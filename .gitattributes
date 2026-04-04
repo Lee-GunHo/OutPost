@@ -1,0 +1,14 @@
+*.cs text
+*.shader text
+*.cginc text
+*.compute text
+*.hlsl text
+
+*.mat text
+*.anim text
+*.meta text
+*.unity text
+*.prefab text
+*.asset text
+*.controller text
+*.overrideController text
