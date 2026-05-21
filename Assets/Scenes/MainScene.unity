@@ -644,7 +644,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 176717343}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216275831}
+        m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
+        m_MethodName: ShowFirst
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 176717338}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &176717343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -970,7 +994,7 @@ GameObject:
   - component: {fileID: 332114848}
   - component: {fileID: 332114847}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1175,7 +1199,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 447604916}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216275831}
+        m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 447604913}
+        m_TargetAssemblyTypeName: ButtonClickSound, Assembly-CSharp
+        m_MethodName: PlayClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &447604916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2153,6 +2201,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1006296174}
   m_CullTransparentMesh: 1
+--- !u!4 &1022252273 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3795205123323759097, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
+  m_PrefabInstance: {fileID: 1533609225}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1083595861
 GameObject:
   m_ObjectHideFlags: 0
@@ -2267,7 +2320,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1083595866}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216275831}
+        m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
+        m_MethodName: ContinueButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1083595863}
+        m_TargetAssemblyTypeName: ButtonClickSound, Assembly-CSharp
+        m_MethodName: PlayClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1083595866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2420,7 +2497,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1119659256}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216275831}
+        m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
+        m_MethodName: NewGameButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1119659253}
+        m_TargetAssemblyTypeName: ButtonClickSound, Assembly-CSharp
+        m_MethodName: PlayClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1119659256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2548,7 +2649,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1195222802}
   m_Layer: 0
-  m_Name: Manager
+  m_Name: System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2569,6 +2670,7 @@ Transform:
   m_Children:
   - {fileID: 1216275830}
   - {fileID: 1461596010}
+  - {fileID: 1022252273}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1216275829
@@ -2582,7 +2684,7 @@ GameObject:
   - component: {fileID: 1216275830}
   - component: {fileID: 1216275831}
   m_Layer: 0
-  m_Name: MainSceneManager
+  m_Name: MainScene_Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2810,7 +2912,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1274526885}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216275831}
+        m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1274526882}
+        m_TargetAssemblyTypeName: ButtonClickSound, Assembly-CSharp
+        m_MethodName: PlayClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1274526885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3038,7 +3164,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1390544876}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216275831}
+        m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
+        m_MethodName: ShowFirst
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1390544873}
+        m_TargetAssemblyTypeName: ButtonClickSound, Assembly-CSharp
+        m_MethodName: PlayClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1390544876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3088,7 +3238,7 @@ GameObject:
   - component: {fileID: 1461596010}
   - component: {fileID: 1461596011}
   m_Layer: 0
-  m_Name: SoundSettingManager
+  m_Name: SoundSetting_Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3267,15 +3417,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1195222802}
     m_Modifications:
+    - target: {fileID: 1684491988231316197, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3795205123323759097, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.0863
+      value: -1526.8798
       objectReference: {fileID: 0}
     - target: {fileID: 3795205123323759097, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: -697.78357
       objectReference: {fileID: 0}
     - target: {fileID: 3795205123323759097, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3287,15 +3441,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3795205123323759097, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3795205123323759097, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3795205123323759097, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3795205123323759097, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3311,7 +3465,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5696291358693388234, guid: 84ca98a6aad40ca4c99f638bc7ef1b8c, type: 3}
       propertyPath: m_Name
-      value: Title_Sound_Package
+      value: Audio
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3432,7 +3586,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1616190229}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216275831}
+        m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
+        m_MethodName: ShowOption
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1616190226}
+        m_TargetAssemblyTypeName: ButtonClickSound, Assembly-CSharp
+        m_MethodName: PlayClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1616190229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3619,7 +3797,7 @@ GameObject:
   - component: {fileID: 1928649478}
   - component: {fileID: 1928649479}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider_Volume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3697,7 +3875,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1461596011}
+        m_TargetAssemblyTypeName: SoundSettingManager, Assembly-CSharp
+        m_MethodName: OnMasterSliderChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2022389931
 GameObject:
   m_ObjectHideFlags: 0
@@ -3891,7 +4081,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2127110163}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216275831}
+        m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
+        m_MethodName: StartGameButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2127110160}
+        m_TargetAssemblyTypeName: ButtonClickSound, Assembly-CSharp
+        m_MethodName: PlayClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2127110163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3937,6 +4151,5 @@ SceneRoots:
   - {fileID: 600366599}
   - {fileID: 2022389934}
   - {fileID: 669338578}
-  - {fileID: 332114850}
-  - {fileID: 1533609225}
   - {fileID: 1195222802}
+  - {fileID: 332114850}

@@ -117,17 +117,7 @@ public class MainSceneManager : MonoBehaviour
     // [첫 화면] 게임 시작 버튼
     public void StartGameButton()
     {
-        // 세이브 있으면 SecondScreen, 없으면 바로 게임 시작
-        if (HasSaveFile())
-        {
-            Debug.Log("[TITLE] 세이브 파일 있음 → SecondScreen 이동");
-            ShowSecond();
-        }
-        else
-        {
-            SceneManager.LoadScene(gameplaySceneName);
-            Debug.Log("[TITLE] 세이브 파일 없음 → 바로 게임 시작");
-        }
+        ShowSecond();
     }
 
     // [두 번째 화면] 이어하기
