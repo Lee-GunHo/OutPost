@@ -31,7 +31,7 @@ public class SeedMapGenerator : MonoBehaviour
     // 바닥 프리팹의 Y 위치 보정값
     public float floorYOffset = 0f;
 
-    [Header("Player Safe Area")]
+    [Header("플레이어 반경 공간")]
     public float safeRadius = 5f;
 
     // 플레이어 시작 위치
@@ -77,7 +77,7 @@ public class SeedMapGenerator : MonoBehaviour
     {
         // int 범위를 넘는 계산이 생겨도 
         // 오류를 내지 않고 자연스럽게 값이 순환 되도록 함.
-        // 해시 계산 검색하다가 가져옴
+        // (해시 계산 검색하다가 괜찮아 보여서 가져옴)
         unchecked
         {
             int hash = globalSeed;
