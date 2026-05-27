@@ -1,0 +1,48 @@
+using UnityEngine;
+
+public class PlayerStateManager : MonoBehaviour
+{
+    private IPlayerState currentState;
+
+    public IPlayerState IdleState { get; private set; }
+    public IPlayerState MoveState { get; private set; }
+    public IPlayerState DashState { get; private set; }
+
+    private PlayerPresenter playerPresenter;
+
+    private void Awake()
+    {
+        playerPresenter = GetComponent<PlayerPresenter>();
+
+        IdleState = new PlayerIdleState(playerPresenter);
+        MoveState = new PlayerMoveState(playerPresenter);
+        DashState = new PlayerDashState(playerPresenter);
+    }
+
+    private void Start()
+    {
+        ChangeState(IdleState);
+    }
+
+    private void Update()
+    {
+        currentState?.Update();
+    }
+
+    private void FixedUpdate()
+    {
+        currentState?.FixedUpdate();
+    }
+
+    public void ChangeState(IPlayerState newState)
+    {
+        if (currentState == newState)
+        {
+            return;
+        }
+
+        currentState?.Exit();
+        currentState = newState;
+        currentState.Enter();
+    }
+}
