@@ -420,7 +420,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &464928481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -596,6 +596,7 @@ GameObject:
   - component: {fileID: 662575200}
   - component: {fileID: 662575199}
   - component: {fileID: 662575202}
+  - component: {fileID: 662575203}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -645,7 +646,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -670,13 +671,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 662575198}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
+  m_LocalPosition: {x: 0, y: 20, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
 --- !u!114 &662575202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -700,7 +701,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -721,6 +722,22 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &662575203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662575198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed45dfbc58a1e2d4cbbb299077872c82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraManager
+  target: {fileID: 377636749}
+  offset: {x: 0, y: 20, z: -10}
+  rotation: {x: 60, y: 0, z: 0}
+  followSpeed: 10
 --- !u!1 &1038704488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,7 +1062,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SeedMapGenerator
   floorPrefab: {fileID: 5465482379942483117, guid: f3acf6f6ba416f44992ad58b63e61df7, type: 3}
   wallPrefab: {fileID: 2856377151059160869, guid: 5ba10dce10cd2e240a9a01b0ea711cb4, type: 3}
-  wallPercent: 35
+  wallPercent: 30
   cellSize: 1
   wallYOffset: 1
   floorYOffset: 0

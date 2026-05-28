@@ -76,9 +76,9 @@ public class ChunkManager : MonoBehaviour
     private Vector2Int GetChunkCoordFromPosition(Vector3 position)
     {
         int chunkX = Mathf.FloorToInt(position.x / chunkSize);
-        int chunkY = Mathf.FloorToInt(position.y / chunkSize);
+        int chunkZ = Mathf.FloorToInt(position.z / chunkSize);
 
-        return new Vector2Int(chunkX, chunkY);
+        return new Vector2Int(chunkX, chunkZ);
     }
 
     /// <summary>
