@@ -17,7 +17,8 @@ public class PlayerDashState : IPlayerState
         dashTimer = playerPresenter.DashDuration;
         dashDirection = playerPresenter.GetDashDirection();
 
-        playerPresenter.PlayDashBlinkEffect(playerPresenter.DashDuration);
+        playerPresenter.StartDashCooldown();
+        playerPresenter.PlayDashEffect(playerPresenter.DashDuration);
     }
 
     public void Update()

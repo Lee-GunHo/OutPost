@@ -7,6 +7,7 @@ public class PlayerStateManager : MonoBehaviour
     public IPlayerState IdleState { get; private set; }
     public IPlayerState MoveState { get; private set; }
     public IPlayerState DashState { get; private set; }
+    public IPlayerState InteractState {get; private set; }
 
     private PlayerPresenter playerPresenter;
 
@@ -17,6 +18,7 @@ public class PlayerStateManager : MonoBehaviour
         IdleState = new PlayerIdleState(playerPresenter);
         MoveState = new PlayerMoveState(playerPresenter);
         DashState = new PlayerDashState(playerPresenter);
+        InteractState = new PlayerInteractState(playerPresenter);
     }
 
     private void Start()

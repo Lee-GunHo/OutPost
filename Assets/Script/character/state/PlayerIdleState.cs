@@ -16,9 +16,15 @@ public class PlayerIdleState : IPlayerState
 
     public void Update()
     {
-        if (playerPresenter.IsDashPressed)
+        if (playerPresenter.IsDashPressed && playerPresenter.CanDash)
         {
             playerPresenter.StateManager.ChangeState(playerPresenter.StateManager.DashState);
+            return;
+        }
+
+        if (playerPresenter.IsInteractPressed)
+        {
+            playerPresenter.StateManager.ChangeState(playerPresenter.StateManager.InteractState);
             return;
         }
 

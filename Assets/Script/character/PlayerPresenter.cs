@@ -7,6 +7,8 @@ public class PlayerPresenter : MonoBehaviour
     private PlayerStateManager stateManager;
     private PlayerView playerView;
     private Rigidbody rigid;
+    private EquipmentModel equipmentModel;
+    private StatusEffectModel statusEffectModel;
 
     private Vector3 lastMoveDirection = Vector3.forward;
 
@@ -17,7 +19,15 @@ public class PlayerPresenter : MonoBehaviour
     public float DashSpeed => playerModel.DashSpeed;
     public float DashDuration => playerModel.DashDuration;
 
+    public bool CanDash => playerModel.CanDash;
+
     public PlayerStateManager StateManager => stateManager;
+
+    public bool IsInteractPressed => inputManager.IsInteractPressed;
+    public float InteractionRange => playerModel.InteractionRange;
+
+    public int TotalAttackPower => playerModel.AttackPower + equipmentModel.WeaponAttackPower;
+    public int TotalDefensePower => playerModel.DefensePower + equipmentModel.ArmorDefensePower;
 
     private void Awake()
     {
@@ -26,6 +36,8 @@ public class PlayerPresenter : MonoBehaviour
         stateManager = GetComponent<PlayerStateManager>();
         playerView = GetComponent<PlayerView>();
         rigid = GetComponent<Rigidbody>();
+        equipmentModel = GetComponent<EquipmentModel>();
+        statusEffectModel = GetComponent<StatusEffectModel>();
     }
 
     public void Move()
@@ -69,7 +81,12 @@ public class PlayerPresenter : MonoBehaviour
         return lastMoveDirection;
     }
 
-    public void PlayDashBlinkEffect(float duration)
+    public void StartDashCooldown()
+    {
+        playerModel.StartDashCooldown();
+    }
+
+    public void PlayDashEffect(float duration)
     {
         playerView.PlayDashBlinkEffect(duration);
     }
@@ -84,5 +101,49 @@ public class PlayerPresenter : MonoBehaviour
         {
             stateManager.ChangeState(stateManager.IdleState);
         }
+    }
+
+    public void TryInteract()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, InteractionRange);
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider.TryGetComponent(out IInteractable interactable))
+            {
+                interactable.Interact(this);
+                return;
+            }
+        }
+
+        Debug.Log("상호작용 가능한 대상이 없습니다.");
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        PlayerModel model = GetComponent<PlayerModel>();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, model.InteractionRange);
+    }
+
+    public void AddStatusEffect(StatusEffectData effectData)
+    {
+        statusEffectModel.AddEffect(effectData);
+    }
+
+    public void RemoveStatusEffect(StatusEffectType effectType)
+    {
+        statusEffectModel.RemoveEffect(effectType);
+    }
+
+    public bool HasStatusEffect(StatusEffectType effectType)
+    {
+        return statusEffectModel.HasEffect(effectType);
     }
 }
