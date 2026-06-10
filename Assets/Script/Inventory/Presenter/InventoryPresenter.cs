@@ -9,12 +9,21 @@ public class InventoryPresenter : MonoBehaviour
     [Header("View")]
     [SerializeField] private InventoryView inventoryView;
 
+    [Header("Test Items")]
+    [SerializeField] private ItemData wood;
+    [SerializeField] private ItemData stone;
+    [SerializeField] private ItemData smileArmor;
+
     private ItemStack draggingItem;
     private int draggedSlotIndex = -1;
 
     private void Start()
     {
         inventoryView.Init(this);
+
+        inventoryModel.AddItem(wood, 50);
+        inventoryModel.AddItem(stone, 25);
+        inventoryModel.AddItem(smileArmor, 1);
 
         RefreshView();
     }
