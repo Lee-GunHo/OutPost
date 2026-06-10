@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour
+public class InventoryModel : MonoBehaviour
 {
     [SerializeField] private int maxSlots = 40;
 
@@ -54,23 +54,32 @@ public class Inventory : MonoBehaviour
 
     public void RemoveItemAt(int index)
     {
-        if (index < 0 || index >= Items.Count)
-            return;
+        if (index < 0 || index >= Items.Count) return;
 
         Items[index] = null;
     }
 
+    public void SwapItems(int fromIndex, int toIndex)
+    {
+        if (fromIndex < 0 || fromIndex >= Items.Count) return;
+        if (toIndex < 0 || toIndex >= Items.Count) return;
+
+        ItemStack temp = Items[fromIndex];
+        Items[fromIndex] = Items[toIndex];
+        Items[toIndex] = temp;
+    }
+
     public void SortItems()
     {
-        List<ItemStack> sortedItems = new();
+        List<ItemStack> sorted = new();
 
         foreach (ItemStack stack in Items)
         {
             if (stack != null)
-                sortedItems.Add(stack);
+                sorted.Add(stack);
         }
 
-        sortedItems.Sort((a, b) =>
+        sorted.Sort((a, b) =>
         {
             int typeCompare = a.item.itemType.CompareTo(b.item.itemType);
             if (typeCompare != 0) return typeCompare;
@@ -80,20 +89,7 @@ public class Inventory : MonoBehaviour
 
         for (int i = 0; i < Items.Count; i++)
         {
-            Items[i] = i < sortedItems.Count ? sortedItems[i] : null;
+            Items[i] = i < sorted.Count ? sorted[i] : null;
         }
-    }
-
-    public void SwapItems(int fromIndex, int toIndex)
-    {
-        if (fromIndex < 0 || fromIndex >= Items.Count)
-            return;
-
-        if (toIndex < 0 || toIndex >= Items.Count)
-            return;
-
-        ItemStack temp = Items[fromIndex];
-        Items[fromIndex] = Items[toIndex];
-        Items[toIndex] = temp;
     }
 }

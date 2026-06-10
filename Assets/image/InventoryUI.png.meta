@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: InventoryUI_EquipmentPanel
+      name: InventoryUI_Iteminfo
       rect:
         serializedVersion: 2
-        x: 15
-        y: 432
-        width: 441
-        height: 550
+        x: 1130
+        y: 453
+        width: 367
+        height: 321
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,63 +125,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3339c29634b9d4342a8ee728ffbfa66e
-      internalID: 514089041
+      spriteID: 3bca1191b495c8d4fa12b3b643b2e400
+      internalID: 1085086739
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_InventoryPanel
+      name: InventoryUI_Sort
       rect:
         serializedVersion: 2
-        x: 473
-        y: 434
-        width: 609
-        height: 548
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 35849ea38646b5b4eb0c1daff8750b0e
-      internalID: 1602801030
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_ItemInfoPanel
-      rect:
-        serializedVersion: 2
-        x: 1101
-        y: 433
-        width: 424
-        height: 549
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ebfd1fb17ceb7c24e9ac3ebe19a8130f
-      internalID: -2037859002
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_SortButton
-      rect:
-        serializedVersion: 2
-        x: 1245
-        y: 328
-        width: 93
+        x: 1246
+        y: 325
+        width: 92
         height: 86
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -191,8 +147,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5bff96cef8081c0489b0305b936aa7e4
-      internalID: -1721983841
+      spriteID: 7789f11e996851e4d8c6f2b4d65bf40e
+      internalID: 392373718
       vertices: []
       indices: 
       edges: []
@@ -202,8 +158,8 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1245
-        y: 222
-        width: 93
+        y: 220
+        width: 92
         height: 92
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -213,30 +169,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f3dbe40afe60b5243802f05a27496087
-      internalID: 1170239121
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_GoldAndBag
-      rect:
-        serializedVersion: 2
-        x: 1086
-        y: 35
-        width: 280
-        height: 163
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 826242a3fbd3dfd4bb4434a4cc481f1c
-      internalID: -1833288324
+      spriteID: 5f2a45e244abcc54c83fc5894927392f
+      internalID: 702518285
       vertices: []
       indices: 
       edges: []
@@ -245,10 +179,10 @@ TextureImporter:
       name: InventoryUI_Hotbar
       rect:
         serializedVersion: 2
-        x: 598
-        y: 226
-        width: 625
-        height: 162
+        x: 592
+        y: 271
+        width: 636
+        height: 107
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -257,20 +191,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1a8aa9dc8ee25e1468d191782ba08189
-      internalID: 1406141161
+      spriteID: 38cec75e8a86ec948908d28bb05827b3
+      internalID: 1272825876
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_CraftinPanel
+      name: InventoryUI_Inventory
       rect:
         serializedVersion: 2
-        x: 14
-        y: 29
-        width: 558
-        height: 367
+        x: 466
+        y: 428
+        width: 618
+        height: 554
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -279,8 +213,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3615162112e1f3144a6632ebd90fae85
-      internalID: 1655155935
+      spriteID: 6719203cc027be8408e5358fe0316169
+      internalID: 1747073100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InventoryUI_Equip
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 428
+        width: 437
+        height: 554
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d2474ab31a182c44911dcefca49189d
+      internalID: 697808918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InventoryUI_Crafting
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 27
+        width: 555
+        height: 365
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c430797e47781b146bc26fbb41b81368
+      internalID: 1104373810
       vertices: []
       indices: 
       edges: []
@@ -289,7 +267,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 60fd4fe5f2e30c6458a097a3de03c9df
+    spriteID: d8a9370e7f007ee4d93a7b6b52c8f351
     internalID: 0
     vertices: []
     indices: 
@@ -299,14 +277,13 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      InventoryUI_CraftinPanel: 1655155935
-      InventoryUI_EquipmentPanel: 514089041
-      InventoryUI_GoldAndBag: -1833288324
-      InventoryUI_Hotbar: 1406141161
-      InventoryUI_InventoryPanel: 1602801030
-      InventoryUI_ItemInfoPanel: -2037859002
-      InventoryUI_SortButton: -1721983841
-      InventoryUI_Trash: 1170239121
+      InventoryUI_Crafting: 1104373810
+      InventoryUI_Equip: 697808918
+      InventoryUI_Hotbar: 1272825876
+      InventoryUI_Inventory: 1747073100
+      InventoryUI_Iteminfo: 1085086739
+      InventoryUI_Sort: 392373718
+      InventoryUI_Trash: 702518285
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

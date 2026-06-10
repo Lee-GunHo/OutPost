@@ -1,19 +1,17 @@
-using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class ItemTooltipUI : MonoBehaviour
+public class ItemTooltipView : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI itemNameText;
     [SerializeField] private TextMeshProUGUI itemTypeText;
     [SerializeField] private TextMeshProUGUI itemDescText;
     [SerializeField] private Vector2 offset = new Vector2(20f, -20f);
 
-    private CanvasGroup canvasGroup;
-
     private void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
+        CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
 
         if (canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
@@ -22,6 +20,7 @@ public class ItemTooltipUI : MonoBehaviour
         canvasGroup.interactable = false;
 
         Graphic[] graphics = GetComponentsInChildren<Graphic>(true);
+
         foreach (Graphic graphic in graphics)
         {
             graphic.raycastTarget = false;
@@ -33,16 +32,18 @@ public class ItemTooltipUI : MonoBehaviour
     private void Update()
     {
         if (gameObject.activeSelf)
+        {
             transform.position = (Vector2)Input.mousePosition + offset;
+        }
     }
 
-    public void Show(ItemStack stack)
+    public void Show(ItemStack item)
     {
-        if (stack == null) return;
+        if (item == null) return;
 
-        itemNameText.text = stack.item.itemName;
-        itemTypeText.text = stack.item.itemType.ToString();
-        itemDescText.text = stack.item.description;
+        itemNameText.text = item.item.itemName;
+        itemTypeText.text = item.item.itemType.ToString();
+        itemDescText.text = item.item.description;
 
         gameObject.SetActive(true);
     }
@@ -51,5 +52,4 @@ public class ItemTooltipUI : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-
 }

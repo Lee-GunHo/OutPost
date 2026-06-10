@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum ItemType
 {
+    Weapon,
     Head,
     Armor,
     Shoes,
@@ -29,6 +30,10 @@ public class ItemData : ScriptableObject
     public Sprite icon;
     [TextArea]
     public string description;
+
+    public int defense;
+    public int attack;
+    public float moveSpeed;
     public int maxStack = 99;
 
 }

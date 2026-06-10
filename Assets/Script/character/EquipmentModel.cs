@@ -2,49 +2,55 @@ using UnityEngine;
 
 public class EquipmentModel : MonoBehaviour
 {
-    [Header("Weapon")]
-    [SerializeField] private string weaponName = "None";
-    [SerializeField] private int weaponAttackPower = 0;
+    [SerializeField] private ItemStack weapon;
+    [SerializeField] private ItemStack armor;
+    [SerializeField] private ItemStack shoes;
+    [SerializeField] private ItemStack ring;
+    [SerializeField] private ItemStack necklace;
 
-    [Header("Armor")]
-    [SerializeField] private string armorName = "None";
-    [SerializeField] private int armorDefensePower = 0;
+    public ItemStack Weapon => weapon;
+    public ItemStack Armor => armor;
+    public ItemStack Shoes => shoes;
+    public ItemStack Ring => ring;
+    public ItemStack Necklace => necklace;
 
-    public string WeaponName => weaponName;
-    public int WeaponAttackPower => weaponAttackPower;
-
-    public string ArmorName => armorName;
-    public int ArmorDefensePower => armorDefensePower;
-
-    public void EquipWeapon(string newWeaponName, int attackPower)
+    public ItemStack GetEquippedItem(ItemType type)
     {
-        weaponName = newWeaponName;
-        weaponAttackPower = attackPower;
-
-        Debug.Log("무기 장착: " + weaponName);
+        return type switch
+        {
+            ItemType.Weapon => weapon,
+            ItemType.Armor => armor,
+            ItemType.Shoes => shoes,
+            ItemType.Ring => ring,
+            ItemType.Necklace => necklace,
+            _ => null
+        };
+    }
+    
+    public void Equip(ItemType type, ItemStack item)
+    {
+        switch (type)
+        {
+            case ItemType.Weapon:
+                weapon = item;
+                break;
+            case ItemType.Armor:
+                armor = item;
+                break;
+            case ItemType.Shoes:
+                shoes = item;
+                break;
+            case ItemType.Ring:
+                ring = item;
+                break;
+            case ItemType.Necklace:
+                necklace = item;
+                break;
+        }
     }
 
-    public void EquipArmor(string newArmorName, int defensePower)
+    public void Unequip(ItemType type)
     {
-        armorName = newArmorName;
-        armorDefensePower = defensePower;
-
-        Debug.Log("방어구 장착: " + armorName);
-    }
-
-    public void UnequipWeapon()
-    {
-        weaponName = "None";
-        weaponAttackPower = 0;
-
-        Debug.Log("무기 해제");
-    }
-
-    public void UnequipArmor()
-    {
-        armorName = "None";
-        armorDefensePower = 0;
-
-        Debug.Log("방어구 해제");
+        Equip(type, null);
     }
 }

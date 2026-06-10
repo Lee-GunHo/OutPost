@@ -26,8 +26,8 @@ public class PlayerPresenter : MonoBehaviour
     public bool IsInteractPressed => inputManager.IsInteractPressed;
     public float InteractionRange => playerModel.InteractionRange;
 
-    public int TotalAttackPower => playerModel.AttackPower + equipmentModel.WeaponAttackPower;
-    public int TotalDefensePower => playerModel.DefensePower + equipmentModel.ArmorDefensePower;
+    public int TotalAttackPower => playerModel.AttackPower  ;
+    public int TotalDefensePower => playerModel.DefensePower ;
 
     private void Awake()
     {

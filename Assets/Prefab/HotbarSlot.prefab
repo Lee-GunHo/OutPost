@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3693074701861575723}
   - component: {fileID: 4989351586408723847}
   - component: {fileID: 8602671481070079841}
-  - component: {fileID: 7256371028154973429}
+  - component: {fileID: 7752374092561935475}
   m_Layer: 5
-  m_Name: InventorySlot
+  m_Name: HotbarSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +78,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7256371028154973429
+--- !u!114 &7752374092561935475
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,9 +87,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1776416347786623735}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ffd34265e731ce4e856a76488b91f51, type: 3}
+  m_Script: {fileID: 11500000, guid: 27e8ac92323fe4f43a220f320cf57f30, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventorySlotView
+  m_EditorClassIdentifier: Assembly-CSharp::HotbarSlotUI
   itemIcon: {fileID: 4539178817294760805}
   countText: {fileID: 6549592518897070321}
 --- !u!1 &3302681960198617189
