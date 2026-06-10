@@ -2,18 +2,33 @@ using UnityEngine;
 
 public enum ItemType
 {
-    Material,
-    Tool,
-    Weapon,
+    Head,
     Armor,
-    Food
+    Shoes,
+    Ring,
+    Necklace,
+    Consumable,
+    Material
 }
 
-[CreateAssetMenu(menuName = "Inventory/Item Data")]
+public enum ItemGrade
+{
+    Normal,
+    Rare,
+    Epic,
+    Legendary
+}
+
+[CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
 public class ItemData : ScriptableObject
 {
+    public int itemID;
     public string itemName;
-    public Sprite icon;
-    public int maxStack = 99;
     public ItemType itemType;
+    public ItemGrade itemGrade;
+    public Sprite icon;
+    [TextArea]
+    public string description;
+    public int maxStack = 99;
+
 }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b76a4ac5fdefe3348b6d2f737c3cf923
+guid: 258a9a18fb8d179499e06a8d9fff53c8
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,177 +110,111 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: InventoryUI_EquipmentPanel
+      name: SlimeWeapon_0
       rect:
         serializedVersion: 2
-        x: 15
-        y: 432
-        width: 441
-        height: 550
+        x: 81
+        y: 455
+        width: 300
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3339c29634b9d4342a8ee728ffbfa66e
-      internalID: 514089041
+      spriteID: 28a07b79a81918e4d8eb935fd6ee9765
+      internalID: -1293485484
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_InventoryPanel
+      name: SlimeWeapon_1
       rect:
         serializedVersion: 2
-        x: 473
-        y: 434
-        width: 609
-        height: 548
+        x: 454
+        y: 387
+        width: 351
+        height: 351
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 35849ea38646b5b4eb0c1daff8750b0e
-      internalID: 1602801030
+      spriteID: 989e3d34b0f14724098c000928dcb9ed
+      internalID: -1178042372
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_ItemInfoPanel
+      name: SlimeWeapon_2
       rect:
         serializedVersion: 2
-        x: 1101
-        y: 433
-        width: 424
-        height: 549
+        x: 833
+        y: 396
+        width: 342
+        height: 298
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ebfd1fb17ceb7c24e9ac3ebe19a8130f
-      internalID: -2037859002
+      spriteID: adb91f15cf9343d4599f8477e37f6318
+      internalID: -851960807
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_SortButton
+      name: SlimeWeapon_4
       rect:
         serializedVersion: 2
-        x: 1245
-        y: 328
-        width: 93
-        height: 86
+        x: 287
+        y: 62
+        width: 220
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5bff96cef8081c0489b0305b936aa7e4
-      internalID: -1721983841
+      spriteID: 61d376151e7bbeb448b152b60d970a3e
+      internalID: -1497500965
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_Trash
+      name: SlimeWeapon_5
       rect:
         serializedVersion: 2
-        x: 1245
-        y: 222
-        width: 93
-        height: 92
+        x: 632
+        y: 30
+        width: 269
+        height: 318
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f3dbe40afe60b5243802f05a27496087
-      internalID: 1170239121
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_GoldAndBag
-      rect:
-        serializedVersion: 2
-        x: 1086
-        y: 35
-        width: 280
-        height: 163
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 826242a3fbd3dfd4bb4434a4cc481f1c
-      internalID: -1833288324
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_Hotbar
-      rect:
-        serializedVersion: 2
-        x: 598
-        y: 226
-        width: 625
-        height: 162
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1a8aa9dc8ee25e1468d191782ba08189
-      internalID: 1406141161
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_CraftinPanel
-      rect:
-        serializedVersion: 2
-        x: 14
-        y: 29
-        width: 558
-        height: 367
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3615162112e1f3144a6632ebd90fae85
-      internalID: 1655155935
+      spriteID: 08323ef58eda5d34fbcea4296b7369e1
+      internalID: -1752793155
       vertices: []
       indices: 
       edges: []
@@ -289,7 +223,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 60fd4fe5f2e30c6458a097a3de03c9df
+    spriteID: 1d25d1a0815ac5c47b85455b67040c70
     internalID: 0
     vertices: []
     indices: 
@@ -297,16 +231,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      InventoryUI_CraftinPanel: 1655155935
-      InventoryUI_EquipmentPanel: 514089041
-      InventoryUI_GoldAndBag: -1833288324
-      InventoryUI_Hotbar: 1406141161
-      InventoryUI_InventoryPanel: 1602801030
-      InventoryUI_ItemInfoPanel: -2037859002
-      InventoryUI_SortButton: -1721983841
-      InventoryUI_Trash: 1170239121
+      SlimeWeapon_0: -1293485484
+      SlimeWeapon_1: -1178042372
+      SlimeWeapon_2: -851960807
+      SlimeWeapon_3: 50908550
+      SlimeWeapon_4: -1497500965
+      SlimeWeapon_5: -1752793155
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

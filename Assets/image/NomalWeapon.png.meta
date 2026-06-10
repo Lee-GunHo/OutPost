@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b76a4ac5fdefe3348b6d2f737c3cf923
+guid: c5d428c883baf1541be578097c40707b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,177 +110,111 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: InventoryUI_EquipmentPanel
+      name: NomalWeapon_0
       rect:
         serializedVersion: 2
-        x: 15
-        y: 432
-        width: 441
-        height: 550
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3339c29634b9d4342a8ee728ffbfa66e
-      internalID: 514089041
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_InventoryPanel
-      rect:
-        serializedVersion: 2
-        x: 473
+        x: 182
         y: 434
-        width: 609
-        height: 548
+        width: 300
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 35849ea38646b5b4eb0c1daff8750b0e
-      internalID: 1602801030
+      spriteID: 5406ab7ce7aec5e49b5fc82cad78dbb3
+      internalID: 40083736
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_ItemInfoPanel
+      name: NomalWeapon_1
       rect:
         serializedVersion: 2
-        x: 1101
-        y: 433
-        width: 424
-        height: 549
+        x: 578
+        y: 346
+        width: 460
+        height: 444
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ebfd1fb17ceb7c24e9ac3ebe19a8130f
-      internalID: -2037859002
+      spriteID: 57a5356446e34f3468339ccb300faed7
+      internalID: -1914023512
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_SortButton
+      name: NomalWeapon_2
       rect:
         serializedVersion: 2
-        x: 1245
-        y: 328
-        width: 93
-        height: 86
+        x: 148
+        y: 51
+        width: 340
+        height: 340
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5bff96cef8081c0489b0305b936aa7e4
-      internalID: -1721983841
+      spriteID: 237022f0b5045cd4981588e68da7b21a
+      internalID: -1890392996
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_Trash
+      name: NomalWeapon_4
       rect:
         serializedVersion: 2
-        x: 1245
-        y: 222
-        width: 93
-        height: 92
+        x: 560
+        y: 88
+        width: 190
+        height: 190
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f3dbe40afe60b5243802f05a27496087
-      internalID: 1170239121
+      spriteID: c25928889ea0ce64685ceec7a294b506
+      internalID: -1883534271
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InventoryUI_GoldAndBag
+      name: NomalWeapon_5
       rect:
         serializedVersion: 2
-        x: 1086
-        y: 35
-        width: 280
-        height: 163
+        x: 852
+        y: 66
+        width: 210
+        height: 268
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 826242a3fbd3dfd4bb4434a4cc481f1c
-      internalID: -1833288324
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_Hotbar
-      rect:
-        serializedVersion: 2
-        x: 598
-        y: 226
-        width: 625
-        height: 162
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1a8aa9dc8ee25e1468d191782ba08189
-      internalID: 1406141161
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InventoryUI_CraftinPanel
-      rect:
-        serializedVersion: 2
-        x: 14
-        y: 29
-        width: 558
-        height: 367
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3615162112e1f3144a6632ebd90fae85
-      internalID: 1655155935
+      spriteID: 9f2da5cb705db01458f0c50e98a81c81
+      internalID: 1928607034
       vertices: []
       indices: 
       edges: []
@@ -289,7 +223,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 60fd4fe5f2e30c6458a097a3de03c9df
+    spriteID: 7d07ac208350b114580d930bb3203164
     internalID: 0
     vertices: []
     indices: 
@@ -297,16 +231,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      InventoryUI_CraftinPanel: 1655155935
-      InventoryUI_EquipmentPanel: 514089041
-      InventoryUI_GoldAndBag: -1833288324
-      InventoryUI_Hotbar: 1406141161
-      InventoryUI_InventoryPanel: 1602801030
-      InventoryUI_ItemInfoPanel: -2037859002
-      InventoryUI_SortButton: -1721983841
-      InventoryUI_Trash: 1170239121
+      NomalWeapon_0: 40083736
+      NomalWeapon_1: -1914023512
+      NomalWeapon_2: -1890392996
+      NomalWeapon_3: 23976319
+      NomalWeapon_4: -1883534271
+      NomalWeapon_5: 1928607034
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
