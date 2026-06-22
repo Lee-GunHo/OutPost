@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerPresenter : MonoBehaviour
+public class PlayerPresenter : MonoBehaviour, IDamageable
 {
     private PlayerInputManager inputManager;
     private PlayerModel playerModel;
@@ -158,6 +158,21 @@ public class PlayerPresenter : MonoBehaviour
         }
 
         Debug.Log("상호작용 가능한 대상이 없습니다.");
+    }
+
+    public void TakeDamage(int damage)
+    {
+        playerModel.TakeDamage(damage);
+
+        Debug.Log("플레이어 피격, 현재 체력: " + playerModel.CurrentHp);
+
+        if (playerModel.IsDead)
+        {
+            Debug.Log("플레이어 사망");
+
+            // 나중에 PlayerDeadState 만들면 여기서 연결
+            // stateManager.ChangeState(stateManager.DeadState);
+        }
     }
 
     private void OnDrawGizmosSelected()
