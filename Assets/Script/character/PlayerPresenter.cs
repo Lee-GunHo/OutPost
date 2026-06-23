@@ -10,16 +10,14 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     private EquipmentModel equipmentModel;
     private StatusEffectModel statusEffectModel;
 
-    private GameObject inventoryPanel;
 
-    private bool isInventoryOpened;
 
-    public bool IsInventoryOpened => isInventoryOpened;
 
     private Vector3 lastMoveDirection = Vector3.forward;
 
-    public Vector2 MoveInput => isInventoryOpened ? Vector2.zero : inputManager.MoveInput;
-    public bool IsDashPressed => !isInventoryOpened && inputManager.IsDashPressed;
+    public Vector2 MoveInput => UIState.IsAnyUIOpen ? Vector2.zero : inputManager.MoveInput;
+    public bool IsDashPressed => !UIState.IsAnyUIOpen && inputManager.IsDashPressed;
+    public bool IsInteractPressed => !UIState.IsAnyUIOpen && inputManager.IsInteractPressed;
 
     public float MoveSpeed => playerModel.MoveSpeed;
     public float DashSpeed => playerModel.DashSpeed;
@@ -29,11 +27,13 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public PlayerStateManager StateManager => stateManager;
 
-    public bool IsInteractPressed => !isInventoryOpened && inputManager.IsInteractPressed;
     public float InteractionRange => playerModel.InteractionRange;
 
     public int TotalAttackPower => playerModel.AttackPower  ;
     public int TotalDefensePower => playerModel.DefensePower ;
+
+
+
 
     private void Awake()
     {
@@ -45,27 +45,18 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         equipmentModel = GetComponent<EquipmentModel>();
         statusEffectModel = GetComponent<StatusEffectModel>();
 
-        inventoryPanel = GameObject.FindGameObjectWithTag("InventoryPanel");
 
-        if (inventoryPanel != null)
-        {
-            inventoryPanel.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("InventoryPanel 태그를 가진 오브젝트를 찾지 못했습니다.");
-        }
+
     }
 
     private void Update()
     {
-        if (inputManager.IsInventoryPressed)
-            ToggleInventory();
+
     }
 
     public void Move()
     {
-        if (isInventoryOpened)
+        if (UIState.IsAnyUIOpen)
         {
             StopMove();
             return;
@@ -84,7 +75,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public void DashMove(Vector3 dashDirection)
     {
-        if (isInventoryOpened)
+        if (UIState.IsAnyUIOpen)
         {
             StopMove();
             return;
@@ -140,7 +131,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public void TryInteract()
     {
-        if (isInventoryOpened)
+        if (UIState.IsAnyUIOpen)
         {
             StopMove();
             return;
@@ -203,18 +194,6 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         return statusEffectModel.HasEffect(effectType);
     }
 
-    private void ToggleInventory()
-    {
-        isInventoryOpened = !isInventoryOpened;
 
-        if (inventoryPanel != null)
-        {
-            inventoryPanel.SetActive(isInventoryOpened);
-        }
-
-        if (isInventoryOpened)
-        {
-            StopMove();
-        }
-    }
+    
 }

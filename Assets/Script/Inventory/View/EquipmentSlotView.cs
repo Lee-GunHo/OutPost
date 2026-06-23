@@ -11,11 +11,9 @@ public class EquipmentSlotView : MonoBehaviour,
     [SerializeField] private Image itemIcon;
 
     private int slotIndex;
-    private ItemStack equippedItem;
     private InventoryPresenter presenter;
 
     public ItemType EquipType => equipType;
-    public ItemStack EquippedItem => equippedItem;
 
     public void Init(int index, InventoryPresenter inventoryPresenter)
     {
@@ -24,18 +22,21 @@ public class EquipmentSlotView : MonoBehaviour,
         Clear();
     }
 
-    public void SetItem(ItemStack item)
+    public void SetItem(ItemStack itemStack)
     {
-        equippedItem = item;
+        if (itemStack == null || itemStack.item == null)
+        {
+            itemIcon.enabled = false;
+            itemIcon.sprite = null;
+            return;
+        }
 
-        itemIcon.sprite = item.item.icon;
         itemIcon.enabled = true;
+        itemIcon.sprite = itemStack.item.icon;
     }
 
     public void Clear()
     {
-        equippedItem = null;
-
         itemIcon.sprite = null;
         itemIcon.enabled = false;
     }

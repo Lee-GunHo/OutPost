@@ -126,6 +126,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventoryPresenter
   inventoryModel: {fileID: 4499239461406420166}
   inventoryView: {fileID: 0}
+  equipmentView: {fileID: 0}
+  equipmentModel: {fileID: 0}
+  wood: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
+  stone: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
+  smileArmor: {fileID: 11400000, guid: dc3de38e89f5e57439f73ab04601ea1a, type: 2}
 --- !u!1 &5092765097817404540
 GameObject:
   m_ObjectHideFlags: 0
