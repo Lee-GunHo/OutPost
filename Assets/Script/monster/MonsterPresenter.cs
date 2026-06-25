@@ -11,6 +11,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     public float ChaseRange => monsterModel.ChaseRange;
     public float AttackRange => monsterModel.AttackRange;
     public float HitDuration => monsterModel.HitDuration;
+    public float KnockbackPower => monsterModel.KnockbackPower;
     public bool IsDead => monsterModel.IsDead;
 
     private void Awake()
@@ -86,10 +87,41 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         rigid.linearVelocity = Vector3.zero;
     }
 
+    public void KnockbackFromPlayer()
+    {
+        if (playerTransform == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+            if (player == null)
+            {
+                Debug.LogWarning("넉백 기준 플레이어를 찾지 못했습니다.");
+                return;
+            }
+
+            playerTransform = player.transform;
+        }
+
+        Vector3 knockbackDirection = transform.position - playerTransform.position;
+        knockbackDirection.y = 0f;
+
+        if (knockbackDirection == Vector3.zero)
+        {
+            knockbackDirection = -transform.forward;
+        }
+
+        knockbackDirection = knockbackDirection.normalized;
+
+        rigid.linearVelocity = knockbackDirection * KnockbackPower;
+
+        Debug.Log("몬스터 넉백");
+    }
+
     public void Attack()
     {
         Debug.Log("몬스터 공격");
     }
+
 
     public void TakeDamage(int damage)
     {

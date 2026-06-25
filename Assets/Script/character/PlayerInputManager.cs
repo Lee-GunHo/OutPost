@@ -10,6 +10,7 @@ public class PlayerInputManager : MonoBehaviour
     public bool IsAttackPressed { get; private set; }
     public bool IsInteractPressed { get; private set; }
     public bool IsDashPressed { get; private set; }
+    public bool IsToggleToolPressed { get; private set; }
 
     private void Awake()
     {
@@ -26,6 +27,7 @@ public class PlayerInputManager : MonoBehaviour
         playerInputAction.Player.Attack.performed += OnAttackPerformed;
         playerInputAction.Player.Interact.performed += OnInteractPerformed;
         playerInputAction.Player.Dash.performed += OnDashPerformed;
+        playerInputAction.Player.ToggleTool.performed += OnToggleToolPerformed;
     }
 
     private void OnDisable()
@@ -36,6 +38,7 @@ public class PlayerInputManager : MonoBehaviour
         playerInputAction.Player.Attack.performed -= OnAttackPerformed;
         playerInputAction.Player.Interact.performed -= OnInteractPerformed;
         playerInputAction.Player.Dash.performed -= OnDashPerformed;
+        playerInputAction.Player.ToggleTool.performed -= OnToggleToolPerformed;
 
         playerInputAction.Player.Disable();
     }
@@ -70,6 +73,11 @@ public class PlayerInputManager : MonoBehaviour
         IsDashPressed = true;
     }
 
+    private void OnToggleToolPerformed(InputAction.CallbackContext context)
+    {
+        IsToggleToolPressed = true;
+    }
+
 
 
     private void ResetButtonInputs()
@@ -77,5 +85,6 @@ public class PlayerInputManager : MonoBehaviour
         IsAttackPressed = false;
         IsInteractPressed = false;
         IsDashPressed = false;
+        IsToggleToolPressed = false;
     }
 }

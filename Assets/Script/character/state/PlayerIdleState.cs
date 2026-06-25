@@ -16,6 +16,21 @@ public class PlayerIdleState : IPlayerState
 
     public void Update()
     {
+        if (playerPresenter.IsAttackPressed)
+        {
+            if (playerPresenter.IsPickaxeMode)
+            {
+                playerPresenter.StateManager.ChangeState(playerPresenter.StateManager.MineState);
+                return;
+            }
+
+            if (playerPresenter.IsWeaponMode)
+            {
+                playerPresenter.StateManager.ChangeState(playerPresenter.StateManager.AttackState);
+                return;
+            }
+        }
+
         if (playerPresenter.IsDashPressed && playerPresenter.CanDash)
         {
             playerPresenter.StateManager.ChangeState(playerPresenter.StateManager.DashState);

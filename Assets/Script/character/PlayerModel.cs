@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Unity.VisualScripting.Dependencies.Sqlite.SQLite3;
 
 public class PlayerModel : MonoBehaviour
 {
@@ -21,6 +22,24 @@ public class PlayerModel : MonoBehaviour
     [Header("Combat Data")]
     [SerializeField] private int attackPower = 10;
     [SerializeField] private int defensePower = 0;
+    [SerializeField] private float attackDuration = 0.35f;
+
+    [Header("Attack Range Data")]
+    [SerializeField] private Vector3 attackBoxHalfSize = new Vector3(0.75f, 0.75f, 0.75f);
+    [SerializeField] private float attackBoxDistance = 1.2f;
+
+    [Header("Tool Data")]
+    [SerializeField] private ToolType currentToolType = ToolType.Pickaxe;
+
+    [Header("Wall Break Data")]
+    [SerializeField] private float breakRange = 5f;
+
+    public ToolType CurrentToolType => currentToolType;
+    public bool IsPickaxeMode => currentToolType == ToolType.Pickaxe;
+    public bool IsWeaponMode => currentToolType == ToolType.Weapon;
+
+    public float BreakRange => breakRange;
+
 
     public int MaxHp => maxHp;
     public int CurrentHp => currentHp;
@@ -36,6 +55,10 @@ public class PlayerModel : MonoBehaviour
 
     public int AttackPower => attackPower;
     public int DefensePower => defensePower;
+    public float AttackDuration => attackDuration;
+
+    public Vector3 AttackBoxHalfSize => attackBoxHalfSize;
+    public float AttackBoxDistance => attackBoxDistance;
 
     public bool IsDead => currentHp <= 0;
     public bool CanDash => currentDashCooldown <= 0f;
@@ -77,5 +100,14 @@ public class PlayerModel : MonoBehaviour
     {
         currentHp += amount;
         currentHp = Mathf.Clamp(currentHp, 0, maxHp);
+    }
+
+    public void ToggleTool()
+    {
+        currentToolType = currentToolType == ToolType.Pickaxe
+            ? ToolType.Weapon
+            : ToolType.Pickaxe;
+
+        Debug.Log("현재 도구 상태: " + currentToolType);
     }
 }

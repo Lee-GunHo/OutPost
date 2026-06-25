@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerPresenter : MonoBehaviour, IDamageable
 {
@@ -18,6 +19,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public Vector2 MoveInput => UIState.IsAnyUIOpen ? Vector2.zero : inputManager.MoveInput;
     public bool IsDashPressed => !UIState.IsAnyUIOpen && inputManager.IsDashPressed;
     public bool IsInteractPressed => !UIState.IsAnyUIOpen && inputManager.IsInteractPressed;
+    public bool IsAttackPressed => !UIState.IsAnyUIOpen && inputManager.IsAttackPressed;
 
     public float MoveSpeed => playerModel.MoveSpeed;
     public float DashSpeed => playerModel.DashSpeed;
@@ -29,10 +31,20 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public float InteractionRange => playerModel.InteractionRange;
 
-    public int TotalAttackPower => playerModel.AttackPower  ;
-    public int TotalDefensePower => playerModel.DefensePower ;
+    public int TotalAttackPower => playerModel.AttackPower;
+    public int TotalDefensePower => playerModel.DefensePower;
+    public float AttackDuration => playerModel.AttackDuration;
 
+    public Vector3 AttackBoxHalfSize => playerModel.AttackBoxHalfSize;
+    public float AttackBoxDistance => playerModel.AttackBoxDistance;
 
+    public bool IsPickaxeMode => playerModel.IsPickaxeMode;
+    public bool IsWeaponMode => playerModel.IsWeaponMode;
+    public ToolType CurrentToolType => playerModel.CurrentToolType;
+
+    [SerializeField] private LayerMask wallLayer;
+
+    private Camera mainCamera;
 
 
     private void Awake()
@@ -44,14 +56,32 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         rigid = GetComponent<Rigidbody>();
         equipmentModel = GetComponent<EquipmentModel>();
         statusEffectModel = GetComponent<StatusEffectModel>();
-
+        mainCamera = Camera.main;
 
 
     }
 
     private void Update()
     {
+        if (UIState.IsAnyUIOpen)
+        {
+            return;
+        }
 
+        if (inputManager.IsToggleToolPressed)
+        {
+            ToggleTool();
+        }
+    }
+
+    private void RotateToDirection(Vector3 direction)
+    {
+        if (direction == Vector3.zero)
+        {
+            return;
+        }
+
+        transform.rotation = Quaternion.LookRotation(direction);
     }
 
     public void Move()
@@ -67,6 +97,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         if (moveDirection != Vector3.zero)
         {
             lastMoveDirection = moveDirection;
+            RotateToDirection(moveDirection);
         }
 
         Vector3 moveVelocity = moveDirection * MoveSpeed;
@@ -177,6 +208,21 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, model.InteractionRange);
+
+        Gizmos.color = Color.red;
+
+        Vector3 attackDirection = transform.forward;
+        Vector3 attackCenter = transform.position + attackDirection * model.AttackBoxDistance;
+
+        Gizmos.matrix = Matrix4x4.TRS(
+            attackCenter,
+            Quaternion.LookRotation(attackDirection),
+            Vector3.one
+        );
+
+        Gizmos.DrawWireCube(Vector3.zero, model.AttackBoxHalfSize * 2f);
+
+        Gizmos.matrix = Matrix4x4.identity;
     }
 
     public void AddStatusEffect(StatusEffectData effectData)
@@ -194,6 +240,165 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         return statusEffectModel.HasEffect(effectType);
     }
 
+    private void ToggleTool()
+    {
+        playerModel.ToggleTool();
+    }
 
-    
+    public void ExecuteAttackAction()
+    {
+        if (UIState.IsAnyUIOpen)
+        {
+            return;
+        }
+
+        if (IsPickaxeMode)
+        {
+            TryBreakWall();
+            return;
+        }
+
+        if (IsWeaponMode)
+        {
+            Attack();
+            return;
+        }
+    }
+
+    public void TryBreakWall()
+    {
+        if (UIState.IsAnyUIOpen)
+        {
+            return;
+        }
+
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+
+            if (mainCamera == null)
+            {
+                Debug.LogWarning("MainCamera를 찾지 못했습니다.");
+                return;
+            }
+        }
+
+        if (Mouse.current == null)
+        {
+            return;
+        }
+
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, wallLayer))
+        {
+            BreakableWall wall = hit.collider.GetComponent<BreakableWall>();
+
+            if (wall == null)
+            {
+                wall = hit.collider.GetComponentInParent<BreakableWall>();
+            }
+
+            if (wall == null)
+            {
+                return;
+            }
+
+            float distance = Vector3.Distance(transform.position, wall.transform.position);
+
+            if (distance <= playerModel.BreakRange)
+            {
+                wall.Break();
+                Debug.Log("벽 부수기 성공");
+            }
+            else
+            {
+                Debug.Log("벽이 너무 멀다.");
+            }
+        }
+    }
+
+    private Vector3 GetMouseDirectionFromPlayer()
+    {
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+
+            if (mainCamera == null)
+            {
+                return transform.forward;
+            }
+        }
+
+        if (Mouse.current == null)
+        {
+            return transform.forward;
+        }
+
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+
+        Plane groundPlane = new Plane(Vector3.up, transform.position);
+
+        if (groundPlane.Raycast(ray, out float enter))
+        {
+            Vector3 mouseWorldPosition = ray.GetPoint(enter);
+
+            Vector3 direction = mouseWorldPosition - transform.position;
+            direction.y = 0f;
+
+            if (direction != Vector3.zero)
+            {
+                return direction.normalized;
+            }
+        }
+
+        return transform.forward;
+    }
+
+    public void Attack()
+    {
+        if (UIState.IsAnyUIOpen)
+        {
+            return;
+        }
+
+        Vector3 attackDirection = GetMouseDirectionFromPlayer();
+
+        if (attackDirection != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(attackDirection);
+        }
+
+        Vector3 attackCenter = transform.position + attackDirection * AttackBoxDistance;
+
+        Collider[] colliders = Physics.OverlapBox(
+            attackCenter,
+            AttackBoxHalfSize,
+            Quaternion.LookRotation(attackDirection)
+        );
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider.GetComponentInParent<PlayerPresenter>() != null)
+            {
+                continue;
+            }
+
+            IDamageable damageable = collider.GetComponentInParent<IDamageable>();
+
+            if (damageable == null)
+            {
+                continue;
+            }
+
+            damageable.TakeDamage(TotalAttackPower);
+            Debug.Log("플레이어 공격 성공: " + collider.name);
+            return;
+        }
+
+        Debug.Log("공격 범위 안에 대상이 없습니다.");
+    }
+
 }

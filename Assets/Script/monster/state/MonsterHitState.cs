@@ -19,6 +19,7 @@ public class MonsterHitState : IMonsterState
 
         monsterPresenter.StopMove();
         hitTimer = monsterPresenter.HitDuration;
+        monsterPresenter.KnockbackFromPlayer();
     }
 
     public void Update()
