@@ -33,6 +33,7 @@ Transform:
   - {fileID: 8586494641153765678}
   - {fileID: 7293994639606909487}
   - {fileID: 2605856091981686182}
+  - {fileID: 6304360298293544800}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2264084145399811000
@@ -125,9 +126,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryPresenter
   inventoryModel: {fileID: 4499239461406420166}
+  equipmentModel: {fileID: 0}
   inventoryView: {fileID: 0}
   equipmentView: {fileID: 0}
-  equipmentModel: {fileID: 0}
+  inventoryPanel: {fileID: 0}
+  inputManager: {fileID: 0}
+  playerPresenter: {fileID: 0}
   wood: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
   stone: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
   smileArmor: {fileID: 11400000, guid: dc3de38e89f5e57439f73ab04601ea1a, type: 2}
@@ -233,3 +237,47 @@ MonoBehaviour:
   floorYOffset: 0
   safeRadius: 5
   playerStartPosition: {x: 0, y: 0, z: 0}
+--- !u!1 &8327011349679937219
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6304360298293544800}
+  - component: {fileID: 1963133426766121305}
+  m_Layer: 0
+  m_Name: UIInputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6304360298293544800
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327011349679937219}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -782.4111, y: -540.24615, z: 1.66384}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2346226157108010335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1963133426766121305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327011349679937219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2202724a92ecf2745bd7209054617520, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIInputManager
