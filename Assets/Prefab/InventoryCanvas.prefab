@@ -1297,7 +1297,6 @@ GameObject:
   - component: {fileID: 1876176170539390077}
   - component: {fileID: 651992662435152767}
   - component: {fileID: 1614026898378189860}
-  - component: {fileID: 8544840421365821181}
   m_Layer: 5
   m_Name: InventoryCanvas
   m_TagString: Untagged
@@ -1395,23 +1394,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &8544840421365821181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4214583027449172109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a2cc3b4248fb824e864ba75cd42ff5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryView
-  slotPrefab: {fileID: 1776416347786623735, guid: 5a80c69235680ac4082b2946f59ac231, type: 3}
-  slotParent: {fileID: 884879323866733650}
-  slotCount: 40
-  dragIcon: {fileID: 9213709085191392589}
-  tooltipView: {fileID: 3030698342252188283}
 --- !u!1 &4329883881169833034
 GameObject:
   m_ObjectHideFlags: 0

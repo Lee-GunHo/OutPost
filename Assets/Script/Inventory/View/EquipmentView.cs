@@ -15,9 +15,20 @@ public class EquipmentView : MonoBehaviour
         }
     }
 
+    public EquipmentSlotView GetSlot(ItemType type)
+    {
+        foreach (EquipmentSlotView slot in slots)
+        {
+            if (slot.EquipType == type)
+                return slot;
+        }
+
+        return null;
+    }
+
     public void Refresh(EquipmentModel equipmentModel)
     {
-        foreach (var slot in slots)
+        foreach (EquipmentSlotView slot in slots)
         {
             ItemStack item = equipmentModel.GetEquippedItem(slot.EquipType);
 
@@ -26,5 +37,15 @@ public class EquipmentView : MonoBehaviour
             else
                 slot.SetItem(item);
         }
+    }
+
+    public void UpdateSlot(ItemType type, ItemStack item)
+    {
+        EquipmentSlotView slot = GetSlot(type);
+
+        if (slot == null)
+            return;
+
+        slot.SetItem(item);
     }
 }

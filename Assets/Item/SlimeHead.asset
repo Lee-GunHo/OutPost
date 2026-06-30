@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: SlimeHead
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  hp: 0
+  defense: 0
+  attack: 0
+  moveSpeed: 0
   itemID: 10
   itemName: SlimeHead
   itemType: 0

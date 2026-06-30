@@ -15,6 +15,13 @@ public class InventoryModel : MonoBehaviour
         }
     }
 
+    public void SetItemAt(int index, ItemStack item)
+    {
+        if (index < 0 || index >= Items.Count) return;
+
+        Items[index] = item;
+    }
+
     public bool AddItem(ItemData item, int amount)
     {
         if (item == null || amount <= 0) return false;
@@ -91,5 +98,5 @@ public class InventoryModel : MonoBehaviour
         {
             Items[i] = i < sorted.Count ? sorted[i] : null;
         }
-    }
+    }   
 }

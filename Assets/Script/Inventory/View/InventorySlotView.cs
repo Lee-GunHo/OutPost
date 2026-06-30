@@ -29,8 +29,14 @@ public class InventorySlotView : MonoBehaviour,
     {
         currentItem = item;
 
+        if (item == null || item.item == null)
+        {
+            Clear();
+            return;
+        }
+
         itemIcon.sprite = item.item.icon;
-        itemIcon.enabled = true;
+        itemIcon.enabled = item.item.icon != null;
 
         countText.text = item.amount > 1 ? item.amount.ToString() : "";
     }
@@ -47,16 +53,19 @@ public class InventorySlotView : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (presenter == null) return;
         presenter.OnInventorySlotClicked(slotIndex);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (presenter == null) return;
         presenter.OnInventorySlotHovered(slotIndex);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (presenter == null) return;
         presenter.OnInventorySlotUnhovered(slotIndex);
     }
 }

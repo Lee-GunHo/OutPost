@@ -17,6 +17,8 @@ public class InventoryPresenter : MonoBehaviour
     [Header("Input")]
     [SerializeField] private UIInputManager inputManager;
     [SerializeField] private PlayerPresenter playerPresenter;
+    [SerializeField] private PlayerModel playerModel;
+
 
     private bool isOpen;
 
@@ -200,65 +202,52 @@ public class InventoryPresenter : MonoBehaviour
     }
     private void Equip(int slotIndex)
     {
-        EquipmentSlotView slotView =
-            equipmentView.Slots[slotIndex];
+        Debug.Log("Equip 함수 호출됨");
 
-        if (draggingItem.item.itemType
-            != slotView.EquipType)
+        EquipmentSlotView slotView = equipmentView.Slots[slotIndex];
+
+        if (draggingItem.item.itemType != slotView.EquipType)
         {
             Debug.Log("장착 불가");
             return;
         }
 
-        ItemStack equippedItem =
-            equipmentModel.GetEquippedItem(
-                slotView.EquipType
-            );
+        ItemStack oldEquippedItem = equipmentModel.GetEquippedItem(slotView.EquipType);
 
-        // 기존 장비 반환
-        if (equippedItem != null)
+        if (oldEquippedItem != null)
         {
-            inventoryModel.AddItem(
-                equippedItem.item,
-                equippedItem.amount
-            );
+            playerModel.RemoveEquipmentStats(oldEquippedItem.item);
         }
 
-        equipmentModel.Equip(
-            slotView.EquipType,
-            draggingItem
-        );
+        equipmentModel.Equip(slotView.EquipType, draggingItem);
 
-        inventoryModel.RemoveItemAt(
-            draggedSlotIndex
-        );
+        playerModel.AddEquipmentStats(draggingItem.item);
+
+        if (oldEquippedItem != null)
+        {
+            inventoryModel.SetItemAt(draggedSlotIndex, oldEquippedItem);
+        }
+        else
+        {
+            inventoryModel.RemoveItemAt(draggedSlotIndex);
+        }
 
         StopDrag();
-
         RefreshView();
     }
     private void Unequip(int slotIndex)
     {
-        EquipmentSlotView slotView =
-            equipmentView.Slots[slotIndex];
+        EquipmentSlotView slotView = equipmentView.Slots[slotIndex];
 
-        ItemStack equippedItem =
-            equipmentModel.GetEquippedItem(
-                slotView.EquipType
-            );
+        ItemStack unequippedItem = equipmentModel.Unequip(slotView.EquipType);
 
-        if (equippedItem == null)
+        if (unequippedItem == null)
             return;
 
-        inventoryModel.AddItem(
-            equippedItem.item,
-            equippedItem.amount
-        );
-
-        equipmentModel.Unequip(
-            slotView.EquipType
-        );
+        inventoryModel.AddItem(unequippedItem.item, unequippedItem.amount);
 
         RefreshView();
     }
+
+
 }

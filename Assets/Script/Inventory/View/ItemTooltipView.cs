@@ -39,11 +39,25 @@ public class ItemTooltipView : MonoBehaviour
 
     public void Show(ItemStack item)
     {
-        if (item == null) return;
+        if (item == null || item.item == null)
+        {
+            Hide();
+            return;
+        }
 
         itemNameText.text = item.item.itemName;
         itemTypeText.text = item.item.itemType.ToString();
-        itemDescText.text = item.item.description;
+
+        string statText = GetStatText(item.item);
+
+        if (string.IsNullOrEmpty(statText))
+        {
+            itemDescText.text = item.item.description;
+        }
+        else
+        {
+            itemDescText.text = $"{item.item.description}\n\n{statText}";
+        }
 
         gameObject.SetActive(true);
     }
@@ -52,4 +66,24 @@ public class ItemTooltipView : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+
+    private string GetStatText(ItemData item)
+    {
+        string text = "";
+
+        if (item.hpBonus != 0)
+            text += $"체력 +{item.hpBonus}\n";
+
+        if (item.attackBonus != 0)
+            text += $"공격력 +{item.attackBonus}\n";
+
+        if (item.defenseBonus != 0)
+            text += $"방어력 +{item.defenseBonus}\n";
+
+        if (item.moveSpeedBonus != 0)
+            text += $"이동속도 +{item.moveSpeedBonus}\n";
+
+        return text;
+    }
+
 }

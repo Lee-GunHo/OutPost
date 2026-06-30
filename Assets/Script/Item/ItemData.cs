@@ -23,6 +23,16 @@ public enum ItemGrade
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
 public class ItemData : ScriptableObject
 {
+
+    [Header("Equipment Stats")]
+    public int hpBonus;
+    public int attackBonus;
+    public int defenseBonus;
+    public float moveSpeedBonus;
+
+
+
+
     public int itemID;
     public string itemName;
     public ItemType itemType;
@@ -31,9 +41,7 @@ public class ItemData : ScriptableObject
     [TextArea]
     public string description;
 
-    public int defense;
-    public int attack;
-    public float moveSpeed;
+
     public int maxStack = 99;
 
 }

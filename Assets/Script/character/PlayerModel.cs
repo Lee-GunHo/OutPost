@@ -1,14 +1,17 @@
 using UnityEngine;
 using static Unity.VisualScripting.Dependencies.Sqlite.SQLite3;
+using static UnityEditor.Progress;
 
 public class PlayerModel : MonoBehaviour
 {
     [Header("Health Data")]
-    [SerializeField] private int maxHp = 100;
+    [SerializeField] private int baseMaxHp = 100;
     [SerializeField] private int currentHp = 100;
 
+    //이거는 너코드
+
     [Header("Move Data")]
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float baseMoveSpeed = 5f;
 
     [Header("Dash Data")]
     [SerializeField] private float dashSpeed = 8f;
@@ -20,8 +23,8 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private float interactionRange = 1.5f;
 
     [Header("Combat Data")]
-    [SerializeField] private int attackPower = 10;
-    [SerializeField] private int defensePower = 0;
+    [SerializeField] private int baseAttackPower = 10;
+    [SerializeField] private int baseDefensePower = 0;
     [SerializeField] private float attackDuration = 0.35f;
 
     [Header("Attack Range Data")]
@@ -41,11 +44,12 @@ public class PlayerModel : MonoBehaviour
     public float BreakRange => breakRange;
 
 
-    public int MaxHp => maxHp;
+
+    
+    public int MaxHp => baseMaxHp + equipmentHpBonus;
     public int CurrentHp => currentHp;
 
-    public float MoveSpeed => moveSpeed;
-
+    public float MoveSpeed => baseMoveSpeed + equipmentMoveSpeedBonus;
     public float DashSpeed => dashSpeed;
     public float DashDuration => dashDuration;
     public float DashCooldown => dashCooldown;
@@ -53,8 +57,8 @@ public class PlayerModel : MonoBehaviour
 
     public float InteractionRange => interactionRange;
 
-    public int AttackPower => attackPower;
-    public int DefensePower => defensePower;
+    public int AttackPower => baseAttackPower + equipmentAttackBonus;
+    public int DefensePower => baseDefensePower + equipmentDefenseBonus;
     public float AttackDuration => attackDuration;
 
     public Vector3 AttackBoxHalfSize => attackBoxHalfSize;
@@ -62,7 +66,11 @@ public class PlayerModel : MonoBehaviour
 
     public bool IsDead => currentHp <= 0;
     public bool CanDash => currentDashCooldown <= 0f;
-
+   
+    private int equipmentHpBonus;
+    private int equipmentAttackBonus;
+    private int equipmentDefenseBonus;
+    private float equipmentMoveSpeedBonus;
     private void Update()
     {
         UpdateDashCooldown();
@@ -90,16 +98,16 @@ public class PlayerModel : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        int finalDamage = Mathf.Max(damage - defensePower, 1);
-
+        int finalDamage = Mathf.Max(damage - DefensePower, 1);
+            
         currentHp -= finalDamage;
-        currentHp = Mathf.Clamp(currentHp, 0, maxHp);
+        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
     }
 
     public void Heal(int amount)
     {
         currentHp += amount;
-        currentHp = Mathf.Clamp(currentHp, 0, maxHp);
+        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
     }
 
     public void ToggleTool()
@@ -109,5 +117,34 @@ public class PlayerModel : MonoBehaviour
             : ToolType.Pickaxe;
 
         Debug.Log("현재 도구 상태: " + currentToolType);
+    }
+
+
+    // 장비 능력치 구현 ( 이건호 ) 
+    public void AddEquipmentStats(ItemData item)
+    {
+        if (item == null) return;
+
+        equipmentHpBonus += item.hpBonus;
+        equipmentAttackBonus += item.attackBonus;
+        equipmentDefenseBonus += item.defenseBonus;
+        equipmentMoveSpeedBonus += item.moveSpeedBonus;
+
+        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+
+        Debug.Log($"현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
+    }
+    // 장비 능력치 제거 구현 ( 이건호 )
+    public void RemoveEquipmentStats(ItemData item)
+    {
+        if (item == null) return;
+        equipmentHpBonus -= item.hpBonus;
+        equipmentAttackBonus -= item.attackBonus;
+        equipmentDefenseBonus -= item.defenseBonus;
+        equipmentMoveSpeedBonus -= item.moveSpeedBonus;
+
+        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+
+        Debug.Log($"현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
     }
 }

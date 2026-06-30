@@ -344,6 +344,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 557197484947940950, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9aae1551c147eda46b99aad0a91169fc, type: 2}
+    - target: {fileID: 557197484947940950, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1769381455543301518, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9aae1551c147eda46b99aad0a91169fc, type: 2}
+    - target: {fileID: 1769381455543301518, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2970311563942042570, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -432,6 +448,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4369172889068410025, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      propertyPath: equipType
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7116260726077123656, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_SizeDelta.x
       value: -1200
@@ -440,11 +460,131 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: -300
       objectReference: {fileID: 0}
+    - target: {fileID: 7185038581323844154, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9aae1551c147eda46b99aad0a91169fc, type: 2}
+    - target: {fileID: 7185038581323844154, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9184998176103030216, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1669818387}
+    - targetCorrespondingSourceObject: {fileID: 8679066210368710178, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 269063969}
   m_SourcePrefab: {fileID: 100100000, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+--- !u!114 &269063965 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3030698342252188283, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41483cbb96282214d8552a0b57f5dd58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemTooltipView
+--- !u!114 &269063966 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9213709085191392589, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!224 &269063967 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 884879323866733650, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &269063968 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8679066210368710178, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &269063969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269063968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a2cc3b4248fb824e864ba75cd42ff5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryView
+  slotPrefab: {fileID: 1776416347786623735, guid: 5a80c69235680ac4082b2946f59ac231, type: 3}
+  slotParent: {fileID: 269063967}
+  slotCount: 40
+  dragIcon: {fileID: 269063966}
+  tooltipView: {fileID: 269063965}
+--- !u!1 &431132909 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3267181070622964672, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+  m_PrefabInstance: {fileID: 1405710166}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &431132911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431132909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd06b0a68d2e5d543bd1c9181ec93ffb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentModel
+  weapon:
+    item: {fileID: 0}
+    amount: 0
+  head:
+    item: {fileID: 0}
+    amount: 0
+  armor:
+    item: {fileID: 0}
+    amount: 0
+  shoes:
+    item: {fileID: 0}
+    amount: 0
+  ring:
+    item: {fileID: 0}
+    amount: 0
+  necklace:
+    item: {fileID: 0}
+    amount: 0
+--- !u!114 &497631395 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 484351321230456664, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811b6a5eb58beac42951f599cd7675ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentSlotView
+--- !u!114 &535876869 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2340263851698823189, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811b6a5eb58beac42951f599cd7675ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentSlotView
 --- !u!1 &656042804
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,6 +875,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef596e326168e6848907eeeae87a7491, type: 3}
+--- !u!114 &735650744 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1800123427312608078, guid: ef596e326168e6848907eeeae87a7491, type: 3}
+  m_PrefabInstance: {fileID: 735650743}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d069129c4977384bb8b9842fa4377ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerModel
 --- !u!114 &986923071 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1963133426766121305, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
@@ -803,6 +954,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
+--- !u!114 &1014207004 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2522299189910752356, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811b6a5eb58beac42951f599cd7675ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentSlotView
+--- !u!114 &1136967987 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4369172889068410025, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811b6a5eb58beac42951f599cd7675ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentSlotView
 --- !u!1 &1264262548
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,13 +1088,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: dc3de38e89f5e57439f73ab04601ea1a, type: 2}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: playerModel
+      value: 
+      objectReference: {fileID: 735650744}
+    - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: inputManager
       value: 
       objectReference: {fileID: 986923071}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: equipmentView
+      value: 
+      objectReference: {fileID: 1669818387}
+    - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: inventoryView
       value: 
-      objectReference: {fileID: 1889630049}
+      objectReference: {fileID: 269063969}
+    - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: equipmentModel
+      value: 
+      objectReference: {fileID: 431132911}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: inventoryPanel
       value: 
@@ -933,7 +1118,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3267181070622964672, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 431132911}
   m_SourcePrefab: {fileID: 100100000, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
 --- !u!1 &1443382439
 GameObject:
@@ -985,6 +1173,29 @@ MonoBehaviour:
   chunkSize: 16
   viewDistance: 2
   globalSeed: 1234
+--- !u!1 &1669818385 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9184998176103030216, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1669818387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1669818385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 535daf6ef6fc0f54e9647b18e8bbd6a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentView
+  slots:
+  - {fileID: 1136967987}
+  - {fileID: 1014207004}
+  - {fileID: 2072554635}
+  - {fileID: 535876869}
+  - {fileID: 497631395}
 --- !u!4 &1698461015 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2605856091981686182, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
@@ -995,17 +1206,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4214583027449172109, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
   m_PrefabInstance: {fileID: 269063964}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1889630049 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8544840421365821181, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
-  m_PrefabInstance: {fileID: 269063964}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1885426488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a2cc3b4248fb824e864ba75cd42ff5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryView
 --- !u!114 &1995688188 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
@@ -1017,6 +1217,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f271c915ccc6c9b49a495af11f7a85d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeedMapGenerator
+--- !u!114 &2072554635 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8085081581206482351, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+  m_PrefabInstance: {fileID: 269063964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811b6a5eb58beac42951f599cd7675ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentSlotView
 --- !u!4 &2144794515 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1026458948300079404, guid: ef596e326168e6848907eeeae87a7491, type: 3}
