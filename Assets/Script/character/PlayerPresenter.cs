@@ -12,8 +12,6 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     private StatusEffectModel statusEffectModel;
 
 
-
-
     private Vector3 lastMoveDirection = Vector3.forward;
 
     public Vector2 MoveInput => UIState.IsAnyUIOpen ? Vector2.zero : inputManager.MoveInput;
@@ -43,7 +41,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public ToolType CurrentToolType => playerModel.CurrentToolType;
 
     [SerializeField] private LayerMask wallLayer;
-
+    [SerializeField] private HotbarPresenter hotbarPresenter;
     private Camera mainCamera;
 
 
@@ -252,19 +250,32 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return;
         }
 
-        if (IsPickaxeMode)
+        ItemStack selectedItem = hotbarPresenter != null
+            ? hotbarPresenter.GetSelectedItem()
+            : null;
+
+        if (selectedItem == null || selectedItem.item == null)
+        {
+            Debug.Log("손에 든 아이템 없음");
+            return;
+        }
+
+        ItemData item = selectedItem.item;
+
+        if (item.itemType == ItemType.Weapon)
+        {
+            Attack();
+            return;
+        }
+
+        if (item.itemType == ItemType.Material)
         {
             TryBreakWall();
             return;
         }
 
-        if (IsWeaponMode)
-        {
-            Attack();
-            return;
-        }
+        Debug.Log("아직 사용할 수 없는 아이템: " + item.itemName);
     }
-
     public void TryBreakWall()
     {
         if (UIState.IsAnyUIOpen)

@@ -14,6 +14,10 @@ public class InventoryPresenter : MonoBehaviour
     [Header("Panel")]
     [SerializeField] private GameObject inventoryPanel;
 
+    [Header("Presentor")]
+    [SerializeField] private HotbarPresenter hotbarPresenter;
+
+
     [Header("Input")]
     [SerializeField] private UIInputManager inputManager;
     [SerializeField] private PlayerPresenter playerPresenter;
@@ -52,6 +56,7 @@ public class InventoryPresenter : MonoBehaviour
 
 
     }
+
     private void OnEnable()
     {
         if (inputManager != null)
@@ -248,6 +253,51 @@ public class InventoryPresenter : MonoBehaviour
 
         RefreshView();
     }
+    public void OnHotbarSlotClicked(int hotbarSlotIndex)
+    {
+        if (draggingItem == null)
+            return;
 
+        ItemStack oldHotbarItem = hotbarPresenter.GetItem(hotbarSlotIndex);
+
+        hotbarPresenter.SetItemToSlot(hotbarSlotIndex, draggingItem);
+
+        if (oldHotbarItem != null)
+        {
+            inventoryModel.SetItemAt(draggedSlotIndex, oldHotbarItem);
+        }
+        else
+        {
+            inventoryModel.RemoveItemAt(draggedSlotIndex);
+        }
+
+        StopDrag();
+        RefreshView();
+    }
+    public void OnItemSlotClicked(SlotReference slotReference)
+    {
+        switch (slotReference.SlotType)
+        {
+            case SlotType.Inventory:
+                OnInventorySlotClicked(slotReference.SlotIndex);
+                break;
+
+            case SlotType.Hotbar:
+                // 나중에 핫바 클릭 처리
+                break;
+        }
+    }
+
+    public void OnItemSlotHovered(SlotReference slotReference)
+    {
+        if (slotReference.SlotType == SlotType.Inventory)
+            OnInventorySlotHovered(slotReference.SlotIndex);
+    }
+
+    public void OnItemSlotUnhovered(SlotReference slotReference)
+    {
+        if (slotReference.SlotType == SlotType.Inventory)
+            OnInventorySlotUnhovered(slotReference.SlotIndex);
+    }
 
 }

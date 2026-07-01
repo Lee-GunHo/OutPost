@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class InventoryModel : MonoBehaviour
 {
@@ -98,5 +99,12 @@ public class InventoryModel : MonoBehaviour
         {
             Items[i] = i < sorted.Count ? sorted[i] : null;
         }
-    }   
+    }
+    public ItemStack GetItem(int index)
+    {
+        if (index < 0 || index >= Items.Count)
+            return null;
+
+        return Items[index];
+    }
 }

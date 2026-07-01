@@ -39,7 +39,7 @@ public class PlayerModel : MonoBehaviour
 
     public ToolType CurrentToolType => currentToolType;
     public bool IsPickaxeMode => currentToolType == ToolType.Pickaxe;
-    public bool IsWeaponMode => currentToolType == ToolType.Weapon;
+    public bool IsWeaponMode => currentToolType == ToolType.Sword;
 
     public float BreakRange => breakRange;
 
@@ -113,7 +113,7 @@ public class PlayerModel : MonoBehaviour
     public void ToggleTool()
     {
         currentToolType = currentToolType == ToolType.Pickaxe
-            ? ToolType.Weapon
+            ? ToolType.Sword
             : ToolType.Pickaxe;
 
         Debug.Log("현재 도구 상태: " + currentToolType);

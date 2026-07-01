@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class InventoryView : MonoBehaviour
 {
     [Header("Slot")]
-    [SerializeField] private GameObject slotPrefab;
+    [SerializeField] private ItemSlotView slotPrefab;
     [SerializeField] private Transform slotParent;
     [SerializeField] private int slotCount = 40;
 
@@ -15,14 +15,13 @@ public class InventoryView : MonoBehaviour
     [Header("Tooltip")]
     [SerializeField] private ItemTooltipView tooltipView;
 
-    private readonly List<InventorySlotView> slots = new();
+    private readonly List<ItemSlotView> slots = new();
 
-    public IReadOnlyList<InventorySlotView> Slots => slots;
+    public IReadOnlyList<ItemSlotView> Slots => slots;
 
     public void Init(InventoryPresenter presenter)
     {
         CreateSlots(presenter);
-
         dragIcon.gameObject.SetActive(false);
     }
 
@@ -36,19 +35,25 @@ public class InventoryView : MonoBehaviour
 
     private void CreateSlots(InventoryPresenter presenter)
     {
+        slots.Clear();
+
         for (int i = 0; i < slotCount; i++)
         {
-            GameObject slotObj = Instantiate(slotPrefab, slotParent);
-            InventorySlotView slotView = slotObj.GetComponent<InventorySlotView>();
+            ItemSlotView slotView = Instantiate(slotPrefab, slotParent);
 
-            slotView.Init(i, presenter);
+            slotView.Initialize(SlotType.Inventory, i);
+
+            slotView.OnSlotClicked += presenter.OnItemSlotClicked;
+            slotView.OnSlotHovered += presenter.OnItemSlotHovered;
+            slotView.OnSlotUnhovered += presenter.OnItemSlotUnhovered;
+
             slots.Add(slotView);
         }
     }
 
     public void Refresh(IReadOnlyList<ItemStack> items)
     {
-        foreach (var slot in slots)
+        foreach (ItemSlotView slot in slots)
         {
             slot.Clear();
         }

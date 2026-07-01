@@ -11,7 +11,17 @@ public enum ItemType
     Consumable,
     Material
 }
-
+public enum ToolType
+{
+    None,
+    Pickaxe,
+    Axe,
+    Sword,
+    Hammer,
+    Hoe,
+    Placeable,
+    Consumable
+}
 public enum ItemGrade
 {
     Normal,
@@ -37,6 +47,7 @@ public class ItemData : ScriptableObject
     public string itemName;
     public ItemType itemType;
     public ItemGrade itemGrade;
+    public ToolType toolType;
     public Sprite icon;
     [TextArea]
     public string description;
