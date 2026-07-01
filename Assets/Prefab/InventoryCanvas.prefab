@@ -2581,7 +2581,6 @@ GameObject:
   - component: {fileID: 1554108013260916869}
   - component: {fileID: 5772709169317030717}
   - component: {fileID: 9188674991400414802}
-  - component: {fileID: 4689319811623501973}
   m_Layer: 5
   m_Name: Hotbar_Panel
   m_TagString: Untagged
@@ -2659,24 +2658,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4640263b2b9195847b7c2793f6991c9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarUI
-  hotbar: {fileID: 4689319811623501973}
   slotPrefab: {fileID: 7752374092561935475, guid: 57118f0499ceb4546be2a5824c4d1626, type: 3}
   slotParent: {fileID: 7116260726077123656}
   hotbarSlotCount: 8
   selectedFrame: {fileID: 357459876717802576}
---- !u!114 &4689319811623501973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8906481366344233773}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cee37eaa5d4d7c5499fc5b8148ce247c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Hotbar
-  maxSlots: 8
 --- !u!1 &9184998176103030216
 GameObject:
   m_ObjectHideFlags: 0

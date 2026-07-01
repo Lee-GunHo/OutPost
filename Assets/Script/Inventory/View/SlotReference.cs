@@ -1,4 +1,4 @@
-public struct SlotReference
+public class SlotReference
 {
     public SlotType SlotType { get; private set; }
     public int SlotIndex { get; private set; }

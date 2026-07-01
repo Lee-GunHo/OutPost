@@ -6,7 +6,6 @@ public class HotbarPresenter : MonoBehaviour
     [SerializeField] private HotbarView hotbarView;
     [SerializeField] private InventoryPresenter inventoryPresenter;
 
-
     private void Awake()
     {
         hotbarModel.Initialize(hotbarView.SlotCount);
@@ -14,7 +13,7 @@ public class HotbarPresenter : MonoBehaviour
         hotbarView.CreateSlots();
 
         hotbarView.OnNumberKeyPressed += SelectSlot;
-        hotbarView.OnSlotClicked += SelectSlot;
+        hotbarView.OnSlotClicked += OnHotbarSlotClicked;
         hotbarView.OnMouseWheelUp += SelectPreviousSlot;
         hotbarView.OnMouseWheelDown += SelectNextSlot;
 
@@ -28,12 +27,22 @@ public class HotbarPresenter : MonoBehaviour
     private void OnDestroy()
     {
         hotbarView.OnNumberKeyPressed -= SelectSlot;
-        hotbarView.OnSlotClicked -= SelectSlot;
+        hotbarView.OnSlotClicked -= OnHotbarSlotClicked;
         hotbarView.OnMouseWheelUp -= SelectPreviousSlot;
         hotbarView.OnMouseWheelDown -= SelectNextSlot;
 
         hotbarModel.OnHotbarChanged -= RefreshView;
         hotbarModel.OnSelectedSlotChanged -= hotbarView.MoveSelectedFrame;
+    }
+
+    private void OnHotbarSlotClicked(SlotReference slotReference)
+    {
+        SelectSlot(slotReference.SlotIndex);
+
+        if (inventoryPresenter != null)
+        {
+            inventoryPresenter.OnItemSlotClicked(slotReference);
+        }
     }
 
     public void SetItem(int index, ItemStack itemStack)
@@ -48,11 +57,6 @@ public class HotbarPresenter : MonoBehaviour
 
     private void SelectSlot(int index)
     {
-        if (inventoryPresenter != null)
-        {
-            inventoryPresenter.OnHotbarSlotClicked(index);
-        }
-
         hotbarModel.SelectSlot(index);
     }
 
@@ -78,10 +82,12 @@ public class HotbarPresenter : MonoBehaviour
 
         return hotbarModel.AddItem(itemStack);
     }
+
     public void SetItemToSlot(int slotIndex, ItemStack itemStack)
     {
         hotbarModel.SetItem(slotIndex, itemStack);
     }
+
     public ItemStack GetItem(int index)
     {
         return hotbarModel.GetItem(index);

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryPresenter : MonoBehaviour
@@ -14,27 +13,23 @@ public class InventoryPresenter : MonoBehaviour
     [Header("Panel")]
     [SerializeField] private GameObject inventoryPanel;
 
-    [Header("Presentor")]
+    [Header("Presenter")]
     [SerializeField] private HotbarPresenter hotbarPresenter;
-
 
     [Header("Input")]
     [SerializeField] private UIInputManager inputManager;
     [SerializeField] private PlayerPresenter playerPresenter;
     [SerializeField] private PlayerModel playerModel;
 
-
     private bool isOpen;
-
 
     [Header("Test Items")]
     [SerializeField] private ItemData wood;
     [SerializeField] private ItemData stone;
     [SerializeField] private ItemData smileArmor;
 
-
     private ItemStack draggingItem;
-    private int draggedSlotIndex = -1;
+    private SlotReference dragSource;
 
     private void Start()
     {
@@ -42,9 +37,7 @@ public class InventoryPresenter : MonoBehaviour
         equipmentView.Init(this);
 
         if (inventoryPanel != null)
-        {
             inventoryPanel.SetActive(false);
-        }
 
         UIState.SetInventoryOpen(false);
 
@@ -53,24 +46,18 @@ public class InventoryPresenter : MonoBehaviour
         inventoryModel.AddItem(smileArmor, 1);
 
         RefreshView();
-
-
     }
 
     private void OnEnable()
     {
         if (inputManager != null)
-        {
             inputManager.OnInventoryPressed += ToggleInventory;
-        }
     }
 
     private void OnDisable()
     {
         if (inputManager != null)
-        {
             inputManager.OnInventoryPressed -= ToggleInventory;
-        }
     }
 
     private void ToggleInventory()
@@ -81,16 +68,12 @@ public class InventoryPresenter : MonoBehaviour
         isOpen = !isOpen;
 
         if (inventoryPanel != null)
-        {
             inventoryPanel.SetActive(isOpen);
-        }
 
         UIState.SetInventoryOpen(isOpen);
 
         if (isOpen && playerPresenter != null)
-        {
             playerPresenter.StopMove();
-        }
 
         if (!isOpen)
         {
@@ -99,51 +82,34 @@ public class InventoryPresenter : MonoBehaviour
         }
     }
 
-
-
     private void RefreshView()
     {
         inventoryView.Refresh(inventoryModel.Items);
         equipmentView.Refresh(equipmentModel);
-
     }
-
-    // =========================
-    // 인벤토리 슬롯 클릭
-    // =========================
 
     public void OnInventorySlotClicked(int slotIndex)
     {
         ItemStack clickedItem = inventoryModel.Items[slotIndex];
 
-        // 드래그 중이면 위치 교환
         if (draggingItem != null)
         {
-            inventoryModel.SwapItems(
-                draggedSlotIndex,
-                slotIndex
-            );
+            inventoryModel.SwapItems(dragSource.SlotIndex, slotIndex);
 
             StopDrag();
-
             RefreshView();
 
             return;
         }
 
-        // 빈 슬롯
         if (clickedItem == null)
             return;
 
         StartDrag(
             clickedItem,
-            slotIndex
+            new SlotReference(SlotType.Inventory, slotIndex)
         );
     }
-
-    // =========================
-    // 인벤토리 툴팁
-    // =========================
 
     public void OnInventorySlotHovered(int slotIndex)
     {
@@ -160,17 +126,10 @@ public class InventoryPresenter : MonoBehaviour
         inventoryView.HideTooltip();
     }
 
-    // =========================
-    // 드래그
-    // =========================
-
-    private void StartDrag(
-        ItemStack item,
-        int slotIndex
-    )
+    private void StartDrag(ItemStack item, SlotReference source)
     {
         draggingItem = item;
-        draggedSlotIndex = slotIndex;
+        dragSource = source;
 
         inventoryView.ShowDragIcon(item);
     }
@@ -178,15 +137,10 @@ public class InventoryPresenter : MonoBehaviour
     private void StopDrag()
     {
         draggingItem = null;
-        draggedSlotIndex = -1;
+        dragSource = null;
 
         inventoryView.HideDragIcon();
     }
-
-    // =========================
-    // 장비 슬롯 (임시)
-    // =========================
-
     public void OnEquipmentSlotClicked(int slotIndex)
     {
         if (draggingItem == null)
@@ -205,6 +159,7 @@ public class InventoryPresenter : MonoBehaviour
     public void OnEquipmentSlotUnhovered(int slotIndex)
     {
     }
+
     private void Equip(int slotIndex)
     {
         Debug.Log("Equip 함수 호출됨");
@@ -220,26 +175,20 @@ public class InventoryPresenter : MonoBehaviour
         ItemStack oldEquippedItem = equipmentModel.GetEquippedItem(slotView.EquipType);
 
         if (oldEquippedItem != null)
-        {
             playerModel.RemoveEquipmentStats(oldEquippedItem.item);
-        }
 
         equipmentModel.Equip(slotView.EquipType, draggingItem);
-
         playerModel.AddEquipmentStats(draggingItem.item);
 
         if (oldEquippedItem != null)
-        {
-            inventoryModel.SetItemAt(draggedSlotIndex, oldEquippedItem);
-        }
+            inventoryModel.SetItemAt(dragSource.SlotIndex, oldEquippedItem);
         else
-        {
-            inventoryModel.RemoveItemAt(draggedSlotIndex);
-        }
+            inventoryModel.RemoveItemAt(dragSource.SlotIndex);
 
         StopDrag();
         RefreshView();
     }
+
     private void Unequip(int slotIndex)
     {
         EquipmentSlotView slotView = equipmentView.Slots[slotIndex];
@@ -253,6 +202,7 @@ public class InventoryPresenter : MonoBehaviour
 
         RefreshView();
     }
+
     public void OnHotbarSlotClicked(int hotbarSlotIndex)
     {
         if (draggingItem == null)
@@ -263,29 +213,41 @@ public class InventoryPresenter : MonoBehaviour
         hotbarPresenter.SetItemToSlot(hotbarSlotIndex, draggingItem);
 
         if (oldHotbarItem != null)
-        {
-            inventoryModel.SetItemAt(draggedSlotIndex, oldHotbarItem);
-        }
+            inventoryModel.SetItemAt(dragSource.SlotIndex, oldHotbarItem);
         else
-        {
-            inventoryModel.RemoveItemAt(draggedSlotIndex);
-        }
+            inventoryModel.RemoveItemAt(dragSource.SlotIndex);
 
         StopDrag();
         RefreshView();
     }
+
     public void OnItemSlotClicked(SlotReference slotReference)
     {
-        switch (slotReference.SlotType)
+        if (draggingItem == null)
         {
-            case SlotType.Inventory:
-                OnInventorySlotClicked(slotReference.SlotIndex);
-                break;
+            switch (slotReference.SlotType)
+            {
+                case SlotType.Inventory:
+                    OnInventorySlotClicked(slotReference.SlotIndex);
+                    break;
 
-            case SlotType.Hotbar:
-                // 나중에 핫바 클릭 처리
-                break;
+                case SlotType.Hotbar:
+                    ItemStack hotbarItem = hotbarPresenter.GetItem(slotReference.SlotIndex);
+
+                    if (hotbarItem != null)
+                    {
+                        StartDrag(hotbarItem, slotReference);
+                    }
+                    break;
+            }
+
+            return;
         }
+
+        MoveItem(dragSource, slotReference);
+
+        StopDrag();
+    
     }
 
     public void OnItemSlotHovered(SlotReference slotReference)
@@ -300,4 +262,50 @@ public class InventoryPresenter : MonoBehaviour
             OnInventorySlotUnhovered(slotReference.SlotIndex);
     }
 
+    private void MoveItem(SlotReference from, SlotReference to)
+    {
+        Debug.Log($"Move : {from.SlotType}[{from.SlotIndex}] -> {to.SlotType}[{to.SlotIndex}]");
+
+        if (from.SlotType == to.SlotType && from.SlotIndex == to.SlotIndex)
+            return;
+
+        ItemStack fromItem = GetSlotItem(from);
+        ItemStack toItem = GetSlotItem(to);
+
+        SetSlotItem(from, toItem);
+        SetSlotItem(to, fromItem);
+
+        RefreshView();
+    }
+
+    private ItemStack GetSlotItem(SlotReference slot)
+    {
+        switch (slot.SlotType)
+        {
+            case SlotType.Inventory:
+                return inventoryModel.Items[slot.SlotIndex];
+
+            case SlotType.Hotbar:
+                return hotbarPresenter.GetItem(slot.SlotIndex);
+
+            default:
+                return null;
+        }
+    }
+    private void SetSlotItem(SlotReference slot, ItemStack item)
+    {
+        switch (slot.SlotType)
+        {
+            case SlotType.Inventory:
+                if (item == null)
+                    inventoryModel.RemoveItemAt(slot.SlotIndex);
+                else
+                    inventoryModel.SetItemAt(slot.SlotIndex, item);
+                break;
+
+            case SlotType.Hotbar:
+                hotbarPresenter.SetItemToSlot(slot.SlotIndex, item);
+                break;
+        }
+    }
 }

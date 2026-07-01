@@ -262,19 +262,18 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         ItemData item = selectedItem.item;
 
-        if (item.itemType == ItemType.Weapon)
+        if (!IsUsableTool(item))
         {
-            Attack();
+            Debug.Log("공격/채굴 가능한 도구가 아님: " + item.itemName);
             return;
         }
 
-        if (item.itemType == ItemType.Material)
+        bool hitTarget = Attack();
+
+        if (!hitTarget)
         {
             TryBreakWall();
-            return;
         }
-
-        Debug.Log("아직 사용할 수 없는 아이템: " + item.itemName);
     }
     public void TryBreakWall()
     {
@@ -368,19 +367,21 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         return transform.forward;
     }
 
-    public void Attack()
+    public bool Attack()
     {
         if (UIState.IsAnyUIOpen)
         {
-            return;
+            return false;
         }
 
         Vector3 attackDirection = GetMouseDirectionFromPlayer();
 
-        if (attackDirection != Vector3.zero)
+        if (attackDirection == Vector3.zero)
         {
-            transform.rotation = Quaternion.LookRotation(attackDirection);
+            return false;
         }
+
+        transform.rotation = Quaternion.LookRotation(attackDirection);
 
         Vector3 attackCenter = transform.position + attackDirection * AttackBoxDistance;
 
@@ -406,10 +407,22 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
             damageable.TakeDamage(TotalAttackPower);
             Debug.Log("플레이어 공격 성공: " + collider.name);
-            return;
+
+            return true;
         }
 
         Debug.Log("공격 범위 안에 대상이 없습니다.");
+        return false;
+    }
+
+    private bool IsUsableTool(ItemData item)
+    {
+        if (item == null)
+            return false;
+
+        return item.toolType == ToolType.Sword
+            || item.toolType == ToolType.Axe
+            || item.toolType == ToolType.Pickaxe;
     }
 
 }
