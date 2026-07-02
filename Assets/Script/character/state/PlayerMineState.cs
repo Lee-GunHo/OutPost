@@ -22,7 +22,7 @@ public class PlayerMineState : IPlayerState
     {
         if (!hasMined)
         {
-            playerPresenter.TryBreakWall();
+            //playerPresenter.TryBreakWall();
             hasMined = true;
         }
 

@@ -28,7 +28,7 @@ public class PlayerAttackState : IPlayerState
 
         if (!hasAttacked)
         {
-            playerPresenter.Attack();
+            playerPresenter.ExecuteAttackAction();
             hasAttacked = true;
         }
 
@@ -40,7 +40,6 @@ public class PlayerAttackState : IPlayerState
 
     public void FixedUpdate()
     {
-        playerPresenter.StopMove();
     }
 
     public void Exit()

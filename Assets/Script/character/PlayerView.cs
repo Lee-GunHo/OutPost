@@ -6,7 +6,11 @@ public class PlayerView : MonoBehaviour
     [Header("Renderer")]
     [SerializeField] private Renderer playerRenderer;
 
-    private Coroutine dashEffectCoroutine;
+    [Header("Dash Effect")]
+    [SerializeField] private GameObject dashEffectPrefab;
+    [SerializeField] private Transform dashEffectSpawnPoint;
+
+    private Coroutine hitEffectCoroutine;
 
     private void Awake()
     {
@@ -14,9 +18,14 @@ public class PlayerView : MonoBehaviour
         {
             playerRenderer = GetComponentInChildren<Renderer>();
         }
+
+        if (dashEffectSpawnPoint == null)
+        {
+            dashEffectSpawnPoint = transform;
+        }
     }
 
-    public void PlayDashBlinkEffect(float duration)
+    public void PlayHitBlinkEffect(float duration)
     {
         if (playerRenderer == null)
         {
@@ -24,15 +33,15 @@ public class PlayerView : MonoBehaviour
             return;
         }
 
-        if (dashEffectCoroutine != null)
+        if (hitEffectCoroutine != null)
         {
-            StopCoroutine(dashEffectCoroutine);
+            StopCoroutine(hitEffectCoroutine);
         }
 
-        dashEffectCoroutine = StartCoroutine(DashBlinkEffect(duration));
+        hitEffectCoroutine = StartCoroutine(HitBlinkEffect(duration));
     }
 
-    private IEnumerator DashBlinkEffect(float duration)
+    private IEnumerator HitBlinkEffect(float duration)
     {
         float timer = 0f;
         float blinkInterval = 0.08f;
@@ -49,6 +58,23 @@ public class PlayerView : MonoBehaviour
         }
 
         playerRenderer.enabled = true;
-        dashEffectCoroutine = null;
+        hitEffectCoroutine = null;
+    }
+
+    public void PlayDashEffect()
+    {
+        if (dashEffectPrefab == null)
+        {
+            Debug.Log("대시 이펙트 프리팹이 아직 없습니다.");
+            return;
+        }
+
+        GameObject effect = Instantiate(
+            dashEffectPrefab,
+            dashEffectSpawnPoint.position,
+            transform.rotation
+        );
+
+        Destroy(effect, 1f);
     }
 }

@@ -26,6 +26,7 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private int baseAttackPower = 10;
     [SerializeField] private int baseDefensePower = 0;
     [SerializeField] private float attackDuration = 0.35f;
+    [SerializeField] private float hitDuration = 0.25f;
 
     [Header("Attack Range Data")]
     [SerializeField] private Vector3 attackBoxHalfSize = new Vector3(0.75f, 0.75f, 0.75f);
@@ -60,6 +61,7 @@ public class PlayerModel : MonoBehaviour
     public int AttackPower => baseAttackPower + equipmentAttackBonus;
     public int DefensePower => baseDefensePower + equipmentDefenseBonus;
     public float AttackDuration => attackDuration;
+    public float HitDuration => hitDuration;
 
     public Vector3 AttackBoxHalfSize => attackBoxHalfSize;
     public float AttackBoxDistance => attackBoxDistance;
@@ -132,7 +134,9 @@ public class PlayerModel : MonoBehaviour
 
         currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
 
-        Debug.Log($"현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
+        Debug.Log($"장착한 아이템 능력치 - 체력 : {item.hpBonus}, 공격력 : {item.attackBonus}, 방어력 : {item.defenseBonus}, 이동속도 : {item.moveSpeedBonus}");
+        Debug.Log($"추가된 아이템 능력치 - 체력 : {equipmentHpBonus}, 공격력 : {equipmentAttackBonus}, 방어력 : {equipmentDefenseBonus}, 이동속도 : {equipmentMoveSpeedBonus}");
+        Debug.Log($"장비 장착 현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
     }
     // 장비 능력치 제거 구현 ( 이건호 )
     public void RemoveEquipmentStats(ItemData item)
@@ -145,6 +149,8 @@ public class PlayerModel : MonoBehaviour
 
         currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
 
-        Debug.Log($"현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
+        Debug.Log($"해제한 아이템 능력치 - 체력 : {item.hpBonus}, 공격력 : {item.attackBonus}, 방어력 : {item.defenseBonus}, 이동속도 : {item.moveSpeedBonus}");
+        Debug.Log($"감소한 아이템 능력치 - 체력 : {equipmentHpBonus}, 공격력 : {equipmentAttackBonus}, 방어력 : {equipmentDefenseBonus}, 이동속도 : {equipmentMoveSpeedBonus}");
+        Debug.Log($"장비 해제 현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
     }
 }

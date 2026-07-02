@@ -119,7 +119,31 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     public void Attack()
     {
-        Debug.Log("몬스터 공격");
+        Debug.Log("MonsterPresenter.Attack() 호출");
+
+        if (playerTransform == null)
+        {
+            Debug.LogWarning("공격할 플레이어가 없습니다.");
+            return;
+        }
+
+        if (!IsPlayerInAttackRange())
+        {
+            Debug.Log("플레이어가 공격 범위 밖입니다.");
+            return;
+        }
+
+        IDamageable damageable = playerTransform.GetComponentInParent<IDamageable>();
+
+        if (damageable == null)
+        {
+            Debug.LogWarning("플레이어에게 IDamageable이 없습니다.");
+            return;
+        }
+
+        damageable.TakeDamage(monsterModel.AttackPower);
+
+        Debug.Log("몬스터가 플레이어에게 데미지 줌: " + monsterModel.AttackPower);
     }
 
 

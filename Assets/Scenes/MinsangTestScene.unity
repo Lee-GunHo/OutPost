@@ -654,17 +654,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
---- !u!114 &1192210060 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8544840421365821181, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
-  m_PrefabInstance: {fileID: 1192210059}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a2cc3b4248fb824e864ba75cd42ff5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryView
 --- !u!1 &1824709373
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,7 +852,7 @@ PrefabInstance:
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: inventoryView
       value: 
-      objectReference: {fileID: 1192210060}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

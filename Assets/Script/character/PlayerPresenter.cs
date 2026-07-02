@@ -32,6 +32,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public int TotalAttackPower => playerModel.AttackPower;
     public int TotalDefensePower => playerModel.DefensePower;
     public float AttackDuration => playerModel.AttackDuration;
+    public float HitDuration => playerModel.HitDuration;
 
     public Vector3 AttackBoxHalfSize => playerModel.AttackBoxHalfSize;
     public float AttackBoxDistance => playerModel.AttackBoxDistance;
@@ -39,6 +40,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public bool IsPickaxeMode => playerModel.IsPickaxeMode;
     public bool IsWeaponMode => playerModel.IsWeaponMode;
     public ToolType CurrentToolType => playerModel.CurrentToolType;
+
+    public bool IsDead => playerModel.IsDead;
 
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private HotbarPresenter hotbarPresenter;
@@ -86,6 +89,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     {
         if (UIState.IsAnyUIOpen)
         {
+            Debug.Log("UI 열림 판정 때문에 이동 정지");
             StopMove();
             return;
         }
@@ -141,9 +145,14 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         playerModel.StartDashCooldown();
     }
 
-    public void PlayDashEffect(float duration)
+    public void PlayDashEffect()
     {
-        playerView.PlayDashBlinkEffect(duration);
+        playerView.PlayDashEffect();
+    }
+
+    public void PlayHitEffect(float duration)
+    {
+        playerView.PlayHitBlinkEffect(duration);
     }
 
     public void ReturnToIdleOrMove()
@@ -168,13 +177,38 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, InteractionRange);
 
+        IInteractable closestInteractable = null;
+        float closestDistance = float.MaxValue;
+
         foreach (Collider collider in colliders)
         {
-            if (collider.TryGetComponent(out IInteractable interactable))
+            IInteractable interactable = collider.GetComponentInParent<IInteractable>();
+
+            if (interactable == null)
             {
-                interactable.Interact(this);
-                return;
+                continue;
             }
+
+            MonoBehaviour interactableObject = interactable as MonoBehaviour;
+
+            if (interactableObject == null)
+            {
+                continue;
+            }
+
+            float distance = Vector3.Distance(transform.position, interactableObject.transform.position);
+
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestInteractable = interactable;
+            }
+        }
+
+        if (closestInteractable != null)
+        {
+            closestInteractable.Interact(this);
+            return;
         }
 
         Debug.Log("상호작용 가능한 대상이 없습니다.");
@@ -182,6 +216,11 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public void TakeDamage(int damage)
     {
+        if (playerModel.IsDead)
+        {
+            return;
+        }
+
         playerModel.TakeDamage(damage);
 
         Debug.Log("플레이어 피격, 현재 체력: " + playerModel.CurrentHp);
@@ -189,10 +228,11 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         if (playerModel.IsDead)
         {
             Debug.Log("플레이어 사망");
-
-            // 나중에 PlayerDeadState 만들면 여기서 연결
-            // stateManager.ChangeState(stateManager.DeadState);
+            stateManager.ChangeState(stateManager.DeadState);
+            return;
         }
+
+        stateManager.ChangeState(stateManager.HitState);
     }
 
     private void OnDrawGizmosSelected()
@@ -254,13 +294,24 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             ? hotbarPresenter.GetSelectedItem()
             : null;
 
-        if (selectedItem == null || selectedItem.item == null)
+        ItemData item = selectedItem != null
+            ? selectedItem.item
+            : null;
+
+        // 아직 아이템 시스템 테스트 전이면 item이 null이어도 테스트 공격 허용
+        if (item == null)
         {
-            Debug.Log("손에 든 아이템 없음");
+            Debug.Log("손에 든 아이템 없음 - 테스트용 기본 공격/채굴 실행");
+
+            bool testHitTarget = Attack(null);
+
+            if (!testHitTarget)
+            {
+                TryBreakWall(null);
+            }
+
             return;
         }
-
-        ItemData item = selectedItem.item;
 
         if (!IsUsableTool(item))
         {
@@ -268,14 +319,14 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return;
         }
 
-        bool hitTarget = Attack();
+        bool hitTarget = Attack(item);
 
         if (!hitTarget)
         {
-            TryBreakWall();
+            TryBreakWall(item);
         }
     }
-    public void TryBreakWall()
+    public void TryBreakWall(ItemData item)
     {
         if (UIState.IsAnyUIOpen)
         {
@@ -367,7 +418,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         return transform.forward;
     }
 
-    public bool Attack()
+    public bool Attack(ItemData item)
     {
         if (UIState.IsAnyUIOpen)
         {
@@ -424,5 +475,4 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             || item.toolType == ToolType.Axe
             || item.toolType == ToolType.Pickaxe;
     }
-
 }

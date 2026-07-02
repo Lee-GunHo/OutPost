@@ -10,6 +10,8 @@ public class PlayerStateManager : MonoBehaviour
     public IPlayerState InteractState { get; private set; }
     public IPlayerState AttackState { get; private set; }
     public IPlayerState MineState { get; private set; }
+    public IPlayerState HitState { get; private set; }
+    public IPlayerState DeadState { get; private set; }
 
     private PlayerPresenter playerPresenter;
 
@@ -23,6 +25,8 @@ public class PlayerStateManager : MonoBehaviour
         InteractState = new PlayerInteractState(playerPresenter);
         AttackState = new PlayerAttackState(playerPresenter);
         MineState = new PlayerMineState(playerPresenter);
+        HitState = new PlayerHitState(playerPresenter);
+        DeadState = new PlayerDeadState(playerPresenter);
     }
 
     private void Start()

@@ -11,6 +11,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: 2f1a8af531d44c14e8c60a1a61556cff
+  - enabled: 0
+    path: Assets/Scenes/MinsangTestScene.unity
+    guid: e3da712bf11c0b342ae520359824d25a
+  - enabled: 1
+    path: Assets/Scenes/GameOverScene.unity
+    guid: eaa866a1de50e3c41b705021a30c8f2b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
