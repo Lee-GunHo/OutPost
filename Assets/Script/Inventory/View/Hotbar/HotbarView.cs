@@ -43,7 +43,10 @@ public class HotbarView : MonoBehaviour
         }
 
         if (selectedFrame != null)
+        {
             selectedFrame.SetAsLastSibling();
+            MoveSelectedFrame(0);
+        }
     }
 
     public void Refresh(List<ItemStack> items)
@@ -59,7 +62,17 @@ public class HotbarView : MonoBehaviour
         if (selectedFrame == null) return;
         if (index < 0 || index >= hotbarSlots.Count) return;
 
-        selectedFrame.position = hotbarSlots[index].transform.position;
+        RectTransform slotRect = hotbarSlots[index].GetComponent<RectTransform>();
+
+        selectedFrame.SetParent(slotRect, false);
+        selectedFrame.SetAsLastSibling();
+
+        selectedFrame.anchorMin = Vector2.zero;
+        selectedFrame.anchorMax = Vector2.one;
+        selectedFrame.pivot = new Vector2(0.5f, 0.5f);
+
+        selectedFrame.offsetMin = Vector2.zero;
+        selectedFrame.offsetMax = Vector2.zero;
     }
 
     private void HandleSlotClicked(SlotReference slotReference)
