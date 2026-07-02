@@ -352,22 +352,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 357459876717802576, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 357459876717802576, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 357459876717802576, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 357459876717802576, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 357459876717802576, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 8
       objectReference: {fileID: 0}
@@ -495,11 +479,8 @@ PrefabInstance:
       propertyPath: m_hasFontAssetChanged
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 9188674991400414802, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
-      propertyPath: slotPrefab
-      value: 
-      objectReference: {fileID: 2475764305655690769, guid: 5a80c69235680ac4082b2946f59ac231, type: 3}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4689319811623501973, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -554,7 +535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2cc3b4248fb824e864ba75cd42ff5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryView
-  slotPrefab: {fileID: 2475764305655690769, guid: 5a80c69235680ac4082b2946f59ac231, type: 3}
+  slotPrefab: {fileID: 1776416347786623735, guid: 5a80c69235680ac4082b2946f59ac231, type: 3}
   slotParent: {fileID: 269063967}
   slotCount: 40
   dragIcon: {fileID: 269063966}
@@ -936,10 +917,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1125514678234943918, guid: ef596e326168e6848907eeeae87a7491, type: 3}
-      propertyPath: hotbarPresenter
-      value: 
-      objectReference: {fileID: 431132914}
     - target: {fileID: 8162465042286375406, guid: ef596e326168e6848907eeeae87a7491, type: 3}
       propertyPath: m_Name
       value: Player_Main

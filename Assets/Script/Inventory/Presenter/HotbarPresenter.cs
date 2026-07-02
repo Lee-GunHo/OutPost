@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class HotbarPresenter : MonoBehaviour
@@ -21,7 +22,14 @@ public class HotbarPresenter : MonoBehaviour
         hotbarModel.OnSelectedSlotChanged += hotbarView.MoveSelectedFrame;
 
         RefreshView();
+    }
+
+    private IEnumerator Start()
+    {
+        yield return null;
+
         hotbarModel.SelectSlot(0);
+        hotbarView.MoveSelectedFrame(0);
     }
 
     private void OnDestroy()
