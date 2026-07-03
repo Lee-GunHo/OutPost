@@ -9,10 +9,12 @@ public class NPCPresenter : MonoBehaviour, IInteractable
 
     private NPCView npcView;
 
+    private PlayerPresenter currentPlayer;
+    private bool isPlayerInRange;
+
     private void Awake()
     {
         npcModel = GetComponent<NPCModel>();
-
         npcView = GetComponent<NPCView>();
 
         if (npcModel == null)
@@ -24,6 +26,41 @@ public class NPCPresenter : MonoBehaviour, IInteractable
         {
             Debug.LogWarning(gameObject.name + "에 NPCView가 없습니다.");
         }
+
+        HideInteractionMark();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        PlayerPresenter player = other.GetComponentInParent<PlayerPresenter>();
+
+        if (player == null)
+            return;
+
+        currentPlayer = player;
+        isPlayerInRange = true;
+
+        ShowInteractionMarkIfPossible();
+
+        Debug.Log("NPC 상호작용 범위 진입");
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        PlayerPresenter player = other.GetComponentInParent<PlayerPresenter>();
+        
+        if(player == null) 
+            return;
+
+        if(currentPlayer == player)
+        {
+            currentPlayer = null;
+            isPlayerInRange = false;
+        }
+
+        HideInteractionMark();
+
+        Debug.Log("NPC 상호작용 범위 이탈");
     }
 
     /// <summary>
@@ -37,11 +74,46 @@ public class NPCPresenter : MonoBehaviour, IInteractable
             return;
         }
 
-        npcView.LookAtPlayer(player.transform);
+        if (currentPlayer != player)
+        {
+            Debug.Log("플레이어가 NPC 상호작용 범위 밖에 있습니다.");
+            return;
+        }
 
-        npcView.PlayTalk();
+        HideInteractionMark();
+
+        npcView.LookAtPlayer(player.transform);
+        //npcView.PlayTalk();
+
+        if (NPCInteractionUI.Instance == null)
+        {
+            Debug.LogWarning("NPCInteractionUI가 씬에 없습니다.");
+            return;
+        }
 
         NPCInteractionUI.Instance.Open(this, player);
+    }
+
+    public void ShowInteractionMarkIfPossible()
+    {
+        if (!isPlayerInRange)
+            return;
+
+        if (UIState.IsAnyUIOpen)
+            return;
+
+        if (npcView != null)
+        {
+            npcView.ShowInteractionMark();
+        }
+    }
+
+    public void HideInteractionMark()
+    {
+        if(npcView != null)
+        {
+            npcView.HideInteractionMark();
+        }
     }
 
     public string GetNPCName()

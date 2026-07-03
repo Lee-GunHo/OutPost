@@ -25,7 +25,8 @@ public class NPCInteractionUI : MonoBehaviour
 
     private NPCPresenter currentNPC;
     private PlayerPresenter currentPlayer;
-    private int dialogueIndex;
+
+    private int lastDialogueIndex = -1;
 
     private void Awake()
     {
@@ -75,56 +76,47 @@ public class NPCInteractionUI : MonoBehaviour
     {
         currentNPC = npc;
         currentPlayer = player;
-        dialogueIndex = 0;
+
+        lastDialogueIndex = -1;
+
+        UIState.SetNPCInteractionOpen(true);
+
+        if(currentNPC != null)
+        {
+            currentNPC.HideInteractionMark();
+        }
 
         if (panel != null)
         {
             panel.SetActive(true);
         }
+        
+        if(npcNameText != null && currentNPC != null)
+        {
+            npcNameText.text = currentNPC.GetNPCName();
+        }
 
-        ShowCurrentDialogue();
+        ShowDefaultDialogue();
 
-        if (shopButton != null)
+        if (shopButton != null && currentNPC != null)
         {
             shopButton.gameObject.SetActive(currentNPC.CanTrade());
         }
 
-        if (questButton != null)
+        if (questButton != null && currentNPC != null)
         {
             questButton.gameObject.SetActive(currentNPC.CanGiveQuest());
         }
     }
 
     /// <summary>
-    /// 현재 dialogueIndex에 맞는 대화 문장을 표시하는 함수
+    /// 대화창이 처음 열렸을 때 기본 문구 표시
     /// </summary>
-    private void ShowCurrentDialogue()
+    private void ShowDefaultDialogue()
     {
-        if (currentNPC == null)
-        {
-            return;
-        }
-
-        string[] lines = currentNPC.GetDialogueLines();
-
-        if (lines == null || lines.Length == 0)
-        {
-            if (dialogueText != null)
-            {
-                dialogueText.text = "대화 내용이 없습니다.";
-            }
-
-            return;
-        }
-
-        if (dialogueIndex >= lines.Length)
-        {
-            dialogueIndex = lines.Length - 1;
-        }
-
         if (dialogueText != null)
         {
-            dialogueText.text = lines[dialogueIndex];
+            dialogueText.text = "무엇을 하시겠습니까?";
         }
     }
 
@@ -142,17 +134,35 @@ public class NPCInteractionUI : MonoBehaviour
 
         if (lines == null || lines.Length == 0)
         {
+            if(dialogueText != null)
+            {
+                dialogueText.text = "대화 내용이 없습니다.";
+            }
+
             return;
         }
 
-        dialogueIndex++;
+        int randomIndex;
 
-        if (dialogueIndex >= lines.Length)
+        if(lines.Length == 1)
         {
-            dialogueIndex = 0;
+            randomIndex = 0;
+        }
+        else
+        {
+            do
+            {
+                randomIndex = Random.Range(0, lines.Length);
+            }
+            while (randomIndex == lastDialogueIndex);
         }
 
-        ShowCurrentDialogue();
+        lastDialogueIndex = randomIndex;
+
+        if(dialogueText != null)
+        {
+            dialogueText.text = lines[randomIndex];
+        }
     }
 
     /// <summary>
@@ -178,7 +188,27 @@ public class NPCInteractionUI : MonoBehaviour
             return;
         }
 
+        if(ShopUI.Instance == null)
+        {
+            Debug.LogWarning("씬에 ShopUI가 없습니다.");
+            return;
+        }
+        
+        if(panel != null)
+        {
+            panel.SetActive(false);
+        }
+
+        UIState.SetNPCInteractionOpen(false);
+
+        ShopUI.Instance.Open(shopData, currentPlayer, currentNPC);
+
         Debug.Log(currentNPC.GetNPCName() + "의 상점을 엽니다.");
+
+        if(dialogueText != null)
+        {
+            dialogueText.text = "상점을 엽니다.";
+        }
     }
 
     /// <summary>
@@ -207,6 +237,12 @@ public class NPCInteractionUI : MonoBehaviour
         if (currentNPC.IsQuestCompleted())
         {
             Debug.Log("이미 완료한 퀘스트입니다.");
+
+            if(dialogueText != null)
+            {
+                dialogueText.text = "이미 완료한 퀘스트 입니다.";
+            }
+
             return;
         }
 
@@ -215,10 +251,21 @@ public class NPCInteractionUI : MonoBehaviour
             currentNPC.AcceptQuest();
 
             Debug.Log("퀘스트 수락 : " + questData.QuestTitle);
+
+            if(dialogueText != null)
+            {
+                dialogueText.text = "퀘스트를 수락했습니다.\n" + questData.QuestTitle;
+            }
+
             return;
         }
 
         Debug.Log("이미 진행 중인 퀘스트입니다. : " + questData.QuestTitle);
+
+        if(dialogueText != null)
+        {
+            dialogueText.text = "이미 진행 중인 퀘스트입니다. : " + questData.QuestTitle;
+        }
     }
 
     /// <summary>
@@ -226,10 +273,14 @@ public class NPCInteractionUI : MonoBehaviour
     /// </summary>
     public void Close()
     {
+        NPCPresenter closedNPC = currentNPC;
+
         if (panel != null)
         {
             panel.SetActive(false);
         }
+
+        UIState.SetNPCInteractionOpen(false);
 
         // 현재 상호작용 중인 NPC 정보 비우기
         currentNPC = null;
@@ -237,7 +288,10 @@ public class NPCInteractionUI : MonoBehaviour
         // 현재 상호작용 중인 플레이어 정보 비우기
         currentPlayer = null;
 
-        // 대화 번호 초기화
-        dialogueIndex = 0;
+        // 대화창을 닫았는데 아직 NPC 범위 안이면 F키 안내 UI 다시 표시
+        if(closedNPC != null)
+        {
+            closedNPC.ShowInteractionMarkIfPossible();
+        }
     }
 }

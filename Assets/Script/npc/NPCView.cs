@@ -9,8 +9,8 @@ public class NPCView : MonoBehaviour
     [Header("상호작용 표시")]
     [SerializeField] private GameObject interactionMark;
 
-    [Header("애니메이터")]
-    [SerializeField] private Animator animator;
+    //[Header("애니메이터")]
+    //[SerializeField] private Animator animator;
 
     public void ShowInteractionMark()
     {
@@ -51,6 +51,7 @@ public class NPCView : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(direction);
     }
 
+    /*
     /// <summary>
     /// NPC가 대화하는 애니메이션을 실행하는 함수
     /// </summary>
@@ -69,4 +70,5 @@ public class NPCView : MonoBehaviour
             animator.SetTrigger("Idle");
         }
     }
+    */
 }

@@ -21,6 +21,6 @@ MonoBehaviour:
   itemType: 6
   itemGrade: 0
   toolType: 7
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 3b7bec7a01eac954dbf8087501044c8a, type: 3}
   description: "\uBA39\uC744 \uAC70"
   maxStack: 99

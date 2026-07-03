@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1467373cd6e0a2c43b2c32a5b501f09d, type: 3}
   m_Name: TEMP_NPCData
   m_EditorClassIdentifier: Assembly-CSharp::NPCData
-  npcName: "\uAE30\uBCF8 \uC0C1\uC810"
-  dialogueLines: []
+  npcName: "\uC784\uC2DC NPC"
+  dialogueLines:
+  - "\uCD5C \uAC15 \uD55C \uD654"
+  - "\uBE68\uB9AC\uD558\uACE0 \uC9D1 \uAC00\uC790"
+  - "\uC624\uB298\uC740 \uBA87 \uC2DC\uC5D0 \uC9D1\uC5D0 \uAC08 \uC218 \uC788\uC73C\uB824\uB0AD"
   canTrade: 1
   shopData: {fileID: 11400000, guid: 4c5aedba2296194418db90dfa4845811, type: 2}
   canGiveQuest: 1

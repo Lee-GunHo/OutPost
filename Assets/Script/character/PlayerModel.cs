@@ -19,8 +19,9 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private float dashCooldown = 1f;
     [SerializeField] private float currentDashCooldown = 0f;
 
+    // (경민) 1.5f에서 2f로 변경
     [Header("Interaction Data")]
-    [SerializeField] private float interactionRange = 1.5f;
+    [SerializeField] private float interactionRange = 2f;
 
     [Header("Combat Data")]
     [SerializeField] private int baseAttackPower = 10;
