@@ -100,4 +100,6 @@ public class HotbarPresenter : MonoBehaviour
     {
         return hotbarModel.GetItem(index);
     }
+
+
 }
