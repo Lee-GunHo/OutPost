@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
+using System;
 
 public class InventoryModel : MonoBehaviour
 {
+    public event Action OnInventoryChanged;
     [SerializeField] private int maxSlots = 40;
 
     public List<ItemStack> Items { get; private set; } = new();
@@ -16,11 +17,13 @@ public class InventoryModel : MonoBehaviour
         }
     }
 
+   
     public void SetItemAt(int index, ItemStack item)
     {
         if (index < 0 || index >= Items.Count) return;
 
         Items[index] = item;
+        OnInventoryChanged?.Invoke();
     }
 
     public bool AddItem(ItemData item, int amount)
@@ -40,7 +43,10 @@ public class InventoryModel : MonoBehaviour
                 amount -= addAmount;
 
                 if (amount <= 0)
+                {
+                    OnInventoryChanged?.Invoke();
                     return true;
+                }
             }
         }
 
@@ -53,7 +59,10 @@ public class InventoryModel : MonoBehaviour
                 amount -= addAmount;
 
                 if (amount <= 0)
+                {
+                    OnInventoryChanged?.Invoke();
                     return true;
+                }
             }
         }
 
@@ -65,6 +74,8 @@ public class InventoryModel : MonoBehaviour
         if (index < 0 || index >= Items.Count) return;
 
         Items[index] = null;
+        OnInventoryChanged?.Invoke();
+
     }
 
     public void SwapItems(int fromIndex, int toIndex)
@@ -75,6 +86,8 @@ public class InventoryModel : MonoBehaviour
         ItemStack temp = Items[fromIndex];
         Items[fromIndex] = Items[toIndex];
         Items[toIndex] = temp;
+        OnInventoryChanged?.Invoke();
+
     }
 
     public void SortItems()
@@ -99,6 +112,8 @@ public class InventoryModel : MonoBehaviour
         {
             Items[i] = i < sorted.Count ? sorted[i] : null;
         }
+        OnInventoryChanged?.Invoke();
+
     }
     public ItemStack GetItem(int index)
     {

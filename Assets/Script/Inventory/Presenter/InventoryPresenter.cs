@@ -52,12 +52,16 @@ public class InventoryPresenter : MonoBehaviour
     {
         if (inputManager != null)
             inputManager.OnInventoryPressed += ToggleInventory;
+        if (inventoryModel != null)
+            inventoryModel.OnInventoryChanged += RefreshView;
     }
 
     private void OnDisable()
     {
         if (inputManager != null)
             inputManager.OnInventoryPressed -= ToggleInventory;
+        if (inventoryModel != null)
+            inventoryModel.OnInventoryChanged -= RefreshView;
     }
 
     private void ToggleInventory()

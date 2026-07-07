@@ -153,5 +153,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad8d8850fc18e9247bb5eae8caf57f76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DroppedItem
-  itemName: Stone
+  itemData: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
   amount: 1
