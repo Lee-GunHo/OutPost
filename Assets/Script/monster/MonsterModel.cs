@@ -17,6 +17,9 @@ public class MonsterModel : MonoBehaviour
     [SerializeField] private float hitDuration = 0.3f;
     [SerializeField] private float knockbackPower = 5f;
 
+    [Header("Reward Data")]
+    [SerializeField] private int expReward = 20;
+
     private int currentHp;
 
     public float MoveSpeed => moveSpeed;
@@ -32,6 +35,8 @@ public class MonsterModel : MonoBehaviour
     public float KnockbackPower => knockbackPower;
 
     public bool IsDead => currentHp <= 0;
+
+    public int ExpReward => expReward;
 
     private void Awake()
     {

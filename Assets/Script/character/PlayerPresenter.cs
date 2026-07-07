@@ -7,6 +7,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     private PlayerModel playerModel;
     private PlayerStateManager stateManager;
     private PlayerView playerView;
+    private PlayerLevelModel levelModel;
     private Rigidbody rigid;
     private EquipmentModel equipmentModel;
     private StatusEffectModel statusEffectModel;
@@ -29,8 +30,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public float InteractionRange => playerModel.InteractionRange;
 
-    public int TotalAttackPower => playerModel.AttackPower;
-    public int TotalDefensePower => playerModel.DefensePower;
+    public int AttackPower => playerModel.AttackPower;
+    public int DefensePower => playerModel.DefensePower;
     public float AttackDuration => playerModel.AttackDuration;
     public float HitDuration => playerModel.HitDuration;
 
@@ -59,6 +60,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         playerModel = GetComponent<PlayerModel>();
         stateManager = GetComponent<PlayerStateManager>();
         playerView = GetComponent<PlayerView>();
+        levelModel = GetComponent<PlayerLevelModel>();
         rigid = GetComponent<Rigidbody>();
         equipmentModel = GetComponent<EquipmentModel>();
         statusEffectModel = GetComponent<StatusEffectModel>();
@@ -324,7 +326,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         {
             Debug.Log("손에 든 아이템 없음 - 테스트용 기본 공격/채굴 실행");
 
-            bool testHitTarget = Attack(null);
+            bool testHitTarget = Attack();
 
             if (!testHitTarget)
             {
@@ -340,7 +342,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return;
         }
 
-        bool hitTarget = Attack(item);
+        bool hitTarget = Attack();
 
         if (!hitTarget)
         {
@@ -439,7 +441,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         return transform.forward;
     }
 
-    public bool Attack(ItemData item)
+    public bool Attack()
     {
         if (UIState.IsAnyUIOpen)
         {
@@ -477,7 +479,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
                 continue;
             }
 
-            damageable.TakeDamage(TotalAttackPower);
+            damageable.TakeDamage(AttackPower);
             Debug.Log("플레이어 공격 성공: " + collider.name);
 
             return true;
@@ -495,5 +497,16 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         return item.toolType == ToolType.Sword
             || item.toolType == ToolType.Axe
             || item.toolType == ToolType.Pickaxe;
+    }
+
+    public void AddExp(int amount)
+    {
+        if (levelModel == null)
+        {
+            Debug.LogWarning("PlayerLevelModel이 없습니다.");
+            return;
+        }
+
+        levelModel.AddExp(amount);
     }
 }

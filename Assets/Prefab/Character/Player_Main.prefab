@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 4288115900196487004}
   - component: {fileID: 6954505682824298573}
   - component: {fileID: 5013175590774896594}
+  - component: {fileID: 2008120513249805676}
   m_Layer: 0
   m_Name: Player_Main
   m_TagString: Player
@@ -214,6 +215,7 @@ MonoBehaviour:
   baseAttackPower: 10
   baseDefensePower: 0
   attackDuration: 0.35
+  hitDuration: 0.25
   attackBoxHalfSize: {x: 0.75, y: 0.75, z: 0.75}
   attackBoxDistance: 1.2
   currentToolType: 1
@@ -259,6 +261,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerView
   playerRenderer: {fileID: 1587876511111404874}
+  dashEffectPrefab: {fileID: 0}
+  dashEffectSpawnPoint: {fileID: 0}
 --- !u!114 &5013175590774896594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,3 +275,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4e381b1d24a6e84fa406744fa22c0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusEffectModel
+--- !u!114 &2008120513249805676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8162465042286375406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dc8e5c6a64e94b4b9245b75e48c017a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLevelModel
+  level: 1
+  currentExp: 0
+  requiredExp: 100
+  statPoint: 0
+  expIncreasePerLevel: 50
+  statPointPerLevel: 3

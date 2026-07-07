@@ -13,6 +13,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     public float HitDuration => monsterModel.HitDuration;
     public float KnockbackPower => monsterModel.KnockbackPower;
     public bool IsDead => monsterModel.IsDead;
+    public int ExpReward => monsterModel.ExpReward;
 
     private void Awake()
     {
@@ -171,10 +172,35 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     public void Dead()
     {
         StopMove();
+
         Debug.Log("몬스터 사망");
 
-        // 일단 테스트용으로 오브젝트 제거
+        GiveExpToPlayer();
+
         Destroy(gameObject, 1f);
+    }
+
+    private void GiveExpToPlayer()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerObject == null)
+        {
+            Debug.LogWarning("경험치를 줄 플레이어를 찾지 못했습니다.");
+            return;
+        }
+
+        PlayerPresenter player = playerObject.GetComponent<PlayerPresenter>();
+
+        if (player == null)
+        {
+            Debug.LogWarning("PlayerPresenter를 찾지 못했습니다.");
+            return;
+        }
+
+        player.AddExp(ExpReward);
+
+        Debug.Log("플레이어에게 경험치 지급: " + ExpReward);
     }
 
     private void OnDrawGizmosSelected()
