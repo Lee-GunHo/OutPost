@@ -19,10 +19,10 @@ public class ShopUI : MonoBehaviour
     [SerializeField] private TMP_Text selectedAmountText;
 
     [Header("구매 슬롯 목록")]
-    [SerializeField] private TempItemSlotView[] buySlots;
+    [SerializeField] private ItemSlotView[] buySlots;
 
     [Header("판매 슬롯 목록")]
-    [SerializeField] private TempItemSlotView[] sellSlots;
+    [SerializeField] private ItemSlotView[] sellSlots;
 
     [Header("수량 설정")]
     [SerializeField] private int minAmount = 1;
@@ -160,7 +160,7 @@ public class ShopUI : MonoBehaviour
         if (currentShopData == null || currentShopData.ShopSellItems == null)
             return;
 
-        currentBuyItems = currentShopData.ShopSellItems;
+        currentBuyItems.AddRange(currentShopData.ShopSellItems);
 
         for(int i = 0; i < buySlots.Length; i++)
         {
@@ -172,7 +172,7 @@ public class ShopUI : MonoBehaviour
             if(shopItem == null || shopItem.ItemData == null)
                 continue;
 
-            buySlots[i].SetItem(shopItem.ItemData, 1);
+            buySlots[i].SetItem(shopItem.ItemData, buyAmounts[i]);
             buySlots[i].SetSelected(false);
         }
     }
@@ -183,10 +183,10 @@ public class ShopUI : MonoBehaviour
 
         currentSellItems.Clear();
 
-        if (currentShopData == null || currentShopData.ShopSellItems == null)
+        if (currentShopData == null || currentShopData.ShopBuyItems == null)
             return;
 
-        currentSellItems = currentShopData.ShopSellItems;
+        currentSellItems.AddRange(currentShopData.ShopBuyItems);
 
         for(int i = 0; i < sellSlots.Length; i++)
         {
@@ -198,7 +198,7 @@ public class ShopUI : MonoBehaviour
             if(shopItem == null || shopItem.ItemData == null)
                 continue;
 
-            sellSlots[i].SetItem(shopItem.ItemData, 1);
+            sellSlots[i].SetItem(shopItem.ItemData, sellAmounts[i]);
             sellSlots[i].SetSelected(false);
         }
     }
@@ -313,7 +313,7 @@ public class ShopUI : MonoBehaviour
     private void RefreshSlotAmount(ShopSlotMode mode, int slotIndex)
     {
         List<ShopItemData> targetList = GetTargetList(mode);
-        TempItemSlotView[] targetSlots = GetTargetSlots(mode);
+        ItemSlotView[] targetSlots = GetTargetSlots(mode);
 
         if (targetList == null || targetSlots == null)
             return;
@@ -467,7 +467,7 @@ public class ShopUI : MonoBehaviour
     private bool IsValidSlot(ShopSlotMode mode, int slotIndex)
     {
         List<ShopItemData> targetList = GetTargetList(mode);
-        TempItemSlotView[] targetSlots = GetTargetSlots(mode);
+        ItemSlotView[] targetSlots = GetTargetSlots(mode);
 
         if (targetList == null || targetSlots == null)
             return false;
@@ -483,7 +483,7 @@ public class ShopUI : MonoBehaviour
         return mode == ShopSlotMode.Buy ? currentBuyItems : currentSellItems;
     }
 
-    private TempItemSlotView[] GetTargetSlots(ShopSlotMode mode)
+    private ItemSlotView[] GetTargetSlots(ShopSlotMode mode)
     {
         return mode == ShopSlotMode.Buy ? buySlots : sellSlots;
     }

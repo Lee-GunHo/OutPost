@@ -16,8 +16,8 @@ MonoBehaviour:
   questTitle: "\uBCBD \uBD80\uC218\uAE30"
   questDescription: "\uC55E\uC744 \uAC00\uB85C\uB9C9\uACE0 \uC788\uB294 \uBCBD\uC5D0
     \uB9C8\uC6B0\uC2A4\uB97C \uB450\uACE0 \uC88C\uD074\uB9AD \uD574\uBCF4\uAE30"
-  requiredItem: {fileID: 11400000, guid: c40638580e072ed44a609b07767fc369, type: 2}
-  requiredAmount: 1
-  rewardItem: {fileID: 11400000, guid: e3f9a1e3565434345aa09d589ff767d3, type: 2}
+  requiredItem: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
+  requiredAmount: 3
+  rewardItem: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
   rewardAmount: 5
-  rewardGold: 10
+  rewardGold: 0

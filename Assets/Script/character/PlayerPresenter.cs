@@ -47,6 +47,11 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     [SerializeField] private HotbarPresenter hotbarPresenter;
     private Camera mainCamera;
 
+    // (경민) 0707 NPC 퀘스트 관련 InventoryModel 연결 추가
+    [SerializeField] private InventoryModel inventoryModel;
+
+    public InventoryModel PlayerInventory => inventoryModel;
+
 
     private void Awake()
     {
@@ -59,7 +64,23 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         statusEffectModel = GetComponent<StatusEffectModel>();
         mainCamera = Camera.main;
 
+        // (경민) 0707 NPC 퀘스트 관련 InventoryModel 연결 추가
+        if(inventoryModel == null)
+        {
+            inventoryModel = GetComponent<InventoryModel>();
+        }
 
+        if(inventoryModel == null)
+        {
+            inventoryModel = GetComponentInChildren<InventoryModel>();
+        }
+
+        if(inventoryModel == null)
+        {
+#pragma warning disable CS0618
+            inventoryModel = FindObjectOfType<InventoryModel>();
+#pragma warning restore CS0618
+        }
     }
 
     private void Update()

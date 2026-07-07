@@ -4,49 +4,42 @@ public class DroppedItem : MonoBehaviour
 {
     [Header("Item Info")]
     [SerializeField] private ItemData itemData;
+
     [SerializeField] private int amount = 1;
 
-    private bool isPickedUp = false;
-    private InventoryModel inventoryModel;
-
-    private void Awake()
-    {
-        inventoryModel = FindFirstObjectByType<InventoryModel>();
-    }
+    private bool isPickedUp;
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("드랍아이템 충돌 감지 : " + other.name);
-
         if (isPickedUp)
             return;
 
-        if (!other.CompareTag("Player"))
+        PlayerPresenter player = other.GetComponentInParent<PlayerPresenter>();
+
+        if (player == null)
+            return;
+
+        InventoryModel inventory = player.PlayerInventory;
+
+        if(inventory == null)
         {
-            Debug.Log("Player 태그가 아니라서 return됨 : " + other.tag);
+            Debug.LogWarning("플레이어에게 InventoryModel이 연결되어 있지 않습니다.");
             return;
         }
 
-        if (inventoryModel == null)
+        if(itemData == null)
         {
-            Debug.LogError("InventoryModel 못 찾음");
+            Debug.LogWarning(gameObject.name + "에 ItemData가 연결되어 있지 않습니다.");
             return;
         }
 
-        if (itemData == null)
+        bool success = inventory.AddItem(itemData, amount);
+
+        if(!success)
         {
-            Debug.LogWarning("ItemData 비어있음");
+            Debug.Log("인벤토리가 가득 차서 아이템을 획득하지 못했습니다.");
             return;
         }
-
-        Debug.Log("AddItem 실행 직전 : " + itemData.name + " / " + amount);
-
-        bool success = inventoryModel.AddItem(itemData, amount);
-
-        Debug.Log("AddItem 결과 : " + success);
-
-        if (!success)
-            return;
 
         isPickedUp = true;
         Destroy(gameObject);

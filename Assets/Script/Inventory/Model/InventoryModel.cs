@@ -122,4 +122,104 @@ public class InventoryModel : MonoBehaviour
 
         return Items[index];
     }
+
+    // (경민) 0707 NPC 퀘스트 관련 코드 추가
+    public int GetItemCount(ItemData item)
+    {
+        if(item == null)
+            return 0;
+
+        int count = 0;
+
+        foreach(ItemStack stack in Items)
+        {
+             if(stack != null && stack.item == item)
+            {
+                count += stack.amount;
+            }
+        }
+
+        return count;
+    }
+
+    // (경민) 0707 NPC 퀘스트 관련 코드 추가
+    public bool HasItem(ItemData item, int amount)
+    {
+        if(item == null || amount <= 0) 
+            return false;
+
+        return GetItemCount(item) >= amount;
+    }
+
+    // (경민) 0707 NPC 퀘스트 관련 코드 추가
+    public bool CanAddItem(ItemData item, int amount)
+    {
+        if(item == null || amount <= 0)
+            return false;
+
+        int remainingAmount = amount;
+
+        for(int i = 0; i < Items.Count; i++)
+        {
+            ItemStack stack = Items[i];
+
+            if(stack != null && stack.item == item)
+            {
+                int space = item.maxStack - stack.amount;
+                remainingAmount -= space;
+
+                if(remainingAmount <= 0)
+                    return true;
+            }
+        }
+
+        for(int i = 0; i < Items.Count; i++)
+        {
+            if (Items[i] == null)
+            {
+                remainingAmount -= item.maxStack;
+
+                if(remainingAmount <= 0)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    // (경민) 0707 NPC 퀘스트 관련 코드 추가
+    public bool RemoveItem(ItemData item, int amount)
+    {
+        if(item == null || amount <= 0)
+            return false;
+
+        if(!HasItem(item, amount))
+            return false;
+
+        int remainingAmount = amount;
+
+        for(int i = 0; i < Items.Count; i++)
+        {
+            ItemStack stack = Items[i];
+
+            if (stack == null || stack.item != item)
+                continue;
+
+            int removeAmount = Mathf.Min(stack.amount, remainingAmount);
+
+            stack.amount -= removeAmount;
+            remainingAmount -= removeAmount;
+
+            if(stack.amount <= 0)
+                Items[i] = null;
+
+            if(remainingAmount <= 0)
+            {
+                OnInventoryChanged?.Invoke();
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

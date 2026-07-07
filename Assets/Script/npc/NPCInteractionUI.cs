@@ -251,21 +251,87 @@ public class NPCInteractionUI : MonoBehaviour
             currentNPC.AcceptQuest();
 
             Debug.Log("퀘스트 수락 : " + questData.QuestTitle);
-
-            if(dialogueText != null)
-            {
-                dialogueText.text = "퀘스트를 수락했습니다.\n" + questData.QuestTitle;
-            }
+            Debug.Log("필요 아이템 : " + questData.RequiredItem.itemName + " x " + questData.RequiredAmount);
 
             return;
         }
 
-        Debug.Log("이미 진행 중인 퀘스트입니다. : " + questData.QuestTitle);
+        TryCompleteQuest(questData);
+    }
 
-        if(dialogueText != null)
+    private void TryCompleteQuest(QuestData questData)
+    {
+        InventoryModel inventory = GetPlayerInventory();
+
+        if (inventory == null)
         {
-            dialogueText.text = "이미 진행 중인 퀘스트입니다. : " + questData.QuestTitle;
+            Debug.LogWarning("플레이어에게 InventoryModel이 없습니다.");
+            return;
         }
+
+        ItemData requiredItem = questData.RequiredItem;
+        int requiredAmount = questData.RequiredAmount;
+
+        ItemData rewardItem = questData.RewardItem;
+        int rewardAmount = questData.RewardAmount;
+
+        if (requiredItem == null || requiredAmount <= 0)
+        {
+            Debug.LogWarning("퀘스트 완료 조건 아이템이 올바르지 않습니다.");
+            return;
+        }
+
+        if(!inventory.HasItem(requiredItem, requiredAmount))
+        {
+            int currentAmount = inventory.GetItemCount(requiredItem);
+
+            Debug.Log(
+                "퀘스트 완료 조건 부족 : " +
+                requiredItem.itemName + " " +
+                currentAmount + " / " + requiredAmount
+                );
+
+            return;
+        }
+
+        if(rewardItem != null && rewardAmount > 0)
+        {
+            if(!inventory.CanAddItem(rewardItem, requiredAmount))
+            {
+                Debug.Log("인벤토리에 보상 아이템을 받을 공간이 부족합니다.");
+                return;
+            }
+        }
+
+        bool removed = inventory.RemoveItem(requiredItem, requiredAmount);
+
+        if(!removed)
+        {
+            Debug.LogWarning("퀘스트 아이템 제거에 실패했습니다.");
+            return;
+        }
+
+        if(rewardItem != null && rewardAmount > 0)
+        {
+            inventory.AddItem(rewardItem, rewardAmount);
+        }
+
+        currentNPC.CompleteQuest();
+
+        Debug.Log("퀘스트 완료 : " + questData.QuestTitle);
+
+        if(rewardItem != null && rewardAmount > 0)
+        {
+            Debug.Log("보상 획득 : " + rewardItem.itemName + " x " + rewardAmount);
+        }
+    }
+
+    private InventoryModel GetPlayerInventory()
+    {
+        if(currentPlayer == null)
+            return null;
+
+        return currentPlayer.PlayerInventory;
     }
 
     /// <summary>

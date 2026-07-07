@@ -16,6 +16,4 @@ public class ShopData : ScriptableObject
 
     public List<ShopItemData> ShopSellItems => shopSellItems;
     public List<ShopItemData> ShopBuyItems => shopBuyItems;
-
-    public List<ShopItemData> SellItems => shopSellItems;
 }

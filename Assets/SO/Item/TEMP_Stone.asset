@@ -17,7 +17,7 @@ MonoBehaviour:
   defenseBonus: 0
   moveSpeedBonus: 0
   itemID: 2
-  itemName: "\uB3CC"
+  itemName: "\uB3CC\uB9F9\uC774"
   itemType: 7
   itemGrade: 0
   toolType: 0

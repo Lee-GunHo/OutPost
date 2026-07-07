@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: TEMP_ShopData
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
   shopSellItems:
-  - itemData: {fileID: 11400000, guid: c40638580e072ed44a609b07767fc369, type: 2}
+  - itemData: {fileID: 11400000, guid: 7ca41ba285fcf9941917edccd37769b5, type: 2}
     buyPrice: 0
     sellPrice: 0
-  - itemData: {fileID: 11400000, guid: e3f9a1e3565434345aa09d589ff767d3, type: 2}
+  - itemData: {fileID: 11400000, guid: df6cfe3bd450dad459ccec57def68f99, type: 2}
     buyPrice: 0
     sellPrice: 0
   shopBuyItems:
-  - itemData: {fileID: 11400000, guid: e3f9a1e3565434345aa09d589ff767d3, type: 2}
+  - itemData: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
     buyPrice: 0
     sellPrice: 0
-  - itemData: {fileID: 11400000, guid: c40638580e072ed44a609b07767fc369, type: 2}
+  - itemData: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
     buyPrice: 0
     sellPrice: 0
