@@ -509,4 +509,32 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         levelModel.AddExp(amount);
     }
+
+    public void TakeStatusDamage(int damage)
+    {
+        if (playerModel.IsDead)
+        {
+            return;
+        }
+
+        playerModel.TakeStatusDamage(damage);
+
+        Debug.Log("상태효과 데미지, 현재 체력: " + playerModel.CurrentHp);
+
+        if (playerModel.IsDead)
+        {
+            Debug.Log("플레이어 사망");
+            stateManager.ChangeState(stateManager.DeadState);
+        }
+    }
+
+    public void AddStatusStats(int attackModifier, int defenseModifier)
+    {
+        playerModel.AddStatusStats(attackModifier, defenseModifier);
+    }
+
+    public void RemoveStatusStats(int attackModifier, int defenseModifier)
+    {
+        playerModel.RemoveStatusStats(attackModifier, defenseModifier);
+    }
 }

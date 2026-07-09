@@ -145,6 +145,8 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         damageable.TakeDamage(monsterModel.AttackPower);
 
         Debug.Log("몬스터가 플레이어에게 데미지 줌: " + monsterModel.AttackPower);
+
+        TryApplyStatusEffectToPlayer();
     }
 
 
@@ -201,6 +203,44 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         player.AddExp(ExpReward);
 
         Debug.Log("플레이어에게 경험치 지급: " + ExpReward);
+    }
+
+    private void TryApplyStatusEffectToPlayer()
+    {
+        Debug.Log("상태효과 부여 시도");
+
+        if (monsterModel.AttackStatusEffectType == StatusEffectType.None)
+        {
+            Debug.Log("몬스터 상태효과 없음");
+            return;
+        }
+
+        if (Random.value > monsterModel.StatusEffectChance)
+        {
+            Debug.Log("상태효과 확률 실패");
+            return;
+        }
+
+        PlayerPresenter player = playerTransform.GetComponentInParent<PlayerPresenter>();
+
+        if (player == null)
+        {
+            Debug.LogWarning("상태효과를 적용할 PlayerPresenter를 찾지 못했습니다.");
+            return;
+        }
+
+        StatusEffectData effectData = new StatusEffectData(
+            monsterModel.AttackStatusEffectType,
+            monsterModel.StatusEffectDuration,
+            monsterModel.StatusEffectValue,
+            monsterModel.StatusEffectTickInterval,
+            monsterModel.StatusAttackModifier,
+            monsterModel.StatusDefenseModifier
+        );
+
+        player.AddStatusEffect(effectData);
+
+        Debug.Log("몬스터가 상태효과 부여: " + monsterModel.AttackStatusEffectType);
     }
 
     private void OnDrawGizmosSelected()

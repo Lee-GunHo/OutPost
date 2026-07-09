@@ -39,6 +39,10 @@ public class PlayerModel : MonoBehaviour
     [Header("Wall Break Data")]
     [SerializeField] private float breakRange = 5f;
 
+    // 상태 효과 추가 공격력, 방어력
+    private int statusAttackBonus;
+    private int statusDefenseBonus;
+
     public ToolType CurrentToolType => currentToolType;
     public bool IsPickaxeMode => currentToolType == ToolType.Pickaxe;
     public bool IsWeaponMode => currentToolType == ToolType.Sword;
@@ -59,8 +63,8 @@ public class PlayerModel : MonoBehaviour
 
     public float InteractionRange => interactionRange;
 
-    public int AttackPower => baseAttackPower + equipmentAttackBonus;
-    public int DefensePower => baseDefensePower + equipmentDefenseBonus;
+    public int AttackPower => baseAttackPower + equipmentAttackBonus + statusAttackBonus;
+    public int DefensePower => baseDefensePower + equipmentDefenseBonus + statusDefenseBonus;
     public float AttackDuration => attackDuration;
     public float HitDuration => hitDuration;
 
@@ -155,5 +159,31 @@ public class PlayerModel : MonoBehaviour
         Debug.Log($"해제한 아이템 능력치 - 체력:{item.hpBonus}, 공격력:{item.attackBonus}, 방어력:{item.defenseBonus}, 이동속도:{item.moveSpeedBonus}");
         Debug.Log($"감소한 아이템 능력치 - 체력:{equipmentHpBonus}, 공격력:{equipmentAttackBonus}, 방어력:{equipmentDefenseBonus}, 이동속도:{equipmentMoveSpeedBonus}");
         Debug.Log($"장비 해제 현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
+    }
+
+    public void TakeStatusDamage(int damage)
+    {
+        int finalDamage = Mathf.Max(damage, 1);
+
+        currentHp -= finalDamage;
+        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+    }
+
+    public void AddStatusStats(int attackModifier, int defenseModifier)
+    {
+        statusAttackBonus += attackModifier;
+        statusDefenseBonus += defenseModifier;
+
+        Debug.Log($"상태효과 스탯 적용 - 공격력 변화:{attackModifier}, 방어력 변화:{defenseModifier}");
+        Debug.Log($"현재 상태효과 보정 - 공격력:{statusAttackBonus}, 방어력:{statusDefenseBonus}");
+    }
+
+    public void RemoveStatusStats(int attackModifier, int defenseModifier)
+    {
+        statusAttackBonus -= attackModifier;
+        statusDefenseBonus -= defenseModifier;
+
+        Debug.Log($"상태효과 스탯 제거 - 공격력 변화:{attackModifier}, 방어력 변화:{defenseModifier}");
+        Debug.Log($"현재 상태효과 보정 - 공격력:{statusAttackBonus}, 방어력:{statusDefenseBonus}");
     }
 }
