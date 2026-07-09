@@ -14,6 +14,6 @@ public class ShopData : ScriptableObject
     [Header("판매 슬롯에 표시할 아이템 목록")]
     [SerializeField] private List<ShopItemData> shopBuyItems = new List<ShopItemData>();
 
-    public List<ShopItemData> ShopSellItems => shopSellItems;
-    public List<ShopItemData> ShopBuyItems => shopBuyItems;
+    public List<ShopItemData> SellItems => shopSellItems;
+    public List<ShopItemData> BuyItems => shopBuyItems;
 }

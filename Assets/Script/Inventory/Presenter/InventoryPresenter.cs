@@ -69,6 +69,13 @@ public class InventoryPresenter : MonoBehaviour
         if (PauseMenuManager.IsMenuOpen)
             return;
 
+        // (경민) 0709 상점 UI 닫을 때 인벤토리 UI도 같이 열렸는데 안닫혀서 수정
+        if(!isOpen && UIState.IsAnyUIOpen)
+        {
+            Debug.Log("다른 UI가 열려 있어서 인벤토리를 열 수 없습니다.");
+            return;
+        }
+
         isOpen = !isOpen;
 
         if (inventoryPanel != null)

@@ -13,43 +13,42 @@ public class ShopUI : MonoBehaviour
     [Header("상점 이름")]
     [SerializeField] private TMP_Text shopTitleText;
 
-    [Header("선택 정보 패널")]
-    [SerializeField] private TMP_Text selectedModeText;
-    [SerializeField] private TMP_Text selectedItemNameText;
-    [SerializeField] private TMP_Text selectedAmountText;
+    [Header("상점 아이템 스크롤 Content")]
+    [SerializeField] private Transform shopContent;
 
-    [Header("구매 슬롯 목록")]
-    [SerializeField] private ItemSlotView[] buySlots;
+    [Header("플레이어 인벤토리 스크롤 Content")]
+    [SerializeField] private Transform playerContent;
 
-    [Header("판매 슬롯 목록")]
-    [SerializeField] private ItemSlotView[] sellSlots;
+    [Header("슬롯 프리팹")]
+    [SerializeField] private ShopSlotView slotPrefab;
 
-    [Header("수량 설정")]
-    [SerializeField] private int minAmount = 1;
-    [SerializeField] private int maxAmount = 99;
+    [Header("슬롯 생성 수량")]
+    [SerializeField] private int ShopSlotCount;
+    [SerializeField] private int playerSlotCount;
+
+    [Header("팝업")]
+    [SerializeField] private ShopQuantityPopup quantityPopup;
+    [SerializeField] private ShopConfirmPopup confirmPopup;
 
     [Header("버튼")]
-    [SerializeField] private Button buyButton;
-    [SerializeField] private Button sellButton;
     [SerializeField] private Button closeButton;
 
     private ShopData currentShopData;
     private PlayerPresenter currentPlayer;
     private NPCPresenter currentNPC;
+    private InventoryModel currentInventory;
 
-    private List<ShopItemData> currentBuyItems = new List<ShopItemData>();
-    private List<ShopItemData> currentSellItems = new List<ShopItemData>();
-
-    private int[] buyAmounts;
-    private int[] sellAmounts;
+    private readonly List<ShopSlotView> shopSlotViews = new List<ShopSlotView>();
+    private readonly List<ShopSlotView> playerSlotViews = new List<ShopSlotView>();
 
     private ShopSlotMode selectedMode;
     private int selectedSlotIndex = -1;
-    private ShopItemData selectedShopItem;
+    private ItemData selectedItem;
+    private int selectedAmount;
 
     private void Awake()
     {
-        if(Instance != null && Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -57,7 +56,7 @@ public class ShopUI : MonoBehaviour
 
         Instance = this;
 
-        if(panel != null)
+        if (panel != null)
         {
             panel.SetActive(false);
         }
@@ -65,66 +64,12 @@ public class ShopUI : MonoBehaviour
 
     private void Start()
     {
-        if(buyButton != null)
-        {
-            buyButton.onClick.AddListener(OnBuyButtonClicked);
-        }
-
-        if(sellButton != null)
-        {
-            sellButton.onClick.AddListener(OnSellButtonClicked);
-        }
-
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(Close);
         }
 
-        InitializeSlots();
-        InitializeAmountArrays();
         ClearSelectedItem();
-        ClearAllSlots();
-    }
-
-    private void InitializeSlots()
-    {
-        if(buySlots != null)
-        {
-            for(int i = 0; i < buySlots.Length; i++)
-            {
-                if (buySlots[i] != null)
-                {
-                    buySlots[i].InitializeShopSlot(this, i, ShopSlotMode.Buy);
-                }
-            }
-        }
-
-        if(sellSlots != null)
-        {
-            for(int i = 0; i< sellSlots.Length; i++)
-            {
-                if (sellSlots[i] != null)
-                {
-                    sellSlots[i].InitializeShopSlot(this, i, ShopSlotMode.Sell);
-                }
-            }
-        }
-    }
-
-    private void InitializeAmountArrays()
-    {
-        buyAmounts = new int[buySlots != null ? buySlots.Length : 0];
-        sellAmounts = new int[sellSlots != null ? sellSlots.Length : 0];
-
-        for(int i = 0; i < buyAmounts.Length; i++)
-        {
-            buyAmounts[i] = 1;
-        }
-
-        for(int i = 0; i < sellAmounts.Length; i++)
-        {
-            sellAmounts[i] = 1;
-        }
     }
 
     public void Open(ShopData shopData, PlayerPresenter player, NPCPresenter npc)
@@ -132,391 +77,415 @@ public class ShopUI : MonoBehaviour
         currentShopData = shopData;
         currentPlayer = player;
         currentNPC = npc;
+        currentInventory = currentPlayer != null ? currentPlayer.PlayerInventory : null;
+
+        UIState.SetInventoryOpen(false);
+        UIState.SetNPCInteractionOpen(false);
 
         UIState.SetShopOpen(true);
 
-        if(panel != null)
+        if (panel != null)
         {
             panel.SetActive(true);
         }
 
-        if(shopTitleText != null && currentNPC != null)
+        if (shopTitleText != null)
         {
-            shopTitleText.text = currentNPC.GetNPCName() + "상점";
+            string npcName = currentNPC != null ? currentNPC.GetNPCName() : "상점";
+            shopTitleText.text = npcName + " 상점";
         }
 
-        InitializeAmountArrays();
         ClearSelectedItem();
-        RefreshBuySlots();
-        RefreshSellSlots();
+        RefreshShopItems();
+        RefreshPlayerItems();
     }
 
-    private void RefreshBuySlots()
+    private void RefreshShopItems()
     {
-        ClearBuySlots();
+        ClearSlotViews(shopSlotViews, shopContent);
 
-        currentBuyItems.Clear();
-
-        if (currentShopData == null || currentShopData.ShopSellItems == null)
-            return;
-
-        currentBuyItems.AddRange(currentShopData.ShopSellItems);
-
-        for(int i = 0; i < buySlots.Length; i++)
+        if (currentShopData == null)
         {
-            if (i >= currentBuyItems.Count)
-                break;
+            Debug.LogWarning("ShopUI 오류: currentShopData가 없습니다.");
+            return;
+        }
 
-            ShopItemData shopItem = currentBuyItems[i];
+        if (currentShopData.SellItems == null)
+        {
+            Debug.LogWarning("ShopUI 오류: ShopData.SellItems가 없습니다.");
+            return;
+        }
+
+        int createCount = Mathf.Max(ShopSlotCount, currentShopData.SellItems.Count);
+
+        List<ShopSlotView> createdSlots = CreateSlot(shopContent, createCount);
+        
+        for (int i = 0; i < createdSlots.Count; i++)
+        {
+            ShopSlotView slotView = createdSlots[i];
+
+            slotView.Initialize(this, ShopSlotMode.Buy, i);
+
+            if(i >= currentShopData.SellItems.Count)
+            {
+                slotView.Clear();
+                shopSlotViews.Add(slotView);
+                continue;
+            }
+
+            ShopItemData shopItem = currentShopData.SellItems[i];
 
             if(shopItem == null || shopItem.ItemData == null)
-                continue;
+            {
+                slotView.Clear();
+            }
+            else
+            {
+                slotView.SetItem(shopItem.ItemData, 1);
+            }
 
-            buySlots[i].SetItem(shopItem.ItemData, buyAmounts[i]);
-            buySlots[i].SetSelected(false);
+            shopSlotViews.Add(slotView);
         }
     }
 
-    private void RefreshSellSlots()
+    private void RefreshPlayerItems()
     {
-        ClearSellSlots();
+        ClearSlotViews(playerSlotViews, playerContent);
 
-        currentSellItems.Clear();
+        if (currentPlayer == null)
+        {
+            Debug.LogWarning("ShopUI 오류: currentPlayer가 없습니다.");
+            return;
+        }
 
-        if (currentShopData == null || currentShopData.ShopBuyItems == null)
+        if(currentInventory == null)
+        {
+            Debug.LogWarning("ShopUI 오류: 플레이어에게 InventoryModel이 없습니다.");
+            return;
+        }
+
+        if (currentInventory.Items == null)
+        {
+            Debug.LogWarning("ShopUI 오류: InventoryModel.Items가 없습니다.");
+            return;
+        }
+
+        List<ShopSlotView> createdSlots = CreateSlot(playerContent, currentInventory.Items.Count);
+
+        for(int i = 0; i < createdSlots.Count; i++)
+        {
+            ShopSlotView slotView = createdSlots[i];
+
+            slotView.Initialize(this, ShopSlotMode.Sell, i);
+
+            if(i >= currentInventory.Items.Count)
+            {
+                slotView.Clear();
+                playerSlotViews.Add(slotView);
+                continue;
+            }
+
+            ItemStack itemStack = currentInventory.Items[i];
+
+            if(itemStack == null || itemStack.item == null)
+            {
+                slotView.Clear();
+            }
+            else
+            {
+                slotView.SetItem(itemStack.item, itemStack.amount);
+            }
+
+            playerSlotViews.Add(slotView);
+        }
+    }
+
+    private List<ShopSlotView> CreateSlot(Transform parent, int count)
+    {
+        List<ShopSlotView> createdSlots = new List<ShopSlotView>();
+
+        if(count <= 0)
+        {
+            Debug.LogWarning("ShopUI 경고 : 생성할 슬롯 수량이 0 이하입니다.");
+            return createdSlots;
+        }
+
+        if (slotPrefab == null)
+        {
+            Debug.LogError("ShopUI 오류 : SlotPrefab이 연결되지 않았습니다. Inspector에서 Slot Prefab에 ShopSlotView 프리팹을 넣어주세요.");
+            return null;
+        }
+
+        if(parent == null)
+        {
+            Debug.LogError("ShopUI 오류: Content Transform이 연결되지 않았습니다. shopContent 또는 playerContent를 연결해주세요.");
+            return null;
+        }
+
+        for(int i = 0; i < count; i++)
+        {
+            ShopSlotView slotView = Instantiate(slotPrefab, parent);
+
+            if(slotView == null)
+            {
+                Debug.LogError("ShopUI 오류: 생성된 슬롯에 ShopSlotView 컴포넌트가 없습니다.");
+                continue;
+            }
+
+            slotView.gameObject.SetActive(true);
+            createdSlots.Add(slotView);
+        }
+
+        return createdSlots;
+    }
+
+    private void ClearSlotViews(List<ShopSlotView> slotViews, Transform content)
+    {
+        for (int i = 0; i < slotViews.Count; i++)
+        {
+            if (slotViews[i] != null)
+            {
+                Destroy(slotViews[i].gameObject);
+            }
+        }
+
+        slotViews.Clear();
+
+        if (content == null)
             return;
 
-        currentSellItems.AddRange(currentShopData.ShopBuyItems);
-
-        for(int i = 0; i < sellSlots.Length; i++)
+        for (int i = content.childCount - 1; i >= 0; i--)
         {
-            if(i >= currentSellItems.Count)
-                break;
-
-            ShopItemData shopItem = currentSellItems[i];
-
-            if(shopItem == null || shopItem.ItemData == null)
-                continue;
-
-            sellSlots[i].SetItem(shopItem.ItemData, sellAmounts[i]);
-            sellSlots[i].SetSelected(false);
+            Destroy(content.GetChild(i).gameObject);
         }
     }
 
     public void SelectSlot(ShopSlotMode mode, int slotIndex)
     {
-        List<ShopItemData> targetList = GetTargetList(mode);
-
-        if (targetList == null)
-            return;
-
-        if (slotIndex < 0 || slotIndex >= targetList.Count)
-            return;
-
-        ShopItemData shopItem = targetList[slotIndex];
-
-        if (shopItem == null || shopItem.ItemData == null)
-            return;
-
         selectedMode = mode;
         selectedSlotIndex = slotIndex;
-        selectedShopItem = shopItem;
+        selectedItem = null;
+        selectedAmount = 0;
 
-        RefreshSelectedMark();
-        RefreshSelectedPanel();
-    }
-
-    private void ClearBuySlots()
-    {
-        if(buySlots == null) 
-            return;
-
-        for(int i = 0; i < buySlots.Length; i++)
+        if (mode == ShopSlotMode.Buy)
         {
-            if (buySlots[i] != null)
-            {
-                buySlots[i].Clear();
-            }
-        }
-    }
-
-    private void ClearSellSlots()
-    {
-        if(sellSlots == null)
-            return;
-
-        for(int i = 0; i < sellSlots.Length; i++)
-        {
-            if(sellSlots[i] != null)
-            {
-                sellSlots[i].Clear();
-            }
-        }
-    }
-
-    private void ClearAllSlots()
-    {
-        ClearBuySlots();
-        ClearSellSlots();
-    }
-
-
-    public void IncreaseAmountFromSlot(ShopSlotMode mode, int slotIndex)
-    {
-        if (!IsValidSlot(mode, slotIndex))
-            return;
-
-        SelectSlot(mode, slotIndex);
-
-        int currentAmount = GetSlotAmount(mode, slotIndex);
-        SetSlotAmount(mode, slotIndex, currentAmount + 1);
-    }
-
-    public void DecreaseAmountFromSlot(ShopSlotMode mode, int slotIndex)
-    {
-        if (!IsValidSlot(mode, slotIndex))
-            return;
-
-        SelectSlot(mode, slotIndex);
-
-        int currentAmount = GetSlotAmount(mode, slotIndex);
-        SetSlotAmount(mode, slotIndex, currentAmount - 1);
-    }
-
-    private void SetSlotAmount(ShopSlotMode mode, int slotIndex, int amount)
-    {
-        int clampedAmount = Mathf.Clamp(amount, minAmount, maxAmount);
-
-        if(mode == ShopSlotMode.Buy)
-        {
-            buyAmounts[slotIndex] = clampedAmount;
+            SelectShopSlot(slotIndex);
         }
         else
         {
-            sellAmounts[slotIndex] = clampedAmount;
+            SelectPlayerSlot(slotIndex);
         }
 
-        RefreshSlotAmount(mode, slotIndex);
-        RefreshSelectedPanel();
+        RefreshSelectedMarks();
     }
 
-    private int GetSlotAmount(ShopSlotMode mode, int slotIndex)
+    private void SelectShopSlot(int slotIndex)
     {
-        if(mode == ShopSlotMode.Buy)
-        {
-            return buyAmounts[slotIndex];
-        }
-
-        return sellAmounts[slotIndex];
-    }
-
-    private void RefreshSlotAmount(ShopSlotMode mode, int slotIndex)
-    {
-        List<ShopItemData> targetList = GetTargetList(mode);
-        ItemSlotView[] targetSlots = GetTargetSlots(mode);
-
-        if (targetList == null || targetSlots == null)
+        if (currentShopData == null || currentShopData.SellItems == null)
             return;
 
-        if (slotIndex < 0 || slotIndex >= targetList.Count || slotIndex >= targetSlots.Length)
+        if (slotIndex < 0 || slotIndex >= currentShopData.SellItems.Count)
             return;
 
-        ShopItemData shopItem = targetList[slotIndex];
+        ShopItemData shopItem = currentShopData.SellItems[slotIndex];
 
         if (shopItem == null || shopItem.ItemData == null)
             return;
 
-        int amount = GetSlotAmount(mode, slotIndex);
+        selectedItem = shopItem.ItemData;
+        selectedAmount = 1;
+    }
 
-        if (targetSlots[slotIndex] != null)
+    private void SelectPlayerSlot(int slotIndex)
+    {
+        if (currentInventory == null || currentInventory.Items == null)
+            return;
+
+        if (slotIndex < 0 || slotIndex >= currentInventory.Items.Count)
+            return;
+
+        ItemStack itemStack = currentInventory.Items[slotIndex];
+
+        if (itemStack == null || itemStack.item == null)
+            return;
+
+        selectedItem = itemStack.item;
+        selectedAmount = GetStackAmount(itemStack);
+    }
+
+    public void OnPlayerItemDoubleClicked(int slotIndex)
+    {
+        if (currentInventory == null || currentInventory.Items == null)
+            return;
+
+        if (slotIndex < 0 || slotIndex >= currentInventory.Items.Count)
+            return;
+
+        ItemStack itemStack = currentInventory.Items[slotIndex];
+
+        if (itemStack == null || itemStack.item == null)
+            return;
+
+        ItemData item = itemStack.item;
+        int amount = GetStackAmount(itemStack);
+
+        if (amount <= 1)
         {
-            targetSlots[slotIndex].SetItem(shopItem.ItemData, amount);
+            OpenSellConfirmPopup(slotIndex, 1);
+            return;
         }
-    }
 
-    /*
-    private void SetSelectedAmount(int amount)
-    {
-        selectedAmount = Mathf.Clamp(amount, minAmount, maxAmount);
-
-        RefreshSelectedPanel();
-        RefreshSelectedSlotAmount();
-    }
-    */
-    private void RefreshSelectedPanel()
-    {
-        if(selectedShopItem == null || selectedShopItem.ItemData == null)
+        if (quantityPopup == null)
         {
-            if(selectedModeText != null)
+            Debug.LogWarning("수량 선택 팝업이 연결되지 않았습니다.");
+            return;
+        }
+
+        quantityPopup.Open(
+            item.itemName,
+            amount,
+            selectedSellAmount =>
             {
-                selectedModeText.text = "선택 없음";
+                OpenSellConfirmPopup(slotIndex, selectedSellAmount);
             }
-            if(selectedItemNameText != null)
+        );
+    }
+
+    private void OpenSellConfirmPopup(int slotIndex, int amount)
+    {
+        if (confirmPopup == null)
+        {
+            Debug.LogWarning("확인 팝업이 연결되지 않았습니다.");
+            return;
+        }
+
+        ItemStack itemStack = currentInventory.Items[slotIndex];
+
+        if (itemStack == null || itemStack.item == null)
+            return;
+
+        ItemData item = itemStack.item;
+
+        string message = item.itemName + " " + amount + "개를 판매하시겠습니까?";
+
+        confirmPopup.Open(
+            message,
+            () =>
             {
-                selectedItemNameText.text = "선택한 아이템 없음";
+                SellPlayerItem(slotIndex, amount);
             }
+        );
+    }
 
-            if(selectedAmountText != null)
+    private void SellPlayerItem(int slotIndex, int amount)
+    {
+        if (currentInventory == null || currentInventory.Items == null)
+            return;
+
+        if (slotIndex < 0 || slotIndex >= currentInventory.Items.Count)
+            return;
+
+        ItemStack itemStack = currentInventory.Items[slotIndex];
+
+        if (itemStack == null || itemStack.item == null)
+            return;
+
+        ItemData item = itemStack.item;
+        int currentAmount = GetStackAmount(itemStack);
+
+        if (amount <= 0)
+            return;
+
+        if (amount > currentAmount)
+        {
+            Debug.Log("판매할 아이템 수량이 부족합니다.");
+            return;
+        }
+
+        bool success = currentInventory.RemoveItem(item, amount);
+
+        if (!success)
+        {
+            Debug.LogWarning("아이템 판매에 실패했습니다.");
+            return;
+        }
+
+        Debug.Log(item.itemName + " " + amount + "개를 판매했습니다.");
+
+        RefreshPlayerItems();
+    }
+
+    private int GetStackAmount(ItemStack itemStack)
+    {
+        return itemStack.amount;
+    }
+
+    private void RefreshSelectedMarks()
+    {
+        for (int i = 0; i < shopSlotViews.Count; i++)
+        {
+            if (shopSlotViews[i] != null)
             {
-                selectedAmountText.text = "0";
+                shopSlotViews[i].SetSelected(selectedMode == ShopSlotMode.Buy && i == selectedSlotIndex);
             }
-
-            return;
         }
 
-        if(selectedModeText != null)
+        for (int i = 0; i < playerSlotViews.Count; i++)
         {
-            selectedModeText.text = selectedMode == ShopSlotMode.Buy ? "구매" : "판매";
-        }
-
-        if(selectedItemNameText != null)
-        {
-            selectedItemNameText.text = selectedShopItem.ItemData.itemName;
-        }
-
-        if(selectedAmountText != null)
-        {
-            selectedAmountText.text = GetSlotAmount(selectedMode, selectedSlotIndex).ToString();
-        }
-    }
-
-    /*
-    private void RefreshSelectedSlotAmount()
-    {
-        if (selectedSlotIndex < 0 || selectedSlotIndex >= buySlots.Length)
-            return;
-
-        TempItemSlotView[] targetSlots = GetTargetSlots(selectedMode);
-
-        if (targetSlots == null)
-            return;
-
-        if(selectedShopItem == null || selectedShopItem.ItemData == null)
-            return;
-
-        if (buySlots[selectedSlotIndex] != null)
-        {
-            buySlots[selectedSlotIndex].SetItem(selectedShopItem.ItemData, selectedAmount);
-        }
-    }
-    */
-
-    private void RefreshSelectedMark()
-    {
-        if(buySlots != null)
-        {
-            for(int i = 0; i < buySlots.Length; i++)
+            if (playerSlotViews[i] != null)
             {
-                if (buySlots[i] != null)
-                {
-                    buySlots[i].SetSelected(selectedMode == ShopSlotMode.Buy && i == selectedSlotIndex);
-                }
+                playerSlotViews[i].SetSelected(selectedMode == ShopSlotMode.Sell && i == selectedSlotIndex);
             }
         }
-
-        if(sellSlots != null)
-        {
-            for(int i = 0; i < sellSlots.Length; i++)
-            {
-                if (sellSlots[i] != null)
-                {
-                    sellSlots[i].SetSelected(selectedMode == ShopSlotMode.Sell && i == selectedSlotIndex);
-                }
-            }
-        }
-    }
-
-    public void OnBuyButtonClicked()
-    {
-        if(selectedShopItem == null || selectedShopItem.ItemData == null)
-        {
-            Debug.Log("구매할 아이템을 선택하세요.");
-            return;
-        }
-
-        if(selectedMode != ShopSlotMode.Buy)
-        {
-            Debug.Log("구매 슬롯에서 아이템을 선택하세요.");
-            return;
-        }
-
-        int amount = GetSlotAmount(selectedMode, selectedSlotIndex);
-
-        Debug.Log(selectedShopItem.ItemData.itemName + " " + amount + "개를 구매했습니다.");
-    }
-
-    public void OnSellButtonClicked()
-    {
-        if(selectedShopItem == null || selectedShopItem.ItemData == null)
-        {
-            Debug.Log("판매할 아이템을 선택하세요.");
-            return;
-        }
-
-        if(selectedMode != ShopSlotMode.Sell)
-        {
-            Debug.Log("판매 슬롯에서 아이템을 선택하세요.");
-            return;
-        }
-
-        int amount = GetSlotAmount(selectedMode, selectedSlotIndex);
-
-        Debug.Log(selectedShopItem.ItemData.itemName + " " + amount + "개를 판매했습니다.");
-    }
-
-    private bool IsValidSlot(ShopSlotMode mode, int slotIndex)
-    {
-        List<ShopItemData> targetList = GetTargetList(mode);
-        ItemSlotView[] targetSlots = GetTargetSlots(mode);
-
-        if (targetList == null || targetSlots == null)
-            return false;
-
-        if(slotIndex < 0 || slotIndex >= targetList.Count || slotIndex >= targetSlots.Length)
-            return false;
-
-        return true;
-    }
-
-    private List<ShopItemData> GetTargetList(ShopSlotMode mode)
-    {
-        return mode == ShopSlotMode.Buy ? currentBuyItems : currentSellItems;
-    }
-
-    private ItemSlotView[] GetTargetSlots(ShopSlotMode mode)
-    {
-        return mode == ShopSlotMode.Buy ? buySlots : sellSlots;
     }
 
     private void ClearSelectedItem()
     {
         selectedSlotIndex = -1;
-        selectedShopItem = null;
+        selectedItem = null;
+        selectedAmount = 0;
 
-        RefreshSelectedMark();
-        RefreshSelectedPanel();
+        RefreshSelectedMarks();
     }
 
     public void Close()
     {
+        NPCPresenter closedNPC = currentNPC;
+
         if(panel != null)
         {
             panel.SetActive(false);
         }
 
         UIState.SetShopOpen(false);
+        UIState.SetNPCInteractionOpen(false);
+        UIState.SetInventoryOpen(false);
 
         currentShopData = null;
         currentPlayer = null;
-
-        if(currentNPC != null)
-        {
-            currentNPC.ShowInteractionMarkIfPossible();
-        }
-
         currentNPC = null;
+        currentInventory = null;
 
         ClearSelectedItem();
-        ClearAllSlots();
+        ClearSlotViews(shopSlotViews, shopContent);
+        ClearSlotViews(playerSlotViews, playerContent);
+
+        if(quantityPopup != null)
+        {
+            quantityPopup.Close();
+        }
+
+        if(confirmPopup != null)
+        {
+            confirmPopup.Close();
+        }
+
+        if(closedNPC != null)
+        {
+            closedNPC.ShowInteractionMarkIfPossible();
+        }
+
+        Debug.Log("상점 닫힘: UIState.SetShopOpen(false)");
+        UIState.DebugLogState("ShopUI.Close 이후");
     }
 }

@@ -45,36 +45,6 @@ public class ItemSlotView : MonoBehaviour,
     public event Action<SlotReference> OnSlotHovered;
     public event Action<SlotReference> OnSlotUnhovered;
 
-    // (°æ¹Î) 0707 Ãß°¡
-    private void Awake()
-    {
-        if(plusButton != null)
-        {
-            plusButton.onClick.AddListener(OnPlusButtonClicked);
-        }
-
-        if(minusButton != null)
-        {
-            minusButton.onClick.AddListener(OnMinusButtonClicked);
-        }
-
-        SetSelected(false);
-    }
-
-    // (°æ¹Î) 0707 Ãß°¡
-    private void OnDestroy()
-    {
-        if(plusButton != null)
-        {
-            plusButton.onClick.RemoveListener(OnPlusButtonClicked);
-        }
-
-        if(minusButton != null)
-        {
-            minusButton.onClick.RemoveListener(OnMinusButtonClicked);
-        }
-    }
-
     public void Initialize(SlotType slotType, int slotIndex)
     {
         // (°æ¹Î) 0707 Ãß°¡
@@ -210,29 +180,5 @@ public class ItemSlotView : MonoBehaviour,
             return;
 
         OnSlotUnhovered?.Invoke(slotReference);
-    }
-
-    // (°æ¹Î) 0707 Ãß°¡
-    private void OnPlusButtonClicked()
-    {
-        if (!isShopSlot)
-            return;
-
-        if (shopUI == null || currentItemData == null)
-            return;
-
-        shopUI.IncreaseAmountFromSlot(shopSlotMode, shopSlotIndex);
-    }
-
-    // (°æ¹Î) 0707 Ãß°¡
-    private void OnMinusButtonClicked()
-    {
-        if (!isShopSlot)
-            return;
-
-        if (shopUI == null || currentItemData == null)
-            return;
-
-        shopUI.DecreaseAmountFromSlot(shopSlotMode, shopSlotIndex);
     }
 }

@@ -193,21 +193,12 @@ public class NPCInteractionUI : MonoBehaviour
             Debug.LogWarning("씬에 ShopUI가 없습니다.");
             return;
         }
-        
-        if(panel != null)
-        {
-            panel.SetActive(false);
-        }
-
-        UIState.SetNPCInteractionOpen(false);
 
         ShopUI.Instance.Open(shopData, currentPlayer, currentNPC);
 
-        Debug.Log(currentNPC.GetNPCName() + "의 상점을 엽니다.");
-
-        if(dialogueText != null)
+        if (panel != null)
         {
-            dialogueText.text = "상점을 엽니다.";
+            panel.SetActive(false);
         }
     }
 

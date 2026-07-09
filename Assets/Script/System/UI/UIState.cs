@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public static class UIState
 {
     public static bool IsInventoryOpen { get; private set; }
@@ -28,5 +30,17 @@ public static class UIState
     public static void SetShopOpen(bool isOpen)
     {
         IsShopOpen = isOpen;
+    }
+
+    // (경민) 0709 상점 UI 오류 해결 위해 추가
+    public static void DebugLogState(string where)
+    {
+        Debug.Log(
+            where +
+            " / IsAnyUIOpen : " + IsAnyUIOpen +
+            " / Inventory : " + IsInventoryOpen +
+            " / NPC : " + IsNPCInteractionOpen +
+            " / Shop : " + IsShopOpen
+        );
     }
 }

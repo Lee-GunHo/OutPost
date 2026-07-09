@@ -76,13 +76,6 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         {
             inventoryModel = GetComponentInChildren<InventoryModel>();
         }
-
-        if(inventoryModel == null)
-        {
-#pragma warning disable CS0618
-            inventoryModel = FindObjectOfType<InventoryModel>();
-#pragma warning restore CS0618
-        }
     }
 
     private void Update()
