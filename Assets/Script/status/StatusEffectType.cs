@@ -3,8 +3,10 @@ public enum StatusEffectType
     None,
 
     // 상태이상
-    Bleeding,       // 출혈
+    Bleed,       // 출혈
     Poison,         // 중독
+    Burn,           // 화상
+    Frozen,         // 동상
     Stun,           // 기절
     Blind,          // 시야방해
     Hunger,         // 배고픔

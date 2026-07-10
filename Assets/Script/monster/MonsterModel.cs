@@ -20,6 +20,29 @@ public class MonsterModel : MonoBehaviour
     [Header("Reward Data")]
     [SerializeField] private int expReward = 20;
 
+    [Header("Status Effect Attack Data")]
+    [SerializeField] private StatusEffectType attackStatusEffectType = StatusEffectType.None;
+    [SerializeField] private float statusEffectDuration = 0f;
+    [SerializeField] private float statusEffectValue = 0f;
+    [SerializeField] private float statusEffectTickInterval = 1f;
+    [SerializeField] private int statusAttackModifier = 0;
+    [SerializeField] private int statusDefenseModifier = 0;
+    [SerializeField, Range(0f, 1f)] private float statusEffectChance = 0f;
+
+    public StatusEffectType AttackStatusEffectType => attackStatusEffectType;
+
+    public float StatusEffectDuration => statusEffectDuration;
+    public float StatusEffectValue => statusEffectValue;
+    public float StatusEffectTickInterval => statusEffectTickInterval;
+
+    public int StatusAttackModifier => statusAttackModifier;
+    public int StatusDefenseModifier => statusDefenseModifier;
+
+    public float StatusEffectChance => statusEffectChance;
+
+
+
+
     private int currentHp;
 
     public float MoveSpeed => moveSpeed;
