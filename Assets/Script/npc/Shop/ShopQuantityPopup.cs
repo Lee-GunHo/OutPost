@@ -51,7 +51,7 @@ public class ShopQuantityPopup : MonoBehaviour
         }
     }
 
-    public void Open(string itemName, int maxAmount, Action<int> onconfirm)
+    public void Open(string title, int maxAmount, Action<int> onconfirm)
     {
         this.maxAmount = Mathf.Max(1, maxAmount);
         this.onConfirm = onconfirm;
@@ -59,7 +59,7 @@ public class ShopQuantityPopup : MonoBehaviour
 
         if(titleText != null)
         {
-            titleText.text = itemName + " 몇 개를 판매하시겠습니까?";
+            titleText.text = title;
         }
 
         RefreshAmountText();
@@ -72,25 +72,13 @@ public class ShopQuantityPopup : MonoBehaviour
 
     private void Increase()
     {
-        currentAmount++;
-
-        if(currentAmount > maxAmount)
-        {
-            currentAmount = maxAmount;
-        }
-
+        currentAmount = Mathf.Min(currentAmount + 1, maxAmount);
         RefreshAmountText();
     }
 
     private void Decrease()
     {
-        currentAmount--;
-
-        if(currentAmount < 1)
-        {
-            currentAmount = 1;
-        }
-
+        currentAmount = Mathf.Max(currentAmount - 1, 1);
         RefreshAmountText();
     }
 
@@ -98,9 +86,11 @@ public class ShopQuantityPopup : MonoBehaviour
     {
         int selectedAmount = currentAmount;
 
+        Action<int> confirmAction = onConfirm;
+
         Close();
 
-        onConfirm?.Invoke(selectedAmount);
+        confirmAction?.Invoke(selectedAmount);
     }
 
     private void RefreshAmountText()

@@ -102,9 +102,18 @@ public class ShopSlotView : MonoBehaviour, IPointerClickHandler
 
         owner.SelectSlot(mode, slotIndex);
 
-        if(mode == ShopSlotMode.Sell && eventData.clickCount >= 2)
+        if(eventData.clickCount < 2)
+        {
+            return;
+        }
+
+        if(mode == ShopSlotMode.Sell)
         {
             owner.OnPlayerItemDoubleClicked(slotIndex);
+        }
+        else if(mode == ShopSlotMode.Buy)
+        {
+            owner.OnShopItemDoubleClicked(slotIndex);
         }
     }
 }

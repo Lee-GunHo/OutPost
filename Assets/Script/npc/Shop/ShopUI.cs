@@ -26,9 +26,17 @@ public class ShopUI : MonoBehaviour
     [SerializeField] private int ShopSlotCount;
     [SerializeField] private int playerSlotCount;
 
-    [Header("팝업")]
-    [SerializeField] private ShopQuantityPopup quantityPopup;
-    [SerializeField] private ShopConfirmPopup confirmPopup;
+    [Header("판매 팝업")]
+    [SerializeField] private ShopQuantityPopup quantitySellPopup;
+    [SerializeField] private ShopConfirmPopup confirmSellPopup;
+
+    [Header("구매 팝업")]
+    [SerializeField] private ShopQuantityPopup quantityBuyPopup;
+    [SerializeField] private ShopConfirmPopup confirmBuyPopup;
+
+    [Header("구매 설정")]
+    [Min(1)]
+    [SerializeField] private int maxBuyAmount = 99;
 
     [Header("버튼")]
     [SerializeField] private Button closeButton;
@@ -310,93 +318,169 @@ public class ShopUI : MonoBehaviour
             return;
 
         selectedItem = itemStack.item;
-        selectedAmount = GetStackAmount(itemStack);
+        selectedAmount = itemStack.amount;
+    }
+
+    public void OnShopItemDoubleClicked(int slotIndex)
+    {
+        ShopItemData shopItem = GetShopItem(slotIndex);
+
+        if(shopItem == null || shopItem.ItemData == null)
+            return;
+
+        if(quantityBuyPopup == null)
+        {
+            Debug.LogWarning("구매 수량 팝업이 ShopUI에 연결되지 않았습니다.");
+            return;
+        }
+
+        CloseSellPopups();
+        confirmBuyPopup?.Close();
+
+        ItemData item = shopItem.ItemData;
+        int limit = Mathf.Max(1, maxBuyAmount);
+
+        quantityBuyPopup.Open(
+            item.itemName + " 몇 개를 구매하시겠습니까?",
+            limit,
+            selectedBuyAmount => OpenBuyConfirmPopup(slotIndex, selectedBuyAmount)
+        );
+    }
+
+    private void OpenBuyConfirmPopup(int slotIndex, int amount)
+    {
+        ShopItemData shopItem = GetShopItem(slotIndex);
+
+        if(shopItem == null || shopItem.ItemData == null)
+            return;
+
+        if(confirmBuyPopup == null)
+        {
+            Debug.LogWarning("구매 확인 팝업이 ShopUI에 연결되지 않았습니다.");
+            return;
+        }
+
+        ItemData item = shopItem.ItemData;
+        int totalPrice = shopItem.BuyPrice * amount;
+        string message = item.itemName + " " + amount + "개를 구매하시겠습니까?";
+
+        if(shopItem.BuyPrice > 0)
+        {
+            message += "\n가격 : " + totalPrice;
+        }
+
+        confirmBuyPopup.Open(
+            message,
+            () => BuyShopItem(slotIndex, amount)
+        );
+    }
+
+    private void BuyShopItem(int slotIndex, int amount)
+    {
+        ShopItemData shopItem = GetShopItem(slotIndex);
+
+        if (shopItem == null || shopItem.ItemData == null)
+            return;
+
+        if(currentInventory == null)
+        {
+            Debug.LogWarning("구매 실패 : 플레이어 InventoryModel이 없습니다.");
+            return;
+        }
+
+        if (amount <= 0)
+            return;
+
+        ItemData item = shopItem.ItemData;
+
+        if(!currentInventory.CanAddItem(item, amount))
+        {
+            Debug.Log("구매 실패 : 인벤토리 공간이 부족합니다.");
+            return;
+        }
+
+        bool success = currentInventory.AddItem(item, amount);
+
+        if(!success)
+        {
+            Debug.LogWarning("아이템 구매에 실패했습니다.");
+            return;
+        }
+
+        int totalPrice = shopItem.BuyPrice * amount;
+        Debug.Log(item.itemName + " " + amount + "개를 구매했습니다. 가격 : " + totalPrice);
+
+        RefreshPlayerItems();
     }
 
     public void OnPlayerItemDoubleClicked(int slotIndex)
     {
-        if (currentInventory == null || currentInventory.Items == null)
-            return;
-
-        if (slotIndex < 0 || slotIndex >= currentInventory.Items.Count)
-            return;
-
-        ItemStack itemStack = currentInventory.Items[slotIndex];
+        ItemStack itemStack = GetPlayerItem(slotIndex);
 
         if (itemStack == null || itemStack.item == null)
             return;
 
-        ItemData item = itemStack.item;
-        int amount = GetStackAmount(itemStack);
+        CloseBuyPopups();
+        confirmSellPopup?.Close();
 
-        if (amount <= 1)
+        ItemData item = itemStack.item;
+        int amount = itemStack.amount;
+
+        if(amount <= 1)
         {
             OpenSellConfirmPopup(slotIndex, 1);
             return;
         }
 
-        if (quantityPopup == null)
+        if(quantitySellPopup == null)
         {
-            Debug.LogWarning("수량 선택 팝업이 연결되지 않았습니다.");
+            Debug.LogWarning("판매 수량 팝업이 ShopUI에 연결되지 않았습니다.");
             return;
         }
 
-        quantityPopup.Open(
-            item.itemName,
+        quantitySellPopup.Open(
+            item.itemName + " 몇 개를 판매하시겠습니까?",
             amount,
-            selectedSellAmount =>
-            {
-                OpenSellConfirmPopup(slotIndex, selectedSellAmount);
-            }
+            selectedSellAmount => OpenSellConfirmPopup(slotIndex, selectedSellAmount)
         );
     }
 
     private void OpenSellConfirmPopup(int slotIndex, int amount)
     {
-        if (confirmPopup == null)
+        ItemStack itemStack = GetPlayerItem(slotIndex);
+
+        if(itemStack == null || itemStack.item == null)
+            return;
+
+        if(confirmSellPopup == null)
         {
-            Debug.LogWarning("확인 팝업이 연결되지 않았습니다.");
+            Debug.LogWarning("판매 확인 팝업이 ShopUI에 연결되지 않았습니다.");
             return;
         }
 
-        ItemStack itemStack = currentInventory.Items[slotIndex];
-
-        if (itemStack == null || itemStack.item == null)
-            return;
-
         ItemData item = itemStack.item;
-
         string message = item.itemName + " " + amount + "개를 판매하시겠습니까?";
 
-        confirmPopup.Open(
+        confirmSellPopup.Open(
             message,
-            () =>
-            {
-                SellPlayerItem(slotIndex, amount);
-            }
+            () => SellPlayerItem(slotIndex, amount)
         );
     }
 
     private void SellPlayerItem(int slotIndex, int amount)
     {
-        if (currentInventory == null || currentInventory.Items == null)
-            return;
-
-        if (slotIndex < 0 || slotIndex >= currentInventory.Items.Count)
-            return;
-
-        ItemStack itemStack = currentInventory.Items[slotIndex];
+        ItemStack itemStack = GetPlayerItem(slotIndex);
 
         if (itemStack == null || itemStack.item == null)
             return;
 
-        ItemData item = itemStack.item;
-        int currentAmount = GetStackAmount(itemStack);
-
         if (amount <= 0)
             return;
 
-        if (amount > currentAmount)
+        ItemData item = itemStack.item;
+        int currentAmount = itemStack.amount;
+
+        if(amount > currentAmount)
         {
             Debug.Log("판매할 아이템 수량이 부족합니다.");
             return;
@@ -404,7 +488,7 @@ public class ShopUI : MonoBehaviour
 
         bool success = currentInventory.RemoveItem(item, amount);
 
-        if (!success)
+        if(!success)
         {
             Debug.LogWarning("아이템 판매에 실패했습니다.");
             return;
@@ -415,9 +499,26 @@ public class ShopUI : MonoBehaviour
         RefreshPlayerItems();
     }
 
-    private int GetStackAmount(ItemStack itemStack)
+    private ShopItemData GetShopItem(int slotIndex)
     {
-        return itemStack.amount;
+        if(currentShopData == null || currentShopData.SellItems == null)
+            return null;
+
+        if(slotIndex < 0 || slotIndex >= currentShopData.SellItems.Count)
+            return null;
+
+        return currentShopData.SellItems[slotIndex];
+    }
+
+    private ItemStack GetPlayerItem(int slotIndex)
+    {
+        if(currentInventory == null || currentInventory.Items == null)
+            return null;
+
+        if(slotIndex < 0 || slotIndex >= currentInventory.Items.Count)
+            return null;
+
+        return currentInventory.Items[slotIndex];
     }
 
     private void RefreshSelectedMarks()
@@ -448,6 +549,24 @@ public class ShopUI : MonoBehaviour
         RefreshSelectedMarks();
     }
 
+    private void CloseBuyPopups()
+    {
+        quantityBuyPopup?.Close();
+        confirmBuyPopup?.Close();
+    }
+
+    private void CloseSellPopups()
+    {
+        quantitySellPopup?.Close();
+        confirmSellPopup?.Close();
+    }
+
+    private void CloseAllPopups()
+    {
+        CloseBuyPopups();
+        CloseSellPopups();
+    }
+
     public void Close()
     {
         NPCPresenter closedNPC = currentNPC;
@@ -466,19 +585,10 @@ public class ShopUI : MonoBehaviour
         currentNPC = null;
         currentInventory = null;
 
+        CloseAllPopups();
         ClearSelectedItem();
         ClearSlotViews(shopSlotViews, shopContent);
         ClearSlotViews(playerSlotViews, playerContent);
-
-        if(quantityPopup != null)
-        {
-            quantityPopup.Close();
-        }
-
-        if(confirmPopup != null)
-        {
-            confirmPopup.Close();
-        }
 
         if(closedNPC != null)
         {

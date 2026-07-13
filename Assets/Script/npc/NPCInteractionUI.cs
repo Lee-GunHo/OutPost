@@ -21,6 +21,7 @@ public class NPCInteractionUI : MonoBehaviour
     [SerializeField] private Button dialogueButton;
     [SerializeField] private Button shopButton;
     [SerializeField] private Button questButton;
+    [SerializeField] private TMP_Text questButtonText;
     [SerializeField] private Button closeButton;
 
     private NPCPresenter currentNPC;
@@ -37,6 +38,11 @@ public class NPCInteractionUI : MonoBehaviour
         }
 
         Instance = this;
+        
+        if(questButtonText == null && questButton != null)
+        {
+            questButtonText = questButton.GetComponentInChildren<TMP_Text>(true);
+        }
 
         if (panel != null)
         {
@@ -106,6 +112,7 @@ public class NPCInteractionUI : MonoBehaviour
         if (questButton != null && currentNPC != null)
         {
             questButton.gameObject.SetActive(currentNPC.CanGiveQuest());
+            RefreshQuestButtonText();
         }
     }
 
@@ -244,10 +251,35 @@ public class NPCInteractionUI : MonoBehaviour
             Debug.Log("퀘스트 수락 : " + questData.QuestTitle);
             Debug.Log("필요 아이템 : " + questData.RequiredItem.itemName + " x " + questData.RequiredAmount);
 
+            if(dialogueText != null)
+            {
+                dialogueText.text = "퀘스트를 수락했습니다.";
+            }
+
+            RefreshQuestButtonText();
             return;
         }
 
         TryCompleteQuest(questData);
+    }
+
+    private void RefreshQuestButtonText()
+    {
+        if (questButtonText == null || currentNPC == null)
+            return;
+
+        if(currentNPC.IsQuestCompleted())
+        {
+            questButtonText.text = "퀘스트 완료됨";
+        }
+        else if(currentNPC.IsQuestAccepted())
+        {
+            questButtonText.text = "퀘스트 완료하기";
+        }
+        else
+        {
+            questButtonText.text = "퀘스트 받기";
+        }
     }
 
     private void TryCompleteQuest(QuestData questData)
@@ -282,6 +314,12 @@ public class NPCInteractionUI : MonoBehaviour
                 currentAmount + " / " + requiredAmount
                 );
 
+            if(dialogueText != null)
+            {
+                dialogueText.text = requiredItem.itemName + "이(가) 부족합니다. " +
+                    currentAmount + " / " + requiredAmount;
+            }
+
             return;
         }
 
@@ -308,8 +346,14 @@ public class NPCInteractionUI : MonoBehaviour
         }
 
         currentNPC.CompleteQuest();
+        RefreshQuestButtonText();
 
         Debug.Log("퀘스트 완료 : " + questData.QuestTitle);
+
+        if(dialogueText != null)
+        {
+            dialogueText.text = "퀘스트를 완료했습니다!";
+        }
 
         if(rewardItem != null && rewardAmount > 0)
         {
