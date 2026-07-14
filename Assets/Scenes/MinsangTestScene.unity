@@ -857,8 +857,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: wallPrefab
+      value: 
+      objectReference: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: floorPrefab
+      value: 
+      objectReference: {fileID: 8396648327956248959, guid: 41c9ab4bcc9a28544bf32f6d52ce91b0, type: 3}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: wallPercent
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: wallYOffset
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: floorYOffset
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2906951323975011249, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: player
@@ -911,7 +927,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1026458948300079404, guid: ef596e326168e6848907eeeae87a7491, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1026458948300079404, guid: ef596e326168e6848907eeeae87a7491, type: 3}
       propertyPath: m_LocalPosition.z

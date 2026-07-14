@@ -3009,6 +3009,7 @@ MonoBehaviour:
   dialogueButton: {fileID: 6001972345445904247}
   shopButton: {fileID: 2802562634925586833}
   questButton: {fileID: 6894002108663301198}
+  questButtonText: {fileID: 0}
   closeButton: {fileID: 1013611216392061681}
 --- !u!1 &6975466808170875215
 GameObject:

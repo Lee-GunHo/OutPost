@@ -34,6 +34,7 @@ Transform:
   - {fileID: 7293994639606909487}
   - {fileID: 2605856091981686182}
   - {fileID: 6304360298293544800}
+  - {fileID: 1530720896029045200}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2264084145399811000
@@ -78,6 +79,9 @@ GameObject:
   - component: {fileID: 4632670754745269554}
   - component: {fileID: 4499239461406420166}
   - component: {fileID: 7554378811232708264}
+  - component: {fileID: 8665865438965783495}
+  - component: {fileID: 745026615524678311}
+  - component: {fileID: 908441844663230652}
   m_Layer: 0
   m_Name: InventoryManager
   m_TagString: Untagged
@@ -126,15 +130,75 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryPresenter
   inventoryModel: {fileID: 4499239461406420166}
-  equipmentModel: {fileID: 0}
+  equipmentModel: {fileID: 8665865438965783495}
   inventoryView: {fileID: 0}
   equipmentView: {fileID: 0}
   inventoryPanel: {fileID: 0}
-  inputManager: {fileID: 0}
+  hotbarPresenter: {fileID: 745026615524678311}
+  inputManager: {fileID: 1963133426766121305}
   playerPresenter: {fileID: 0}
+  playerModel: {fileID: 0}
   wood: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
   stone: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
   smileArmor: {fileID: 11400000, guid: dc3de38e89f5e57439f73ab04601ea1a, type: 2}
+--- !u!114 &8665865438965783495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3267181070622964672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd06b0a68d2e5d543bd1c9181ec93ffb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentModel
+  weapon:
+    item: {fileID: 0}
+    amount: 0
+  head:
+    item: {fileID: 0}
+    amount: 0
+  armor:
+    item: {fileID: 0}
+    amount: 0
+  shoes:
+    item: {fileID: 0}
+    amount: 0
+  ring:
+    item: {fileID: 0}
+    amount: 0
+  necklace:
+    item: {fileID: 0}
+    amount: 0
+--- !u!114 &745026615524678311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3267181070622964672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be2f0220b8fa74540a465daeeaf2568e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HotbarPresenter
+  hotbarModel: {fileID: 908441844663230652}
+  hotbarView: {fileID: 0}
+  inventoryPresenter: {fileID: 7554378811232708264}
+--- !u!114 &908441844663230652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3267181070622964672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cee37eaa5d4d7c5499fc5b8148ce247c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HotbarModel
+  maxSlotCount: 8
 --- !u!1 &5092765097817404540
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,11 +244,69 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
   player: {fileID: 0}
-  chunkParent: {fileID: 0}
-  generator: {fileID: 0}
+  chunkParent: {fileID: 2605856091981686182}
+  generator: {fileID: 2714469394036554109}
   chunkSize: 16
   viewDistance: 2
   globalSeed: 1234
+--- !u!1 &6252360756361882342
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1530720896029045200}
+  - component: {fileID: 749635384692914969}
+  m_Layer: 0
+  m_Name: MonsterSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1530720896029045200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6252360756361882342}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2346226157108010335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &749635384692914969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6252360756361882342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e42e2c5af451a4847b99b645cbd7152d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
+  player: {fileID: 0}
+  monsterSpawnDatas:
+  - monsterPrefab: {fileID: 5159088055879067741, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
+    spawnChance: 1
+  monsterParent: {fileID: 0}
+  spawnInterval: 1
+  spawnCount: 1
+  safeRadius: 5
+  spawnRadius: 12
+  maxAliveMonsterCount: 20
+  spawnCheckRadius: 0.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &7579109593351765646
 GameObject:
   m_ObjectHideFlags: 0
@@ -229,13 +351,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f271c915ccc6c9b49a495af11f7a85d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeedMapGenerator
-  floorPrefab: {fileID: 5465482379942483117, guid: f3acf6f6ba416f44992ad58b63e61df7, type: 3}
-  wallPrefab: {fileID: 7505041049709611239, guid: 680f5ae53811529439ce3688134d0b41, type: 3}
-  wallPercent: 30
+  floorPrefab: {fileID: 8396648327956248959, guid: 41c9ab4bcc9a28544bf32f6d52ce91b0, type: 3}
+  wallPrefab: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}
+  wallPercent: 35
   cellSize: 1
-  wallYOffset: 1.9
-  floorYOffset: 0
-  safeRadius: 5
+  wallYOffset: 0.5
+  floorYOffset: -0.1
+  safeRadius: 10
   playerStartPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &8327011349679937219
 GameObject:
