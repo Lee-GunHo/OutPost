@@ -16,7 +16,7 @@ MonoBehaviour:
   attackBonus: 0
   defenseBonus: 0
   moveSpeedBonus: 0
-  itemID: 0
+  itemID: 5
   itemName: Silver
   itemType: 7
   itemGrade: 0

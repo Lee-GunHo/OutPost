@@ -10,17 +10,17 @@ public class ChunkManager : MonoBehaviour
     [Tooltip("플레이어의 위치를 알기 위해 필요함")]
     public Transform player;
 
-    // 생성된 청크들을 보기 좋게 정리하기 위한 부모 오브젝트 자리
+    [Tooltip("생성된 청크들을 정리할 부모 오브젝트")]
     public Transform chunkParent;
 
-    // 실제 청크 내부의 Tilemap과 타일 생성을 담당하는 스크립트 자리
+    [Tooltip("실제 청크 오브젝트 생성을 담당하는 스크립트")]
     public SeedMapGenerator generator;
 
     [Header("Chunk Settings")]
-    [Tooltip("청크 하나의 크기")]
+    [Tooltip("청크 한 변의 타일 개수")]
     public int chunkSize = 16;
 
-    [Tooltip("플레이어 주변 몇 청크까지")]
+    [Tooltip("플레이어 주변 몇 청크까지 유지할지")]
     public int viewDistance = 2;
 
     [Header("Seed Settings")]
@@ -39,8 +39,27 @@ public class ChunkManager : MonoBehaviour
     // Value : 실제 청크 오브젝트
     private Dictionary<Vector2Int, GameObject> loadedChunks = new Dictionary<Vector2Int, GameObject>();
 
-    void Start()
+    private void Start()
     {
+        if(player == null)
+        {
+            Debug.LogError("ChunkManager 오류 : Player가 연결되지 않았습니다.");
+            enabled = false;
+            return;
+        }
+
+        if(generator == null)
+        {
+            Debug.LogError("ChunkManager 오류 : SeedMapGenerator가 연결되지 않았습니다.");
+            enabled = false;
+            return;
+        }
+
+        // 청크가 생성되기 전에 현재 시드의 파괴 기록을 먼저 불러온다.
+        ChunkModificationSaveManager saveManager = ChunkModificationSaveManager.GetOrCreate();
+
+        saveManager.InitializeWorld(globalSeed);
+
         // 처음엔 lastChunkCoord를 말이 안되는 값으로 설정해야
         // 게임 시작 직후 무조건 청크가 한 번 생성됨.
         lastChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
@@ -52,20 +71,16 @@ public class ChunkManager : MonoBehaviour
         lastChunkCoord = GetChunkCoordFromPosition(player.position);
     }
 
-    void Update()
+    private void Update()
     {
         // 현재 플레이어 위치를 청크 좌표로 변환
         currentChunkCoord = GetChunkCoordFromPosition(player.position);
 
-        // 플레이어가 이전과 같은 청크에 있으면 청크를 다시 검사할 필요가 없음.
-        // 다른 청크로 넘어 갔을 대 언로드/로드 갱신
-        if(currentChunkCoord != lastChunkCoord)
-        {
-            UpdateChunks();
+        if (currentChunkCoord == lastChunkCoord)
+            return;
 
-            // 현재 청크 좌표를 마지막 청크 좌표로 저장.
-            lastChunkCoord = currentChunkCoord;
-        }
+        UpdateChunks();
+        lastChunkCoord = currentChunkCoord;
     }
 
     /// <summary>
@@ -75,6 +90,10 @@ public class ChunkManager : MonoBehaviour
     /// <returns></returns>
     private Vector2Int GetChunkCoordFromPosition(Vector3 position)
     {
+        float currentCellSize = generator != null ? generator.cellSize : 1f;
+
+        float chunkWorldSize = chunkSize * currentCellSize;
+
         int chunkX = Mathf.FloorToInt(position.x / chunkSize);
         int chunkZ = Mathf.FloorToInt(position.z / chunkSize);
 
@@ -93,12 +112,12 @@ public class ChunkManager : MonoBehaviour
         // 1. 플레이어 주변 청크 생성
         for(int x = -viewDistance; x <= viewDistance; x++)
         {
-            for(int y = -viewDistance; y <= viewDistance; y++)
+            for(int z = -viewDistance; z <= viewDistance; z++)
             {
                 // 현재 플레이어 청크 기준으로 주변 청크 좌표
                 Vector2Int coord = new Vector2Int(
                     currentChunkCoord.x + x,
-                    currentChunkCoord.y + y
+                    currentChunkCoord.y + z
                 );
 
                 // 이미 생성된 청크라면 다시 만들지 않음.
@@ -118,14 +137,15 @@ public class ChunkManager : MonoBehaviour
         {
             // 현재 플레이어 청크와 해당 청크 사이의 거리
             int distanceX = Mathf.Abs(chunk.Key.x - currentChunkCoord.x);
-            int distanceY = Mathf.Abs(chunk.Key.y - currentChunkCoord.y);
+            int distanceZ = Mathf.Abs(chunk.Key.y - currentChunkCoord.y);
 
-            // viewDistance의 범위 밖이면 제거 대상임.
-            if(distanceX > viewDistance || distanceY > viewDistance)
-            {
+            if (distanceX <= viewDistance && distanceZ <= viewDistance)
+                continue;
+
+            if(chunk.Value != null) 
                 Destroy(chunk.Value);
-                chunksToRemove.Add(chunk.Key);
-            }
+
+            chunksToRemove.Add(chunk.Key);
         }
 
         // 실제 Dictionary에서 제거
@@ -145,16 +165,17 @@ public class ChunkManager : MonoBehaviour
             globalSeed
         );
 
-        // 보기 좋게 이름 지정
-        chunkObject.name = "Chunk " + chunkCoord;
-
-        // chunkParent가 연결되어 있으면 그 아래에 청크 넣기
-        if(chunkParent != null)
+        if(chunkObject == null)
         {
-            chunkObject.transform.parent = chunkParent;
+            Debug.LogError("청크 생성 실패 : " + chunkCoord);
+            return;
         }
 
-        // 생성된 청크를 Dictionary에 등록
+        chunkObject.name = "Chunk " + chunkCoord;
+
+        if (chunkParent != null)
+            chunkObject.transform.SetParent(chunkParent, true);
+
         loadedChunks.Add(chunkCoord, chunkObject);
     }
 }

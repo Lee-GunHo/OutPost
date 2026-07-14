@@ -666,63 +666,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2202724a92ecf2745bd7209054617520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIInputManager
---- !u!1001 &1006361949
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5159088055879067741, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_Name
-      value: Monster_Main
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
 --- !u!114 &1247266289 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2632601093522406277, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
@@ -746,6 +689,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: System_Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 745026615524678311, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: hotbarView
+      value: 
+      objectReference: {fileID: 9188674991131359566}
     - target: {fileID: 2346226157108010335, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 784.0749
@@ -791,6 +738,10 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: treePrefab
+      value: 
+      objectReference: {fileID: 2842405900904198630, guid: c3e8a0b1599825d4a9fa6b456469724a, type: 3}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: wallPrefab
       value: 
       objectReference: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}
@@ -810,6 +761,30 @@ PrefabInstance:
       propertyPath: floorYOffset
       value: -0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: dirtWallPrefab
+      value: 
+      objectReference: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: goldWallPrefab
+      value: 
+      objectReference: {fileID: 5638992812030455425, guid: e365c2a0a1ca0f8468e4de5d79e964b4, type: 3}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: stoneWallPrefab
+      value: 
+      objectReference: {fileID: 1903153408827292549, guid: 1f1b9fee778fab4419d48e2fee072e27, type: 3}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: treeFillPercent
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: copperWallPrefab
+      value: 
+      objectReference: {fileID: 1069697998713221066, guid: 20a8bbb8fe1155f4280556681d49101f, type: 3}
+    - target: {fileID: 2714469394036554109, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: silverWallPrefab
+      value: 
+      objectReference: {fileID: 8317466132184921900, guid: 562a606324ba6de40a402e5fd82ec9ab, type: 3}
     - target: {fileID: 2906951323975011249, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: player
       value: 
@@ -867,7 +842,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2144794519}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6252360756361882342, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3267181070622964672, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
@@ -1272,5 +1248,4 @@ SceneRoots:
   - {fileID: 1405710166}
   - {fileID: 7953957928210945419}
   - {fileID: 735650743}
-  - {fileID: 1006361949}
   - {fileID: 4511418152505063923}

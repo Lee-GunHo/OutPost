@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67be975ce9123fb41ba77dbf5dccaf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableWall
-  dropItemPrefab: {fileID: 9144331305896731867, guid: dcee0e4f51d48f9409e8f5e3609d25b5, type: 3}
+  dropItemPrefab: {fileID: 9170619911380639485, guid: 99fb455f988b0114995edcd59a2b768b, type: 3}
   minDropCount: 1
   maxDropCount: 3
   dropSpread: 0.3

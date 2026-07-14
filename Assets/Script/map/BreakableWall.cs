@@ -1,49 +1,202 @@
 using UnityEngine;
 
+/// <summary>
+/// 절차적으로 생성된 벽과 나무의 공통 파괴 동작
+/// 생성 시 전달받은 월드 타일 좌표를 그대로 저장 키로 사용
+/// </summary>
 public class BreakableWall : MonoBehaviour
 {
     [Header("Drop Setting")]
-    [Tooltip("벽이 부서질 때 떨어질 아이템 프리팹")]
+    [Tooltip("파괴될 때 떨어질 아이템 프리팹")]
     public GameObject dropItemPrefab;
 
-    [Tooltip("아이템이 몇 개 떨어지는지")]
+    [Tooltip("아이템 최소 드롭 개수")]
     public int minDropCount = 1;
+
+    [Tooltip("아이템 최대 드롭 개수")]
     public int maxDropCount = 3;
 
-    [Tooltip("아이템과 벽 사이 간격")]
+    [Tooltip("아이템과 오브젝트 사이의 드롭 간격")]
     public float dropSpread = 0.3f;
 
-    /// <summary>
-    /// 벽을 부수는 함수
-    /// PlayerInteractor.cs에서 호출됨.
-    /// </summary>
+    [Header("Debug")]
+    [SerializeField] private bool showSaveDebugLog = true;
+
+    private bool hasGeneratedIdentity;
+    private bool isBroken;
+
+    private int worldSeed;
+    private Vector2Int chunkCoord;
+    private Vector2Int localCellCoord;
+    private Vector2Int globalCellCoord;
+    private string generatedObjectType = ChunkModificationSaveManager.ObjectTypeWall;
+    private GameObject generatedRootObject;
+
+    public void InitializeGeneratedWall(
+        int worldSeed,
+        Vector2Int chunkCoord,
+        Vector2Int localCellCoord,
+        Vector2Int globalCellCoord,
+        GameObject generatedRootObject = null)
+    {
+        InitializeGeneratedObject(
+            worldSeed,
+            chunkCoord,
+            localCellCoord,
+            globalCellCoord,
+            ChunkModificationSaveManager.ObjectTypeWall,
+            generatedRootObject
+        );
+    }
+
+    public void InitializeGeneratedTree(
+        int worldSeed,
+        Vector2Int chunkCoord,
+        Vector2Int localCellCoord,
+        Vector2Int globalCellCoord,
+        GameObject generatedRootObject = null)
+    {
+        InitializeGeneratedObject(
+            worldSeed,
+            chunkCoord,
+            localCellCoord,
+            globalCellCoord,
+            ChunkModificationSaveManager.ObjectTypeTree,
+            generatedRootObject
+        );
+    }
+
+    // 이전 SeedMapGenerator와의 컴파일 호환을 위한 오버로드
+    public void InitializeGeneratedWall(
+        int worldSeed,
+        Vector2Int chunkCoord,
+        Vector2Int localCellCoord,
+        GameObject generatedRootObject = null)
+    {
+        InitializeGeneratedWall(
+            worldSeed,
+            chunkCoord,
+            localCellCoord,
+            localCellCoord,
+            generatedRootObject
+        );
+    }
+
+    public void InitializeGeneratedTree(
+        int worldSeed,
+        Vector2Int chunkCoord,
+        Vector2Int localCellCoord,
+        GameObject generatedRootObject = null)
+    {
+        InitializeGeneratedTree(
+            worldSeed,
+            chunkCoord,
+            localCellCoord,
+            localCellCoord,
+            generatedRootObject
+        );
+    }
+
+    private void InitializeGeneratedObject(
+        int worldSeed,
+        Vector2Int chunkCoord,
+        Vector2Int localCellCoord,
+        Vector2Int globalCellCoord,
+        string objectType,
+        GameObject generatedRootObject)
+    {
+        this.worldSeed = worldSeed;
+        this.chunkCoord = chunkCoord;
+        this.localCellCoord = localCellCoord;
+        this.globalCellCoord = globalCellCoord;
+        generatedObjectType = objectType;
+
+        this.generatedRootObject = generatedRootObject != null
+            ? generatedRootObject
+            : gameObject;
+
+        hasGeneratedIdentity = true;
+    }
+
     public void Break()
     {
-        // 1개 ~ 3개 랜덤 개수 결정
-        int randomDropCount = Random.Range(minDropCount, maxDropCount + 1);
+        if (isBroken)
+            return;
 
-        for(int i = 0; i < randomDropCount; i++)
+        isBroken = true;
+
+        if (!hasGeneratedIdentity)
         {
-            // 떨어질 아이템 프리팹이 연결되어 있을 때만 생성
-            if(dropItemPrefab != null)
+            Debug.LogWarning(
+                $"{gameObject.name}: 생성 좌표가 전달되지 않아 파괴 상태를 저장할 수 없습니다."
+            );
+        }
+        else
+        {
+            ChunkModificationSaveManager saveManager =
+                ChunkModificationSaveManager.GetOrCreate();
+
+            saveManager.RegisterDestroyedObject(
+                worldSeed,
+                chunkCoord,
+                localCellCoord,
+                globalCellCoord,
+                generatedObjectType
+            );
+
+            bool saveVerified = saveManager.IsObjectDestroyed(
+                worldSeed,
+                chunkCoord,
+                localCellCoord,
+                globalCellCoord,
+                generatedObjectType
+            );
+
+            if (!saveVerified)
             {
-                // 기본 드랍 위치는 현재 벽의 위치
-                Vector3 dropPosition = transform.position;
-
-                // 아이템이 벽 중심에 겹치지 않도록
-                // XZ 평면에서 살짝 랜덤하게 위치를 바꿈.
-                dropPosition.x += Random.Range(-dropSpread, dropSpread);
-                dropPosition.z += Random.Range(-dropSpread, dropSpread);
-
-                // 아이템이 바닥에 뭍히지 않도록 Y 위치를 살짝 올림
-                dropPosition.y = 0.5f;
-
-                // 아이템 프리팹을 실제 씬에 생성
-                Instantiate(dropItemPrefab, dropPosition, Quaternion.identity);
+                Debug.LogError(
+                    $"[{generatedObjectType} 저장 검증 실패] " +
+                    $"GlobalCell({globalCellCoord.x}, {globalCellCoord.y})"
+                );
+            }
+            else if (showSaveDebugLog)
+            {
+                Debug.Log(
+                    $"[{generatedObjectType} 저장 검증 완료] " +
+                    $"Seed({worldSeed}) " +
+                    $"GlobalCell({globalCellCoord.x}, {globalCellCoord.y}) " +
+                    $"Chunk({chunkCoord.x}, {chunkCoord.y}) " +
+                    $"Cell({localCellCoord.x}, {localCellCoord.y})"
+                );
             }
         }
 
-        // 아이템을 생성한 뒤, 벽 오브젝트 제거
-        Destroy(gameObject);
+        SpawnDrops();
+
+        GameObject destroyTarget = generatedRootObject != null
+            ? generatedRootObject
+            : gameObject;
+
+        Destroy(destroyTarget);
+    }
+
+    private void SpawnDrops()
+    {
+        int minimum = Mathf.Max(0, minDropCount);
+        int maximum = Mathf.Max(minimum, maxDropCount);
+        int randomDropCount = Random.Range(minimum, maximum + 1);
+
+        for (int i = 0; i < randomDropCount; i++)
+        {
+            if (dropItemPrefab == null)
+                continue;
+
+            Vector3 dropPosition = transform.position;
+            dropPosition.x += Random.Range(-dropSpread, dropSpread);
+            dropPosition.z += Random.Range(-dropSpread, dropSpread);
+            dropPosition.y = 0.5f;
+
+            Instantiate(dropItemPrefab, dropPosition, Quaternion.identity);
+        }
     }
 }
