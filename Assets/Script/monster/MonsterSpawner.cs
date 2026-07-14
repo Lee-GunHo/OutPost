@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MonsterSpawner : MonoBehaviour
 {
@@ -54,6 +55,27 @@ public class MonsterSpawner : MonoBehaviour
                 player = playerObject.transform;
             }
         }
+    }
+
+    private void Start()
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Player가 없습니다.");
+            return;
+        }
+
+        if (NavMesh.SamplePosition(player.position, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+        {
+            Debug.Log("플레이어 주변 NavMesh 찾음: " + hit.position);
+        }
+        else
+        {
+            Debug.LogWarning("플레이어 주변에도 NavMesh가 없습니다.");
+        }
+
+        NavMeshTriangulation triangulation = NavMesh.CalculateTriangulation();
+        Debug.Log("현재 NavMesh 정점 수: " + triangulation.vertices.Length);
     }
 
     private void Update()
@@ -151,22 +173,48 @@ public class MonsterSpawner : MonoBehaviour
 
     private bool TryGetSpawnPosition(out Vector3 spawnPosition)
     {
-        int maxTryCount = 30;
+        int maxTryCount = 100;
+
+        int navMeshFailCount = 0;
+        int blockedFailCount = 0;
 
         for (int i = 0; i < maxTryCount; i++)
         {
             Vector3 candidatePosition = GetRandomPositionAroundPlayer();
 
-            if (IsBlocked(candidatePosition))
+            if (!TryGetNearestNavMeshPosition(candidatePosition, out Vector3 navMeshPosition))
             {
+                navMeshFailCount++;
                 continue;
             }
 
-            spawnPosition = candidatePosition;
+            if (IsBlocked(navMeshPosition))
+            {
+                blockedFailCount++;
+                continue;
+            }
+
+            spawnPosition = navMeshPosition;
             return true;
         }
 
+        Debug.LogWarning($"스폰 위치 찾기 실패 - NavMesh 실패: {navMeshFailCount}, 장애물 실패: {blockedFailCount}");
+
         spawnPosition = Vector3.zero;
+        return false;
+    }
+
+    private bool TryGetNearestNavMeshPosition(Vector3 position, out Vector3 navMeshPosition)
+    {
+        float searchRadius = 3f;
+
+        if (NavMesh.SamplePosition(position, out NavMeshHit hit, searchRadius, NavMesh.AllAreas))
+        {
+            navMeshPosition = hit.position;
+            return true;
+        }
+
+        navMeshPosition = position;
         return false;
     }
 

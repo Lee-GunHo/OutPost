@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MonsterPresenter : MonoBehaviour, IDamageable
 {
@@ -15,11 +16,24 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     public bool IsDead => monsterModel.IsDead;
     public int ExpReward => monsterModel.ExpReward;
 
+    private bool isDeathProcessed;
+
+    [Header("Navigation")]
+    [SerializeField] private NavMeshAgent agent;
+
     private void Awake()
     {
         monsterModel = GetComponent<MonsterModel>();
         stateManager = GetComponent<MonsterStateManager>();
         rigid = GetComponent<Rigidbody>();
+        agent = GetComponent<NavMeshAgent>();
+
+        if (agent != null && monsterModel != null)
+        {
+            agent.speed = monsterModel.MoveSpeed;
+            agent.stoppingDistance = monsterModel.AttackRange * 0.8f;
+            agent.updateRotation = true;
+        }
     }
 
     private void Start()
@@ -76,16 +90,38 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
             return;
         }
 
-        Vector3 direction = playerTransform.position - transform.position;
-        direction.y = 0f;
-        direction = direction.normalized;
+        if (agent == null)
+        {
+            Debug.LogWarning("NavMeshAgent가 없습니다.");
+            StopMove();
+            return;
+        }
 
-        rigid.linearVelocity = direction * MoveSpeed;
+        if (!agent.isOnNavMesh)
+        {
+            Debug.LogWarning("몬스터가 NavMesh 위에 있지 않습니다.");
+            StopMove();
+            return;
+        }
+
+        agent.isStopped = false;
+        agent.speed = monsterModel.MoveSpeed;
+        agent.stoppingDistance = monsterModel.AttackRange * 0.8f;
+        agent.SetDestination(playerTransform.position);
     }
 
     public void StopMove()
     {
-        rigid.linearVelocity = Vector3.zero;
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        if (rigid != null)
+        {
+            rigid.linearVelocity = Vector3.zero;
+        }
     }
 
     public void KnockbackFromPlayer()
@@ -173,13 +209,33 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     public void Dead()
     {
+        if (isDeathProcessed)
+        {
+            return;
+        }
+
+        isDeathProcessed = true;
+
         StopMove();
 
         Debug.Log("몬스터 사망");
 
         GiveExpToPlayer();
 
+        AddKillProgress();
+
         Destroy(gameObject, 1f);
+    }
+
+    private void AddKillProgress()
+    {
+        if (GameProgressManager.Instance == null)
+        {
+            Debug.LogWarning("GameProgressManager가 없습니다.");
+            return;
+        }
+
+        GameProgressManager.Instance.AddNormalMonsterKill();
     }
 
     private void GiveExpToPlayer()
