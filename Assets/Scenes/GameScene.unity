@@ -246,6 +246,56 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &138092545
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 138092546}
+  - component: {fileID: 138092547}
+  m_Layer: 0
+  m_Name: GameProgressManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &138092546
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138092545}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2050029577}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &138092547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138092545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b05fd1e802d433f4e8fe3a8c1059b52e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameProgressManager
+  normalMonsterKillCount: 0
+  bossKillCount: 0
+  bossKilled: 0
+  raidClearCount: 0
+  progressLevel: 0
+  normalMonsterKillRequiredForProgress: 10
 --- !u!114 &269063969 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2642659949904781940, guid: b2eafeb202ce91a499e859b6cc78f24f, type: 3}
@@ -368,8 +418,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 100266119160920320, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 330207037}
   m_SourcePrefab: {fileID: 100100000, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+--- !u!1 &330207028 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100266119160920320, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+  m_PrefabInstance: {fileID: 273095477}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &330207037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330207028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b05fd1e802d433f4e8fe3a8c1059b52e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameProgressManager
+  normalMonsterKillCount: 0
+  bossKillCount: 0
+  bossKilled: 0
+  raidClearCount: 0
+  progressLevel: 0
+  normalMonsterKillRequiredForProgress: 10
 --- !u!4 &400875003 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8167213004136463254, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
@@ -719,6 +795,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2064798364}
     m_Modifications:
+    - target: {fileID: 5109239218376596851, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5109239218376596851, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5159088055879067741, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
       propertyPath: m_Name
       value: Monster_Main
@@ -858,7 +942,10 @@ PrefabInstance:
       objectReference: {fileID: 2144794519}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 2346226157108010335, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 138092546}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
 --- !u!114 &1669818387 stripped
@@ -872,6 +959,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 535daf6ef6fc0f54e9647b18e8bbd6a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentView
+--- !u!4 &2050029577 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2346226157108010335, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+  m_PrefabInstance: {fileID: 1405710166}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2064798363
 GameObject:
   m_ObjectHideFlags: 0
