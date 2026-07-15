@@ -47,10 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67be975ce9123fb41ba77dbf5dccaf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableWall
-  dropItemPrefab: {fileID: 9170619911380639485, guid: 99fb455f988b0114995edcd59a2b768b, type: 3}
+  dropItemPrefab: {fileID: 3457806078259381087, guid: 204547259d0312a49bbfae97e901832f, type: 3}
   minDropCount: 1
   maxDropCount: 3
   dropSpread: 0.3
+  showSaveDebugLog: 1
 --- !u!65 &2056544052396425067
 BoxCollider:
   m_ObjectHideFlags: 0

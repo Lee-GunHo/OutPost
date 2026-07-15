@@ -23,6 +23,7 @@ public class BreakableWall : MonoBehaviour
     [SerializeField] private bool showSaveDebugLog = true;
 
     private bool hasGeneratedIdentity;
+    private bool isPlayerPlaced;
     private bool isBroken;
 
     private int worldSeed;
@@ -64,6 +65,27 @@ public class BreakableWall : MonoBehaviour
             ChunkModificationSaveManager.ObjectTypeTree,
             generatedRootObject
         );
+    }
+
+    public void InitializePlacedWall(
+        int worldSeed,
+        Vector2Int chunkCoord,
+        Vector2Int localCellCoord,
+        Vector2Int globalCellCoord,
+        GameObject generatedRootObject = null)
+    {
+        this.worldSeed = worldSeed;
+        this.chunkCoord = chunkCoord;
+        this.localCellCoord = localCellCoord;
+        this.globalCellCoord = globalCellCoord;
+        generatedObjectType = ChunkModificationSaveManager.ObjectTypeWall;
+
+        this.generatedRootObject = generatedRootObject != null
+            ? generatedRootObject
+            : gameObject;
+
+        hasGeneratedIdentity = true;
+        isPlayerPlaced = true;
     }
 
     // 이전 SeedMapGenerator와의 컴파일 호환을 위한 오버로드
@@ -116,6 +138,7 @@ public class BreakableWall : MonoBehaviour
             : gameObject;
 
         hasGeneratedIdentity = true;
+        isPlayerPlaced = false;
     }
 
     public void Break()
@@ -130,6 +153,20 @@ public class BreakableWall : MonoBehaviour
             Debug.LogWarning(
                 $"{gameObject.name}: 생성 좌표가 전달되지 않아 파괴 상태를 저장할 수 없습니다."
             );
+        }
+        else if(isPlayerPlaced)
+        {
+            bool removed = PlacedBlockSaveManager
+                .GetOrCreate()
+                .RemovePlacedBlock(worldSeed, globalCellCoord);
+
+            if(!removed)
+            {
+                Debug.LogWarning(
+                    $"설치 블록 저장 기록을 찾지 못했습니다. " +
+                    $"GlobalCell({globalCellCoord.x}, {globalCellCoord.y})"
+                );
+            }
         }
         else
         {

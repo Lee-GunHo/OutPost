@@ -20,7 +20,9 @@ MonoBehaviour:
   itemName: Dirt
   itemType: 7
   itemGrade: 0
-  toolType: 0
+  toolType: 6
   icon: {fileID: 21300000, guid: 5a836737288d0e24eadb98830f644888, type: 3}
   description: "\uD759\uD759"
+  placeablePrefab: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}
+  placeableYOffset: 0.5
   maxStack: 99

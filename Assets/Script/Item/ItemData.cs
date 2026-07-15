@@ -52,6 +52,13 @@ public class ItemData : ScriptableObject
     [TextArea]
     public string description;
 
+    [Header("Placeable Block")]
+    [Tooltip("ToolType이 Placeable일 때 월드에 생성할 벽/블록 프리팹")]
+    public GameObject placeablePrefab;
+
+    [Tooltip("바닥 기준 설치 높이. 기존 벽의 wallYOffset과 같은 값으로 맞추세요.")]
+    public float placeableYOffset = 1f;
+
 
     public int maxStack = 99;
 

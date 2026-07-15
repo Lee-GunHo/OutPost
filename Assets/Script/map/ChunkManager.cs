@@ -39,6 +39,10 @@ public class ChunkManager : MonoBehaviour
     // Value : 실제 청크 오브젝트
     private Dictionary<Vector2Int, GameObject> loadedChunks = new Dictionary<Vector2Int, GameObject>();
 
+    public int ChunkSize => chunkSize;
+    public int GlobalSeed => globalSeed;
+    public float CellSize => generator != null ? generator.cellSize : 1f;
+
     private void Start()
     {
         if(player == null)
@@ -90,14 +94,72 @@ public class ChunkManager : MonoBehaviour
     /// <returns></returns>
     private Vector2Int GetChunkCoordFromPosition(Vector3 position)
     {
-        float currentCellSize = generator != null ? generator.cellSize : 1f;
-
-        float chunkWorldSize = chunkSize * currentCellSize;
+        float chunkWorldSize = chunkSize * CellSize;
 
         int chunkX = Mathf.FloorToInt(position.x / chunkSize);
         int chunkZ = Mathf.FloorToInt(position.z / chunkSize);
 
         return new Vector2Int(chunkX, chunkZ);
+    }
+
+    public Vector2Int WorldToGlobalCell(Vector3 worldPosition)
+    {
+        return new Vector2Int(
+            Mathf.RoundToInt(worldPosition.x / CellSize),
+            Mathf.RoundToInt(worldPosition.z / CellSize)
+        );
+    }
+
+    public Vector3 GlobalCellToWorldPosition(Vector2Int globalCell, float yOffset = 0f)
+    {
+        return new Vector3(
+            globalCell.x * CellSize,
+            yOffset,
+            globalCell.y * CellSize
+        );
+    }
+
+    public Vector2Int GlobalCellToChunkCoord(Vector2Int globalCell)
+    {
+        return new Vector2Int(
+            FloorDivide(globalCell.x, chunkSize),
+            FloorDivide(globalCell.y, chunkSize)
+        );
+    }
+
+    public Vector2Int GlobalCellToLocalCell(Vector2Int globalCell)
+    {
+        Vector2Int chunkCoord = GlobalCellToChunkCoord(globalCell);
+
+        return new Vector2Int(
+            globalCell.x - chunkCoord.x * chunkSize,
+            globalCell.y - chunkCoord.y * chunkSize
+        );
+    }
+
+    public bool TryGetLoadedChunk(Vector2Int chunkCoord, out Transform chunkTransform)
+    {
+        chunkTransform = null;
+
+        if(!loadedChunks.TryGetValue(chunkCoord, out GameObject chunkObject))
+            return false;
+
+        if(chunkObject == null)
+            return false;
+
+        chunkTransform = chunkObject.transform;
+        return true;
+    }
+
+    private static int FloorDivide(int value, int divisor)
+    {
+        int quotient = value / divisor;
+        int remainder = value % divisor;
+
+        if (remainder != 0 && ((remainder < 0) != (divisor < 0)))
+            quotient--;
+
+        return quotient;
     }
 
     /// <summary>

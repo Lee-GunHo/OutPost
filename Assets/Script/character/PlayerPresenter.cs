@@ -53,6 +53,9 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public InventoryModel PlayerInventory => inventoryModel;
 
+    // (경민) 0715 블럭 설치 범위 관련 프로퍼티 추가
+    public float BreakRange => playerModel.BreakRange;
+
 
     private void Awake()
     {

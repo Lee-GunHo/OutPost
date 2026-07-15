@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -62,6 +63,10 @@ public class SeedMapGenerator : MonoBehaviour
     [SerializeField] private int clearingMargin = 1;
     [SerializeField] private float treeYOffset = 0f;
 
+    [Header("Player Placed Blocks")]
+    [Tooltip("설치 가능한 ItemData를 등록합니다. itemID로 저장된 블록을 다시 찾을 때 사용합니다.")]
+    [SerializeField] private List<ItemData> placeableBlockItems = new List<ItemData>();
+
     private struct TreeClearingInfo
     {
         public bool IsEnabled;
@@ -90,6 +95,11 @@ public class SeedMapGenerator : MonoBehaviour
 
         saveManager.InitializeWorld(globalSeed);
 
+        PlacedBlockSaveManager placedBlockSaveManager =
+            PlacedBlockSaveManager.GetOrCreate();
+
+        placedBlockSaveManager.InitializeWorld(globalSeed);
+
         GameObject chunkObject = new GameObject();
 
         Vector3 chunkWorldPosition = new Vector3(
@@ -108,7 +118,8 @@ public class SeedMapGenerator : MonoBehaviour
             chunkSize,
             chunkSeed,
             globalSeed,
-            saveManager
+            saveManager,
+            placedBlockSaveManager
         );
 
         return chunkObject;
@@ -131,7 +142,8 @@ public class SeedMapGenerator : MonoBehaviour
         int chunkSize,
         int chunkSeed,
         int globalSeed,
-        ChunkModificationSaveManager saveManager)
+        ChunkModificationSaveManager saveManager,
+        PlacedBlockSaveManager placedBlockSaveManager)
     {
         System.Random random = new System.Random(chunkSeed);
         TreeClearingInfo clearing = CreateTreeClearing(random, chunkSize);
@@ -157,6 +169,16 @@ public class SeedMapGenerator : MonoBehaviour
 
                 CreateFloor(worldCellPosition, chunkTransform);
 
+                bool hasPlacedBlock = TryCreatePlacedBlock(
+                    worldCellPosition,
+                    chunkTransform,
+                    globalSeed,
+                    chunkCoord,
+                    localCellCoord,
+                    globalCellCoord,
+                    placedBlockSaveManager
+                );
+
                 float squareDistance =
                     GetSquareDistanceInTiles(worldCellPosition);
 
@@ -175,7 +197,8 @@ public class SeedMapGenerator : MonoBehaviour
                         chunkCoord,
                         localCellCoord,
                         globalCellCoord,
-                        saveManager
+                        saveManager,
+                        hasPlacedBlock
                     );
                     continue;
                 }
@@ -189,6 +212,9 @@ public class SeedMapGenerator : MonoBehaviour
 
                 GameObject selectedWallPrefab =
                     GetWallPrefab(squareDistance, random);
+
+                if (hasPlacedBlock)
+                    continue;
 
                 if (selectedWallPrefab == null)
                     continue;
@@ -243,6 +269,88 @@ public class SeedMapGenerator : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool TryCreatePlacedBlock(
+        Vector3 worldCellPosition,
+        Transform chunkTransform,
+        int globalSeed,
+        Vector2Int chunkCoord,
+        Vector2Int localCellCoord,
+        Vector2Int globalCellCoord,
+        PlacedBlockSaveManager placedBlockSaveManager)
+    {
+        if(!placedBlockSaveManager.TryGetPlacedBlock(
+            globalSeed,
+            globalCellCoord,
+            out int itemId))
+        {
+            return false;
+        }
+
+        ItemData itemData = FindPlaceableItem(itemId);
+
+        if(itemData == null)
+        {
+            Debug.LogWarning(
+                $"설치 블록 ItemaData를 찾지 못했습니다. itemID = {itemId}"
+            );
+            return true;
+        }
+
+        if(itemData.placeablePrefab == null)
+        {
+            Debug.LogWarning(
+                $"{itemData.itemName}의 placeablePrefab이 비어 있습니다."
+            );
+            return true;
+        }
+
+        Vector3 blockPosition = worldCellPosition;
+        blockPosition.y += itemData.placeableYOffset;
+
+        GameObject blockObject = Instantiate(
+            itemData.placeablePrefab,
+            blockPosition,
+            Quaternion.identity,
+            chunkTransform
+        );
+
+        blockObject.name = itemData.placeablePrefab.name;
+
+        BreakableWall[] breakableWalls =
+            blockObject.GetComponentsInChildren<BreakableWall>(true);
+
+        foreach(BreakableWall breakableWall in breakableWalls)
+        {
+            breakableWall.InitializePlacedWall(
+                globalSeed,
+                chunkCoord,
+                localCellCoord,
+                globalCellCoord,
+                blockObject
+            );
+        }
+
+        if(breakableWalls.Length == 0)
+        {
+            Debug.LogWarning(
+                $"{itemData.placeablePrefab.name}에 BreakableWall이 없습니다."
+            );
+        }
+
+        return true;
+    }
+
+    private ItemData FindPlaceableItem(int itemId)
+    {
+        foreach(ItemData itemData in placeableBlockItems)
+        {
+            if(itemData != null && itemData.itemID == itemId)
+                return itemData;
+        }
+
+        return null;
     }
 
     private void CreateFloor(
@@ -378,7 +486,8 @@ public class SeedMapGenerator : MonoBehaviour
         Vector2Int chunkCoord,
         Vector2Int localCellCoord,
         Vector2Int globalCellCoord,
-        ChunkModificationSaveManager saveManager)
+        ChunkModificationSaveManager saveManager,
+        bool suppressCreation)
     {
         if (treePrefab == null)
             return;
@@ -389,6 +498,9 @@ public class SeedMapGenerator : MonoBehaviour
         bool shouldCreateTree = random.Next(0, 100) < treeFillPercent;
 
         if (!shouldCreateTree)
+            return;
+
+        if(suppressCreation)
             return;
 
         // 이전에 베어낸 나무는 같은 시드로 청크를 다시 생성해도 만들지 않음
