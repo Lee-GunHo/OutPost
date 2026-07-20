@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 // (경민) 0707 TempItemSlotView.cs의 상점 슬롯 기능 추가(이하 (경민) 0707 추가)
 public enum ShopSlotMode
@@ -42,9 +43,9 @@ public class ItemSlotView : MonoBehaviour,
     public ItemStack CurrentItem => currentItem;
 
     public event Action<SlotReference> OnSlotClicked;
+    public event Action<SlotReference> OnSlotSplitClicked;
     public event Action<SlotReference> OnSlotHovered;
     public event Action<SlotReference> OnSlotUnhovered;
-
     public void Initialize(SlotType slotType, int slotIndex)
     {
         // (경민) 0707 추가
@@ -151,8 +152,12 @@ public class ItemSlotView : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // (경민) 0707 추가
-        if(isShopSlot)
+        // 왼쪽 클릭만 처리
+        if (eventData.button != PointerEventData.InputButton.Left)
+            return;
+
+        // 상점 슬롯 처리
+        if (isShopSlot)
         {
             if (shopUI == null || currentItemData == null)
                 return;
@@ -161,6 +166,21 @@ public class ItemSlotView : MonoBehaviour,
             return;
         }
 
+        Keyboard keyboard = Keyboard.current;
+
+        bool controlPressed =
+            keyboard != null &&
+            (keyboard.leftCtrlKey.isPressed ||
+             keyboard.rightCtrlKey.isPressed);
+
+        // Ctrl + 좌클릭: 스택 나누기
+        if (controlPressed)
+        {
+            OnSlotSplitClicked?.Invoke(slotReference);
+            return;
+        }
+
+        // 일반 좌클릭: 아이템 이동
         OnSlotClicked?.Invoke(slotReference);
     }
 

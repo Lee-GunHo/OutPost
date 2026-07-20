@@ -44,6 +44,7 @@ public class InventoryView : MonoBehaviour
             slotView.Initialize(SlotType.Inventory, i);
 
             slotView.OnSlotClicked += presenter.OnItemSlotClicked;
+            slotView.OnSlotSplitClicked += presenter.OnItemSlotSplitClicked;
             slotView.OnSlotHovered += presenter.OnItemSlotHovered;
             slotView.OnSlotUnhovered += presenter.OnItemSlotUnhovered;
 

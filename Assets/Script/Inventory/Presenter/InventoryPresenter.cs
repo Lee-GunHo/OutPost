@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 public class InventoryPresenter : MonoBehaviour
 {
     [Header("Model")]
@@ -21,15 +21,26 @@ public class InventoryPresenter : MonoBehaviour
     [SerializeField] private PlayerPresenter playerPresenter;
     [SerializeField] private PlayerModel playerModel;
 
+
+    [Header("Hotbar Position")]
+    [SerializeField] private RectTransform hotbarRect;
+    [SerializeField] private Vector2 closedHotbarPosition;
+    [SerializeField] private Vector2 openedHotbarPosition;
+
+
     private bool isOpen;
 
+    public bool IsOpen => isOpen;
+
     [Header("Test Items")]
+    [SerializeField] private bool addTestItemsOnStart;
     [SerializeField] private ItemData wood;
     [SerializeField] private ItemData stone;
     [SerializeField] private ItemData smileArmor;
 
     private ItemStack draggingItem;
     private SlotReference dragSource;
+    private bool isSplitDrag;
 
     private void Start()
     {
@@ -40,12 +51,45 @@ public class InventoryPresenter : MonoBehaviour
             inventoryPanel.SetActive(false);
 
         UIState.SetInventoryOpen(false);
+        UpdateHotbarPosition();
 
-        inventoryModel.AddItem(wood, 50);
-        inventoryModel.AddItem(stone, 25);
-        inventoryModel.AddItem(smileArmor, 1);
+        if (addTestItemsOnStart)
+        {
+            AddTestItems();
+        }
 
         RefreshView();
+    }
+
+    private void Update()
+    {
+        if (draggingItem == null)
+            return;
+
+        bool escapePressed =
+            Keyboard.current != null &&
+            Keyboard.current.escapeKey.wasPressedThisFrame;
+
+        bool rightClickPressed =
+            Mouse.current != null &&
+            Mouse.current.rightButton.wasPressedThisFrame;
+
+        if (escapePressed || rightClickPressed)
+        {
+            CancelDrag();
+        }
+    }
+
+    private void AddTestItems()
+    {
+        if (wood != null)
+            inventoryModel.AddItem(wood, 50);
+
+        if (stone != null)
+            inventoryModel.AddItem(stone, 25);
+
+        if (smileArmor != null)
+            inventoryModel.AddItem(smileArmor, 1);
     }
 
     private void OnEnable()
@@ -83,6 +127,8 @@ public class InventoryPresenter : MonoBehaviour
 
         UIState.SetInventoryOpen(isOpen);
 
+        UpdateHotbarPosition();
+
         if (isOpen && playerPresenter != null)
             playerPresenter.StopMove();
 
@@ -92,6 +138,14 @@ public class InventoryPresenter : MonoBehaviour
             inventoryView.HideTooltip();
         }
     }
+    private void UpdateHotbarPosition()
+    {
+        if (hotbarRect == null)
+            return;
+
+        hotbarRect.anchoredPosition =
+            isOpen ? openedHotbarPosition : closedHotbarPosition;
+    }
 
     private void RefreshView()
     {
@@ -99,19 +153,9 @@ public class InventoryPresenter : MonoBehaviour
         equipmentView.Refresh(equipmentModel);
     }
 
-    public void OnInventorySlotClicked(int slotIndex)
+    private void OnInventorySlotClicked(int slotIndex)
     {
-        ItemStack clickedItem = inventoryModel.Items[slotIndex];
-
-        if (draggingItem != null)
-        {
-            inventoryModel.SwapItems(dragSource.SlotIndex, slotIndex);
-
-            StopDrag();
-            RefreshView();
-
-            return;
-        }
+        ItemStack clickedItem = inventoryModel.GetItem(slotIndex);
 
         if (clickedItem == null)
             return;
@@ -139,9 +183,14 @@ public class InventoryPresenter : MonoBehaviour
 
     private void StartDrag(ItemStack item, SlotReference source)
     {
+        if (item == null || item.item == null || source == null)
+            return;
+
         draggingItem = item;
         dragSource = source;
 
+        // 드래그 중에는 툴팁을 숨긴다.
+        inventoryView.HideTooltip();
         inventoryView.ShowDragIcon(item);
     }
 
@@ -149,9 +198,23 @@ public class InventoryPresenter : MonoBehaviour
     {
         draggingItem = null;
         dragSource = null;
+        isSplitDrag = false;
 
         inventoryView.HideDragIcon();
     }
+
+    private void CancelDrag()
+    {
+        if (isSplitDrag)
+        {
+            ReturnSplitItemToSource();
+        }
+
+        StopDrag();
+        inventoryView.HideTooltip();
+        RefreshView();
+    }
+
     public void OnEquipmentSlotClicked(int slotIndex)
     {
         if (draggingItem == null)
@@ -173,28 +236,33 @@ public class InventoryPresenter : MonoBehaviour
 
     private void Equip(int slotIndex)
     {
-        Debug.Log("Equip 함수 호출됨");
-
         EquipmentSlotView slotView = equipmentView.Slots[slotIndex];
 
+        // 드래그 중인 아이템이 없거나 데이터가 잘못된 경우
+        if (draggingItem == null || draggingItem.item == null)
+            return;
+
+        // 장비 슬롯과 아이템 종류가 다르면 장착하지 않음
         if (draggingItem.item.itemType != slotView.EquipType)
         {
-            Debug.Log("장착 불가");
+            Debug.Log("장착할 수 없는 아이템입니다.");
             return;
         }
 
-        ItemStack oldEquippedItem = equipmentModel.GetEquippedItem(slotView.EquipType);
+        ItemStack oldEquippedItem =
+            equipmentModel.GetEquippedItem(slotView.EquipType);
 
+        // 기존 장비 능력치 제거
         if (oldEquippedItem != null)
             playerModel.RemoveEquipmentStats(oldEquippedItem.item);
 
+        // 새로운 장비 장착 및 능력치 적용
         equipmentModel.Equip(slotView.EquipType, draggingItem);
         playerModel.AddEquipmentStats(draggingItem.item);
 
-        if (oldEquippedItem != null)
-            inventoryModel.SetItemAt(dragSource.SlotIndex, oldEquippedItem);
-        else
-            inventoryModel.RemoveItemAt(dragSource.SlotIndex);
+        // 아이템을 집었던 원래 슬롯에 기존 장비를 돌려놓음
+        // 기존 장비가 없었다면 원래 슬롯이 비워짐
+        SetSlotItem(dragSource, oldEquippedItem);
 
         StopDrag();
         RefreshView();
@@ -204,31 +272,64 @@ public class InventoryPresenter : MonoBehaviour
     {
         EquipmentSlotView slotView = equipmentView.Slots[slotIndex];
 
-        ItemStack unequippedItem = equipmentModel.Unequip(slotView.EquipType);
+        ItemStack equippedItem =
+            equipmentModel.GetEquippedItem(slotView.EquipType);
+
+        if (equippedItem == null)
+            return;
+
+        // 인벤토리에 아이템이 들어갈 공간이 있는지 먼저 확인
+        if (!inventoryModel.CanAddItem(
+                equippedItem.item,
+                equippedItem.amount))
+        {
+            Debug.Log("인벤토리 공간이 부족하여 장비를 해제할 수 없습니다.");
+            return;
+        }
+
+        ItemStack unequippedItem =
+            equipmentModel.Unequip(slotView.EquipType);
 
         if (unequippedItem == null)
             return;
 
-        inventoryModel.AddItem(unequippedItem.item, unequippedItem.amount);
+        // 장비로 증가했던 능력치 제거
+        playerModel.RemoveEquipmentStats(unequippedItem.item);
+
+        inventoryModel.AddItem(
+            unequippedItem.item,
+            unequippedItem.amount);
 
         RefreshView();
     }
 
-    public void OnHotbarSlotClicked(int hotbarSlotIndex)
+    public void OnItemSlotSplitClicked(SlotReference slotReference)
     {
-        if (draggingItem == null)
+        // 이미 아이템을 드래그하고 있으면 나누지 않는다.
+        if (draggingItem != null)
             return;
 
-        ItemStack oldHotbarItem = hotbarPresenter.GetItem(hotbarSlotIndex);
+        ItemStack sourceItem = GetSlotItem(slotReference);
 
-        hotbarPresenter.SetItemToSlot(hotbarSlotIndex, draggingItem);
+        // 1개 이하인 아이템은 나눌 수 없다.
+        if (sourceItem == null ||
+            sourceItem.item == null ||
+            sourceItem.amount <= 1)
+        {
+            return;
+        }
 
-        if (oldHotbarItem != null)
-            inventoryModel.SetItemAt(dragSource.SlotIndex, oldHotbarItem);
-        else
-            inventoryModel.RemoveItemAt(dragSource.SlotIndex);
+        // 홀수인 경우 원래 슬롯에 더 많은 수량을 남긴다.
+        int splitAmount = sourceItem.amount / 2;
 
-        StopDrag();
+        sourceItem.amount -= splitAmount;
+
+        ItemStack splitItem =
+            new ItemStack(sourceItem.item, splitAmount);
+
+        isSplitDrag = true;
+
+        StartDrag(splitItem, slotReference);
         RefreshView();
     }
 
@@ -263,32 +364,157 @@ public class InventoryPresenter : MonoBehaviour
 
     public void OnItemSlotHovered(SlotReference slotReference)
     {
-        if (slotReference.SlotType == SlotType.Inventory)
-            OnInventorySlotHovered(slotReference.SlotIndex);
+        // 아이템을 옮기는 동안에는 툴팁을 표시하지 않는다.
+        if (draggingItem != null)
+        {
+            inventoryView.HideTooltip();
+            return;
+        }
+
+        ItemStack item = GetSlotItem(slotReference);
+
+        if (item == null)
+        {
+            inventoryView.HideTooltip();
+            return;
+        }
+
+        inventoryView.ShowTooltip(item);
     }
 
     public void OnItemSlotUnhovered(SlotReference slotReference)
     {
-        if (slotReference.SlotType == SlotType.Inventory)
-            OnInventorySlotUnhovered(slotReference.SlotIndex);
+        inventoryView.HideTooltip();
     }
-
     private void MoveItem(SlotReference from, SlotReference to)
     {
-        Debug.Log($"Move : {from.SlotType}[{from.SlotIndex}] -> {to.SlotType}[{to.SlotIndex}]");
+        // 나누기로 집은 아이템을 같은 슬롯에 놓으면 원상 복구
+        if (from.SlotType == to.SlotType &&
+            from.SlotIndex == to.SlotIndex)
+        {
+            if (isSplitDrag)
+                ReturnSplitItemToSource();
 
-        if (from.SlotType == to.SlotType && from.SlotIndex == to.SlotIndex)
             return;
+        }
+
+        // 나누기로 집은 아이템은 별도 방식으로 배치
+        if (isSplitDrag)
+        {
+            PlaceSplitItem(to);
+            RefreshView();
+            return;
+        }
+
 
         ItemStack fromItem = GetSlotItem(from);
         ItemStack toItem = GetSlotItem(to);
 
+        if (fromItem == null)
+            return;
+
+        // 같은 아이템이면 수량을 합친다.
+        if (CanMergeItems(fromItem, toItem))
+        {
+            MergeItems(from, fromItem, toItem);
+            RefreshView();
+            return;
+        }
+
+        // 다른 아이템이면 서로 교환한다.
         SetSlotItem(from, toItem);
         SetSlotItem(to, fromItem);
 
         RefreshView();
     }
+    private void PlaceSplitItem(SlotReference target)
+    {
+        ItemStack targetItem = GetSlotItem(target);
 
+        // 빈 슬롯이면 분리한 아이템을 그대로 배치
+        if (targetItem == null)
+        {
+            SetSlotItem(target, draggingItem);
+            return;
+        }
+
+        // 같은 아이템이면 최대 스택까지 합친다.
+        if (targetItem.item == draggingItem.item &&
+            targetItem.amount < targetItem.item.maxStack)
+        {
+            int availableSpace =
+                targetItem.item.maxStack - targetItem.amount;
+
+            int moveAmount =
+                Mathf.Min(availableSpace, draggingItem.amount);
+
+            targetItem.amount += moveAmount;
+            draggingItem.amount -= moveAmount;
+        }
+
+        // 들어가지 못한 나머지는 원래 슬롯으로 반환
+        if (draggingItem.amount > 0)
+        {
+            ReturnSplitItemToSource();
+        }
+    }
+    private void ReturnSplitItemToSource()
+    {
+        if (draggingItem == null || dragSource == null)
+            return;
+
+        ItemStack sourceItem = GetSlotItem(dragSource);
+
+        if (sourceItem != null &&
+            sourceItem.item == draggingItem.item)
+        {
+            sourceItem.amount += draggingItem.amount;
+        }
+        else
+        {
+            SetSlotItem(dragSource, draggingItem);
+        }
+
+        draggingItem.amount = 0;
+    }
+    private bool CanMergeItems(ItemStack fromItem, ItemStack toItem)
+    {
+        if (fromItem == null || toItem == null)
+            return false;
+
+        if (fromItem.item == null || toItem.item == null)
+            return false;
+
+        if (fromItem.item != toItem.item)
+            return false;
+
+        return toItem.amount < toItem.item.maxStack;
+    }
+    private void MergeItems(
+    SlotReference from,
+    ItemStack fromItem,
+    ItemStack toItem)
+    {
+        int availableSpace =
+            toItem.item.maxStack - toItem.amount;
+
+        int moveAmount =
+            Mathf.Min(availableSpace, fromItem.amount);
+
+        toItem.amount += moveAmount;
+        fromItem.amount -= moveAmount;
+
+        // 원래 아이템을 전부 옮겼으면 원래 슬롯을 비운다.
+        if (fromItem.amount <= 0)
+        {
+            SetSlotItem(from, null);
+        }
+        else
+        {
+            // 최대 수량을 초과한 아이템은 원래 슬롯에 남긴다.
+            SetSlotItem(from, fromItem);
+        }
+    }
     private ItemStack GetSlotItem(SlotReference slot)
     {
         switch (slot.SlotType)
@@ -318,5 +544,40 @@ public class InventoryPresenter : MonoBehaviour
                 hotbarPresenter.SetItemToSlot(slot.SlotIndex, item);
                 break;
         }
+    }
+    public void OnTrashButtonClicked()
+    {
+        if (draggingItem == null || dragSource == null)
+            return;
+
+        if (!isSplitDrag)
+        {
+            // 일반 드래그는 원래 슬롯에 아이템이 그대로 있으므로
+            // 원래 슬롯을 비워 전체 스택을 삭제한다.
+            SetSlotItem(dragSource, null);
+        }
+
+        // 분리 드래그는 집은 수량이 이미 원래 스택에서 빠져 있으므로
+        // 원래 슬롯을 건드리지 않고 드래그 중인 수량만 삭제한다.
+
+        StopDrag();
+        inventoryView.HideTooltip();
+        RefreshView();
+
+        Debug.Log("아이템을 버렸습니다.");
+    }
+    public void OnSortButtonClicked()
+    {
+        // 아이템을 들고 있는 동안에는 정렬하지 않는다.
+        if (draggingItem != null)
+        {
+            Debug.Log("아이템을 이동 중에는 정렬할 수 없습니다.");
+            return;
+        }
+
+        inventoryModel.SortItems();
+        RefreshView();
+
+        Debug.Log("인벤토리를 정렬했습니다.");
     }
 }

@@ -15,6 +15,10 @@ public class HotbarPresenter : MonoBehaviour
 
         hotbarView.OnNumberKeyPressed += SelectSlot;
         hotbarView.OnSlotClicked += OnHotbarSlotClicked;
+        hotbarView.OnSlotHovered += OnHotbarSlotHovered;
+        hotbarView.OnSlotUnhovered += OnHotbarSlotUnhovered;
+        hotbarView.OnSlotSplitClicked += OnHotbarSlotSplitClicked;
+
         hotbarView.OnMouseWheelUp += SelectPreviousSlot;
         hotbarView.OnMouseWheelDown += SelectNextSlot;
 
@@ -36,8 +40,13 @@ public class HotbarPresenter : MonoBehaviour
     {
         hotbarView.OnNumberKeyPressed -= SelectSlot;
         hotbarView.OnSlotClicked -= OnHotbarSlotClicked;
+        hotbarView.OnSlotHovered -= OnHotbarSlotHovered;
+        hotbarView.OnSlotSplitClicked -= OnHotbarSlotSplitClicked;
+        hotbarView.OnSlotUnhovered -= OnHotbarSlotUnhovered;
+
         hotbarView.OnMouseWheelUp -= SelectPreviousSlot;
         hotbarView.OnMouseWheelDown -= SelectNextSlot;
+
 
         hotbarModel.OnHotbarChanged -= RefreshView;
         hotbarModel.OnSelectedSlotChanged -= hotbarView.MoveSelectedFrame;
@@ -45,13 +54,46 @@ public class HotbarPresenter : MonoBehaviour
 
     private void OnHotbarSlotClicked(SlotReference slotReference)
     {
+        // 인벤토리 상태와 관계없이 핫바 선택은 변경한다.
         SelectSlot(slotReference.SlotIndex);
 
-        if (inventoryPresenter != null)
+        // 인벤토리가 열려 있을 때만 아이템 이동을 시작한다.
+        if (inventoryPresenter != null &&
+            inventoryPresenter.IsOpen)
         {
             inventoryPresenter.OnItemSlotClicked(slotReference);
         }
     }
+    private void OnHotbarSlotHovered(SlotReference slotReference)
+    {
+        if (inventoryPresenter == null ||
+            !inventoryPresenter.IsOpen)
+        {
+            return;
+        }
+
+        inventoryPresenter.OnItemSlotHovered(slotReference);
+    }
+    private void OnHotbarSlotUnhovered(SlotReference slotReference)
+    {
+        if (inventoryPresenter != null)
+        {
+            inventoryPresenter.OnItemSlotUnhovered(slotReference);
+        }
+    }
+    private void OnHotbarSlotSplitClicked(
+    SlotReference slotReference)
+    {
+        // 인벤토리가 열려 있을 때만 핫바 아이템을 나눈다.
+        if (inventoryPresenter == null ||
+            !inventoryPresenter.IsOpen)
+        {
+            return;
+        }
+
+        inventoryPresenter.OnItemSlotSplitClicked(slotReference);
+    }
+
 
     public void SetItem(int index, ItemStack itemStack)
     {

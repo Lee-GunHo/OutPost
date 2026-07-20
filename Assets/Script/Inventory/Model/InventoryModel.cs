@@ -28,13 +28,20 @@ public class InventoryModel : MonoBehaviour
 
     public bool AddItem(ItemData item, int amount)
     {
-        if (item == null || amount <= 0) return false;
+        if (item == null || amount <= 0)
+            return false;
+
+        // 전체 수량이 들어갈 공간이 있는지 먼저 검사
+        if (!CanAddItem(item, amount))
+            return false;
 
         for (int i = 0; i < Items.Count; i++)
         {
             ItemStack stack = Items[i];
 
-            if (stack != null && stack.item == item && stack.amount < item.maxStack)
+            if (stack != null &&
+                stack.item == item &&
+                stack.amount < item.maxStack)
             {
                 int space = item.maxStack - stack.amount;
                 int addAmount = Mathf.Min(space, amount);
@@ -49,6 +56,8 @@ public class InventoryModel : MonoBehaviour
                 }
             }
         }
+
+        // 아래쪽의 빈 슬롯에 추가하는 기존 코드는 그대로 유지
 
         for (int i = 0; i < Items.Count; i++)
         {

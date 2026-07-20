@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class HotbarModel : MonoBehaviour
 {
-    [SerializeField] private int maxSlotCount = 8;
 
     public List<ItemStack> Items { get; private set; } = new();
     public int SelectedIndex { get; private set; }
@@ -12,10 +11,7 @@ public class HotbarModel : MonoBehaviour
     public event Action OnHotbarChanged;
     public event Action<int> OnSelectedSlotChanged;
 
-    private void Awake()
-    {
-        Initialize(maxSlotCount);
-    }
+
 
     public void Initialize(int slotCount)
     {

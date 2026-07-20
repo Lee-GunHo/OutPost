@@ -19,6 +19,11 @@ public class HotbarView : MonoBehaviour
 
     public event Action<int> OnNumberKeyPressed;
     public event Action<SlotReference> OnSlotClicked;
+    public event Action<SlotReference> OnSlotSplitClicked;
+
+    public event Action<SlotReference> OnSlotHovered;
+    public event Action<SlotReference> OnSlotUnhovered;
+
     public event Action OnMouseWheelUp;
     public event Action OnMouseWheelDown;
 
@@ -38,7 +43,9 @@ public class HotbarView : MonoBehaviour
 
             slot.Initialize(SlotType.Hotbar, i);
             slot.OnSlotClicked += HandleSlotClicked;
-
+            slot.OnSlotSplitClicked += HandleSlotSplitClicked;
+            slot.OnSlotHovered += HandleSlotHovered;
+            slot.OnSlotUnhovered += HandleSlotUnhovered;
             hotbarSlots.Add(slot);
         }
 
@@ -47,6 +54,16 @@ public class HotbarView : MonoBehaviour
             selectedFrame.SetAsLastSibling();
             MoveSelectedFrame(0);
         }
+    }
+
+    private void HandleSlotHovered(SlotReference slotReference)
+    {
+        OnSlotHovered?.Invoke(slotReference);
+    }
+
+    private void HandleSlotUnhovered(SlotReference slotReference)
+    {
+        OnSlotUnhovered?.Invoke(slotReference);
     }
 
     public void Refresh(List<ItemStack> items)
@@ -79,7 +96,10 @@ public class HotbarView : MonoBehaviour
     {
         OnSlotClicked?.Invoke(slotReference);
     }
-
+    private void HandleSlotSplitClicked(SlotReference slotReference)
+    {
+        OnSlotSplitClicked?.Invoke(slotReference);
+    }
     private void HandleNumberInput()
     {
         Keyboard keyboard = Keyboard.current;
