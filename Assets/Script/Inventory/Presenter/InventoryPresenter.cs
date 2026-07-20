@@ -173,9 +173,10 @@ public class InventoryPresenter : MonoBehaviour
 
     private void Equip(int slotIndex)
     {
-        Debug.Log("Equip 함수 호출됨");
-
         EquipmentSlotView slotView = equipmentView.Slots[slotIndex];
+
+        if (draggingItem == null || draggingItem.item == null)
+            return;
 
         if (draggingItem.item.itemType != slotView.EquipType)
         {
@@ -191,10 +192,9 @@ public class InventoryPresenter : MonoBehaviour
         equipmentModel.Equip(slotView.EquipType, draggingItem);
         playerModel.AddEquipmentStats(draggingItem.item);
 
-        if (oldEquippedItem != null)
-            inventoryModel.SetItemAt(dragSource.SlotIndex, oldEquippedItem);
-        else
-            inventoryModel.RemoveItemAt(dragSource.SlotIndex);
+        // 인벤토리와 핫바 중 실제로 드래그를 시작한 슬롯에
+        // 기존 장비를 돌려놓거나, 기존 장비가 없으면 슬롯을 비운다.
+        SetSlotItem(dragSource, oldEquippedItem);
 
         StopDrag();
         RefreshView();
@@ -204,11 +204,25 @@ public class InventoryPresenter : MonoBehaviour
     {
         EquipmentSlotView slotView = equipmentView.Slots[slotIndex];
 
+        ItemStack equippedItem = equipmentModel.GetEquippedItem(slotView.EquipType);
+
+        if (equippedItem == null)
+            return;
+
+        // 공간이 없을 때 먼저 장비를 해제하면 아이템이 사라질 수 있으므로
+        // 인벤토리에 전부 들어갈 수 있는지 먼저 확인한다.
+        if (!inventoryModel.CanAddItem(equippedItem.item, equippedItem.amount))
+        {
+            Debug.Log("인벤토리 공간이 부족하여 장비를 해제할 수 없습니다.");
+            return;
+        }
+
         ItemStack unequippedItem = equipmentModel.Unequip(slotView.EquipType);
 
         if (unequippedItem == null)
             return;
 
+        playerModel.RemoveEquipmentStats(unequippedItem.item);
         inventoryModel.AddItem(unequippedItem.item, unequippedItem.amount);
 
         RefreshView();
