@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using UnityEngine;
 
 public class MonsterAttackState : IMonsterState
 {
@@ -17,18 +17,28 @@ public class MonsterAttackState : IMonsterState
     public void Enter()
     {
         monsterPresenter.StopMove();
+
+        // 공격 상태에 들어오자마자 바로 공격 가능
         currentCooldown = 0f;
     }
 
     public void Update()
     {
-        if (!monsterPresenter.IsPlayerInAttackRange())
+        monsterPresenter.UpdateTarget();
+
+        if (!monsterPresenter.HasTarget)
+        {
+            stateManager.ChangeState(stateManager.IdleState);
+            return;
+        }
+
+        if (!monsterPresenter.IsCurrentTargetInAttackRange())
         {
             stateManager.ChangeState(stateManager.ChaseState);
             return;
         }
 
-        currentCooldown -= UnityEngine.Time.deltaTime;
+        currentCooldown -= Time.deltaTime;
 
         if (currentCooldown <= 0f)
         {
@@ -39,6 +49,7 @@ public class MonsterAttackState : IMonsterState
 
     public void FixedUpdate()
     {
+        monsterPresenter.StopMove();
     }
 
     public void Exit()

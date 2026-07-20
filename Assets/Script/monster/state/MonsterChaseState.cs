@@ -15,22 +15,24 @@ public class MonsterChaseState : IMonsterState
 
     public void Update()
     {
-        if (monsterPresenter.IsPlayerInAttackRange())
+        monsterPresenter.UpdateTarget();
+
+        if (!monsterPresenter.HasTarget)
         {
-            stateManager.ChangeState(stateManager.AttackState);
+            stateManager.ChangeState(stateManager.IdleState);
             return;
         }
 
-        if (!monsterPresenter.IsPlayerInChaseRange())
+        if (monsterPresenter.IsCurrentTargetInAttackRange())
         {
-            stateManager.ChangeState(stateManager.IdleState);
+            stateManager.ChangeState(stateManager.AttackState);
             return;
         }
     }
 
     public void FixedUpdate()
     {
-        monsterPresenter.ChasePlayer();
+        monsterPresenter.ChaseTarget();
     }
 
     public void Exit()

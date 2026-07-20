@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class MonsterIdleState : IMonsterState
 {
     private MonsterPresenter monsterPresenter;
@@ -16,9 +18,12 @@ public class MonsterIdleState : IMonsterState
 
     public void Update()
     {
-        if (monsterPresenter.IsPlayerInChaseRange())
+        monsterPresenter.UpdateTarget();
+
+        if (monsterPresenter.HasTarget)
         {
             stateManager.ChangeState(stateManager.ChaseState);
+            return;
         }
     }
 

@@ -3,6 +3,13 @@ using UnityEngine.AI;
 
 public class MonsterPresenter : MonoBehaviour, IDamageable
 {
+    public enum MonsterBehaviorMode
+    {
+        Wild,          // 자연 생성 몬스터
+        NexusAssault   // 웨이브 몬스터
+    }
+
+
     private MonsterModel monsterModel;
     private MonsterStateManager stateManager;
     private Rigidbody rigid;
@@ -20,6 +27,19 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     [Header("Navigation")]
     [SerializeField] private NavMeshAgent agent;
+
+    [Header("Behavior")]
+    [SerializeField] private MonsterBehaviorMode behaviorMode = MonsterBehaviorMode.Wild;
+
+    [Header("Target")]
+    [SerializeField] private Transform nexusTransform;
+    [SerializeField] private float playerAggroReleaseRange = 12f;
+
+    private Transform currentTarget;
+    private bool isPlayerAggro;
+
+    public bool HasTarget => currentTarget != null;
+
 
     private void Awake()
     {
@@ -64,15 +84,16 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         return distance <= ChaseRange;
     }
 
-    public bool IsPlayerInAttackRange()
+    public bool IsCurrentTargetInAttackRange()
     {
-        if (playerTransform == null)
+        UpdateTarget();
+
+        if (currentTarget == null)
         {
-            Debug.LogWarning("playerTransform이 null입니다.");
             return false;
         }
 
-        float distance = GetDistanceToPlayer();
+        float distance = Vector3.Distance(transform.position, currentTarget.position);
 
         return distance <= AttackRange;
     }
@@ -82,9 +103,11 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         return Vector3.Distance(transform.position, playerTransform.position);
     }
 
-    public void ChasePlayer()
+    public void ChaseTarget()
     {
-        if (playerTransform == null)
+        UpdateTarget();
+
+        if (currentTarget == null)
         {
             StopMove();
             return;
@@ -107,7 +130,8 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         agent.isStopped = false;
         agent.speed = monsterModel.MoveSpeed;
         agent.stoppingDistance = monsterModel.AttackRange * 0.8f;
-        agent.SetDestination(playerTransform.position);
+        Debug.Log("현재 타겟으로 이동: " + currentTarget.name);
+        agent.SetDestination(currentTarget.position);
     }
 
     public void StopMove()
@@ -156,38 +180,43 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     public void Attack()
     {
-        Debug.Log("MonsterPresenter.Attack() 호출");
+        UpdateTarget();
 
-        if (playerTransform == null)
+        if (currentTarget == null)
         {
-            Debug.LogWarning("공격할 플레이어가 없습니다.");
+            Debug.LogWarning("공격할 대상이 없습니다.");
             return;
         }
 
-        if (!IsPlayerInAttackRange())
+        if (!IsCurrentTargetInAttackRange())
         {
-            Debug.Log("플레이어가 공격 범위 밖입니다.");
+            Debug.Log("대상이 공격 범위 밖입니다.");
             return;
         }
 
-        IDamageable damageable = playerTransform.GetComponentInParent<IDamageable>();
+        IDamageable damageable = currentTarget.GetComponentInParent<IDamageable>();
 
         if (damageable == null)
         {
-            Debug.LogWarning("플레이어에게 IDamageable이 없습니다.");
+            Debug.LogWarning("현재 타겟에게 IDamageable이 없습니다: " + currentTarget.name);
             return;
         }
 
         damageable.TakeDamage(monsterModel.AttackPower);
 
-        Debug.Log("몬스터가 플레이어에게 데미지 줌: " + monsterModel.AttackPower);
+        Debug.Log("몬스터가 타겟에게 데미지 줌: " + monsterModel.AttackPower);
 
-        TryApplyStatusEffectToPlayer();
+        if (currentTarget == playerTransform)
+        {
+            TryApplyStatusEffectToPlayer();
+        }
     }
 
 
     public void TakeDamage(int damage)
     {
+        SetTargetToPlayer();
+
         if (monsterModel.IsDead)
         {
             return;
@@ -297,6 +326,77 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         player.AddStatusEffect(effectData);
 
         Debug.Log("몬스터가 상태효과 부여: " + monsterModel.AttackStatusEffectType);
+    }
+
+    public void InitializeAsWaveMonster(Transform nexus)
+    {
+        behaviorMode = MonsterBehaviorMode.NexusAssault;
+        nexusTransform = nexus;
+
+        isPlayerAggro = false;
+        SetTargetToNexus();
+
+        Debug.Log("웨이브 몬스터로 초기화됨. 목표: Nexus");
+    }
+
+    private void SetTargetToNexus()
+    {
+        if (nexusTransform == null)
+        {
+            currentTarget = null;
+            return;
+        }
+
+        currentTarget = nexusTransform;
+    }
+
+    private void SetTargetToPlayer()
+    {
+        if (playerTransform == null)
+        {
+            return;
+        }
+
+        currentTarget = playerTransform;
+        isPlayerAggro = true;
+    }
+
+    public void UpdateTarget()
+    {
+        if (playerTransform != null)
+        {
+            float playerDistance = Vector3.Distance(transform.position, playerTransform.position);
+
+            // 플레이어가 인식 범위 안으로 들어오면 플레이어를 공격
+            if (playerDistance <= ChaseRange)
+            {
+                SetTargetToPlayer();
+                return;
+            }
+
+            // 플레이어를 쫓던 중 너무 멀어지면 어그로 해제
+            if (isPlayerAggro && playerDistance > playerAggroReleaseRange)
+            {
+                isPlayerAggro = false;
+            }
+
+            // 아직 플레이어 어그로가 유지 중이면 계속 플레이어 추적
+            if (isPlayerAggro)
+            {
+                currentTarget = playerTransform;
+                return;
+            }
+        }
+
+        // 웨이브 몬스터는 플레이어 어그로가 없으면 넥서스 공격
+        if (behaviorMode == MonsterBehaviorMode.NexusAssault)
+        {
+            SetTargetToNexus();
+            return;
+        }
+
+        // 자연 몬스터는 플레이어가 없으면 아무 목표 없음
+        currentTarget = null;
     }
 
     private void OnDrawGizmosSelected()

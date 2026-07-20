@@ -37,7 +37,7 @@ public class MonsterHitState : IMonsterState
             return;
         }
 
-        if (monsterPresenter.IsPlayerInAttackRange())
+        if (monsterPresenter.IsCurrentTargetInAttackRange())
         {
             stateManager.ChangeState(stateManager.AttackState);
             return;
@@ -58,5 +58,6 @@ public class MonsterHitState : IMonsterState
 
     public void Exit()
     {
+        monsterPresenter.StopMove();
     }
 }
