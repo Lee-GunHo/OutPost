@@ -100,4 +100,16 @@ public class HotbarModel : MonoBehaviour
         SetItem(emptyIndex, itemStack);
         return true;
     }
+    public void ClearAllItems()
+    {
+        for (int i = 0; i < Items.Count; i++)
+        {
+            Items[i] = null;
+        }
+
+        SelectedIndex = 0;
+
+        OnHotbarChanged?.Invoke();
+        OnSelectedSlotChanged?.Invoke(SelectedIndex);
+    }
 }

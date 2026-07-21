@@ -33,6 +33,12 @@ public enum ItemGrade
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
 public class ItemData : ScriptableObject
 {
+    [Header("Item Info")]
+    public int itemID;
+    public string itemName;
+    public ItemType itemType;
+    public ItemGrade itemGrade;
+    public Sprite icon;
 
     [Header("Equipment Stats")]
     public int hpBonus;
@@ -43,12 +49,8 @@ public class ItemData : ScriptableObject
 
 
 
-    public int itemID;
-    public string itemName;
-    public ItemType itemType;
-    public ItemGrade itemGrade;
+
     public ToolType toolType;
-    public Sprite icon;
     [TextArea]
     public string description;
 

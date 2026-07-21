@@ -54,4 +54,14 @@ public class EquipmentModel : MonoBehaviour
         Equip(type, null);
         return item;
     }
+
+    public void ClearAllEquipment()
+    {
+        weapon = null;
+        head = null;
+        armor = null;
+        shoes = null;
+        ring = null;
+        necklace = null;
+    }
 }
