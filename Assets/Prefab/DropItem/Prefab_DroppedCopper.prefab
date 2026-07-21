@@ -76,7 +76,13 @@ PrefabInstance:
       addedObject: {fileID: 3736123862652138222}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c01c6a9a430e7fa4896755d214a10261, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7105741825574679461}
+      addedObject: {fileID: 6306535930024473758}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c01c6a9a430e7fa4896755d214a10261, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9097736153585941626}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c01c6a9a430e7fa4896755d214a10261, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1024465648467328454}
   m_SourcePrefab: {fileID: 100100000, guid: c01c6a9a430e7fa4896755d214a10261, type: 3}
 --- !u!1 &1721959967777922751 stripped
 GameObject:
@@ -131,7 +137,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.9288094, y: 0.47490332, z: 0.85011065}
   m_Center: {x: -0.07702094, y: 0.20550992, z: -0.02277258}
---- !u!114 &7105741825574679461
+--- !u!114 &6306535930024473758
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,8 +146,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 1721959967777922751}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad8d8850fc18e9247bb5eae8caf57f76, type: 3}
+  m_Script: {fileID: 11500000, guid: 460ca09e0a80fdd40b80c51ebb75c2df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DroppedItem
+  m_EditorClassIdentifier: Assembly-CSharp::DroppedItemPresenter
+  model: {fileID: 9097736153585941626}
+  view: {fileID: 1024465648467328454}
+--- !u!114 &9097736153585941626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721959967777922751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0a8b71545d674b4cae67a9faabf4500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DroppedItemModel
   itemData: {fileID: 11400000, guid: adbd05296adccdd4db958419ac4c2622, type: 2}
   amount: 1
+--- !u!114 &1024465648467328454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721959967777922751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804bf5f61a5089a4bbb24b086bcb8e6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DroppedItemView

@@ -218,6 +218,10 @@ MonoBehaviour:
   inputManager: {fileID: 1963133426766121305}
   playerPresenter: {fileID: 0}
   playerModel: {fileID: 0}
+  hotbarRect: {fileID: 0}
+  closedHotbarPosition: {x: 0, y: 0}
+  openedHotbarPosition: {x: 0, y: 0}
+  addTestItemsOnStart: 0
   wood: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
   stone: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
   smileArmor: {fileID: 11400000, guid: dc3de38e89f5e57439f73ab04601ea1a, type: 2}
@@ -278,7 +282,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee37eaa5d4d7c5499fc5b8148ce247c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarModel
-  maxSlotCount: 8
 --- !u!1 &5092765097817404540
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,7 +291,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8586494641153765678}
-  - component: {fileID: 2906951323975011249}
+  - component: {fileID: 7910421769988821486}
+  - component: {fileID: 2969428886985262584}
+  - component: {fileID: 342821628234486417}
   m_Layer: 0
   m_Name: ChunkManager
   m_TagString: Untagged
@@ -311,7 +316,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2346226157108010335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2906951323975011249
+--- !u!114 &7910421769988821486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5092765097817404540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26fc9e6fab3333247b171e0fceeddc3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChunkModel
+  chunkSize: 16
+  viewDistance: 2
+  globalSeed: 1234
+--- !u!114 &2969428886985262584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5092765097817404540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c64da8ba0f15e42b4ba8c833067b81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChunkView
+  chunkParent: {fileID: 2605856091981686182}
+--- !u!114 &342821628234486417
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -324,11 +357,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
   player: {fileID: 0}
-  chunkParent: {fileID: 2605856091981686182}
-  generator: {fileID: 2714469394036554109}
-  chunkSize: 16
-  viewDistance: 2
-  globalSeed: 1234
+  model: {fileID: 7910421769988821486}
+  view: {fileID: 2969428886985262584}
+  mapPresenter: {fileID: 3862820166605921218}
 --- !u!1 &6252360756361882342
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,7 +427,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7293994639606909487}
-  - component: {fileID: 2714469394036554109}
+  - component: {fileID: 3957481929276320370}
+  - component: {fileID: 4354002464865711106}
+  - component: {fileID: 3862820166605921218}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -419,7 +452,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2346226157108010335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2714469394036554109
+--- !u!114 &3957481929276320370
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -428,20 +461,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7579109593351765646}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f271c915ccc6c9b49a495af11f7a85d0, type: 3}
+  m_Script: {fileID: 11500000, guid: f60e66f322d46734e9b2535c0e1b7700, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SeedMapGenerator
-  floorPrefab: {fileID: 8396648327956248959, guid: 41c9ab4bcc9a28544bf32f6d52ce91b0, type: 3}
-  dirtWallPrefab: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}
-  stoneWallPrefab: {fileID: 1903153408827292549, guid: 1f1b9fee778fab4419d48e2fee072e27, type: 3}
-  copperWallPrefab: {fileID: 1069697998713221066, guid: 20a8bbb8fe1155f4280556681d49101f, type: 3}
-  silverWallPrefab: {fileID: 8317466132184921900, guid: 562a606324ba6de40a402e5fd82ec9ab, type: 3}
-  goldWallPrefab: {fileID: 5638992812030455425, guid: e365c2a0a1ca0f8468e4de5d79e964b4, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::SeedMapModel
   wallPercent: 35
   cellSize: 1
-  wallYOffset: 0.5
-  floorYOffset: -0.1
-  playerStartPosition: {x: 0, y: 0, z: 0}
+  playerStartPosition: {x: 0, y: 1, z: 0}
   safeRange: 10
   dirtOnlyRange: 13
   dirtStoneRange: 15
@@ -451,13 +476,48 @@ MonoBehaviour:
   copperSilverRange: 25
   silverOnlyRange: 28
   silverGoldRange: 30
-  treePrefab: {fileID: 2842405900904198630, guid: c3e8a0b1599825d4a9fa6b456469724a, type: 3}
   treeClearingChance: 10
   clearingWidth: 5
   clearingLength: 10
   treeFillPercent: 35
   clearingMargin: 1
-  treeYOffset: 0
+  placeableBlockItems: []
+--- !u!114 &4354002464865711106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7579109593351765646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5e1158d0f401df448f2c53db738cb7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SeedMapView
+  floorPrefab: {fileID: 8396648327956248959, guid: 41c9ab4bcc9a28544bf32f6d52ce91b0, type: 3}
+  floorYOffset: -0.1
+  dirtWallPrefab: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}
+  stoneWallPrefab: {fileID: 1903153408827292549, guid: 1f1b9fee778fab4419d48e2fee072e27, type: 3}
+  copperWallPrefab: {fileID: 1069697998713221066, guid: 20a8bbb8fe1155f4280556681d49101f, type: 3}
+  silverWallPrefab: {fileID: 8317466132184921900, guid: 562a606324ba6de40a402e5fd82ec9ab, type: 3}
+  goldWallPrefab: {fileID: 5638992812030455425, guid: e365c2a0a1ca0f8468e4de5d79e964b4, type: 3}
+  wallYOffset: 0.5
+  treePrefab: {fileID: 2842405900904198630, guid: c3e8a0b1599825d4a9fa6b456469724a, type: 3}
+  treeYOffset: 0.5
+--- !u!114 &3862820166605921218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7579109593351765646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01305a18ed234f4ca6eb6788ecda2b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SeedMapPresenter
+  model: {fileID: 3957481929276320370}
+  view: {fileID: 4354002464865711106}
 --- !u!1 &8327011349679937219
 GameObject:
   m_ObjectHideFlags: 0

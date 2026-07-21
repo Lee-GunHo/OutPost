@@ -76,7 +76,13 @@ PrefabInstance:
       addedObject: {fileID: -6524958723737684550}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5e2ba731f9074f499c169a49acce2bf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -4447381644821916408}
+      addedObject: {fileID: 3814362577630294864}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5e2ba731f9074f499c169a49acce2bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5777300705594601450}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a5e2ba731f9074f499c169a49acce2bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7330510826066945021}
   m_SourcePrefab: {fileID: 100100000, guid: a5e2ba731f9074f499c169a49acce2bf, type: 3}
 --- !u!1 &8770676088589347088 stripped
 GameObject:
@@ -131,7 +137,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-4447381644821916408
+--- !u!114 &3814362577630294864
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,8 +146,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 8770676088589347088}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad8d8850fc18e9247bb5eae8caf57f76, type: 3}
+  m_Script: {fileID: 11500000, guid: 460ca09e0a80fdd40b80c51ebb75c2df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DroppedItem
+  m_EditorClassIdentifier: Assembly-CSharp::DroppedItemPresenter
+  model: {fileID: 5777300705594601450}
+  view: {fileID: 7330510826066945021}
+--- !u!114 &5777300705594601450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8770676088589347088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0a8b71545d674b4cae67a9faabf4500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DroppedItemModel
   itemData: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
   amount: 1
+--- !u!114 &7330510826066945021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8770676088589347088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804bf5f61a5089a4bbb24b086bcb8e6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DroppedItemView
