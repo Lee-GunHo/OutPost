@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 4538292783853716663}
   - component: {fileID: 4728280154983506219}
   - component: {fileID: -7598805793440517630}
+  - component: {fileID: 1104850543006067139}
+  - component: {fileID: 1542599139151614044}
   m_Layer: 7
   m_Name: Prefab_Tree
   m_TagString: Untagged
@@ -70,11 +72,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67be975ce9123fb41ba77dbf5dccaf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableWall
+  model: {fileID: 1104850543006067139}
+  view: {fileID: 1542599139151614044}
   dropItemPrefab: {fileID: 8770676088589347088, guid: 2e9b1361904f1ea46b5b8a81837f7567, type: 3}
   minDropCount: 1
   maxDropCount: 3
   dropSpread: 0.3
   showSaveDebugLog: 1
+--- !u!114 &1104850543006067139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2842405900904198630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3f53efca8214374a9c804672232d707, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BreakableWallModel
+  dropItemPrefab: {fileID: 8770676088589347088, guid: 2e9b1361904f1ea46b5b8a81837f7567, type: 3}
+  minDropCount: 1
+  maxDropCount: 3
+  dropSpread: 0.3
+  showSaveDebugLog: 1
+--- !u!114 &1542599139151614044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2842405900904198630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 364a72c946734394289d6825da5bc8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BreakableWallView
 --- !u!1001 &1509689172037861504
 PrefabInstance:
   m_ObjectHideFlags: 0
