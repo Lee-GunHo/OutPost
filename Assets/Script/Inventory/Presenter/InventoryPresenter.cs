@@ -228,12 +228,33 @@ public class InventoryPresenter : MonoBehaviour
 
     public void OnEquipmentSlotHovered(int slotIndex)
     {
+        if (slotIndex < 0 ||
+            slotIndex >= equipmentView.Slots.Count)
+        {
+            return;
+        }
+
+        EquipmentSlotView slotView =
+            equipmentView.Slots[slotIndex];
+
+        ItemStack equippedItem =
+            equipmentModel.GetEquippedItem(
+                slotView.EquipType);
+
+        if (equippedItem == null ||
+            equippedItem.item == null)
+        {
+            inventoryView.HideTooltip();
+            return;
+        }
+
+        inventoryView.ShowTooltip(equippedItem);
     }
 
     public void OnEquipmentSlotUnhovered(int slotIndex)
     {
+        inventoryView.HideTooltip();
     }
-
     private void Equip(int slotIndex)
     {
         EquipmentSlotView slotView = equipmentView.Slots[slotIndex];
@@ -579,5 +600,9 @@ public class InventoryPresenter : MonoBehaviour
         RefreshView();
 
         Debug.Log("인벤토리를 정렬했습니다.");
+    }
+    public void RefreshAfterLoad()
+    {
+        RefreshView();
     }
 }

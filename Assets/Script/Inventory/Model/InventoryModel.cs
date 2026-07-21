@@ -231,4 +231,13 @@ public class InventoryModel : MonoBehaviour
 
         return false;
     }
+    public void ClearAllItems()
+    {
+        for (int i = 0; i < Items.Count; i++)
+        {
+            Items[i] = null;
+        }
+
+        OnInventoryChanged?.Invoke();
+    }
 }
