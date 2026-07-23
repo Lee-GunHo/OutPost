@@ -46,6 +46,7 @@ public class ItemSlotView : MonoBehaviour,
     public event Action<SlotReference> OnSlotSplitClicked;
     public event Action<SlotReference> OnSlotHovered;
     public event Action<SlotReference> OnSlotUnhovered;
+
     public void Initialize(SlotType slotType, int slotIndex)
     {
         // (°æ¹Î) 0707 Ãß°¡
