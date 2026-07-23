@@ -26,6 +26,7 @@ public class HotbarPresenter : MonoBehaviour
         hotbarModel.OnSelectedSlotChanged += hotbarView.MoveSelectedFrame;
 
         RefreshView();
+        RefreshVisibility();
     }
 
     private IEnumerator Start()
@@ -50,6 +51,8 @@ public class HotbarPresenter : MonoBehaviour
 
         hotbarModel.OnHotbarChanged -= RefreshView;
         hotbarModel.OnSelectedSlotChanged -= hotbarView.MoveSelectedFrame;
+
+        UIState.OnStateChanged -= RefreshVisibility;
     }
 
     private void OnHotbarSlotClicked(SlotReference slotReference)
@@ -123,6 +126,15 @@ public class HotbarPresenter : MonoBehaviour
     private void RefreshView()
     {
         hotbarView.Refresh(hotbarModel.Items);
+    }
+
+    private void RefreshVisibility()
+    {
+        bool shouldShow =
+            !UIState.IsNPCInteractionOpen &&
+            !UIState.IsShopOpen;
+
+        hotbarView.SetVisible(shouldShow);
     }
 
     public bool AddItemToHotbar(ItemStack itemStack)

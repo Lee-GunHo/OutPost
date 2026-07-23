@@ -1,5 +1,6 @@
+using System;
 using UnityEngine;
-
+using static UnityEngine.CullingGroup;
 public static class UIState
 {
     public static bool IsInventoryOpen { get; private set; }
@@ -10,6 +11,7 @@ public static class UIState
     public static bool IsShopOpen { get; private set; }
 
     public static bool IsAnyUIOpen => IsInventoryOpen || IsPauseOpen || IsNPCInteractionOpen || IsShopOpen;
+    public static event Action OnStateChanged;
 
     public static void SetInventoryOpen(bool isOpen)
     {
@@ -25,11 +27,15 @@ public static class UIState
     public static void SetNPCInteractionOpen(bool isOpen)
     {
         IsNPCInteractionOpen = isOpen;
+        OnStateChanged?.Invoke();
+
     }
 
     public static void SetShopOpen(bool isOpen)
     {
         IsShopOpen = isOpen;
+        OnStateChanged?.Invoke();
+
     }
 
     // (경민) 0709 상점 UI 오류 해결 위해 추가

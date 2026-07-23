@@ -114,7 +114,10 @@ public class HotbarView : MonoBehaviour
         if (keyboard.digit7Key.wasPressedThisFrame) OnNumberKeyPressed?.Invoke(6);
         if (keyboard.digit8Key.wasPressedThisFrame) OnNumberKeyPressed?.Invoke(7);
     }
-
+    public void SetVisible(bool isVisible)
+    {
+        gameObject.SetActive(isVisible);
+    }
     private void HandleMouseWheelInput()
     {
         Mouse mouse = Mouse.current;
