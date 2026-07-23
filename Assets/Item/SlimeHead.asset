@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: SlimeHead
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  hp: 0
-  defense: 0
-  attack: 0
-  moveSpeed: 0
   itemID: 10
   itemName: SlimeHead
-  itemType: 0
+  itemType: 1
   itemGrade: 0
   icon: {fileID: -1293485484, guid: 258a9a18fb8d179499e06a8d9fff53c8, type: 3}
+  hpBonus: 0
+  attackBonus: 0
+  defenseBonus: 0
+  moveSpeedBonus: 0
+  toolType: 0
   description: 
+  placeablePrefab: {fileID: 0}
+  placeableYOffset: 1
   maxStack: 1

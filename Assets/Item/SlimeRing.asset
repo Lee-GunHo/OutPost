@@ -14,8 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 13
   itemName: SlimeRing
-  itemType: 3
+  itemType: 4
   itemGrade: 0
   icon: {fileID: -1497500965, guid: 258a9a18fb8d179499e06a8d9fff53c8, type: 3}
+  hpBonus: 0
+  attackBonus: 0
+  defenseBonus: 0
+  moveSpeedBonus: 0
+  toolType: 0
   description: 
+  placeablePrefab: {fileID: 0}
+  placeableYOffset: 1
   maxStack: 1
