@@ -264,6 +264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b33950ab0c68d1342bc6b261a783dd55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChestModel
+  persistentChestId: 
   maxSlots: 40
   startingItems:
   - item: {fileID: 11400000, guid: 14236db1d278ee24397813533d9b2853, type: 2}

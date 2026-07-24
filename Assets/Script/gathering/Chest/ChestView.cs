@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 /// <summary>
-/// 창고 UI 표시를 담당
+/// 창고 UI 표시와 UI 이벤트 연결만 담당
 /// </summary>
 public class ChestView : MonoBehaviour
 {
@@ -12,38 +15,61 @@ public class ChestView : MonoBehaviour
 
     [Header("슬롯 Content")]
     [SerializeField] private Transform hotbarContent;
-
-    [Tooltip("Inventory Scroll View의 Content")]
     [SerializeField] private Transform inventoryContent;
-
-    [Tooltip("Chest Scroll View의 Content")]
     [SerializeField] private Transform chestContent;
 
-    [Header("슬롯 프리팹")]
+    [Header("일반 슬롯 프리팹")]
     [SerializeField] private ChestSlotView slotPrefab;
 
     [Header("슬롯 개수")]
-    [SerializeField] private int hotbarSlotCount = 10;
-    [SerializeField] private int inventorySlotCount = 40;
-    [SerializeField] private int chestSlotCount = 40;
+    [SerializeField, Min(1)] private int hotbarSlotCount = 10;
+    [SerializeField, Min(1)] private int inventorySlotCount = 40;
+    [SerializeField, Min(1)] private int chestSlotCount = 40;
+
+    [Header("버리기 UI")]
+    [SerializeField] private ChestDiscardSlotView discardSlotView;
+    [SerializeField] private Button discardButton;
+
+    [Header("커서에 들고 있는 아이템 UI")]
+    [FormerlySerializedAs("dragIcon")]
+    [SerializeField] private Image carriedItemIcon;
+    [FormerlySerializedAs("dragAmountText")]
+    [SerializeField] private TMP_Text carriedItemAmountText;
 
     [Header("기타 UI")]
     [SerializeField] private Button closeButton;
     [SerializeField] private ItemTooltipView tooltipView;
 
-    private readonly List<ChestSlotView> hotbarSlots
-        = new List<ChestSlotView>();
+    private readonly List<ChestSlotView> hotbarSlots =
+        new List<ChestSlotView>();
 
-    private readonly List<ChestSlotView> inventorySlots
-        = new List<ChestSlotView>();
+    private readonly List<ChestSlotView> inventorySlots =
+        new List<ChestSlotView>();
 
-    private readonly List<ChestSlotView> chestSlots
-        = new List<ChestSlotView>();
+    private readonly List<ChestSlotView> chestSlots =
+        new List<ChestSlotView>();
 
     private ChestPresenter presenter;
     private bool isInitialized;
 
     public int HotbarSlotCount => hotbarSlotCount;
+
+    private void Update()
+    {
+        if (carriedItemIcon == null ||
+            !carriedItemIcon.gameObject.activeSelf)
+        {
+            return;
+        }
+
+        if (Mouse.current != null)
+        {
+            carriedItemIcon.transform.position =
+                Mouse.current.position.ReadValue();
+        }
+
+        carriedItemIcon.transform.SetAsLastSibling();
+    }
 
     public void Init(ChestPresenter chestPresenter)
     {
@@ -73,18 +99,40 @@ public class ChestView : MonoBehaviour
             chestSlots
         );
 
+        if (discardSlotView != null)
+        {
+            discardSlotView.OnSlotClicked -=
+                presenter.OnDiscardSlotClicked;
+
+            discardSlotView.OnSlotClicked +=
+                presenter.OnDiscardSlotClicked;
+
+            discardSlotView.Clear();
+        }
+
+        if (discardButton != null)
+        {
+            discardButton.onClick.RemoveListener(
+                presenter.OnDiscardButtonClicked
+            );
+
+            discardButton.onClick.AddListener(
+                presenter.OnDiscardButtonClicked
+            );
+
+            discardButton.interactable = false;
+        }
+
         if (closeButton != null)
         {
-            closeButton.onClick.AddListener(
-                presenter.Close
-            );
+            closeButton.onClick.RemoveListener(presenter.Close);
+            closeButton.onClick.AddListener(presenter.Close);
         }
 
-        if (tooltipView != null)
-        {
-            tooltipView.Hide();
-        }
-
+        ConfigureCarriedIconRaycast();
+        HideCarriedItem();
+        ClearDiscardItem();
+        HideTooltip();
         Hide();
 
         isInitialized = true;
@@ -100,10 +148,8 @@ public class ChestView : MonoBehaviour
 
     public void Hide()
     {
-        if (tooltipView != null)
-        {
-            tooltipView.Hide();
-        }
+        HideTooltip();
+        HideCarriedItem();
 
         if (panel != null)
         {
@@ -116,20 +162,9 @@ public class ChestView : MonoBehaviour
         IReadOnlyList<ItemStack> inventoryItems,
         IReadOnlyList<ItemStack> chestItems)
     {
-        RefreshSlots(
-            hotbarSlots,
-            hotbarItems
-        );
-
-        RefreshSlots(
-            inventorySlots,
-            inventoryItems
-        );
-
-        RefreshSlots(
-            chestSlots,
-            chestItems
-        );
+        RefreshSlots(hotbarSlots, hotbarItems);
+        RefreshSlots(inventorySlots, inventoryItems);
+        RefreshSlots(chestSlots, chestItems);
     }
 
     public void ShowTooltip(ItemStack itemStack)
@@ -137,8 +172,7 @@ public class ChestView : MonoBehaviour
         if (tooltipView == null)
             return;
 
-        if (itemStack == null ||
-            itemStack.item == null)
+        if (itemStack == null || itemStack.item == null)
         {
             tooltipView.Hide();
             return;
@@ -155,6 +189,101 @@ public class ChestView : MonoBehaviour
         }
     }
 
+    public void ShowCarriedItem(ItemStack itemStack)
+    {
+        if (itemStack == null ||
+            itemStack.item == null ||
+            itemStack.amount <= 0)
+        {
+            HideCarriedItem();
+            return;
+        }
+
+        if (carriedItemIcon != null)
+        {
+            carriedItemIcon.sprite = itemStack.item.icon;
+            carriedItemIcon.enabled = itemStack.item.icon != null;
+            carriedItemIcon.gameObject.SetActive(true);
+            carriedItemIcon.transform.SetAsLastSibling();
+        }
+
+        if (carriedItemAmountText != null)
+        {
+            carriedItemAmountText.text = itemStack.amount > 1
+                ? itemStack.amount.ToString()
+                : string.Empty;
+        }
+    }
+
+    public void HideCarriedItem()
+    {
+        if (carriedItemIcon != null)
+        {
+            carriedItemIcon.sprite = null;
+            carriedItemIcon.gameObject.SetActive(false);
+        }
+
+        if (carriedItemAmountText != null)
+        {
+            carriedItemAmountText.text = string.Empty;
+        }
+    }
+
+    public void SetDiscardItem(ItemStack itemStack)
+    {
+        if (discardSlotView != null)
+        {
+            discardSlotView.SetItem(itemStack);
+        }
+
+        if (discardButton != null)
+        {
+            discardButton.interactable =
+                itemStack != null &&
+                itemStack.item != null &&
+                itemStack.amount > 0;
+        }
+    }
+
+    public void ClearDiscardItem()
+    {
+        if (discardSlotView != null)
+        {
+            discardSlotView.Clear();
+        }
+
+        if (discardButton != null)
+        {
+            discardButton.interactable = false;
+        }
+    }
+
+    private void ConfigureCarriedIconRaycast()
+    {
+        if (carriedItemIcon == null)
+            return;
+
+        Graphic[] graphics =
+            carriedItemIcon.GetComponentsInChildren<Graphic>(true);
+
+        foreach (Graphic graphic in graphics)
+        {
+            graphic.raycastTarget = false;
+        }
+
+        CanvasGroup canvasGroup =
+            carriedItemIcon.GetComponent<CanvasGroup>();
+
+        if (canvasGroup == null)
+        {
+            canvasGroup =
+                carriedItemIcon.gameObject.AddComponent<CanvasGroup>();
+        }
+
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+    }
+
     private void CreateOrBindSlots(
         Transform content,
         int requiredCount,
@@ -168,19 +297,14 @@ public class ChestView : MonoBehaviour
             Debug.LogError(
                 $"ChestView 오류: {area} Content가 연결되지 않았습니다."
             );
-
             return;
         }
 
-        // 이미 만들어진 슬롯이 있다면 먼저 사용
         ChestSlotView[] existingSlots =
-            content.GetComponentsInChildren<ChestSlotView>(
-                true
-            );
+            content.GetComponentsInChildren<ChestSlotView>(true);
 
         for (int i = 0;
-             i < existingSlots.Length &&
-             result.Count < requiredCount;
+             i < existingSlots.Length && result.Count < requiredCount;
              i++)
         {
             BindSlot(
@@ -191,23 +315,18 @@ public class ChestView : MonoBehaviour
             );
         }
 
-        // 부족한 슬롯은 프리팹으로 생성
         while (result.Count < requiredCount)
         {
             if (slotPrefab == null)
             {
                 Debug.LogError(
-                    $"ChestView 오류: {area} 슬롯 프리팹이 없습니다."
+                    $"ChestView 오류: {area} 슬롯이 {requiredCount}개 필요하지만 " +
+                    $"현재 {result.Count}개이며 Slot Prefab이 없습니다."
                 );
-
                 break;
             }
 
-            ChestSlotView createdSlot =
-                Instantiate(
-                    slotPrefab,
-                    content
-                );
+            ChestSlotView createdSlot = Instantiate(slotPrefab, content);
 
             BindSlot(
                 createdSlot,
@@ -229,17 +348,19 @@ public class ChestView : MonoBehaviour
 
         slotView.Initialize(area, index);
 
-        slotView.OnSlotClicked +=
-            presenter.OnSlotClicked;
+        slotView.OnSlotClicked -= presenter.OnSlotClicked;
+        slotView.OnSlotClicked += presenter.OnSlotClicked;
 
-        slotView.OnSlotHovered +=
-            presenter.OnSlotHovered;
+        slotView.OnSlotHovered -= presenter.OnSlotHovered;
+        slotView.OnSlotHovered += presenter.OnSlotHovered;
 
-        slotView.OnSlotUnhovered +=
-            presenter.OnSlotUnhovered;
+        slotView.OnSlotUnhovered -= presenter.OnSlotUnhovered;
+        slotView.OnSlotUnhovered += presenter.OnSlotUnhovered;
+
+        slotView.OnRightDragStarted -= presenter.OnRightDragStarted;
+        slotView.OnRightDragStarted += presenter.OnRightDragStarted;
 
         slotView.gameObject.SetActive(true);
-
         result.Add(slotView);
     }
 
