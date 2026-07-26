@@ -305,6 +305,60 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
+    /// 같은 아이템 스택을 합치고 빈 슬롯을 뒤로 이동
+    /// </summary>
+    public void OnGatherItemsClicked()
+    {
+        if(!CanSortChest())
+            return;
+
+        currentChest.GartherItems();
+        chestView.CloseSortPopup();
+
+        Debug.Log("창고 아이템을 위로 모았습니다.");
+    }
+
+    /// <summary>
+    /// 타입, 희귀도, 아이템 ID 순으로 정렬
+    /// </summary>
+    public void OnSortByTypeClicked()
+    {
+        if(!CanSortChest())
+            return;
+
+        currentChest.SortItemsByType();
+        chestView.CloseSortPopup();
+
+        Debug.Log("창고 아이템을 종류별로 정렬했습니다.");
+    }
+
+    private bool CanSortChest()
+    {
+        if(!isOpen || currentChest == null)
+            return false;
+
+        if(carriedStack != null)
+        {
+            Debug.Log(
+                "커서에 들고 있는 아이템을 먼저 놓아야 정렬할 수 있습니다."
+            );
+
+            return false;
+        }
+
+        if(pendingDiscard != null)
+        {
+            Debug.Log(
+                "삭제 대기 아이템을 먼저 삭제하거나 취소해야 정렬할 수 있습니다."
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// 쓰레기통 슬롯 좌클릭 시 커서 아이템 1개를 삭제 대기로 이동
     /// </summary>
     public void OnDiscardSlotClicked(

@@ -986,6 +986,18 @@ PrefabInstance:
       propertyPath: 'placeableBlockItems.Array.data[0]'
       value: 
       objectReference: {fileID: 11400000, guid: ac2140e5959e36b47a92575bf18debd6, type: 2}
+    - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: 'placeableBlockItems.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: ac2140e5959e36b47a92575bf18debd6, type: 2}
+    - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: 'placeableBlockItems.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: ac2140e5959e36b47a92575bf18debd6, type: 2}
+    - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: 'placeableBlockItems.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: ac2140e5959e36b47a92575bf18debd6, type: 2}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: hotbarRect
       value: 

@@ -192,6 +192,152 @@ public class ChestModel : MonoBehaviour
         return removedAmount;
     }
 
+    /// <summary>
+    /// 같은 아이템 스택을 합치고 모든 빈 슬롯을 뒤로 보냄.
+    /// 아이템 종류의 순서는 기존 슬롯에서 처음 등장한 순서를 유지
+    /// </summary>
+    public void GartherItems()
+    {
+        // 아이템 별 전체 수량
+        Dictionary<ItemData, int> totalAmounts =
+            new Dictionary<ItemData, int>();
+
+        // 기존에 처음 등장한 순서
+        List<ItemData> itemOrder = 
+            new List<ItemData>();
+
+        foreach(ItemStack stack in Items)
+        {
+            if(IsEmpty(stack))
+                continue;
+
+            ItemData item = stack.item;
+
+            if(!totalAmounts.ContainsKey(item))
+            {
+                totalAmounts.Add(item, 0);
+                itemOrder.Add(item);
+            }
+
+            totalAmounts[item] += stack.amount;
+        }
+
+        List<ItemStack> gatheredItems = 
+            new List<ItemStack>();
+
+        foreach(ItemData item in itemOrder)
+        {
+            int remainingAmount = totalAmounts[item];
+            int maxStack = Mathf.Max(1, item.maxStack);
+
+            while(remainingAmount > 0)
+            {
+                int stackAmount = Mathf.Min(
+                    remainingAmount,
+                    maxStack
+                );
+
+                gatheredItems.Add(
+                    new ItemStack(item, stackAmount)
+                );
+
+                remainingAmount -= stackAmount;
+            }
+        }
+
+        ApplySortedItems(gatheredItems);
+    }
+
+    /// <summary>
+    /// 아이템 타입 -> 희귀도 -> 아이템 ID 순서로 정렬
+    /// 같은 아이템의 스택은 합치지 않음
+    /// </summary>
+    public void SortItemsByType()
+    {
+        List<ItemStack> sortedItems = 
+            new List<ItemStack>();
+
+        foreach(ItemStack stack in Items)
+        {
+            if(IsEmpty(stack))
+                continue;
+
+            sortedItems.Add(CloneStack(stack));
+        }
+
+        sortedItems.Sort(CompareItemStacks);
+
+        ApplySortedItems(sortedItems);
+    }
+
+    /// <summary>
+    /// 종류별 정렬 비교 함수
+    /// 타입은 오름차순, 희귀도는 높은 등급 부터,
+    /// ID는 낮은 번호부터 정렬
+    /// </summary>
+    private static int CompareItemStacks(
+        ItemStack first,
+        ItemStack second)
+    {
+        if(IsEmpty(first) && IsEmpty(second))
+            return 0;
+
+        if (IsEmpty(first))
+            return 1;
+
+        if (IsEmpty(second))
+            return -1;
+
+        ItemData firstItem = first.item;
+        ItemData secondItem = second.item;
+
+        // 1. 아이템 타입 오름차순
+        int typeCompare = 
+            firstItem.itemType.CompareTo(secondItem.itemType);
+
+        if(typeCompare != 0)
+            return typeCompare;
+
+        // 2. 희귀도 내림차순
+        int gradeCompare = 
+            secondItem.itemGrade.CompareTo(firstItem.itemGrade);
+
+        /* 2-1. 희귀도 오름차순
+        int gradeCompare = 
+            firstItem.itemGrade.CompateTo(secondItem.itemGrade);
+        */
+
+        if(gradeCompare != 0)
+            return gradeCompare;
+
+        // 3. 아이템 ID 오름차순
+        return firstItem.itemID.CompareTo(secondItem.itemID);
+    }
+
+    /// <summary>
+    /// 정렬 결과를 전체 창고 슬롯에 적용하고
+    /// 남는 슬롯은 null로 초기화
+    /// 이벤트와 저장은 한 번만 실행
+    /// </summary>
+    private void ApplySortedItems(
+        IReadOnlyList<ItemStack> sortedItems)
+    {
+        for(int i = 0; i < Items.Count; i++)
+        {
+            if(sortedItems != null &&
+                i < sortedItems.Count)
+            {
+                Items[i] = CloneStack(sortedItems[i]);
+            }
+            else
+            {
+                Items[i] = null;
+            }
+        }
+
+        OnChestChanged?.Invoke();
+    }
+
     public void ForceSave()
     {
         SaveCurrentState();

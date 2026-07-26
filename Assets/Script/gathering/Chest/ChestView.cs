@@ -26,6 +26,13 @@ public class ChestView : MonoBehaviour
     [SerializeField, Min(1)] private int inventorySlotCount = 40;
     [SerializeField, Min(1)] private int chestSlotCount = 40;
 
+    [Header("Canvas")]
+    [SerializeField] private Canvas parentCanvas;
+
+    [Header("정렬 UI")]
+    [SerializeField] private Button sortButton;
+    [SerializeField] private ChestSortPopup sortPopup;
+
     [Header("버리기 UI")]
     [SerializeField] private ChestDiscardSlotView discardSlotView;
     [SerializeField] private Button discardButton;
@@ -123,10 +130,25 @@ public class ChestView : MonoBehaviour
             discardButton.interactable = false;
         }
 
-        if (closeButton != null)
+        if(parentCanvas == null)
         {
-            closeButton.onClick.RemoveListener(presenter.Close);
-            closeButton.onClick.AddListener(presenter.Close);
+            parentCanvas = GetComponentInParent<Canvas>();
+        }
+
+        if(sortPopup != null)
+        {
+            sortPopup.Initialize(
+                presenter.OnGatherItemsClicked,
+                presenter.OnSortByTypeClicked
+            );
+
+            sortPopup.Close();
+        }
+
+        if(sortButton != null)
+        {
+            sortButton.onClick.RemoveListener(OpenSortPopup);
+            sortButton.onClick.AddListener(OpenSortPopup);
         }
 
         ConfigureCarriedIconRaycast();
@@ -150,6 +172,7 @@ public class ChestView : MonoBehaviour
     {
         HideTooltip();
         HideCarriedItem();
+        CloseSortPopup();
 
         if (panel != null)
         {
@@ -226,6 +249,39 @@ public class ChestView : MonoBehaviour
         if (carriedItemAmountText != null)
         {
             carriedItemAmountText.text = string.Empty;
+        }
+    }
+
+    public void OpenSortPopup()
+    {
+        HideTooltip();
+
+        if (sortPopup == null)
+            return;
+
+        Vector2 mousePosition = Vector2.zero;
+
+        if(Mouse.current != null)
+        {
+            mousePosition =
+                Mouse.current.position.ReadValue();
+        }
+        else
+        {
+            mousePosition = Input.mousePosition;
+        }
+
+        sortPopup.Open(
+            mousePosition,
+            parentCanvas
+        );
+    }
+
+    public void CloseSortPopup()
+    {
+        if(sortPopup != null)
+        {
+            sortPopup.Close();
         }
     }
 
