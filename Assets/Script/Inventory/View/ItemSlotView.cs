@@ -32,6 +32,13 @@ public class ItemSlotView : MonoBehaviour,
     private SlotReference slotReference;
     private ItemStack currentItem;
 
+    private CraftingRecipe craftingRecipe;
+    private bool isCraftingSlot;
+
+    public CraftingRecipe CraftingRecipe => craftingRecipe;
+
+    public event Action<CraftingRecipe> OnCraftingRecipeClicked;
+
     // (∞ÊπŒ) 0707 √ﬂ∞°
     private ShopUI shopUI;
     private int shopSlotIndex;
@@ -51,6 +58,9 @@ public class ItemSlotView : MonoBehaviour,
     {
         // (∞ÊπŒ) 0707 √ﬂ∞°
         isShopSlot = false;
+        isCraftingSlot = false;
+        craftingRecipe = null;
+
 
         slotReference = new SlotReference(slotType, slotIndex);
         Clear();
@@ -66,6 +76,9 @@ public class ItemSlotView : MonoBehaviour,
     public void InitializeShopSlot(ShopUI shopUI, int slotIndex, ShopSlotMode slotMode)
     {
         isShopSlot = true;
+        isCraftingSlot = false;
+        craftingRecipe = null;
+
 
         this.shopUI = shopUI;
         this.shopSlotIndex = slotIndex;
@@ -166,7 +179,15 @@ public class ItemSlotView : MonoBehaviour,
             shopUI.SelectSlot(shopSlotMode, shopSlotIndex);
             return;
         }
+        // ¡¶¿€ ∑πΩ√«« ΩΩ∑‘ ≈¨∏Ø
+        if (isCraftingSlot)
+        {
+            if (craftingRecipe == null)
+                return;
 
+            OnCraftingRecipeClicked?.Invoke(craftingRecipe);
+            return;
+        }
         Keyboard keyboard = Keyboard.current;
 
         bool controlPressed =
@@ -188,7 +209,7 @@ public class ItemSlotView : MonoBehaviour,
     public void OnPointerEnter(PointerEventData eventData)
     {
         // (∞ÊπŒ) 0707 √ﬂ∞°
-        if (isShopSlot)
+        if (isShopSlot || isCraftingSlot)
             return;
 
         OnSlotHovered?.Invoke(slotReference);
@@ -197,9 +218,33 @@ public class ItemSlotView : MonoBehaviour,
     public void OnPointerExit(PointerEventData eventData)
     {
         // (∞ÊπŒ) 0707 √ﬂ∞°
-        if (isShopSlot)
+        if (isShopSlot || isCraftingSlot)
             return;
 
         OnSlotUnhovered?.Invoke(slotReference);
+    }
+
+
+    public void InitializeCraftingSlot(
+    CraftingRecipe recipe,
+    int slotIndex)
+    {
+        isShopSlot = false;
+        isCraftingSlot = true;
+
+        craftingRecipe = recipe;
+        slotReference = new SlotReference(
+            SlotType.Crafting,
+            slotIndex);
+
+        if (recipe == null || recipe.ResultItem == null)
+        {
+            Clear();
+            return;
+        }
+
+        SetItem(
+            recipe.ResultItem,
+            recipe.ResultAmount);
     }
 }
