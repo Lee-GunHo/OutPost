@@ -68,7 +68,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -237704605, guid: 62e4a5f8116f3624f921ae97192c9d5c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d7931a06af8e7f54fa721d9d77071127, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -92,6 +92,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemSlotView
   itemIcon: {fileID: 4539178817294760805}
   countText: {fileID: 6549592518897070321}
+  plusButton: {fileID: 0}
+  minusButton: {fileID: 0}
+  selectedMark: {fileID: 0}
 --- !u!1 &3302681960198617189
 GameObject:
   m_ObjectHideFlags: 0
