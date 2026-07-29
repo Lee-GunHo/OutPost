@@ -9,7 +9,11 @@ public class ShopSlotView : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Image itemIcon;
     [SerializeField] private TMP_Text itemNameText;
     [SerializeField] private TMP_Text amountText;
-    [SerializeField] private GameObject selectedMark;
+
+    [Header("½½·Ô ¹è°æ")]
+    [SerializeField] private Image slotBackground;
+    [SerializeField] private Sprite defaultSlotSprite;
+    [SerializeField] private Sprite selectedSlotSprite;
 
     private ShopUI owner;
     private ShopSlotMode mode;
@@ -89,10 +93,12 @@ public class ShopSlotView : MonoBehaviour, IPointerClickHandler
 
     public void SetSelected(bool isSelected)
     {
-        if(selectedMark != null)
-        {
-            selectedMark.SetActive(isSelected);
-        }
+        if (slotBackground == null)
+            return;
+
+        slotBackground.sprite = isSelected
+            ? selectedSlotSprite
+            : defaultSlotSprite;
     }
 
     public void OnPointerClick(PointerEventData eventData)

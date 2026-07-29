@@ -92,9 +92,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemSlotView
   itemIcon: {fileID: 4539178817294760805}
   countText: {fileID: 6549592518897070321}
-  plusButton: {fileID: 0}
-  minusButton: {fileID: 0}
-  selectedMark: {fileID: 0}
+  slotBackground: {fileID: 8602671481070079841}
+  defaultSlotSprite: {fileID: 21300000, guid: d7931a06af8e7f54fa721d9d77071127, type: 3}
+  selectedSlotSprite: {fileID: 21300000, guid: 5594df37124cf7b48b5a3c8e05ad6309, type: 3}
 --- !u!1 &3302681960198617189
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: Copper
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 1
+  itemID: 3
   itemName: Copper
   itemType: 7
   itemGrade: 0

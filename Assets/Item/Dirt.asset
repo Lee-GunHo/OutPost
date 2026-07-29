@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: Dirt
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 3
+  itemID: 1
   itemName: Dirt
   itemType: 7
   itemGrade: 0

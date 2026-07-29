@@ -33,6 +33,9 @@ public class ChestView : MonoBehaviour
     [SerializeField] private Button sortButton;
     [SerializeField] private ChestSortPopup sortPopup;
 
+    [Header("보관 UI")]
+    [SerializeField] private Button autoStoreButton;
+
     [Header("버리기 UI")]
     [SerializeField] private ChestDiscardSlotView discardSlotView;
     [SerializeField] private Button discardButton;
@@ -151,6 +154,42 @@ public class ChestView : MonoBehaviour
             sortButton.onClick.AddListener(OpenSortPopup);
         }
 
+        if(autoStoreButton != null)
+        {
+            autoStoreButton.onClick.RemoveListener(
+                presenter.OnAutoStoreClicked
+            );
+
+            autoStoreButton.onClick.AddListener(
+                presenter.OnAutoStoreClicked
+            );
+        }
+        else
+        {
+            Debug.LogWarning(
+                "ChestView의 Auto Store Button이 연결되지 않았습니다.",
+                this
+            );
+        }
+
+        if (closeButton == null)
+        {
+            Debug.LogError(
+                "ChestView 오류 : CloseButton이 Inspector에 연결되지 않았습니다.",
+                this
+            );
+        }
+        else
+        {
+            Debug.Log(
+                $"창고 닫기 버튼 연결 완료 : {closeButton.gameObject.name}",
+                closeButton
+            );
+
+            closeButton.onClick.RemoveListener(presenter.Close);
+            closeButton.onClick.AddListener(presenter.Close);
+        }
+
         ConfigureCarriedIconRaycast();
         HideCarriedItem();
         ClearDiscardItem();
@@ -174,10 +213,15 @@ public class ChestView : MonoBehaviour
         HideCarriedItem();
         CloseSortPopup();
 
-        if (panel != null)
+        if(panel == null)
         {
-            panel.SetActive(false);
+            Debug.LogError(
+                "ChestView의 Panel이 연결되지 않았습니다."
+            );
+            return;
         }
+
+        panel.SetActive(false);
     }
 
     public void Refresh(

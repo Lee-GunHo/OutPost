@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 6797274176272134462}
   - component: {fileID: 3048914030179848811}
   m_Layer: 5
-  m_Name: SelectedMark
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -305,7 +305,9 @@ MonoBehaviour:
   itemIcon: {fileID: 4844056719027025890}
   itemNameText: {fileID: 312536257310909507}
   amountText: {fileID: 11724003502591379}
-  selectedMark: {fileID: 4266778271204289334}
+  slotBackground: {fileID: 3048914030179848811}
+  defaultSlotSprite: {fileID: 21300000, guid: d7931a06af8e7f54fa721d9d77071127, type: 3}
+  selectedSlotSprite: {fileID: 21300000, guid: 5594df37124cf7b48b5a3c8e05ad6309, type: 3}
 --- !u!114 &951586665240232904
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -570,8 +572,8 @@ RectTransform:
   m_Children:
   - {fileID: 2954881853259888007}
   - {fileID: 2336218831210722442}
-  - {fileID: 7782900187875150905}
   - {fileID: 4885162999297436322}
+  - {fileID: 7782900187875150905}
   m_Father: {fileID: 7218115214056653258}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}

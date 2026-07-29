@@ -180,6 +180,10 @@ public class ChestPresenter : MonoBehaviour
 
     public void Close()
     {
+        Debug.Log(
+            $"[닫기 버튼] ChestPresenter.Close 호출 / isOpen : {isOpen}"
+        );
+
         if (!isOpen)
             return;
 
@@ -189,7 +193,13 @@ public class ChestPresenter : MonoBehaviour
         UnsubscribeModels();
 
         isOpen = false;
+
         chestView.Hide();
+
+        Debug.Log(
+            $"[닫기 버튼] ChestView.Hide 실행 완료"
+        );
+
         UIState.SetInventoryOpen(false);
 
         currentChest = null;
@@ -1026,5 +1036,132 @@ public class ChestPresenter : MonoBehaviour
             itemStack.item,
             itemStack.amount
         );
+    }
+
+    /// <summary>
+    /// 인벤토리 아이템 중 창고에 이미 같은 종류가 존재하는 아이템을
+    /// 가능한 수량만큼 모두 창고로 이동
+    ///
+    /// 같은 아이템이 창고에 하나라도 존재하면 자동 보관 대상이 되며,
+    /// 기존 스택을 채운 후 창고의 빈 슬롯에도 새로운 스택을 생성
+    /// </summary>
+    public void OnAutoStoreClicked()
+    {
+        if (!CanUseAutoStore())
+            return;
+
+        int totalMovedAmount = 0;
+
+        for (int inventoryIndex = 0;
+             inventoryIndex < currentInventory.Items.Count;
+             inventoryIndex++)
+        {
+            ItemStack inventoryStack =
+                currentInventory.Items[inventoryIndex];
+
+            if (IsEmpty(inventoryStack))
+                continue;
+
+            ItemData item = inventoryStack.item;
+
+            // 창고에 같은 종류의 아이템이 없으면 자동 보관하지 않음
+            if (!ChestContainsItem(item))
+                continue;
+
+            int originalAmount = inventoryStack.amount;
+
+            // 기존 스택을 채운 뒤 빈 슬롯까지 사용하여 전부 보관 시도
+            int remainingAmount =
+                currentChest.AddItemAndGetRemaining(
+                    item,
+                    originalAmount
+                );
+
+            int movedAmount =
+                originalAmount - remainingAmount;
+
+            if (movedAmount <= 0)
+                continue;
+
+            totalMovedAmount += movedAmount;
+
+            currentInventory.SetItemAt(
+                inventoryIndex,
+                remainingAmount > 0
+                    ? new ItemStack(item, remainingAmount)
+                    : null
+            );
+        }
+
+        RefreshView();
+
+        if (totalMovedAmount > 0)
+        {
+            Debug.Log(
+                $"자동 보관 완료: 총 {totalMovedAmount}개의 아이템을 이동했습니다."
+            );
+        }
+        else
+        {
+            Debug.Log(
+                "자동 보관할 아이템이 없거나 창고 공간이 부족합니다."
+            );
+        }
+    }
+
+    /// <summary>
+    /// 창고에 해당 아이템이 하나라도 존재하는지 확인
+    /// </summary>
+    private bool ChestContainsItem(ItemData targetItem)
+    {
+        if (currentChest == null || targetItem == null)
+            return false;
+
+        for (int i = 0; i < currentChest.Items.Count; i++)
+        {
+            ItemStack chestStack =
+                currentChest.Items[i];
+
+            if (IsEmpty(chestStack))
+                continue;
+
+            if (chestStack.item == targetItem)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// 자동 보관을 실행할 수 있는 상태인지 검사
+    /// </summary>
+    private bool CanUseAutoStore()
+    {
+        if (!isOpen ||
+            currentChest == null ||
+            currentInventory == null)
+        {
+            return false;
+        }
+
+        if (carriedStack != null)
+        {
+            Debug.Log(
+                "커서에 들고 있는 아이템을 먼저 놓아야 자동 보관할 수 있습니다."
+            );
+
+            return false;
+        }
+
+        if (pendingDiscard != null)
+        {
+            Debug.Log(
+                "삭제 대기 아이템을 먼저 삭제하거나 취소해야 자동 보관할 수 있습니다."
+            );
+
+            return false;
+        }
+
+        return true;
     }
 }

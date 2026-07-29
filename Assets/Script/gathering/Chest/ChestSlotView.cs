@@ -28,6 +28,11 @@ public class ChestSlotView : MonoBehaviour,
     [SerializeField] private Image itemIcon;
     [SerializeField] private TMP_Text countText;
 
+    [Header("½½·Ô ¹è°æ")]
+    [SerializeField] private Image slotBackground;
+    [SerializeField] private Sprite defaultSlotSprite;
+    [SerializeField] private Sprite selectedSlotSprite;
+
     private ChestSlotArea slotArea;
     private int slotIndex;
     private ItemStack currentItem;
