@@ -15,7 +15,6 @@ public class MonsterHitState : IMonsterState
 
     public void Enter()
     {
-        Debug.Log("몬스터 Hit 상태 진입");
 
         monsterPresenter.StopMove();
         hitTimer = monsterPresenter.HitDuration;

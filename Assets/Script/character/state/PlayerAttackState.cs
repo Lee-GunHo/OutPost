@@ -19,7 +19,6 @@ public class PlayerAttackState : IPlayerState
         attackTimer = playerPresenter.AttackDuration;
         hasAttacked = false;
 
-        Debug.Log("Attack State ÁøÀÔ");
     }
 
     public void Update()

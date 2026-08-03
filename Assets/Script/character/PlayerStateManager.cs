@@ -51,7 +51,6 @@ public class PlayerStateManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("Player State Change: " + currentState + " -> " + newState);
 
 
         currentState?.Exit();

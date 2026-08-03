@@ -130,7 +130,6 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         agent.isStopped = false;
         agent.speed = monsterModel.MoveSpeed;
         agent.stoppingDistance = monsterModel.AttackRange * 0.8f;
-        Debug.Log("현재 타겟으로 이동: " + currentTarget.name);
         agent.SetDestination(currentTarget.position);
     }
 

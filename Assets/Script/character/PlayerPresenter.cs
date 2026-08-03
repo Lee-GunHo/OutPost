@@ -44,6 +44,11 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public bool IsDead => playerModel.IsDead;
 
+    public int CurrentHp => playerModel.CurrentHp;
+    public int CurrentExp => levelModel != null ? levelModel.CurrentExp : 0;
+    public int Level => levelModel != null ? levelModel.Level : 1;
+    public int StatPoint => levelModel != null ? levelModel.StatPoint : 0;
+
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private HotbarPresenter hotbarPresenter;
     private Camera mainCamera;
@@ -476,7 +481,6 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             }
 
             damageable.TakeDamage(AttackPower);
-            Debug.Log("플레이어 공격 성공: " + collider.name);
 
             return true;
         }
@@ -532,5 +536,39 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public void RemoveStatusStats(int attackModifier, int defenseModifier)
     {
         playerModel.RemoveStatusStats(attackModifier, defenseModifier);
+    }
+
+    public void LoadPlayerData(PlayerSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            return;
+        }
+
+        StopMove();
+
+        if (rigid != null)
+        {
+            rigid.position = saveData.playerPosition;
+            rigid.linearVelocity = Vector3.zero;
+        }
+        else
+        {
+            transform.position = saveData.playerPosition;
+        }
+
+        playerModel.LoadSavedHealth(saveData.currentHp);
+        playerModel.LoadSavedStats(saveData.attackPower, saveData.defensePower);
+
+        if (levelModel != null)
+        {
+            levelModel.LoadSavedLevelData(
+                saveData.level,
+                saveData.currentExp,
+                saveData.statPoint
+            );
+        }
+
+        Debug.Log("플레이어 데이터 로드 완료. 위치: " + saveData.playerPosition);
     }
 }

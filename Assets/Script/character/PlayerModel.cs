@@ -83,6 +83,17 @@ public class PlayerModel : MonoBehaviour
         UpdateDashCooldown();
     }
 
+    public void LoadSavedHealth(int savedHp)
+    {
+        currentHp = Mathf.Clamp(savedHp, 0, MaxHp);
+    }
+
+    public void LoadSavedStats(int savedAttackPower, int savedDefensePower)
+    {
+        baseAttackPower = savedAttackPower;
+        baseDefensePower = savedDefensePower;
+    }
+
     private void UpdateDashCooldown()
     {
         if (currentDashCooldown <= 0f)

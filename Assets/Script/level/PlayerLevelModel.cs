@@ -56,4 +56,11 @@ public class PlayerLevelModel : MonoBehaviour
         statPoint -= amount;
         return true;
     }
+
+    public void LoadSavedLevelData(int savedLevel, int savedCurrentExp, int savedStatPoint)
+    {
+        level = savedLevel;
+        currentExp = savedCurrentExp;
+        statPoint = savedStatPoint;
+    }
 }
