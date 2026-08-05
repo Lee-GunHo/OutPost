@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +13,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     private EquipmentModel equipmentModel;
     private StatusEffectModel statusEffectModel;
 
+    public event Action OnPlayerStatusChanged;
 
     private Vector3 lastMoveDirection = Vector3.forward;
 
@@ -44,10 +46,22 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public bool IsDead => playerModel.IsDead;
 
+    public int MaxHp => playerModel.MaxHp;
     public int CurrentHp => playerModel.CurrentHp;
+
+    public int MaxMp => playerModel.MaxMp;
+    public int CurrentMp => playerModel.CurrentMp;
+
     public int CurrentExp => levelModel != null ? levelModel.CurrentExp : 0;
+    public int RequiredExp => levelModel != null ? levelModel.RequiredExp : 0;
     public int Level => levelModel != null ? levelModel.Level : 1;
     public int StatPoint => levelModel != null ? levelModel.StatPoint : 0;
+
+    public int HpUpgradeLevel => playerModel.HpUpgradeLevel;
+    public int MpUpgradeLevel => playerModel.MpUpgradeLevel;
+    public int AttackUpgradeLevel => playerModel.AttackUpgradeLevel;
+    public int DefenseUpgradeLevel => playerModel.DefenseUpgradeLevel;
+    public int MoveSpeedUpgradeLevel => playerModel.MoveSpeedUpgradeLevel;
 
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private HotbarPresenter hotbarPresenter;
@@ -60,6 +74,27 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     // (경민) 0715 블럭 설치 범위 관련 프로퍼티 추가
     public float BreakRange => playerModel.BreakRange;
+
+
+
+
+    [ContextMenu("Test Use MP")]
+    private void TestUseMp()
+    {
+        UseMp(20);
+    }
+
+    [ContextMenu("Test Recover MP")]
+    private void TestRecoverMp()
+    {
+        RecoverMp(20);
+    }
+
+    [ContextMenu("Test Level UP")]
+    private void TestAddExp()
+    {
+        AddExp(2000);
+    }
 
 
     private void Awake()
@@ -97,6 +132,11 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         {
             ToggleTool();
         }
+    }
+
+    public void NotifyStatusChanged()
+    {
+        OnPlayerStatusChanged?.Invoke();
     }
 
     private void RotateToDirection(Vector3 direction)
@@ -246,6 +286,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         }
 
         playerModel.TakeDamage(damage);
+        NotifyStatusChanged();
 
         Debug.Log("플레이어 피격, 현재 체력: " + playerModel.CurrentHp);
 
@@ -508,6 +549,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         }
 
         levelModel.AddExp(amount);
+        NotifyStatusChanged();
     }
 
     public void TakeStatusDamage(int damage)
@@ -518,6 +560,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         }
 
         playerModel.TakeStatusDamage(damage);
+        NotifyStatusChanged();
 
         Debug.Log("상태효과 데미지, 현재 체력: " + playerModel.CurrentHp);
 
@@ -557,8 +600,16 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             transform.position = saveData.playerPosition;
         }
 
+        playerModel.LoadStatUpgradeLevels(
+            saveData.hpUpgradeLevel,
+            saveData.mpUpgradeLevel,
+            saveData.attackUpgradeLevel,
+            saveData.defenseUpgradeLevel,
+            saveData.moveSpeedUpgradeLevel
+        );
+
         playerModel.LoadSavedHealth(saveData.currentHp);
-        playerModel.LoadSavedStats(saveData.attackPower, saveData.defensePower);
+        playerModel.LoadSavedMp(saveData.currentMp);
 
         if (levelModel != null)
         {
@@ -569,6 +620,121 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             );
         }
 
+        NotifyStatusChanged();
+
         Debug.Log("플레이어 데이터 로드 완료. 위치: " + saveData.playerPosition);
+    }
+
+    public bool UseMp(int amount)
+    {
+        bool success = playerModel.UseMp(amount);
+
+        if (success)
+        {
+            NotifyStatusChanged();
+        }
+
+        return success;
+    }
+
+    public void RecoverMp(int amount)
+    {
+        playerModel.RecoverMp(amount);
+        NotifyStatusChanged();
+    }
+
+    public bool UpgradeHp()
+    {
+        if (levelModel == null)
+        {
+            Debug.LogWarning("PlayerLevelModel이 없습니다.");
+            return false;
+        }
+
+        if (!levelModel.UseStatPoint(1))
+        {
+            return false;
+        }
+
+        playerModel.UpgradeHp();
+        NotifyStatusChanged();
+
+        return true;
+    }
+
+    public bool UpgradeMp()
+    {
+        if (levelModel == null)
+        {
+            Debug.LogWarning("PlayerLevelModel이 없습니다.");
+            return false;
+        }
+
+        if (!levelModel.UseStatPoint(1))
+        {
+            return false;
+        }
+
+        playerModel.UpgradeMp();
+        NotifyStatusChanged();
+
+        return true;
+    }
+
+    public bool UpgradeAttack()
+    {
+        if (levelModel == null)
+        {
+            Debug.LogWarning("PlayerLevelModel이 없습니다.");
+            return false;
+        }
+
+        if (!levelModel.UseStatPoint(1))
+        {
+            return false;
+        }
+
+        playerModel.UpgradeAttack();
+        NotifyStatusChanged();
+
+        return true;
+    }
+
+    public bool UpgradeDefense()
+    {
+        if (levelModel == null)
+        {
+            Debug.LogWarning("PlayerLevelModel이 없습니다.");
+            return false;
+        }
+
+        if (!levelModel.UseStatPoint(1))
+        {
+            return false;
+        }
+
+        playerModel.UpgradeDefense();
+        NotifyStatusChanged();
+
+        return true;
+    }
+
+    public bool UpgradeMoveSpeed()
+    {
+        if (levelModel == null)
+        {
+            Debug.LogWarning("PlayerLevelModel이 없습니다.");
+            return false;
+        }
+
+        if (!levelModel.UseStatPoint(1))
+        {
+            return false;
+        }
+
+        playerModel.UpgradeMoveSpeed();
+        NotifyStatusChanged();
+
+        return true;
     }
 }

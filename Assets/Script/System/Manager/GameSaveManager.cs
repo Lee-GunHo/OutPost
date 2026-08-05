@@ -76,12 +76,21 @@ public class GameSaveManager : MonoBehaviour
             playerPosition = playerPresenter.transform.position,
 
             currentHp = playerPresenter.CurrentHp,
+            currentMp = playerPresenter.CurrentMp,
+
+            // 기존 호환용. 로드에서는 사용하지 않는 걸 추천.
             attackPower = playerPresenter.AttackPower,
             defensePower = playerPresenter.DefensePower,
 
             level = playerPresenter.Level,
             currentExp = playerPresenter.CurrentExp,
-            statPoint = playerPresenter.StatPoint
+            statPoint = playerPresenter.StatPoint,
+
+            hpUpgradeLevel = playerPresenter.HpUpgradeLevel,
+            mpUpgradeLevel = playerPresenter.MpUpgradeLevel,
+            attackUpgradeLevel = playerPresenter.AttackUpgradeLevel,
+            defenseUpgradeLevel = playerPresenter.DefenseUpgradeLevel,
+            moveSpeedUpgradeLevel = playerPresenter.MoveSpeedUpgradeLevel
         };
 
         string json = JsonUtility.ToJson(saveData, true);

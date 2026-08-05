@@ -1,6 +1,4 @@
 using UnityEngine;
-using static Unity.VisualScripting.Dependencies.Sqlite.SQLite3;
-using static UnityEditor.Progress;
 
 public class PlayerModel : MonoBehaviour
 {
@@ -8,7 +6,9 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private int baseMaxHp = 100;
     [SerializeField] private int currentHp = 100;
 
-    //이거는 너코드
+    [Header("MP Data")]
+    [SerializeField] private int baseMaxMp = 100;
+    [SerializeField] private int currentMp = 100;
 
     [Header("Move Data")]
     [SerializeField] private float baseMoveSpeed = 5f;
@@ -39,6 +39,27 @@ public class PlayerModel : MonoBehaviour
     [Header("Wall Break Data")]
     [SerializeField] private float breakRange = 5f;
 
+    [Header("Stat Upgrade Data")]
+    [SerializeField] private int hpIncreasePerUpgrade = 10;
+    [SerializeField] private int mpIncreasePerUpgrade = 10;
+    [SerializeField] private int attackIncreasePerUpgrade = 2;
+    [SerializeField] private int defenseIncreasePerUpgrade = 1;
+    [SerializeField] private float moveSpeedIncreasePerUpgrade = 0.2f;
+
+    // 현재 업그레이드 레벨
+    private int hpUpgradeLevel;
+    private int mpUpgradeLevel;
+    private int attackUpgradeLevel;
+    private int defenseUpgradeLevel;
+    private int moveSpeedUpgradeLevel;
+
+    // 장비 보정
+    private int equipmentHpBonus;
+    private int equipmentMpBonus;
+    private int equipmentAttackBonus;
+    private int equipmentDefenseBonus;
+    private float equipmentMoveSpeedBonus;
+
     // 상태 효과 추가 공격력, 방어력
     private int statusAttackBonus;
     private int statusDefenseBonus;
@@ -49,13 +70,21 @@ public class PlayerModel : MonoBehaviour
 
     public float BreakRange => breakRange;
 
-
-
-    
-    public int MaxHp => baseMaxHp + equipmentHpBonus;
+    public int MaxHp => Mathf.Max(1, baseMaxHp + equipmentHpBonus + hpUpgradeLevel * hpIncreasePerUpgrade);
     public int CurrentHp => currentHp;
 
-    public float MoveSpeed => baseMoveSpeed + equipmentMoveSpeedBonus;
+    public int MaxMp => Mathf.Max(1, baseMaxMp + equipmentMpBonus + mpUpgradeLevel * mpIncreasePerUpgrade);
+    public int CurrentMp => currentMp;
+
+    public float MoveSpeed =>
+    baseMoveSpeed + equipmentMoveSpeedBonus + moveSpeedUpgradeLevel * moveSpeedIncreasePerUpgrade;
+
+    public int AttackPower =>
+        baseAttackPower + equipmentAttackBonus + statusAttackBonus + attackUpgradeLevel * attackIncreasePerUpgrade;
+
+    public int DefensePower =>
+        baseDefensePower + equipmentDefenseBonus + statusDefenseBonus + defenseUpgradeLevel * defenseIncreasePerUpgrade;
+
     public float DashSpeed => dashSpeed;
     public float DashDuration => dashDuration;
     public float DashCooldown => dashCooldown;
@@ -63,8 +92,6 @@ public class PlayerModel : MonoBehaviour
 
     public float InteractionRange => interactionRange;
 
-    public int AttackPower => baseAttackPower + equipmentAttackBonus + statusAttackBonus;
-    public int DefensePower => baseDefensePower + equipmentDefenseBonus + statusDefenseBonus;
     public float AttackDuration => attackDuration;
     public float HitDuration => hitDuration;
 
@@ -73,25 +100,22 @@ public class PlayerModel : MonoBehaviour
 
     public bool IsDead => currentHp <= 0;
     public bool CanDash => currentDashCooldown <= 0f;
-   
-    private int equipmentHpBonus;
-    private int equipmentAttackBonus;
-    private int equipmentDefenseBonus;
-    private float equipmentMoveSpeedBonus;
+
+    public int HpUpgradeLevel => hpUpgradeLevel;
+    public int MpUpgradeLevel => mpUpgradeLevel;
+    public int AttackUpgradeLevel => attackUpgradeLevel;
+    public int DefenseUpgradeLevel => defenseUpgradeLevel;
+    public int MoveSpeedUpgradeLevel => moveSpeedUpgradeLevel;
+
+    private void Awake()
+    {
+        ClampCurrentHp();
+        ClampCurrentMp();
+    }
+
     private void Update()
     {
         UpdateDashCooldown();
-    }
-
-    public void LoadSavedHealth(int savedHp)
-    {
-        currentHp = Mathf.Clamp(savedHp, 0, MaxHp);
-    }
-
-    public void LoadSavedStats(int savedAttackPower, int savedDefensePower)
-    {
-        baseAttackPower = savedAttackPower;
-        baseDefensePower = savedDefensePower;
     }
 
     private void UpdateDashCooldown()
@@ -109,6 +133,34 @@ public class PlayerModel : MonoBehaviour
         }
     }
 
+    private void ClampCurrentHp()
+    {
+        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+    }
+
+    private void ClampCurrentMp()
+    {
+        currentMp = Mathf.Clamp(currentMp, 0, MaxMp);
+    }
+
+    public void LoadSavedHealth(int savedHp)
+    {
+        currentHp = savedHp;
+        ClampCurrentHp();
+    }
+
+    public void LoadSavedMp(int savedMp)
+    {
+        currentMp = savedMp;
+        ClampCurrentMp();
+    }
+
+    public void LoadSavedStats(int savedAttackPower, int savedDefensePower)
+    {
+        baseAttackPower = savedAttackPower;
+        baseDefensePower = savedDefensePower;
+    }
+
     public void StartDashCooldown()
     {
         currentDashCooldown = dashCooldown;
@@ -117,15 +169,98 @@ public class PlayerModel : MonoBehaviour
     public void TakeDamage(int damage)
     {
         int finalDamage = Mathf.Max(damage - DefensePower, 1);
-            
+
         currentHp -= finalDamage;
-        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+        ClampCurrentHp();
+    }
+
+    public void TakeStatusDamage(int damage)
+    {
+        int finalDamage = Mathf.Max(damage, 1);
+
+        currentHp -= finalDamage;
+        ClampCurrentHp();
     }
 
     public void Heal(int amount)
     {
+        if (amount <= 0)
+        {
+            return;
+        }
+
         currentHp += amount;
-        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+        ClampCurrentHp();
+    }
+
+    public bool UseMp(int amount)
+    {
+        if (amount <= 0)
+        {
+            return true;
+        }
+
+        if (currentMp < amount)
+        {
+            return false;
+        }
+
+        currentMp -= amount;
+        ClampCurrentMp();
+
+        return true;
+    }
+
+    public void RecoverMp(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        currentMp += amount;
+        ClampCurrentMp();
+    }
+
+    public void UpgradeHp()
+    {
+        hpUpgradeLevel++;
+
+        currentHp += hpIncreasePerUpgrade;
+        ClampCurrentHp();
+
+        Debug.Log($"HP 강화 완료. 강화 레벨: {hpUpgradeLevel}, 현재 HP: {currentHp}/{MaxHp}");
+    }
+
+    public void UpgradeMp()
+    {
+        mpUpgradeLevel++;
+
+        currentMp += mpIncreasePerUpgrade;
+        ClampCurrentMp();
+
+        Debug.Log($"MP 강화 완료. 강화 레벨: {mpUpgradeLevel}, 현재 MP: {currentMp}/{MaxMp}");
+    }
+
+    public void UpgradeAttack()
+    {
+        attackUpgradeLevel++;
+
+        Debug.Log($"공격력 강화 완료. 강화 레벨: {attackUpgradeLevel}, 현재 공격력: {AttackPower}");
+    }
+
+    public void UpgradeDefense()
+    {
+        defenseUpgradeLevel++;
+
+        Debug.Log($"방어력 강화 완료. 강화 레벨: {defenseUpgradeLevel}, 현재 방어력: {DefensePower}");
+    }
+
+    public void UpgradeMoveSpeed()
+    {
+        moveSpeedUpgradeLevel++;
+
+        Debug.Log($"이동속도 강화 완료. 강화 레벨: {moveSpeedUpgradeLevel}, 현재 이동속도: {MoveSpeed}");
     }
 
     public void ToggleTool()
@@ -137,47 +272,66 @@ public class PlayerModel : MonoBehaviour
         Debug.Log("현재 도구 상태: " + currentToolType);
     }
 
+    public void LoadStatUpgradeLevels(
+        int savedHpUpgradeLevel,
+        int savedMpUpgradeLevel,
+        int savedAttackUpgradeLevel,
+        int savedDefenseUpgradeLevel,
+        int savedMoveSpeedUpgradeLevel
+    )
+    {
+        hpUpgradeLevel = Mathf.Max(0, savedHpUpgradeLevel);
+        mpUpgradeLevel = Mathf.Max(0, savedMpUpgradeLevel);
+        attackUpgradeLevel = Mathf.Max(0, savedAttackUpgradeLevel);
+        defenseUpgradeLevel = Mathf.Max(0, savedDefenseUpgradeLevel);
+        moveSpeedUpgradeLevel = Mathf.Max(0, savedMoveSpeedUpgradeLevel);
+
+        ClampCurrentHp();
+        ClampCurrentMp();
+    }
 
     // 장비 능력치 구현 ( 이건호 ) 
     public void AddEquipmentStats(ItemData item)
     {
-        if (item == null) return;
+        if (item == null)
+        {
+            return;
+        }
 
         equipmentHpBonus += item.hpBonus;
         equipmentAttackBonus += item.attackBonus;
         equipmentDefenseBonus += item.defenseBonus;
         equipmentMoveSpeedBonus += item.moveSpeedBonus;
 
-        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+        ClampCurrentHp();
+        ClampCurrentMp();
 
         Debug.Log("==========아이템 장착==========");
         Debug.Log($"장착한 아이템 능력치 - 체력:{item.hpBonus}, 공격력:{item.attackBonus}, 방어력:{item.defenseBonus}, 이동속도:{item.moveSpeedBonus}");
         Debug.Log($"추가된 아이템 능력치 - 체력:{equipmentHpBonus}, 공격력:{equipmentAttackBonus}, 방어력:{equipmentDefenseBonus}, 이동속도:{equipmentMoveSpeedBonus}");
-        Debug.Log($"장비 장착 현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
+        Debug.Log($"장비 장착 현재 능력치 - 체력:{MaxHp}, MP:{MaxMp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
     }
+
     // 장비 능력치 제거 구현 ( 이건호 )
     public void RemoveEquipmentStats(ItemData item)
     {
-        if (item == null) return;
+        if (item == null)
+        {
+            return;
+        }
+
         equipmentHpBonus -= item.hpBonus;
         equipmentAttackBonus -= item.attackBonus;
         equipmentDefenseBonus -= item.defenseBonus;
         equipmentMoveSpeedBonus -= item.moveSpeedBonus;
 
-        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+        ClampCurrentHp();
+        ClampCurrentMp();
 
         Debug.Log("==========아이템 해제==========");
         Debug.Log($"해제한 아이템 능력치 - 체력:{item.hpBonus}, 공격력:{item.attackBonus}, 방어력:{item.defenseBonus}, 이동속도:{item.moveSpeedBonus}");
         Debug.Log($"감소한 아이템 능력치 - 체력:{equipmentHpBonus}, 공격력:{equipmentAttackBonus}, 방어력:{equipmentDefenseBonus}, 이동속도:{equipmentMoveSpeedBonus}");
-        Debug.Log($"장비 해제 현재 능력치 - 체력:{MaxHp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
-    }
-
-    public void TakeStatusDamage(int damage)
-    {
-        int finalDamage = Mathf.Max(damage, 1);
-
-        currentHp -= finalDamage;
-        currentHp = Mathf.Clamp(currentHp, 0, MaxHp);
+        Debug.Log($"장비 해제 현재 능력치 - 체력:{MaxHp}, MP:{MaxMp}, 공격력:{AttackPower}, 방어력:{DefensePower}, 이동속도:{MoveSpeed}");
     }
 
     public void AddStatusStats(int attackModifier, int defenseModifier)

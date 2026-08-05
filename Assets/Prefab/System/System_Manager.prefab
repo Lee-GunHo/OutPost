@@ -38,6 +38,7 @@ Transform:
   - {fileID: 6771871648894348193}
   - {fileID: 2184630742395329268}
   - {fileID: 9187505619098696236}
+  - {fileID: 3737615672112863761}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1444708050729278303
@@ -117,7 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27e2357104392cd44bfe3c529ba95925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RuntimeNavMeshBuilder
-  navMeshSurface: {fileID: 0}
+  navMeshSurface: {fileID: 3570729732963153355}
   buildDelay: 1
 --- !u!1 &2264084145399811000
 GameObject:
@@ -198,6 +199,51 @@ MonoBehaviour:
   optionPanel: {fileID: 0}
   mainMenuSceneName: MainScene
   inputManager: {fileID: 1963133426766121305}
+--- !u!1 &2796574510906233991
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3737615672112863761}
+  - component: {fileID: 8522807417517220883}
+  m_Layer: 0
+  m_Name: GameSaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3737615672112863761
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2796574510906233991}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2346226157108010335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8522807417517220883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2796574510906233991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 530de6cfade7cd04a97d050bedfa9892, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSaveManager
+  playerPresenter: {fileID: 0}
 --- !u!1 &3267181070622964672
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,9 +315,9 @@ MonoBehaviour:
   playerPresenter: {fileID: 0}
   playerModel: {fileID: 0}
   hotbarRect: {fileID: 0}
-  closedHotbarPosition: {x: 0, y: 0}
-  openedHotbarPosition: {x: 0, y: 0}
-  addTestItemsOnStart: 0
+  closedHotbarPosition: {x: 0, y: -450}
+  openedHotbarPosition: {x: 200, y: -200}
+  addTestItemsOnStart: 1
   wood: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
   stone: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
   smileArmor: {fileID: 11400000, guid: dc3de38e89f5e57439f73ab04601ea1a, type: 2}

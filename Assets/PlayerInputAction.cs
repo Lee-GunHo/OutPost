@@ -136,6 +136,15 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""StatWindow"",
+                    ""type"": ""Button"",
+                    ""id"": ""2798f8f5-27ae-42cc-b2a5-4e873eccb752"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -237,6 +246,17 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""action"": ""ToggleTool"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e267fd3a-556c-4398-a3f4-82a2b9db6409"",
+                    ""path"": ""<Keyboard>/l"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""StatWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -309,6 +329,7 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_ToggleTool = m_Player.FindAction("ToggleTool", throwIfNotFound: true);
+        m_Player_StatWindow = m_Player.FindAction("StatWindow", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Esc = m_UI.FindAction("Esc", throwIfNotFound: true);
@@ -399,6 +420,7 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_ToggleTool;
+    private readonly InputAction m_Player_StatWindow;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -430,6 +452,10 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ToggleTool".
         /// </summary>
         public InputAction @ToggleTool => m_Wrapper.m_Player_ToggleTool;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/StatWindow".
+        /// </summary>
+        public InputAction @StatWindow => m_Wrapper.m_Player_StatWindow;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -471,6 +497,9 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
             @ToggleTool.started += instance.OnToggleTool;
             @ToggleTool.performed += instance.OnToggleTool;
             @ToggleTool.canceled += instance.OnToggleTool;
+            @StatWindow.started += instance.OnStatWindow;
+            @StatWindow.performed += instance.OnStatWindow;
+            @StatWindow.canceled += instance.OnStatWindow;
         }
 
         /// <summary>
@@ -497,6 +526,9 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
             @ToggleTool.started -= instance.OnToggleTool;
             @ToggleTool.performed -= instance.OnToggleTool;
             @ToggleTool.canceled -= instance.OnToggleTool;
+            @StatWindow.started -= instance.OnStatWindow;
+            @StatWindow.performed -= instance.OnStatWindow;
+            @StatWindow.canceled -= instance.OnStatWindow;
         }
 
         /// <summary>
@@ -679,6 +711,13 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleTool(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "StatWindow" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnStatWindow(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

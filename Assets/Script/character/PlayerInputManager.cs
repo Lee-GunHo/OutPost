@@ -12,6 +12,9 @@ public class PlayerInputManager : MonoBehaviour
     public bool IsDashPressed { get; private set; }
     public bool IsToggleToolPressed { get; private set; }
 
+    // (¹Î»ó) 0806 ½ºÅÈÃ¢ ¿­±â ÀÔ·Â Ãß°¡
+    public bool IsStatWindowPressed { get; private set; }
+
     private void Awake()
     {
         playerInputAction = new PlayerInputAction();
@@ -28,6 +31,9 @@ public class PlayerInputManager : MonoBehaviour
         playerInputAction.Player.Interact.performed += OnInteractPerformed;
         playerInputAction.Player.Dash.performed += OnDashPerformed;
         playerInputAction.Player.ToggleTool.performed += OnToggleToolPerformed;
+
+        // (¹Î»ó) 0806 ½ºÅÈÃ¢ ÀÔ·Â ÀÌº¥Æ® µî·Ï
+        playerInputAction.Player.StatWindow.performed += OnStatWindowPerformed;
     }
 
     private void OnDisable()
@@ -39,6 +45,9 @@ public class PlayerInputManager : MonoBehaviour
         playerInputAction.Player.Interact.performed -= OnInteractPerformed;
         playerInputAction.Player.Dash.performed -= OnDashPerformed;
         playerInputAction.Player.ToggleTool.performed -= OnToggleToolPerformed;
+
+        // (¹Î»ó) 0806 ½ºÅÈÃ¢ ÀÔ·Â ÀÌº¥Æ® ÇØÁ¦
+        playerInputAction.Player.StatWindow.performed -= OnStatWindowPerformed;
 
         playerInputAction.Player.Disable();
     }
@@ -78,7 +87,11 @@ public class PlayerInputManager : MonoBehaviour
         IsToggleToolPressed = true;
     }
 
-
+    // (¹Î»ó) 0806 ½ºÅÈÃ¢ ÀÔ·Â Ã³¸®
+    private void OnStatWindowPerformed(InputAction.CallbackContext context)
+    {
+        IsStatWindowPressed = true;
+    }
 
     private void ResetButtonInputs()
     {
@@ -86,5 +99,8 @@ public class PlayerInputManager : MonoBehaviour
         IsInteractPressed = false;
         IsDashPressed = false;
         IsToggleToolPressed = false;
+
+        // (¹Î»ó) 0806 ½ºÅÈÃ¢ ÀÔ·Â ÃÊ±âÈ­
+        IsStatWindowPressed = false;
     }
 }

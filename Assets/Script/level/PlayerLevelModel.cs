@@ -12,10 +12,17 @@ public class PlayerLevelModel : MonoBehaviour
     [SerializeField] private int expIncreasePerLevel = 50;
     [SerializeField] private int statPointPerLevel = 3;
 
+    private int baseRequiredExp;
+
     public int Level => level;
     public int CurrentExp => currentExp;
     public int RequiredExp => requiredExp;
     public int StatPoint => statPoint;
+
+    private void Awake()
+    {
+        baseRequiredExp = requiredExp;
+    }
 
     public void AddExp(int amount)
     {
@@ -47,6 +54,11 @@ public class PlayerLevelModel : MonoBehaviour
 
     public bool UseStatPoint(int amount)
     {
+        if (amount <= 0)
+        {
+            return true;
+        }
+
         if (statPoint < amount)
         {
             Debug.Log("스탯 포인트가 부족합니다.");
@@ -59,8 +71,15 @@ public class PlayerLevelModel : MonoBehaviour
 
     public void LoadSavedLevelData(int savedLevel, int savedCurrentExp, int savedStatPoint)
     {
-        level = savedLevel;
-        currentExp = savedCurrentExp;
-        statPoint = savedStatPoint;
+        level = Mathf.Max(1, savedLevel);
+        currentExp = Mathf.Max(0, savedCurrentExp);
+        statPoint = Mathf.Max(0, savedStatPoint);
+
+        RecalculateRequiredExp();
+    }
+
+    private void RecalculateRequiredExp()
+    {
+        requiredExp = baseRequiredExp + (level - 1) * expIncreasePerLevel;
     }
 }
