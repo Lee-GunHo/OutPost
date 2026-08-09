@@ -130,6 +130,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!4 &69446825 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+  m_PrefabInstance: {fileID: 1355673054}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &98285035
 GameObject:
   m_ObjectHideFlags: 0
@@ -1293,6 +1298,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215763946}
   m_CullTransparentMesh: 1
+--- !u!1001 &1355673054
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 295364665087807538, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 914011479017039206, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: maxHealth
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.00000008146034
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984666073804806571, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5112867284247076509, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6865026967297497089, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+      propertyPath: m_Name
+      value: Nexus
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
 --- !u!224 &1360208497 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 293899760475147861, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
@@ -1366,10 +1440,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
-      propertyPath: wallPercent
-      value: 1
-      objectReference: {fileID: 0}
+    - target: {fileID: 4674959809733426903, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1115572301}
+    - target: {fileID: 4674959809733426903, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: monsterParent
+      value: 
+      objectReference: {fileID: 2064798364}
+    - target: {fileID: 4674959809733426903, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: nexusTransform
+      value: 
+      objectReference: {fileID: 69446825}
     - target: {fileID: 4721644016349314801, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: pausePanel
       value: 
@@ -3076,3 +3158,4 @@ SceneRoots:
   - {fileID: 927199058}
   - {fileID: 7674105975148383819}
   - {fileID: 4248088077012698383}
+  - {fileID: 1355673054}

@@ -39,6 +39,7 @@ Transform:
   - {fileID: 2184630742395329268}
   - {fileID: 9187505619098696236}
   - {fileID: 3737615672112863761}
+  - {fileID: 360267931492050767}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1444708050729278303
@@ -378,6 +379,71 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee37eaa5d4d7c5499fc5b8148ce247c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarModel
+--- !u!1 &4930478553000661126
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 360267931492050767}
+  - component: {fileID: 4674959809733426903}
+  m_Layer: 0
+  m_Name: MonsterWaveSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &360267931492050767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4930478553000661126}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2346226157108010335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4674959809733426903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4930478553000661126}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 259d84d8b3e176c4887a4a8259ebe1ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterWaveSpawner
+  player: {fileID: 0}
+  monsterParent: {fileID: 0}
+  waves:
+  - waveName: gimozzi
+    monsterCount: 3
+    spawnInterval: 2
+    monsterSpawnDatas:
+    - monsterPrefab: {fileID: 5159088055879067741, guid: fd5f959ed9622af40a69b5a9d9d92121, type: 3}
+      spawnWeight: 1
+  startDelay: 3
+  nextWaveDelay: 5
+  loopWaves: 0
+  safeRadius: 5
+  spawnRadius: 12
+  navMeshSearchRadius: 10
+  spawnCheckRadius: 0.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  maxAliveMonsterCount: 20
+  nexusTransform: {fileID: 0}
 --- !u!1 &5092765097817404540
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,7 +676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f60e66f322d46734e9b2535c0e1b7700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeedMapModel
-  wallPercent: 35
+  wallPercent: 1
   cellSize: 1
   playerStartPosition: {x: 0, y: 1, z: 0}
   safeRange: 10
