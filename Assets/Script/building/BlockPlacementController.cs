@@ -9,7 +9,7 @@ public class BlockPlacementController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PlayerPresenter playerPresenter;
-    [SerializeField] private InventoryModel inventoryModel;
+    [SerializeField] private HotbarPresenter hotbarPresenter;
     [SerializeField] private ChunkManager chunkManager;
     [SerializeField] private Camera mainCamera;
 
@@ -43,9 +43,6 @@ public class BlockPlacementController : MonoBehaviour
     {
         if (playerPresenter == null)
             playerPresenter = GetComponent<PlayerPresenter>();
-
-        if (inventoryModel == null && playerPresenter != null)
-            inventoryModel = playerPresenter.PlayerInventory;
 
         if (playerPresenter != null)
             playerColliders = playerPresenter.GetComponentsInChildren<Collider>(true);
@@ -86,9 +83,12 @@ public class BlockPlacementController : MonoBehaviour
         // 인벤토리 앞쪽 슬롯부터 설치 가능한 아이템을 자동 검색
         if (!TryGetPlaceableItem(out ItemData placeableItem))
         {
+            Debug.LogWarning("현재 Hotbar 선택 아이템은 설치할 수 없습니다.");
             HidePreview();
             return;
         }
+
+        Debug.Log("설치 아이템 감지: " + placeableItem.itemName);
 
         if (!TryGetMouseGlobalCell(out Vector2Int globalCell))
         {
@@ -130,7 +130,7 @@ public class BlockPlacementController : MonoBehaviour
         }
 
         if (playerPresenter == null ||
-            inventoryModel == null ||
+            hotbarPresenter == null ||
             chunkManager == null)
         {
             return false;
@@ -142,46 +142,34 @@ public class BlockPlacementController : MonoBehaviour
         return mainCamera != null && Mouse.current != null;
     }
 
-    /// <summary>
-    /// 인벤토리 슬롯 순서대로 검색하여 첫 번째 설치 가능 아이템을 반환
-    /// </summary>
     private bool TryGetPlaceableItem(out ItemData placeableItem)
     {
         placeableItem = null;
 
-        if (inventoryModel == null || inventoryModel.Items == null)
+        if (hotbarPresenter == null)
             return false;
 
-        for (int i = 0; i < inventoryModel.Items.Count; i++)
+        ItemStack selectedStack = hotbarPresenter.GetSelectedItem();
+
+        if (selectedStack == null ||
+            selectedStack.item == null ||
+            selectedStack.amount <= 0)
         {
-            ItemStack stack = inventoryModel.Items[i];
-
-            if (stack == null ||
-                stack.item == null ||
-                stack.amount <= 0)
-            {
-                continue;
-            }
-
-            ItemData itemData = stack.item;
-
-            if (itemData.toolType != ToolType.Placeable)
-                continue;
-
-            if (itemData.placeablePrefab == null)
-                continue;
-
-            BreakableWall breakableWall =
-                itemData.placeablePrefab.GetComponentInChildren<BreakableWall>(true);
-
-            if (breakableWall == null)
-                continue;
-
-            placeableItem = itemData;
-            return true;
+            return false;
         }
 
-        return false;
+        ItemData itemData = selectedStack.item;
+
+        // 설치 가능한 아이템인지 확인
+        if (itemData.toolType != ToolType.Placeable)
+            return false;
+
+        // 설치할 프리팹이 존재하는지 확인
+        if (itemData.placeablePrefab == null)
+            return false;
+
+        placeableItem = itemData;
+        return true;
     }
 
     private bool TryGetMouseGlobalCell(out Vector2Int globalCell)
@@ -312,7 +300,11 @@ public class BlockPlacementController : MonoBehaviour
             return;
 
         // 설치 직전에 아이템이 아직 존재하는지 다시 확인
-        if (!inventoryModel.HasItem(itemData, 1))
+        ItemStack selectedStack = hotbarPresenter.GetSelectedItem();
+
+        if (selectedStack == null ||
+            selectedStack.item != itemData ||
+            selectedStack.amount <= 0)
         {
             HidePreview();
             return;
@@ -369,7 +361,7 @@ public class BlockPlacementController : MonoBehaviour
         }
 
         // 인벤토리에서 블록 1개를 차감
-        bool consumed = inventoryModel.RemoveItem(itemData, 1);
+        bool consumed = hotbarPresenter.ConsumeSelectedItem(1);
 
         if (!consumed)
         {

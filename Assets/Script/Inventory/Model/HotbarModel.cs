@@ -112,4 +112,30 @@ public class HotbarModel : MonoBehaviour
         OnHotbarChanged?.Invoke();
         OnSelectedSlotChanged?.Invoke(SelectedIndex);
     }
+
+    // 0813 경민 선택 아이템 1개 차감 기능 추가
+    public bool ConsumeSelectedItem(int amount = 1)
+    {
+        if (amount <= 0)
+            return false;
+
+        ItemStack stack = GetSelectedItem();
+
+        if (stack == null ||
+            stack.item == null ||
+            stack.amount < amount)
+        {
+            return false;
+        }
+
+        stack.amount -= amount;
+
+        if (stack.amount <= 0)
+        {
+            Items[SelectedIndex] = null;
+        }
+
+        OnHotbarChanged?.Invoke();
+        return true;
+    }
 }

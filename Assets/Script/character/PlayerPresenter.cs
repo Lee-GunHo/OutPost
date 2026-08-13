@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -67,6 +68,24 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     [SerializeField] private HotbarPresenter hotbarPresenter;
     private Camera mainCamera;
 
+    [Header("Save Position Safety")]
+    [Tooltip("저장 위치의 X/Z에서 바닥을 찾기 위해 위쪽에서 시작할 높이")]
+    [SerializeField] private float loadGroundProbeHeight = 50f;
+
+    [Tooltip("저장 위치에서 아래 방향으로 바닥을 찾는 최대 거리")]
+    [SerializeField] private float loadGroundProbeDistance = 200f;
+
+    [Tooltip("바닥과 플레이어 발 사이에 둘 여유 높이")]
+    [SerializeField] private float loadGroundPadding = 0.05f;
+
+    [Tooltip("저장 위치 X/Z로 이동한 뒤 청크가 갱신될 때까지 기다릴 프레임 수")]
+    [Min(1)]
+    [SerializeField] private int loadGroundWaitFrames = 2;
+
+    private Vector3 initialSpawnPosition;
+    private Coroutine restorePositionCoroutine;
+    private bool restorePreviousUseGravity;
+
     // (경민) 0707 NPC 퀘스트 관련 InventoryModel 연결 추가
     [SerializeField] private InventoryModel inventoryModel;
 
@@ -108,14 +127,15 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         equipmentModel = GetComponent<EquipmentModel>();
         statusEffectModel = GetComponent<StatusEffectModel>();
         mainCamera = Camera.main;
+        initialSpawnPosition = transform.position;
 
         // (경민) 0707 NPC 퀘스트 관련 InventoryModel 연결 추가
-        if(inventoryModel == null)
+        if (inventoryModel == null)
         {
             inventoryModel = GetComponent<InventoryModel>();
         }
 
-        if(inventoryModel == null)
+        if (inventoryModel == null)
         {
             inventoryModel = GetComponentInChildren<InventoryModel>();
         }
@@ -590,16 +610,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         StopMove();
 
-        if (rigid != null)
-        {
-            rigid.position = saveData.playerPosition;
-            rigid.linearVelocity = Vector3.zero;
-        }
-        else
-        {
-            transform.position = saveData.playerPosition;
-        }
-
+        // 스탯 데이터는 즉시 복구한다.
         playerModel.LoadStatUpgradeLevels(
             saveData.hpUpgradeLevel,
             saveData.mpUpgradeLevel,
@@ -622,7 +633,185 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         NotifyStatusChanged();
 
-        Debug.Log("플레이어 데이터 로드 완료. 위치: " + saveData.playerPosition);
+        // 저장된 Y를 그대로 적용하지 않고, 해당 X/Z의 실제 바닥을 찾아 위치를 복구한다.
+        if (restorePositionCoroutine != null)
+        {
+            StopCoroutine(restorePositionCoroutine);
+
+            if (rigid != null)
+            {
+                rigid.useGravity = restorePreviousUseGravity;
+            }
+        }
+
+        restorePositionCoroutine =
+            StartCoroutine(RestorePlayerPositionSafely(saveData.playerPosition));
+    }
+
+    private IEnumerator RestorePlayerPositionSafely(Vector3 savedPosition)
+    {
+        // 우선 저장된 X/Z 위의 높은 위치로 옮긴다.
+        // 이 위치 변경을 감지한 ChunkPresenter가 필요한 청크를 생성할 수 있다.
+        float temporaryY = Mathf.Max(
+            initialSpawnPosition.y,
+            savedPosition.y,
+            0f
+        ) + loadGroundProbeHeight;
+
+        Vector3 temporaryPosition = new Vector3(
+            savedPosition.x,
+            temporaryY,
+            savedPosition.z
+        );
+
+        if (rigid != null)
+        {
+            restorePreviousUseGravity = rigid.useGravity;
+            rigid.useGravity = false;
+        }
+
+        SetPhysicsPosition(temporaryPosition);
+
+        int waitFrames = Mathf.Max(1, loadGroundWaitFrames);
+
+        for (int i = 0; i < waitFrames; i++)
+        {
+            yield return null;
+        }
+
+        Physics.SyncTransforms();
+
+        if (TryFindGroundBelow(temporaryPosition, out RaycastHit groundHit))
+        {
+            float feetOffset = GetPlayerFeetOffset();
+
+            Vector3 safePosition = new Vector3(
+                savedPosition.x,
+                groundHit.point.y + feetOffset + loadGroundPadding,
+                savedPosition.z
+            );
+
+            SetPhysicsPosition(safePosition);
+
+            Debug.Log(
+                $"플레이어 위치 안전 복구 완료. " +
+                $"저장 위치={savedPosition}, 복구 위치={safePosition}, " +
+                $"바닥={groundHit.collider.name}"
+            );
+        }
+        else
+        {
+            // 저장 위치에 바닥을 찾지 못하면 씬에 배치된 최초 시작 위치로 되돌린다.
+            SetPhysicsPosition(initialSpawnPosition);
+
+            Debug.LogWarning(
+                $"저장 위치 X/Z({savedPosition.x:F2}, {savedPosition.z:F2})에서 " +
+                "바닥을 찾지 못해 초기 시작 위치로 복구했습니다."
+            );
+        }
+
+        if (rigid != null)
+        {
+            rigid.useGravity = restorePreviousUseGravity;
+            rigid.linearVelocity = Vector3.zero;
+        }
+
+        restorePositionCoroutine = null;
+    }
+
+    private bool TryFindGroundBelow(
+        Vector3 probePosition,
+        out RaycastHit selectedHit)
+    {
+        selectedHit = default;
+
+        float distance = Mathf.Max(1f, loadGroundProbeDistance);
+
+        RaycastHit[] hits = Physics.RaycastAll(
+            probePosition,
+            Vector3.down,
+            distance,
+            ~0,
+            QueryTriggerInteraction.Ignore
+        );
+
+        bool foundGround = false;
+        float closestDistance = float.MaxValue;
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider == null)
+                continue;
+
+            Transform hitTransform = hit.collider.transform;
+
+            // 자기 자신의 몸 Collider는 바닥 후보에서 제외한다.
+            if (hitTransform == transform || hitTransform.IsChildOf(transform))
+                continue;
+
+            // 아래를 향한 Ray가 윗면을 맞은 경우만 바닥으로 취급한다.
+            if (hit.normal.y <= 0.5f)
+                continue;
+
+            if (hit.distance >= closestDistance)
+                continue;
+
+            closestDistance = hit.distance;
+            selectedHit = hit;
+            foundGround = true;
+        }
+
+        return foundGround;
+    }
+
+    private float GetPlayerFeetOffset()
+    {
+        Physics.SyncTransforms();
+
+        Collider[] colliders = GetComponentsInChildren<Collider>(true);
+
+        float lowestPoint = float.PositiveInfinity;
+        bool foundBodyCollider = false;
+
+        foreach (Collider col in colliders)
+        {
+            if (col == null || !col.enabled || col.isTrigger)
+                continue;
+
+            // Player Rigidbody에 속한 물리 몸체만 사용한다.
+            if (rigid != null && col.attachedRigidbody != rigid)
+                continue;
+
+            lowestPoint = Mathf.Min(lowestPoint, col.bounds.min.y);
+            foundBodyCollider = true;
+        }
+
+        if (!foundBodyCollider)
+        {
+            Debug.LogWarning(
+                "플레이어의 비-Trigger 몸 Collider를 찾지 못했습니다. " +
+                "기본 발 높이 0.5를 사용합니다."
+            );
+            return 0.5f;
+        }
+
+        return Mathf.Max(0f, transform.position.y - lowestPoint);
+    }
+
+    private void SetPhysicsPosition(Vector3 position)
+    {
+        if (rigid != null)
+        {
+            rigid.position = position;
+            rigid.linearVelocity = Vector3.zero;
+            rigid.angularVelocity = Vector3.zero;
+        }
+        else
+        {
+            transform.position = position;
+        }
+
+        Physics.SyncTransforms();
     }
 
     public bool UseMp(int amount)

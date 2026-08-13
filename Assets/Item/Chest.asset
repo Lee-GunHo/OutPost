@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
+  m_Name: Chest
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemID: 100
+  itemName: "\uC0C1\uC790"
+  itemType: 6
+  itemGrade: 0
+  icon: {fileID: 21300000, guid: 3b7bec7a01eac954dbf8087501044c8a, type: 3}
+  hpBonus: 0
+  attackBonus: 0
+  defenseBonus: 0
+  moveSpeedBonus: 0
+  toolType: 6
+  description: 
+  placeablePrefab: {fileID: 1642490396178773992, guid: 5b12bdbdef78fcc41be2d42f8f43fa09, type: 3}
+  placeableYOffset: 0.5
+  maxStack: 99

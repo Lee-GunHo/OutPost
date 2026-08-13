@@ -155,5 +155,9 @@ public class HotbarPresenter : MonoBehaviour
         return hotbarModel.GetItem(index);
     }
 
-
+    // 0813 경민 선택 아이템 1개 차감 기능 연결 함수 추가
+    public bool ConsumeSelectedItem(int amount = 1)
+    {
+        return hotbarModel.ConsumeSelectedItem(amount);
+    }
 }
