@@ -28,18 +28,34 @@ public class ChunkPresenter : MonoBehaviour
 
     protected virtual void Start()
     {
+        Debug.Log("1. ChunkPresenter Start 실행");
+
         if (!ValidateReferences())
         {
+            Debug.LogError("2. ChunkPresenter 참조 검사 실패");
             enabled = false;
             return;
         }
 
+        Debug.Log("2. ChunkPresenter 참조 검사 성공");
+
         ChunkModificationSaveManager saveManager =
             ChunkModificationSaveManager.GetOrCreate();
+
         saveManager.InitializeWorld(GlobalSeed);
 
+        Debug.Log("3. 저장 시스템 초기화 완료");
+
         model.Initialize(player.position, CellSize);
+
+        Debug.Log(
+            $"4. ChunkModel 초기화 완료 / 현재 청크: {model.CurrentChunkCoord}"
+        );
+
         RefreshChunks();
+
+        Debug.Log("5. RefreshChunks 완료");
+
         model.ConfirmCurrentChunk();
     }
 
@@ -146,11 +162,15 @@ public class ChunkPresenter : MonoBehaviour
 
     private void CreateChunk(Vector2Int chunkCoord)
     {
+        Debug.Log($"청크 생성 시작 : {chunkCoord}");
+
         GameObject chunkObject = mapPresenter.GenerateChunk(
             chunkCoord,
             ChunkSize,
             GlobalSeed
         );
+
+        Debug.Log($"GenerateChunk 반환 : {chunkCoord}");
 
         if (chunkObject == null)
         {
@@ -162,6 +182,9 @@ public class ChunkPresenter : MonoBehaviour
         {
             Debug.LogWarning($"청크 등록 실패 또는 중복: {chunkCoord}", this);
             Destroy(chunkObject);
+            return;
         }
+
+        Debug.Log($"청크 생성 완료 : {chunkCoord}");
     }
 }

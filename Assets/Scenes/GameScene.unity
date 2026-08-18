@@ -1397,36 +1397,40 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4721644016349314801, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: pausePanel
-      value: 
+      value:
       objectReference: {fileID: 245855666}
     - target: {fileID: 4721644016349314801, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: optionPanel
-      value: 
+      value:
       objectReference: {fileID: 329610676}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: hotbarRect
-      value: 
+      value:
       objectReference: {fileID: 855847864}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: playerModel
-      value: 
+      value:
       objectReference: {fileID: 1937201796}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: equipmentView
-      value: 
+      value:
       objectReference: {fileID: 9100000000000002}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: inventoryView
-      value: 
+      value:
       objectReference: {fileID: 9100000000000001}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: inventoryPanel
-      value: 
+      value:
       objectReference: {fileID: 9100000000000005}
     - target: {fileID: 7554378811232708264, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: playerPresenter
-      value: 
+      value:
       objectReference: {fileID: 1589439508}
+    - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: wallPercent
+      value: 35
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2063,15 +2067,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7647948488240877450, guid: 3451567fb7cd6574bb1475d6a472c095, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8465223075025968533, guid: 3451567fb7cd6574bb1475d6a472c095, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8465223075025968533, guid: 3451567fb7cd6574bb1475d6a472c095, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
