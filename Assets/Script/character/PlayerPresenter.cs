@@ -255,6 +255,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     {
         if (UIState.IsAnyUIOpen)
         {
+            Debug.Log("다른 UI가 열려 있어서 상호작용할 수 없습니다.");
             StopMove();
             return;
         }

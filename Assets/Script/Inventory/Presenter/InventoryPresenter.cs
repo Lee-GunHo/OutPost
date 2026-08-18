@@ -132,12 +132,24 @@ public class InventoryPresenter : MonoBehaviour
         if (isOpen && playerPresenter != null)
             playerPresenter.StopMove();
 
-        if (!isOpen)
+        if (isOpen)
+        {
+            CraftingPresenter.Instance?.Open(null, playerPresenter, null);
+        }
+        else
         {
             StopDrag();
             inventoryView.HideTooltip();
+            CraftingPresenter.Instance?.Close();
         }
     }
+
+    public void SetPanelVisible(bool visible)
+    {
+        if (inventoryPanel != null)
+            inventoryPanel.SetActive(visible);
+    }
+
     private void UpdateHotbarPosition()
     {
         if (hotbarRect == null)

@@ -8,6 +8,9 @@ public class CraftingView : MonoBehaviour
     [SerializeField] private Transform recipeSlotParent;
     [SerializeField] private CraftingRecipeSlotView recipeSlotPrefab;
 
+    [Header("Close Button")]
+    [SerializeField] private GameObject closeButton;
+
     private readonly List<CraftingRecipeSlotView> recipeSlots
         = new List<CraftingRecipeSlotView>();
 
@@ -62,6 +65,14 @@ public class CraftingView : MonoBehaviour
     public void SetVisible(bool isVisible)
     {
         gameObject.SetActive(isVisible);
+    }
+
+    public void SetCloseButtonVisible(bool isVisible)
+    {
+        if (closeButton != null)
+        {
+            closeButton.SetActive(isVisible);
+        }
     }
 
     public void ClearRecipeSlots()

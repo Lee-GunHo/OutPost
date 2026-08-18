@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CraftingPresenter : MonoBehaviour
 {
+    public static CraftingPresenter Instance { get; private set; }
+
     [Header("Model")]
     [SerializeField] private InventoryModel inventoryModel;
 
@@ -11,12 +14,53 @@ public class CraftingPresenter : MonoBehaviour
 
     [SerializeField] private CraftingTooltipView craftingTooltipView;
 
+    [Header("Presenter")]
+    [Tooltip("손 제작일 때 craftingView가 들어가는 부모 — 인벤토리 창 안쪽")]
+    [SerializeField] private Transform tabParent;
+
     [Header("Hand Crafting Recipes")]
+    [Tooltip("제작대 없이도 항상 제작 가능한 레시피")]
     [SerializeField]
     private List<CraftingRecipe> handRecipes
         = new List<CraftingRecipe>();
 
     private CraftingModel craftingModel;
+
+    private readonly List<CraftingRecipe> displayedRecipes
+        = new List<CraftingRecipe>();
+
+    private CraftingTableModel currentTable;
+    private PlayerPresenter currentPlayer;
+    private CraftingTableInteractable currentInteractable;
+    private bool isOpen;
+
+    public bool IsOpen => isOpen;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
+    private void Update()
+    {
+        if (!isOpen)
+            return;
+
+        bool escapePressed =
+            Keyboard.current != null &&
+            Keyboard.current.escapeKey.wasPressedThisFrame;
+
+        if (escapePressed)
+        {
+            Close();
+        }
+    }
 
     private void Start()
     {
@@ -34,8 +78,7 @@ public class CraftingPresenter : MonoBehaviour
         craftingView.OnRecipePointerExited += HandleRecipePointerExited;
         inventoryModel.OnInventoryChanged += RefreshCraftableState;
 
-        craftingView.ShowRecipes(handRecipes);
-        RefreshCraftableState();
+        craftingView.SetVisible(false);
     }
 
     private void OnDestroy()
@@ -50,6 +93,92 @@ public class CraftingPresenter : MonoBehaviour
         if (inventoryModel != null)
         {
             inventoryModel.OnInventoryChanged -= RefreshCraftableState;
+        }
+
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    /// <summary>
+    /// table이 있으면 그 제작대 전용 레시피만, 없으면 손 제작 레시피만 보여줌
+    /// </summary>
+    public void Open(
+        CraftingTableModel table,
+        PlayerPresenter player,
+        CraftingTableInteractable interactable)
+    {
+        if (player == null || craftingModel == null)
+        {
+            Debug.LogWarning(
+                "제작 UI를 열 수 없습니다: 필요한 참조가 없습니다.");
+            return;
+        }
+
+        if (isOpen)
+        {
+            Close();
+        }
+
+        currentTable = table;
+        currentPlayer = player;
+        currentInteractable = interactable;
+        isOpen = true;
+
+        UIState.SetCraftingOpen(true);
+        currentPlayer.StopMove();
+
+        // 제작대에서 열면 인벤토리 창과 분리된 독립 창으로, 손 제작이면 인벤토리 안으로
+        Transform parent = table != null ? craftingView.transform.root : tabParent;
+        if (parent != null)
+            craftingView.transform.SetParent(parent, false);
+
+        RebuildDisplayedRecipes();
+        craftingView.ShowRecipes(displayedRecipes);
+        craftingView.SetCloseButtonVisible(currentTable != null);
+        craftingView.SetVisible(true);
+        RefreshCraftableState();
+    }
+
+    public void Close()
+    {
+        if (!isOpen)
+            return;
+
+        CraftingTableInteractable closedInteractable = currentInteractable;
+
+        isOpen = false;
+        craftingView.SetVisible(false);
+
+        UIState.SetCraftingOpen(false);
+
+        currentTable = null;
+        currentPlayer = null;
+        currentInteractable = null;
+
+        if (closedInteractable != null)
+        {
+            closedInteractable.ShowInteractionMarkIfPossible();
+        }
+    }
+
+    public bool IsOpenedTable(CraftingTableModel table)
+    {
+        return isOpen && currentTable == table;
+    }
+
+    private void RebuildDisplayedRecipes()
+    {
+        displayedRecipes.Clear();
+
+        if (currentTable != null)
+        {
+            displayedRecipes.AddRange(currentTable.TableRecipes);
+        }
+        else
+        {
+            displayedRecipes.AddRange(handRecipes);
         }
     }
 
@@ -124,9 +253,9 @@ public class CraftingPresenter : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < handRecipes.Count; i++)
+        for (int i = 0; i < displayedRecipes.Count; i++)
         {
-            bool canCraft = craftingModel.CanCraft(handRecipes[i]);
+            bool canCraft = craftingModel.CanCraft(displayedRecipes[i]);
             craftingView.SetRecipeCraftable(i, canCraft);
         }
     }

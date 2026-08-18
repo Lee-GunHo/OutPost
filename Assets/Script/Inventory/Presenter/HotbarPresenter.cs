@@ -39,18 +39,24 @@ public class HotbarPresenter : MonoBehaviour
 
     private void OnDestroy()
     {
-        hotbarView.OnNumberKeyPressed -= SelectSlot;
-        hotbarView.OnSlotClicked -= OnHotbarSlotClicked;
-        hotbarView.OnSlotHovered -= OnHotbarSlotHovered;
-        hotbarView.OnSlotSplitClicked -= OnHotbarSlotSplitClicked;
-        hotbarView.OnSlotUnhovered -= OnHotbarSlotUnhovered;
+        if (hotbarView != null)
+        {
+            hotbarView.OnNumberKeyPressed -= SelectSlot;
+            hotbarView.OnSlotClicked -= OnHotbarSlotClicked;
+            hotbarView.OnSlotHovered -= OnHotbarSlotHovered;
+            hotbarView.OnSlotSplitClicked -= OnHotbarSlotSplitClicked;
+            hotbarView.OnSlotUnhovered -= OnHotbarSlotUnhovered;
 
-        hotbarView.OnMouseWheelUp -= SelectPreviousSlot;
-        hotbarView.OnMouseWheelDown -= SelectNextSlot;
+            hotbarView.OnMouseWheelUp -= SelectPreviousSlot;
+            hotbarView.OnMouseWheelDown -= SelectNextSlot;
+        }
 
-
-        hotbarModel.OnHotbarChanged -= RefreshView;
-        hotbarModel.OnSelectedSlotChanged -= hotbarView.MoveSelectedFrame;
+        if (hotbarModel != null)
+        {
+            hotbarModel.OnHotbarChanged -= RefreshView;
+            if (hotbarView != null)
+                hotbarModel.OnSelectedSlotChanged -= hotbarView.MoveSelectedFrame;
+        }
 
         UIState.OnStateChanged -= RefreshVisibility;
     }
