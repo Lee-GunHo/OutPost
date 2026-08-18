@@ -894,7 +894,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2005795051838259585, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2166281372812790338, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
       propertyPath: m_Name
@@ -1327,6 +1327,10 @@ PrefabInstance:
     - target: {fileID: 2346226157108010335, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: wallPercent
+      value: 35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1831,6 +1835,10 @@ PrefabInstance:
     - target: {fileID: 7647948488240877450, guid: 3451567fb7cd6574bb1475d6a472c095, type: 3}
       propertyPath: m_Name
       value: StatusCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7647948488240877450, guid: 3451567fb7cd6574bb1475d6a472c095, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8465223075025968533, guid: 3451567fb7cd6574bb1475d6a472c095, type: 3}
       propertyPath: m_AnchorMax.x
