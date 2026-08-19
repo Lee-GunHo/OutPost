@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BossPresenter : MonoBehaviour, IDamageable
@@ -19,6 +20,9 @@ public class BossPresenter : MonoBehaviour, IDamageable
     public bool IsDead => bossModel.IsDead;
     public bool HasTarget => playerTransform != null;
 
+    public event Action<int, int> OnBossHpChanged;
+    public event Action OnBossDead;
+
     private void Awake()
     {
         bossModel = GetComponent<BossModel>();
@@ -37,6 +41,8 @@ public class BossPresenter : MonoBehaviour, IDamageable
         {
             Debug.LogWarning("Player object was not found.");
         }
+
+        NotifyBossHpChanged();
     }
 
     public float GetDistanceToTarget()
@@ -88,6 +94,8 @@ public class BossPresenter : MonoBehaviour, IDamageable
 
         Debug.Log($"Boss damaged. HP: {CurrentHp}/{MaxHp}");
 
+        NotifyBossHpChanged();
+
         // No groggy / no hit state.
         if (bossModel.IsDead)
         {
@@ -106,9 +114,34 @@ public class BossPresenter : MonoBehaviour, IDamageable
 
         GiveExpToPlayer();
 
+        AddBossKillProgress();
+
+        NotifyBossDead();
+
         Debug.Log("Boss dead.");
 
         Destroy(gameObject, 1f);
+    }
+
+    private void AddBossKillProgress()
+    {
+        if (GameProgressManager.Instance == null)
+        {
+            Debug.LogWarning("GameProgressManager가 없습니다.");
+            return;
+        }
+
+        GameProgressManager.Instance.AddBossKill();
+    }
+
+    private void NotifyBossHpChanged()
+    {
+        OnBossHpChanged?.Invoke(CurrentHp, MaxHp);
+    }
+
+    private void NotifyBossDead()
+    {
+        OnBossDead?.Invoke();
     }
 
     private void GiveExpToPlayer()

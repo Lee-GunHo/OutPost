@@ -21,4 +21,11 @@ public class PlayerSaveData
     public int attackUpgradeLevel;
     public int defenseUpgradeLevel;
     public int moveSpeedUpgradeLevel;
+
+    // 진행도 저장 정보
+    public int normalMonsterKillCount;
+    public int bossKillCount;
+    public bool bossKilled;
+    public int raidClearCount;
+    public int progressLevel;
 }

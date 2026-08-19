@@ -80,4 +80,32 @@ public class GameProgressManager : MonoBehaviour
             OnProgressLevelChanged?.Invoke(progressLevel);
         }
     }
+
+    public void LoadProgressData(
+    int savedNormalMonsterKillCount,
+    int savedBossKillCount,
+    bool savedBossKilled,
+    int savedRaidClearCount,
+    int savedProgressLevel
+)
+    {
+        normalMonsterKillCount = Mathf.Max(0, savedNormalMonsterKillCount);
+        bossKillCount = Mathf.Max(0, savedBossKillCount);
+        bossKilled = savedBossKilled;
+        raidClearCount = Mathf.Max(0, savedRaidClearCount);
+        progressLevel = Mathf.Max(0, savedProgressLevel);
+
+        OnNormalMonsterKillCountChanged?.Invoke(normalMonsterKillCount);
+        OnRaidClearCountChanged?.Invoke(raidClearCount);
+        OnProgressLevelChanged?.Invoke(progressLevel);
+
+        Debug.Log(
+            "진행도 데이터 로드 완료" +
+            " / 일반 몬스터 처치 수: " + normalMonsterKillCount +
+            " / 보스 처치 수: " + bossKillCount +
+            " / 보스 처치 여부: " + bossKilled +
+            " / 습격 클리어 수: " + raidClearCount +
+            " / 진행도 레벨: " + progressLevel
+        );
+    }
 }
