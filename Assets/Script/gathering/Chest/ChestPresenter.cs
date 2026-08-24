@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// ChestModel과 ChestView를 연결하고 아이템 이동, 한 개씩 배치,
@@ -106,6 +107,21 @@ public class ChestPresenter : MonoBehaviour
         }
 
         chestView.Init(this);
+    }
+
+    private void Update()
+    {
+        if (!isOpen)
+            return;
+
+        bool escapePressed =
+            Keyboard.current != null &&
+            Keyboard.current.escapeKey.wasPressedThisFrame;
+
+        if (escapePressed)
+        {
+            Close();
+        }
     }
 
     private void OnApplicationQuit()
