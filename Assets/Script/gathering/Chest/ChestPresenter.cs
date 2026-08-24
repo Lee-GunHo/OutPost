@@ -4,15 +4,19 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// ChestModel과 ChestView를 연결하고 아이템 이동, 한 개씩 배치,
+/// ChestModel과 ChestView를 연결하고 아이템 이동, 한 개씩 줍기/놓기,
 /// 삭제 대기 및 삭제 확정을 처리
 ///
 /// 조작 방식
-/// - 아이템 슬롯을 우클릭한 채 드래그: 해당 스택 전체를 커서로 듬.
-/// - 커서에 아이템이 있을 때 일반 슬롯 좌클릭: 1개를 놓음
-/// - 커서에 아이템이 있을 때 쓰레기통 좌클릭: 1개를 삭제 대기로 옮김
+/// - 커서가 비어 있을 때 아이템 슬롯을 좌클릭한 채 드래그: 해당 스택 전체를 커서로 듬.
+/// - 커서가 비어 있을 때 슬롯 우클릭: 아이템 1개만 커서로 집어 듦.
+/// - 커서에 아이템이 있을 때 그 아이템을 집었던 슬롯을 다시 우클릭: 1개 더 집어서
+///   커서에 쌓음(아이템 최대 스택 수량까지). 계속 우클릭하면 계속 쌓임.
+/// - 커서에 아이템이 있을 때 일반 슬롯 좌클릭: 들고 있는 아이템을 한 번에 놓음
+///   (대상 슬롯 공간이 부족하면 들어가는 만큼만 놓고 나머지는 커서에 유지)
+/// - 커서에 아이템이 있을 때 (원래 집었던 슬롯이 아닌) 다른 슬롯을 우클릭: 1개만 놓음
+/// - 커서에 아이템이 있을 때 쓰레기통 우클릭: 1개를 삭제 대기로 옮김
 /// - 쓰레기통 버튼 클릭: 삭제 대기 아이템을 영구 삭제
-/// - 커서에 아이템이 있을 때 슬롯 우클릭: 남은 아이템을 원래 슬롯으로 돌려놓음
 /// - 커서가 비어 있을 때 Shift + 좌클릭: 기존 전체 빠른 이동을 수행
 /// </summary>
 public class ChestPresenter : MonoBehaviour
@@ -231,7 +235,10 @@ public class ChestPresenter : MonoBehaviour
 
     /// <summary>
     /// 일반 슬롯 클릭 입력
-    /// 아이템을 들고 있다면 좌클릭으로 1개 배치
+    /// 아이템을 들고 있다면 좌클릭으로 한 번에 놓고,
+    /// 우클릭은 원래 집었던 슬롯이면 1개 더 집어서 커서에 쌓고,
+    /// 다른 슬롯이면 1개를 내려놓음
+    /// 커서가 비어 있다면 우클릭으로 1개씩 집어 듦
     /// </summary>
     public void OnSlotClicked(
         ChestSlotArea area,
@@ -246,13 +253,21 @@ public class ChestPresenter : MonoBehaviour
         {
             if (button == PointerEventData.InputButton.Left)
             {
-                PlaceOneIntoSlot(area, slotIndex);
+                PlaceAllIntoSlot(area, slotIndex);
                 return;
             }
 
             if (button == PointerEventData.InputButton.Right)
             {
-                ReturnCarriedToOrigin();
+                if (IsCarriedOriginSlot(area, slotIndex))
+                {
+                    PickupOneMoreFromOrigin();
+                }
+                else
+                {
+                    PlaceOneIntoSlot(area, slotIndex);
+                }
+
                 return;
             }
 
@@ -277,6 +292,13 @@ public class ChestPresenter : MonoBehaviour
             {
                 Transfer(area, slotIndex, sourceItem.amount);
             }
+
+            return;
+        }
+
+        if (button == PointerEventData.InputButton.Right)
+        {
+            PickupOneFromSlot(area, slotIndex);
         }
     }
 
@@ -294,10 +316,10 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// 아이템이 있는 슬롯에서 우클릭 드래그를 시작하면
+    /// 아이템이 있는 슬롯에서 좌클릭 드래그를 시작하면
     /// 원본 스택 전체를 커서로 옮김
     /// </summary>
-    public void OnRightDragStarted(ChestSlotArea area, int slotIndex)
+    public void OnStackDragStarted(ChestSlotArea area, int slotIndex)
     {
         if (!isOpen || carriedStack != null)
             return;
@@ -385,13 +407,13 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// 쓰레기통 슬롯 좌클릭 시 커서 아이템 1개를 삭제 대기로 이동
+    /// 쓰레기통 슬롯 우클릭 시 커서 아이템 1개를 삭제 대기로 이동
     /// </summary>
     public void OnDiscardSlotClicked(
         PointerEventData.InputButton button)
     {
         if (!isOpen ||
-            button != PointerEventData.InputButton.Left ||
+            button != PointerEventData.InputButton.Right ||
             carriedStack == null)
         {
             return;
@@ -498,6 +520,145 @@ public class ChestPresenter : MonoBehaviour
         RefreshView();
     }
 
+    /// <summary>
+    /// 커서에 들고 있는 아이템을 전부 대상 슬롯에 놓음
+    /// 대상 슬롯에 남은 공간이 부족하면 들어가는 만큼만 놓고
+    /// 나머지는 커서에 그대로 유지
+    /// </summary>
+    private void PlaceAllIntoSlot(
+        ChestSlotArea targetArea,
+        int targetIndex)
+    {
+        if (carriedStack == null || carriedStack.Amount <= 0)
+            return;
+
+        ItemStack targetItem = GetItem(targetArea, targetIndex);
+
+        if (IsEmpty(targetItem))
+        {
+            SetSlotItem(
+                targetArea,
+                targetIndex,
+                new ItemStack(carriedStack.Item, carriedStack.Amount)
+            );
+
+            carriedStack.Amount = 0;
+            FinishCarriedStackIfEmpty();
+            RefreshView();
+            return;
+        }
+
+        if (targetItem.item != carriedStack.Item)
+        {
+            Debug.Log("다른 종류의 아이템 위에는 놓을 수 없습니다.");
+            return;
+        }
+
+        int maxStack = Mathf.Max(1, carriedStack.Item.maxStack);
+        int freeSpace = maxStack - targetItem.amount;
+
+        if (freeSpace <= 0)
+        {
+            Debug.Log("해당 슬롯의 아이템 스택이 가득 찼습니다.");
+            return;
+        }
+
+        int placeAmount = Mathf.Min(freeSpace, carriedStack.Amount);
+
+        SetSlotItem(
+            targetArea,
+            targetIndex,
+            new ItemStack(
+                targetItem.item,
+                targetItem.amount + placeAmount
+            )
+        );
+
+        carriedStack.Amount -= placeAmount;
+        FinishCarriedStackIfEmpty();
+        RefreshView();
+    }
+
+    /// <summary>
+    /// 커서가 비어 있을 때 슬롯을 우클릭하면 아이템 1개만 커서로 집어 듦
+    /// </summary>
+    private void PickupOneFromSlot(
+        ChestSlotArea area,
+        int slotIndex)
+    {
+        ItemStack sourceItem = GetItem(area, slotIndex);
+
+        if (IsEmpty(sourceItem))
+            return;
+
+        carriedStack = new CarriedStack(area, slotIndex, sourceItem.item, 1);
+
+        int remainingAmount = sourceItem.amount - 1;
+
+        SetSlotItem(
+            area,
+            slotIndex,
+            remainingAmount > 0
+                ? new ItemStack(sourceItem.item, remainingAmount)
+                : null
+        );
+
+        chestView.HideTooltip();
+        RefreshCarriedItemView();
+        RefreshView();
+    }
+
+    /// <summary>
+    /// 우클릭한 슬롯이 지금 커서에 들고 있는 아이템을 원래 집었던 슬롯인지 확인
+    /// </summary>
+    private bool IsCarriedOriginSlot(ChestSlotArea area, int slotIndex)
+    {
+        return carriedStack != null &&
+               carriedStack.Origin.Area == area &&
+               carriedStack.Origin.Index == slotIndex;
+    }
+
+    /// <summary>
+    /// 커서에 아이템을 들고 있는 상태에서 원래 집었던 슬롯을 다시 우클릭하면
+    /// 그 슬롯에서 1개를 더 집어서 커서에 쌓음 (아이템 최대 스택 수량까지)
+    /// </summary>
+    private void PickupOneMoreFromOrigin()
+    {
+        if (carriedStack == null)
+            return;
+
+        ItemStack originItem = GetItem(
+            carriedStack.Origin.Area,
+            carriedStack.Origin.Index
+        );
+
+        if (IsEmpty(originItem) || originItem.item != carriedStack.Item)
+            return;
+
+        int maxStack = Mathf.Max(1, carriedStack.Item.maxStack);
+
+        if (carriedStack.Amount >= maxStack)
+        {
+            Debug.Log("더 이상 들 수 없습니다. 최대 수량에 도달했습니다.");
+            return;
+        }
+
+        carriedStack.Amount++;
+
+        int remainingInOrigin = originItem.amount - 1;
+
+        SetSlotItem(
+            carriedStack.Origin.Area,
+            carriedStack.Origin.Index,
+            remainingInOrigin > 0
+                ? new ItemStack(originItem.item, remainingInOrigin)
+                : null
+        );
+
+        RefreshCarriedItemView();
+        RefreshView();
+    }
+
     private void FinishCarriedStackIfEmpty()
     {
         if (carriedStack == null)
@@ -543,29 +704,6 @@ public class ChestPresenter : MonoBehaviour
                 pendingDiscard.Amount
             )
         );
-    }
-
-    private void ReturnCarriedToOrigin()
-    {
-        if (carriedStack == null)
-            return;
-
-        bool restored = AddToOriginSlot(
-            carriedStack.Origin,
-            carriedStack.Item,
-            carriedStack.Amount
-        );
-
-        if (!restored)
-        {
-            Debug.LogError(
-                "커서 아이템을 원래 슬롯으로 되돌리지 못했습니다."
-            );
-            return;
-        }
-
-        ClearCarriedState();
-        RefreshView();
     }
 
     private void RestoreTransientItems()
