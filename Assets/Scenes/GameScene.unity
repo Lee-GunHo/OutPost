@@ -608,6 +608,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4423544701134646204, guid: 250cb1556e2e3934d82b9e51e4170cb0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 599
+      objectReference: {fileID: 0}
+    - target: {fileID: 4423544701134646204, guid: 250cb1556e2e3934d82b9e51e4170cb0, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -39.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5868478289094263948, guid: 250cb1556e2e3934d82b9e51e4170cb0, type: 3}
       propertyPath: m_Name
       value: Canvas_Chest
@@ -632,8 +640,16 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8978685370765941282, guid: 250cb1556e2e3934d82b9e51e4170cb0, type: 3}
+      propertyPath: m_text
+      value: "\uC6B0\uD074\uB9AD :\n1\uAC1C\uC529 \uC90D\uAE30,\n1\uAC1C\uC529 \uB193\uAE30\n\n\uC88C\uD074\uB9AD
+        :\n\uD55C \uBC88\uC5D0 \uB193\uAE30\n\n\uC88C\uD074\uB9AD \uB4DC\uB798\uADF8\n:
+        \uD55C \uBC88\uC5D0 \uC90D\uAE30\n\nShift + \uC88C\uD074\uB9AD : \uC989\uC2DC
+        \uC774\uB3D9"
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3486271220477082333, guid: 250cb1556e2e3934d82b9e51e4170cb0, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 250cb1556e2e3934d82b9e51e4170cb0, type: 3}

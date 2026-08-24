@@ -14,7 +14,7 @@ public enum ChestSlotArea
 
 /// <summary>
 /// 창고 UI에서 사용하는 일반 슬롯 View
-/// 우클릭 드래그 시작과 슬롯 클릭 입력만 Presenter에 전달
+/// 좌클릭 드래그 시작과 슬롯 클릭 입력만 Presenter에 전달
 /// </summary>
 public class ChestSlotView : MonoBehaviour,
     IPointerClickHandler,
@@ -37,7 +37,7 @@ public class ChestSlotView : MonoBehaviour,
     private int slotIndex;
     private ItemStack currentItem;
 
-    private bool isRightDragging;
+    private bool isDragging;
     private int lastDragEndFrame = -1;
 
     public ChestSlotArea SlotArea => slotArea;
@@ -53,7 +53,7 @@ public class ChestSlotView : MonoBehaviour,
 
     public event Action<ChestSlotArea, int> OnSlotHovered;
     public event Action OnSlotUnhovered;
-    public event Action<ChestSlotArea, int> OnRightDragStarted;
+    public event Action<ChestSlotArea, int> OnStackDragStarted;
 
     public void Initialize(ChestSlotArea area, int index)
     {
@@ -104,7 +104,7 @@ public class ChestSlotView : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // 우클릭 드래그를 끝낸 프레임에 우클릭 이벤트까지 발생하는 것을 막음
+        // 드래그를 끝낸 프레임에 클릭 이벤트까지 발생하는 것을 막음
         if (Time.frameCount == lastDragEndFrame)
             return;
 
@@ -125,7 +125,7 @@ public class ChestSlotView : MonoBehaviour,
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (isRightDragging)
+        if (isDragging)
             return;
 
         OnSlotHovered?.Invoke(slotArea, slotIndex);
@@ -138,16 +138,16 @@ public class ChestSlotView : MonoBehaviour,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // 이 기능은 우클릭 드래그로만 시작
-        if (eventData.button != PointerEventData.InputButton.Right)
+        // 이 기능은 좌클릭 드래그로만 시작
+        if (eventData.button != PointerEventData.InputButton.Left)
             return;
 
         if (IsEmpty(currentItem))
             return;
 
-        isRightDragging = true;
+        isDragging = true;
         OnSlotUnhovered?.Invoke();
-        OnRightDragStarted?.Invoke(slotArea, slotIndex);
+        OnStackDragStarted?.Invoke(slotArea, slotIndex);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -157,14 +157,14 @@ public class ChestSlotView : MonoBehaviour,
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (!isRightDragging)
+        if (!isDragging)
             return;
 
-        isRightDragging = false;
+        isDragging = false;
         lastDragEndFrame = Time.frameCount;
 
         // 드래그가 끝나도 Presenter가 들고 있는 아이템은 유지됨
-        // 이후 좌클릭할 때마다 1개씩 놓음
+        // 이후 좌클릭하면 들고 있는 아이템을 한 번에 놓고, 우클릭하면 1개씩 놓음
     }
 
     private static bool IsEmpty(ItemStack itemStack)

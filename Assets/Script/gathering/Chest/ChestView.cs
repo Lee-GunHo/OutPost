@@ -457,8 +457,8 @@ public class ChestView : MonoBehaviour
         slotView.OnSlotUnhovered -= presenter.OnSlotUnhovered;
         slotView.OnSlotUnhovered += presenter.OnSlotUnhovered;
 
-        slotView.OnRightDragStarted -= presenter.OnRightDragStarted;
-        slotView.OnRightDragStarted += presenter.OnRightDragStarted;
+        slotView.OnStackDragStarted -= presenter.OnStackDragStarted;
+        slotView.OnStackDragStarted += presenter.OnStackDragStarted;
 
         slotView.gameObject.SetActive(true);
         result.Add(slotView);

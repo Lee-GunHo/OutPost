@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// 삭제 대기 아이템을 표시하고 좌클릭 입력을 Presenter에 전달
-/// 커서에 아이템을 들고 있을 때 좌클릭하면 1개씩 들어감
+/// 삭제 대기 아이템을 표시하고 클릭 입력을 Presenter에 전달
+/// 커서에 아이템을 들고 있을 때 우클릭하면 1개씩 들어감
 /// </summary>
 [RequireComponent(typeof(Image))]
 public class ChestDiscardSlotView : MonoBehaviour, IPointerClickHandler
