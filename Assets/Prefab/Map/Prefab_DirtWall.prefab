@@ -74,7 +74,7 @@ MonoBehaviour:
   view: {fileID: 6680036739559837894}
   dropItemPrefab: {fileID: 3457806078259381087, guid: 204547259d0312a49bbfae97e901832f, type: 3}
   minDropCount: 1
-  maxDropCount: 3
+  maxDropCount: 1
   dropSpread: 0.3
   showSaveDebugLog: 1
 --- !u!114 &7464559772690641338
