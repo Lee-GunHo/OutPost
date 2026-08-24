@@ -1,0 +1,11 @@
+/*
+ * 이 파일을 복사해서 "OpenAIConfig.cs" 라는 이름으로 저장한 뒤
+ * 아래 ApiKey 값을 platform.openai.com에서 발급받은 본인 키로 바꿔서 사용하세요.
+ *
+ * OpenAIConfig.cs는 .gitignore에 등록되어 있어서 git에 올라가지 않습니다.
+ * 절대로 실제 키를 이 예시 파일(OpenAIConfig.example.txt)에 적어서 커밋하지 마세요.
+ */
+public static class OpenAIConfig
+{
+    public const string ApiKey = "여기에_발급받은_API_키_붙여넣기";
+}

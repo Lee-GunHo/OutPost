@@ -48,3 +48,7 @@ Logs/
 UserSettings/
 MemoryCaptures/
 .plastic/
+
+# OpenAI API 키 (개인 키, 절대 커밋하지 않음)
+Assets/Script/Config/OpenAIConfig.cs
+Assets/Script/Config/OpenAIConfig.cs.meta
