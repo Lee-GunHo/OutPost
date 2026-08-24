@@ -1,15 +1,15 @@
 using UnityEngine;
 
 /// <summary>
-/// NPCÀÇ ½Ã°¢ÀûÀÎ Ç¥Çö ´ã´ç
-/// »óÈ£ÀÛ¿ë Ç¥½Ã, NPC È¸Àü, ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà µîÀÌ Æ÷ÇÔµÇ¾î ÀÖ½À´Ï´Ù.
+/// NPCì˜ ì‹œê°ì ì¸ í‘œí˜„ ë‹´ë‹¹
+/// ìƒí˜¸ì‘ìš© í‘œì‹œ, NPC íšŒì „, ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰ ë“±ì´ í¬í•¨ë˜ì–´ ìˆìŠµë‹ˆë‹¤.
 /// </summary>
 public class NPCView : MonoBehaviour
 {
-    [Header("»óÈ£ÀÛ¿ë Ç¥½Ã")]
+    [Header("ìƒí˜¸ì‘ìš© í‘œì‹œ")]
     [SerializeField] private GameObject interactionMark;
 
-    //[Header("¾Ö´Ï¸ŞÀÌÅÍ")]
+    //[Header("ì• ë‹ˆë©”ì´í„°")]
     //[SerializeField] private Animator animator;
 
     public void ShowInteractionMark()
@@ -29,7 +29,7 @@ public class NPCView : MonoBehaviour
     }
 
     /// <summary>
-    /// NPC°¡ ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸°Ô ¸¸µå´Â ÇÔ¼ö
+    /// NPCê°€ í”Œë ˆì´ì–´ë¥¼ ë°”ë¼ë³´ê²Œ ë§Œë“œëŠ” í•¨ìˆ˜
     /// </summary>
     /// <param name="player"></param>
     public void LookAtPlayer(Transform player)
@@ -53,7 +53,7 @@ public class NPCView : MonoBehaviour
 
     /*
     /// <summary>
-    /// NPC°¡ ´ëÈ­ÇÏ´Â ¾Ö´Ï¸ŞÀÌ¼ÇÀ» ½ÇÇàÇÏ´Â ÇÔ¼ö
+    /// NPCê°€ ëŒ€í™”í•˜ëŠ” ì• ë‹ˆë©”ì´ì…˜ì„ ì‹¤í–‰í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public void PlayTalk()
     {

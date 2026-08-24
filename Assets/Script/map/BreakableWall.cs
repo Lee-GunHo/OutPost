@@ -1,13 +1,13 @@
 using UnityEngine;
 
 /// <summary>
-/// ±âÁ¸ SeedMapGenerator¿Í °ø°İ ÄÚµåÀÇ BreakableWall ÂüÁ¶¸¦ À¯ÁöÇÏ±â À§ÇÑ È£È¯ Å¬·¡½º
-/// ½ÇÁ¦ ÆÄ±« Á¦¾î´Â BreakableWallPresenter°¡ ´ã´ç
+/// ê¸°ì¡´ SeedMapGeneratorì™€ ê³µê²© ì½”ë“œì˜ BreakableWall ì°¸ì¡°ë¥¼ ìœ ì§€í•˜ê¸° ìœ„í•œ í˜¸í™˜ í´ë˜ìŠ¤
+/// ì‹¤ì œ íŒŒê´´ ì œì–´ëŠ” BreakableWallPresenterê°€ ë‹´ë‹¹
 /// </summary>
 public class BreakableWall : BreakableWallPresenter
 {
-    // ±âÁ¸ ÇÁ¸®ÆÕ¿¡ Á÷·ÄÈ­µÈ °ªÀ» À¯ÁöÇÏ±â À§ÇÑ È£È¯ ÇÊµå
-    // »õ ÇÁ¸®ÆÕ¿¡¼­´Â BreakableWallModel Inspector¸¦ »ç¿ë
+    // ê¸°ì¡´ í”„ë¦¬íŒ¹ì— ì§ë ¬í™”ëœ ê°’ì„ ìœ ì§€í•˜ê¸° ìœ„í•œ í˜¸í™˜ í•„ë“œ
+    // ìƒˆ í”„ë¦¬íŒ¹ì—ì„œëŠ” BreakableWallModel Inspectorë¥¼ ì‚¬ìš©
     [HideInInspector] public GameObject dropItemPrefab;
     [HideInInspector] public int minDropCount = 1;
     [HideInInspector] public int maxDropCount = 3;

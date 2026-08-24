@@ -12,7 +12,7 @@ public class PlayerInputManager : MonoBehaviour
     public bool IsDashPressed { get; private set; }
     public bool IsToggleToolPressed { get; private set; }
 
-    // (�λ�) 0806 ����â ���� �Է� �߰�
+    // (경민) 0806 스탯창 관련 입력 추가
     public bool IsStatWindowPressed { get; private set; }
 
     private void Awake()
@@ -32,7 +32,7 @@ public class PlayerInputManager : MonoBehaviour
         playerInputAction.Player.Dash.performed += OnDashPerformed;
         playerInputAction.Player.ToggleTool.performed += OnToggleToolPerformed;
 
-        // (�λ�) 0806 ����â �Է� �̺�Ʈ ���
+        // (경민) 0806 스탯창 입력 이벤트 등록
         playerInputAction.Player.StatWindow.performed += OnStatWindowPerformed;
     }
 
@@ -46,7 +46,7 @@ public class PlayerInputManager : MonoBehaviour
         playerInputAction.Player.Dash.performed -= OnDashPerformed;
         playerInputAction.Player.ToggleTool.performed -= OnToggleToolPerformed;
 
-        // (�λ�) 0806 ����â �Է� �̺�Ʈ ����
+        // (경민) 0806 스탯창 입력 이벤트 해제
         playerInputAction.Player.StatWindow.performed -= OnStatWindowPerformed;
 
         playerInputAction.Player.Disable();
@@ -87,7 +87,7 @@ public class PlayerInputManager : MonoBehaviour
         IsToggleToolPressed = true;
     }
 
-    // (�λ�) 0806 ����â �Է� ó��
+    // (경민) 0806 스탯창 입력 처리
     private void OnStatWindowPerformed(InputAction.CallbackContext context)
     {
         IsStatWindowPressed = true;
@@ -100,7 +100,7 @@ public class PlayerInputManager : MonoBehaviour
         IsDashPressed = false;
         IsToggleToolPressed = false;
 
-        // (�λ�) 0806 ����â �Է� �ʱ�ȭ
+        // (경민) 0806 스탯창 입력 초기화
         IsStatWindowPressed = false;
     }
 }

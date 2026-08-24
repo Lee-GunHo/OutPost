@@ -10,7 +10,7 @@ public class ShopSlotView : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TMP_Text itemNameText;
     [SerializeField] private TMP_Text amountText;
 
-    [Header("½½·Ô ¹è°æ")]
+    [Header("ìŠ¬ë¡¯ ë°°ê²½")]
     [SerializeField] private Image slotBackground;
     [SerializeField] private Sprite defaultSlotSprite;
     [SerializeField] private Sprite selectedSlotSprite;

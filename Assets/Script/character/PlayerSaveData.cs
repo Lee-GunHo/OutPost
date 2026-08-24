@@ -22,7 +22,7 @@ public class PlayerSaveData
     public int defenseUpgradeLevel;
     public int moveSpeedUpgradeLevel;
 
-    // ÁøÇàµµ ÀúÀå Á¤º¸
+    // ì§„í–‰ë„ ì €ì¥ ì •ë³´
     public int normalMonsterKillCount;
     public int bossKillCount;
     public bool bossKilled;

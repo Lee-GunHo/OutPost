@@ -2,33 +2,33 @@ using UnityEngine;
 
 public class StatusEffectData
 {
-    // »óÅÂÈ¿°ú Á¾·ù
+    // ìƒíƒœíš¨ê³¼ ì¢…ë¥˜
     public StatusEffectType EffectType { get; private set; }
 
-    // »óÅÂÈ¿°ú ÀüÃ¼ Áö¼Ó½Ã°£
+    // ìƒíƒœíš¨ê³¼ ì „ì²´ ì§€ì†ì‹œê°„
     public float TotalDuration { get; private set; }
 
-    // ÇöÀç ³²Àº Áö¼Ó½Ã°£
+    // í˜„ìž¬ ë‚¨ì€ ì§€ì†ì‹œê°„
     public float Duration { get; private set; }
 
-    // »óÅÂÈ¿°ú ±âº» ¼öÄ¡
-    // Poison/Burn: °íÁ¤ µµÆ® µ¥¹ÌÁö
-    // Bleed: ±âº» µ¥¹ÌÁö
+    // ìƒíƒœíš¨ê³¼ ê¸°ë³¸ ìˆ˜ì¹˜
+    // Poison/Burn: ê³ ì • ë„íŠ¸ ë°ë¯¸ì§€
+    // Bleed: ê¸°ë³¸ ë°ë¯¸ì§€
     public float Value { get; private set; }
 
-    // ¸î ÃÊ¸¶´Ù µµÆ® µ¥¹ÌÁö¸¦ ÁÙÁö
+    // ëª‡ ì´ˆë§ˆë‹¤ ë„íŠ¸ ë°ë¯¸ì§€ë¥¼ ì¤„ì§€
     public float TickInterval { get; private set; }
 
-    // °ø°Ý·Â º¯È­·®
+    // ê³µê²©ë ¥ ë³€í™”ëŸ‰
     public int AttackModifier { get; private set; }
 
-    // ¹æ¾î·Â º¯È­·®
+    // ë°©ì–´ë ¥ ë³€í™”ëŸ‰
     public int DefenseModifier { get; private set; }
 
-    // »óÅÂÈ¿°ú°¡ ½ÃÀÛµÈ ÈÄ Áö³­ ½Ã°£
+    // ìƒíƒœíš¨ê³¼ê°€ ì‹œìž‘ëœ í›„ ì§€ë‚œ ì‹œê°„
     private float elapsedTime;
 
-    // Áö±Ý±îÁö ½ÇÁ¦·Î Àû¿ëµÈ Æ½ È½¼ö
+    // ì§€ê¸ˆê¹Œì§€ ì‹¤ì œë¡œ ì ìš©ëœ í‹± íšŸìˆ˜
     private int tickCount;
 
     public int TickCount => tickCount;
@@ -73,7 +73,7 @@ public class StatusEffectData
         return Duration <= 0f;
     }
 
-    // ÀÌ¹ø ÇÁ·¹ÀÓ¿¡ ¸î ¹øÀÇ Æ½ µ¥¹ÌÁö¸¦ Àû¿ëÇØ¾ß ÇÏ´ÂÁö °è»ê
+    // ì´ë²ˆ í”„ë ˆìž„ì— ëª‡ ë²ˆì˜ í‹± ë°ë¯¸ì§€ë¥¼ ì ìš©í•´ì•¼ í•˜ëŠ”ì§€ ê³„ì‚°
     public int GetReadyTickCount(float deltaTime)
     {
         if (TickInterval <= 0f)
@@ -97,7 +97,7 @@ public class StatusEffectData
         return readyTickCount;
     }
 
-    // Æ½ µ¥¹ÌÁö°¡ ½ÇÁ¦·Î 1¹ø Àû¿ëµÇ¾úÀ» ¶§ È£Ãâ
+    // í‹± ë°ë¯¸ì§€ê°€ ì‹¤ì œë¡œ 1ë²ˆ ì ìš©ë˜ì—ˆì„ ë•Œ í˜¸ì¶œ
     public void IncreaseTickCount()
     {
         tickCount++;

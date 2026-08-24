@@ -127,7 +127,7 @@ public class BossPresenter : MonoBehaviour, IDamageable
     {
         if (GameProgressManager.Instance == null)
         {
-            Debug.LogWarning("GameProgressManager°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("GameProgressManagerê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 

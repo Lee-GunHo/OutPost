@@ -13,7 +13,7 @@ public class MonsterDeadState : IMonsterState
 
     public void Enter()
     {
-        Debug.Log("¸ó½ºÅÍ Dead »óÅÂ ÁøÀÔ");
+        Debug.Log("ëª¬ìŠ¤í„° Dead ìƒíƒœ ì§„ì…");
 
         monsterPresenter.Dead();
     }

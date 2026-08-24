@@ -1,13 +1,13 @@
 using UnityEngine;
 
 /// <summary>
-/// ±âÁ¸ ÇÁ¸®ÆÕ°ú ¿ÜºÎ ÂüÁ¶¸¦ À¯ÁöÇÏ±â À§ÇÑ È£È¯ Å¬·¡½º
-/// ½ÇÁ¦ È¹µæ Ã³¸®´Â DroppedItemPresenter°¡ ´ã´ç
+/// ê¸°ì¡´ í”„ë¦¬íŒ¹ê³¼ ì™¸ë¶€ ì°¸ì¡°ë¥¼ ìœ ì§€í•˜ê¸° ìœ„í•œ í˜¸í™˜ í´ë˜ìŠ¤
+/// ì‹¤ì œ íšë“ ì²˜ë¦¬ëŠ” DroppedItemPresenterê°€ ë‹´ë‹¹
 /// </summary>
 public class DroppedItem : DroppedItemPresenter
 {
-    // ±âÁ¸ DroppedItem ÄÄÆ÷³ÍÆ®¿¡ ÀúÀåµÈ °ªÀ» À¯ÁöÇÏ±â À§ÇÑ ÇÊµå
-    // »õ ¿ÀºêÁ§Æ®¿¡¼­´Â DroppedItemModel Inspector¸¦ »ç¿ë
+    // ê¸°ì¡´ DroppedItem ì»´í¬ë„ŒíŠ¸ì— ì €ì¥ëœ ê°’ì„ ìœ ì§€í•˜ê¸° ìœ„í•œ í•„ë“œ
+    // ìƒˆ ì˜¤ë¸Œì íŠ¸ì—ì„œëŠ” DroppedItemModel Inspectorë¥¼ ì‚¬ìš©
     [SerializeField, HideInInspector] private ItemData itemData;
     [SerializeField, HideInInspector] private int amount = 1;
 

@@ -19,26 +19,26 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private Transform monsterParent;
 
     [Header("Spawn Settings")]
-    [Tooltip("¸î ÃÊ¸¶´Ù ½ºÆùÇÒÁö")]
+    [Tooltip("ëª‡ ì´ˆë§ˆë‹¤ ìŠ¤í°í• ì§€")]
     [SerializeField] private float spawnInterval = 1f;
 
-    [Tooltip("ÇÑ ¹ø¿¡ ¸î ¸¶¸® ½ºÆùÇÒÁö")]
+    [Tooltip("í•œ ë²ˆì— ëª‡ ë§ˆë¦¬ ìŠ¤í°í• ì§€")]
     [SerializeField] private int spawnCount = 1;
 
-    [Tooltip("ÇÃ·¹ÀÌ¾î ÁÖº¯ ½ºÆù ±İÁö ¹İ°æ")]
+    [Tooltip("í”Œë ˆì´ì–´ ì£¼ë³€ ìŠ¤í° ê¸ˆì§€ ë°˜ê²½")]
     [SerializeField] private float safeRadius = 5f;
 
-    [Tooltip("ÇÃ·¹ÀÌ¾î ±âÁØ ÃÖ´ë ½ºÆù ¹İ°æ")]
+    [Tooltip("í”Œë ˆì´ì–´ ê¸°ì¤€ ìµœëŒ€ ìŠ¤í° ë°˜ê²½")]
     [SerializeField] private float spawnRadius = 12f;
 
-    [Tooltip("µ¿½Ã¿¡ Á¸Àç °¡´ÉÇÑ ÃÖ´ë ¸ó½ºÅÍ ¼ö")]
+    [Tooltip("ë™ì‹œì— ì¡´ì¬ ê°€ëŠ¥í•œ ìµœëŒ€ ëª¬ìŠ¤í„° ìˆ˜")]
     [SerializeField] private int maxAliveMonsterCount = 20;
 
     [Header("Spawn Check")]
-    [Tooltip("½ºÆù À§Ä¡ ÁÖº¯ Àå¾Ö¹° °Ë»ç ¹İ°æ")]
+    [Tooltip("ìŠ¤í° ìœ„ì¹˜ ì£¼ë³€ ì¥ì• ë¬¼ ê²€ì‚¬ ë°˜ê²½")]
     [SerializeField] private float spawnCheckRadius = 0.5f;
 
-    [Tooltip("º®/Àå¾Ö¹° ·¹ÀÌ¾î")]
+    [Tooltip("ë²½/ì¥ì• ë¬¼ ë ˆì´ì–´")]
     [SerializeField] private LayerMask obstacleLayer;
 
     private float spawnTimer;
@@ -61,21 +61,21 @@ public class MonsterSpawner : MonoBehaviour
     {
         if (player == null)
         {
-            Debug.LogWarning("Player°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("Playerê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (NavMesh.SamplePosition(player.position, out NavMeshHit hit, 10f, NavMesh.AllAreas))
         {
-            Debug.Log("ÇÃ·¹ÀÌ¾î ÁÖº¯ NavMesh Ã£À½: " + hit.position);
+            Debug.Log("í”Œë ˆì´ì–´ ì£¼ë³€ NavMesh ì°¾ìŒ: " + hit.position);
         }
         else
         {
-            Debug.LogWarning("ÇÃ·¹ÀÌ¾î ÁÖº¯¿¡µµ NavMesh°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("í”Œë ˆì´ì–´ ì£¼ë³€ì—ë„ NavMeshê°€ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         NavMeshTriangulation triangulation = NavMesh.CalculateTriangulation();
-        Debug.Log("ÇöÀç NavMesh Á¤Á¡ ¼ö: " + triangulation.vertices.Length);
+        Debug.Log("í˜„ì¬ NavMesh ì •ì  ìˆ˜: " + triangulation.vertices.Length);
     }
 
     private void Update()
@@ -115,13 +115,13 @@ public class MonsterSpawner : MonoBehaviour
         {
             if (!TryGetRandomMonsterPrefab(out GameObject monsterPrefab))
             {
-                Debug.Log("ÀÌ¹ø ½ºÆù È®·ü¿¡ ¼º°øÇÑ ¸ó½ºÅÍ°¡ ¾ø½À´Ï´Ù.");
+                Debug.Log("ì´ë²ˆ ìŠ¤í° í™•ë¥ ì— ì„±ê³µí•œ ëª¬ìŠ¤í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
                 continue;
             }
 
             if (!TryGetSpawnPosition(out Vector3 spawnPosition))
             {
-                Debug.LogWarning("½ºÆù À§Ä¡¸¦ Ã£Áö ¸øÇß½À´Ï´Ù.");
+                Debug.LogWarning("ìŠ¤í° ìœ„ì¹˜ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
                 continue;
             }
 
@@ -134,7 +134,7 @@ public class MonsterSpawner : MonoBehaviour
 
             spawnedMonsters.Add(monster);
 
-            Debug.Log("¸ó½ºÅÍ ½ºÆù: " + monster.name);
+            Debug.Log("ëª¬ìŠ¤í„° ìŠ¤í°: " + monster.name);
         }
     }
 
@@ -198,7 +198,7 @@ public class MonsterSpawner : MonoBehaviour
             return true;
         }
 
-        Debug.LogWarning($"½ºÆù À§Ä¡ Ã£±â ½ÇÆĞ - NavMesh ½ÇÆĞ: {navMeshFailCount}, Àå¾Ö¹° ½ÇÆĞ: {blockedFailCount}");
+        Debug.LogWarning($"ìŠ¤í° ìœ„ì¹˜ ì°¾ê¸° ì‹¤íŒ¨ - NavMesh ì‹¤íŒ¨: {navMeshFailCount}, ì¥ì• ë¬¼ ì‹¤íŒ¨: {blockedFailCount}");
 
         spawnPosition = Vector3.zero;
         return false;

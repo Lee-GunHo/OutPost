@@ -4,20 +4,20 @@ using UnityEngine.UI;
 
 
 /// <summary>
-/// NPC »óÈ£ÀÛ¿ë ÇßÀ» ¶§ ¿­¸®´Â UI
+/// NPC ìƒí˜¸ì‘ìš© í–ˆì„ ë•Œ ì—´ë¦¬ëŠ” UI
 /// </summary>
 public class NPCInteractionUI : MonoBehaviour
 {
     public static NPCInteractionUI Instance { get; private set; }
 
-    [Header("ÀüÃ¼ UI ÆĞ³Î")]
+    [Header("ì „ì²´ UI íŒ¨ë„")]
     [SerializeField] private GameObject panel;
 
-    [Header("ÅØ½ºÆ® UI")]
+    [Header("í…ìŠ¤íŠ¸ UI")]
     [SerializeField] private TMP_Text npcNameText;
     [SerializeField] private TMP_Text dialogueText;
 
-    [Header("¹öÆ° UI")]
+    [Header("ë²„íŠ¼ UI")]
     [SerializeField] private Button dialogueButton;
     [SerializeField] private Button shopButton;
     [SerializeField] private Button questButton;
@@ -74,7 +74,7 @@ public class NPCInteractionUI : MonoBehaviour
     }
 
     /// <summary>
-    /// NPCPresenter¿¡¼­ È£ÃâÇÏ´Â ÇÔ¼ö
+    /// NPCPresenterì—ì„œ í˜¸ì¶œí•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     /// <param name="npc"></param>
     /// <param name="player"></param>
@@ -117,18 +117,18 @@ public class NPCInteractionUI : MonoBehaviour
     }
 
     /// <summary>
-    /// ´ëÈ­Ã¢ÀÌ Ã³À½ ¿­·ÈÀ» ¶§ ±âº» ¹®±¸ Ç¥½Ã
+    /// ëŒ€í™”ì°½ì´ ì²˜ìŒ ì—´ë ¸ì„ ë•Œ ê¸°ë³¸ ë¬¸êµ¬ í‘œì‹œ
     /// </summary>
     private void ShowDefaultDialogue()
     {
         if (dialogueText != null)
         {
-            dialogueText.text = "¹«¾ùÀ» ÇÏ½Ã°Ú½À´Ï±î?";
+            dialogueText.text = "ë¬´ì—‡ì„ í•˜ì‹œê² ìŠµë‹ˆê¹Œ?";
         }
     }
 
     /// <summary>
-    /// ´ëÈ­ ¹öÆ°À» ´­·¶À» ¶§ ½ÇÇàµÇ´Â ÇÔ¼ö
+    /// ëŒ€í™” ë²„íŠ¼ì„ ëˆŒë €ì„ ë•Œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
     /// </summary>
     private void OnDialogueButtonClicked()
     {
@@ -143,7 +143,7 @@ public class NPCInteractionUI : MonoBehaviour
         {
             if(dialogueText != null)
             {
-                dialogueText.text = "´ëÈ­ ³»¿ëÀÌ ¾ø½À´Ï´Ù.";
+                dialogueText.text = "ëŒ€í™” ë‚´ìš©ì´ ì—†ìŠµë‹ˆë‹¤.";
             }
 
             return;
@@ -173,7 +173,7 @@ public class NPCInteractionUI : MonoBehaviour
     }
 
     /// <summary>
-    /// »óÁ¡ ¹öÆ°À» ´­·¶À» ¶§ ½ÇÇàµÇ´Â ÇÔ¼ö
+    /// ìƒì  ë²„íŠ¼ì„ ëˆŒë €ì„ ë•Œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
     /// </summary>
     private void OnShopButtonClicked()
     {
@@ -191,13 +191,13 @@ public class NPCInteractionUI : MonoBehaviour
 
         if (shopData == null)
         {
-            Debug.LogWarning("»óÁ¡ µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ìƒì  ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if(ShopUI.Instance == null)
         {
-            Debug.LogWarning("¾À¿¡ ShopUI°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ì”¬ì— ShopUIê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -210,7 +210,7 @@ public class NPCInteractionUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Äù½ºÆ® ¹öÆ°À» ´­·¶À» ¶§ ½ÇÇàµÇ´Â ÇÔ¼ö
+    /// í€˜ìŠ¤íŠ¸ ë²„íŠ¼ì„ ëˆŒë €ì„ ë•Œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
     /// </summary>
     private void OnQuestButtonClicked()
     {
@@ -228,17 +228,17 @@ public class NPCInteractionUI : MonoBehaviour
 
         if (questData == null)
         {
-            Debug.LogWarning("Äù½ºÆ® µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("í€˜ìŠ¤íŠ¸ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (currentNPC.IsQuestCompleted())
         {
-            Debug.Log("ÀÌ¹Ì ¿Ï·áÇÑ Äù½ºÆ®ÀÔ´Ï´Ù.");
+            Debug.Log("ì´ë¯¸ ì™„ë£Œí•œ í€˜ìŠ¤íŠ¸ì…ë‹ˆë‹¤.");
 
             if(dialogueText != null)
             {
-                dialogueText.text = "ÀÌ¹Ì ¿Ï·áÇÑ Äù½ºÆ® ÀÔ´Ï´Ù.";
+                dialogueText.text = "ì´ë¯¸ ì™„ë£Œí•œ í€˜ìŠ¤íŠ¸ ì…ë‹ˆë‹¤.";
             }
 
             return;
@@ -248,12 +248,12 @@ public class NPCInteractionUI : MonoBehaviour
         {
             currentNPC.AcceptQuest();
 
-            Debug.Log("Äù½ºÆ® ¼ö¶ô : " + questData.QuestTitle);
-            Debug.Log("ÇÊ¿ä ¾ÆÀÌÅÛ : " + questData.RequiredItem.itemName + " x " + questData.RequiredAmount);
+            Debug.Log("í€˜ìŠ¤íŠ¸ ìˆ˜ë½ : " + questData.QuestTitle);
+            Debug.Log("í•„ìš” ì•„ì´í…œ : " + questData.RequiredItem.itemName + " x " + questData.RequiredAmount);
 
             if(dialogueText != null)
             {
-                dialogueText.text = "Äù½ºÆ®¸¦ ¼ö¶ôÇß½À´Ï´Ù.";
+                dialogueText.text = "í€˜ìŠ¤íŠ¸ë¥¼ ìˆ˜ë½í–ˆìŠµë‹ˆë‹¤.";
             }
 
             RefreshQuestButtonText();
@@ -270,15 +270,15 @@ public class NPCInteractionUI : MonoBehaviour
 
         if(currentNPC.IsQuestCompleted())
         {
-            questButtonText.text = "Äù½ºÆ® ¿Ï·áµÊ";
+            questButtonText.text = "í€˜ìŠ¤íŠ¸ ì™„ë£Œë¨";
         }
         else if(currentNPC.IsQuestAccepted())
         {
-            questButtonText.text = "Äù½ºÆ® ¿Ï·áÇÏ±â";
+            questButtonText.text = "í€˜ìŠ¤íŠ¸ ì™„ë£Œí•˜ê¸°";
         }
         else
         {
-            questButtonText.text = "Äù½ºÆ® ¹Ş±â";
+            questButtonText.text = "í€˜ìŠ¤íŠ¸ ë°›ê¸°";
         }
     }
 
@@ -288,7 +288,7 @@ public class NPCInteractionUI : MonoBehaviour
 
         if (inventory == null)
         {
-            Debug.LogWarning("ÇÃ·¹ÀÌ¾î¿¡°Ô InventoryModelÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("í”Œë ˆì´ì–´ì—ê²Œ InventoryModelì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -300,7 +300,7 @@ public class NPCInteractionUI : MonoBehaviour
 
         if (requiredItem == null || requiredAmount <= 0)
         {
-            Debug.LogWarning("Äù½ºÆ® ¿Ï·á Á¶°Ç ¾ÆÀÌÅÛÀÌ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù.");
+            Debug.LogWarning("í€˜ìŠ¤íŠ¸ ì™„ë£Œ ì¡°ê±´ ì•„ì´í…œì´ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -309,14 +309,14 @@ public class NPCInteractionUI : MonoBehaviour
             int currentAmount = inventory.GetItemCount(requiredItem);
 
             Debug.Log(
-                "Äù½ºÆ® ¿Ï·á Á¶°Ç ºÎÁ· : " +
+                "í€˜ìŠ¤íŠ¸ ì™„ë£Œ ì¡°ê±´ ë¶€ì¡± : " +
                 requiredItem.itemName + " " +
                 currentAmount + " / " + requiredAmount
                 );
 
             if(dialogueText != null)
             {
-                dialogueText.text = requiredItem.itemName + "ÀÌ(°¡) ºÎÁ·ÇÕ´Ï´Ù. " +
+                dialogueText.text = requiredItem.itemName + "ì´(ê°€) ë¶€ì¡±í•©ë‹ˆë‹¤. " +
                     currentAmount + " / " + requiredAmount;
             }
 
@@ -327,7 +327,7 @@ public class NPCInteractionUI : MonoBehaviour
         {
             if(!inventory.CanAddItem(rewardItem, requiredAmount))
             {
-                Debug.Log("ÀÎº¥Åä¸®¿¡ º¸»ó ¾ÆÀÌÅÛÀ» ¹ŞÀ» °ø°£ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+                Debug.Log("ì¸ë²¤í† ë¦¬ì— ë³´ìƒ ì•„ì´í…œì„ ë°›ì„ ê³µê°„ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.");
                 return;
             }
         }
@@ -336,7 +336,7 @@ public class NPCInteractionUI : MonoBehaviour
 
         if(!removed)
         {
-            Debug.LogWarning("Äù½ºÆ® ¾ÆÀÌÅÛ Á¦°Å¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+            Debug.LogWarning("í€˜ìŠ¤íŠ¸ ì•„ì´í…œ ì œê±°ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -348,16 +348,16 @@ public class NPCInteractionUI : MonoBehaviour
         currentNPC.CompleteQuest();
         RefreshQuestButtonText();
 
-        Debug.Log("Äù½ºÆ® ¿Ï·á : " + questData.QuestTitle);
+        Debug.Log("í€˜ìŠ¤íŠ¸ ì™„ë£Œ : " + questData.QuestTitle);
 
         if(dialogueText != null)
         {
-            dialogueText.text = "Äù½ºÆ®¸¦ ¿Ï·áÇß½À´Ï´Ù!";
+            dialogueText.text = "í€˜ìŠ¤íŠ¸ë¥¼ ì™„ë£Œí–ˆìŠµë‹ˆë‹¤!";
         }
 
         if(rewardItem != null && rewardAmount > 0)
         {
-            Debug.Log("º¸»ó È¹µæ : " + rewardItem.itemName + " x " + rewardAmount);
+            Debug.Log("ë³´ìƒ íšë“ : " + rewardItem.itemName + " x " + rewardAmount);
         }
     }
 
@@ -370,7 +370,7 @@ public class NPCInteractionUI : MonoBehaviour
     }
 
     /// <summary>
-    /// UI ´İ´Â ÇÔ¼ö
+    /// UI ë‹«ëŠ” í•¨ìˆ˜
     /// </summary>
     public void Close()
     {
@@ -383,13 +383,13 @@ public class NPCInteractionUI : MonoBehaviour
 
         UIState.SetNPCInteractionOpen(false);
 
-        // ÇöÀç »óÈ£ÀÛ¿ë ÁßÀÎ NPC Á¤º¸ ºñ¿ì±â
+        // í˜„ì¬ ìƒí˜¸ì‘ìš© ì¤‘ì¸ NPC ì •ë³´ ë¹„ìš°ê¸°
         currentNPC = null;
 
-        // ÇöÀç »óÈ£ÀÛ¿ë ÁßÀÎ ÇÃ·¹ÀÌ¾î Á¤º¸ ºñ¿ì±â
+        // í˜„ì¬ ìƒí˜¸ì‘ìš© ì¤‘ì¸ í”Œë ˆì´ì–´ ì •ë³´ ë¹„ìš°ê¸°
         currentPlayer = null;
 
-        // ´ëÈ­Ã¢À» ´İ¾Ò´Âµ¥ ¾ÆÁ÷ NPC ¹üÀ§ ¾ÈÀÌ¸é FÅ° ¾È³» UI ´Ù½Ã Ç¥½Ã
+        // ëŒ€í™”ì°½ì„ ë‹«ì•˜ëŠ”ë° ì•„ì§ NPC ë²”ìœ„ ì•ˆì´ë©´ Fí‚¤ ì•ˆë‚´ UI ë‹¤ì‹œ í‘œì‹œ
         if(closedNPC != null)
         {
             closedNPC.ShowInteractionMarkIfPossible();

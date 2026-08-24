@@ -24,7 +24,7 @@ public class TextHoverFade : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (targetText == null)
         {
-            // ¹öÆ° ÀÚ½Ä¿¡¼­ ÀÚµ¿À¸·Î Ã£±â (¸ø Ã£À¸¸é ÀÎ½ºÆåÅÍ¿¡ ³Ö¾îÁà)
+            // ë²„íŠ¼ ìì‹ì—ì„œ ìë™ìœ¼ë¡œ ì°¾ê¸° (ëª» ì°¾ìœ¼ë©´ ì¸ìŠ¤í™í„°ì— ë„£ì–´ì¤˜)
             targetText = GetComponentInChildren<TMP_Text>(true);
         }
 

@@ -9,7 +9,7 @@ public static class UIState
     public static bool IsShopOpen { get; private set; }
     public static bool IsStatWindowOpen { get; private set; }
 
-    // Á¦ÀÛ´ë UI ¿­¸² »óÅÂ Ãß°¡
+    // ì œì‘ëŒ€ UI ì—´ë¦¼ ìƒíƒœ ì¶”ê°€
     public static bool IsCraftingOpen { get; private set; }
 
     public static bool IsAnyUIOpen =>
@@ -52,7 +52,7 @@ public static class UIState
         OnStateChanged?.Invoke();
     }
 
-    // Á¦ÀÛ´ë UI ¿­¸² »óÅÂ º¯°æ ÇÔ¼ö Ãß°¡
+    // ì œì‘ëŒ€ UI ì—´ë¦¼ ìƒíƒœ ë³€ê²½ í•¨ìˆ˜ ì¶”ê°€
     public static void SetCraftingOpen(bool isOpen)
     {
         IsCraftingOpen = isOpen;

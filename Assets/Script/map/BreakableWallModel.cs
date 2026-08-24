@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// ÆÄ±« °¡´ÉÇÑ º®°ú ³ª¹«ÀÇ ¼³Á¤, »ý¼º ÁÂÇ¥, ÆÄ±« »óÅÂ¸¦ °ü¸®
-/// ÀúÀå ¸Å´ÏÀú È£ÃâÀÌ³ª ÇÁ¸®ÆÕ »ý¼º ¹× Á¦°Å´Â ´ã´çÇÏÁö ¾ÊÀ½.
+/// íŒŒê´´ ê°€ëŠ¥í•œ ë²½ê³¼ ë‚˜ë¬´ì˜ ì„¤ì •, ìƒì„± ì¢Œí‘œ, íŒŒê´´ ìƒíƒœë¥¼ ê´€ë¦¬
+/// ì €ìž¥ ë§¤ë‹ˆì € í˜¸ì¶œì´ë‚˜ í”„ë¦¬íŒ¹ ìƒì„± ë° ì œê±°ëŠ” ë‹´ë‹¹í•˜ì§€ ì•ŠìŒ.
 /// </summary>
 public class BreakableWallModel : MonoBehaviour
 {
@@ -50,7 +50,7 @@ public class BreakableWallModel : MonoBehaviour
     public GameObject GeneratedRootObject => generatedRootObject;
 
     /// <summary>
-    /// ±âÁ¸ BreakableWall ÄÄÆ÷³ÍÆ®ÀÇ Á÷·ÄÈ­ µ¥ÀÌÅÍ¸¦ ¿Å±æ ¶§ »ç¿ë
+    /// ê¸°ì¡´ BreakableWall ì»´í¬ë„ŒíŠ¸ì˜ ì§ë ¬í™” ë°ì´í„°ë¥¼ ì˜®ê¸¸ ë•Œ ì‚¬ìš©
     /// </summary>
     public void ConfigureDropSettings(
         GameObject newDropItemPrefab,

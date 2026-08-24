@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-// (°æ¹Î) 0707 TempItemSlotView.csÀÇ »óÁ¡ ½½·Ô ±â´É Ãß°¡(ÀÌÇÏ (°æ¹Î) 0707 Ãß°¡)
+// (ê²½ë¯¼) 0707 TempItemSlotView.csì˜ ìƒì  ìŠ¬ë¡¯ ê¸°ëŠ¥ ì¶”ê°€(ì´í•˜ (ê²½ë¯¼) 0707 ì¶”ê°€)
 public enum ShopSlotMode
 {
     Buy,
@@ -21,12 +21,12 @@ public class ItemSlotView : MonoBehaviour,
     [SerializeField] private Image itemIcon;
     [SerializeField] private TextMeshProUGUI countText;
 
-    // (°æ¹Î) 0707 Ãß°¡
-    [Header("»óÁ¡ ½½·Ô ¼ö·® ¹öÆ°")]
+    // (ê²½ë¯¼) 0707 ì¶”ê°€
+    [Header("ìƒì  ìŠ¬ë¡¯ ìˆ˜ëŸ‰ ë²„íŠ¼")]
     [SerializeField] private Button plusButton;
     [SerializeField] private Button minusButton;
 
-    [Header("»óÁ¡ ½½·Ô ¼±ÅÃ Ç¥½Ã")]
+    [Header("ìƒì  ìŠ¬ë¡¯ ì„ íƒ í‘œì‹œ")]
     [SerializeField] private GameObject selectedMark;
 
     private SlotReference slotReference;
@@ -39,7 +39,7 @@ public class ItemSlotView : MonoBehaviour,
 
     public event Action<CraftingRecipe> OnCraftingRecipeClicked;
 
-    // (°æ¹Î) 0707 Ãß°¡
+    // (ê²½ë¯¼) 0707 ì¶”ê°€
     private ShopUI shopUI;
     private int shopSlotIndex;
     private ShopSlotMode shopSlotMode;
@@ -56,7 +56,7 @@ public class ItemSlotView : MonoBehaviour,
 
     public void Initialize(SlotType slotType, int slotIndex)
     {
-        // (°æ¹Î) 0707 Ãß°¡
+        // (ê²½ë¯¼) 0707 ì¶”ê°€
         isShopSlot = false;
         isCraftingSlot = false;
         craftingRecipe = null;
@@ -67,8 +67,8 @@ public class ItemSlotView : MonoBehaviour,
     }
 
     /// <summary>
-    /// (°æ¹Î) 0707 Ãß°¡
-    /// »óÁ¡ ½½·Ô ÃÊ±âÈ­
+    /// (ê²½ë¯¼) 0707 ì¶”ê°€
+    /// ìƒì  ìŠ¬ë¡¯ ì´ˆê¸°í™”
     /// </summary>
     /// <param name="shopUI"></param>
     /// <param name="slotIndex"></param>
@@ -91,7 +91,7 @@ public class ItemSlotView : MonoBehaviour,
     {
         currentItem = itemStack;
 
-        // (°æ¹Î) 0707 Ãß°¡
+        // (ê²½ë¯¼) 0707 ì¶”ê°€
         currentItemData = itemStack != null ? itemStack.item : null;
 
         if (itemStack == null || itemStack.item == null)
@@ -108,7 +108,7 @@ public class ItemSlotView : MonoBehaviour,
     }
 
     /// <summary>
-    /// (°æ¹Î) »óÁ¡ ½½·Ô¿¡ ItemData¸¦ Á÷Á¢ ³Ö±â À§ÇØ ¸¸µç ÇÔ¼ö
+    /// (ê²½ë¯¼) ìƒì  ìŠ¬ë¡¯ì— ItemDataë¥¼ ì§ì ‘ ë„£ê¸° ìœ„í•´ ë§Œë“  í•¨ìˆ˜
     /// </summary>
     /// <param name="itemData"></param>
     /// <param name="amount"></param>
@@ -139,7 +139,7 @@ public class ItemSlotView : MonoBehaviour,
     {
         currentItem = null;
 
-        // (°æ¹Î) 0707 Ãß°¡
+        // (ê²½ë¯¼) 0707 ì¶”ê°€
         currentItemData = null;
 
         if(itemIcon != null)
@@ -151,11 +151,11 @@ public class ItemSlotView : MonoBehaviour,
         if (countText != null)
             countText.text = "";
 
-        // (°æ¹Î) 0707 Ãß°¡
+        // (ê²½ë¯¼) 0707 ì¶”ê°€
         SetSelected(false);
     }
 
-    // (°æ¹Î) 0707 Ãß°¡
+    // (ê²½ë¯¼) 0707 ì¶”ê°€
     public void SetSelected(bool isSelected)
     {
         if(selectedMark != null)
@@ -166,11 +166,11 @@ public class ItemSlotView : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // ¿ŞÂÊ Å¬¸¯¸¸ Ã³¸®
+        // ì™¼ìª½ í´ë¦­ë§Œ ì²˜ë¦¬
         if (eventData.button != PointerEventData.InputButton.Left)
             return;
 
-        // »óÁ¡ ½½·Ô Ã³¸®
+        // ìƒì  ìŠ¬ë¡¯ ì²˜ë¦¬
         if (isShopSlot)
         {
             if (shopUI == null || currentItemData == null)
@@ -179,7 +179,7 @@ public class ItemSlotView : MonoBehaviour,
             shopUI.SelectSlot(shopSlotMode, shopSlotIndex);
             return;
         }
-        // Á¦ÀÛ ·¹½ÃÇÇ ½½·Ô Å¬¸¯
+        // ì œì‘ ë ˆì‹œí”¼ ìŠ¬ë¡¯ í´ë¦­
         if (isCraftingSlot)
         {
             if (craftingRecipe == null)
@@ -195,20 +195,20 @@ public class ItemSlotView : MonoBehaviour,
             (keyboard.leftCtrlKey.isPressed ||
              keyboard.rightCtrlKey.isPressed);
 
-        // Ctrl + ÁÂÅ¬¸¯: ½ºÅÃ ³ª´©±â
+        // Ctrl + ì¢Œí´ë¦­: ìŠ¤íƒ ë‚˜ëˆ„ê¸°
         if (controlPressed)
         {
             OnSlotSplitClicked?.Invoke(slotReference);
             return;
         }
 
-        // ÀÏ¹İ ÁÂÅ¬¸¯: ¾ÆÀÌÅÛ ÀÌµ¿
+        // ì¼ë°˜ ì¢Œí´ë¦­: ì•„ì´í…œ ì´ë™
         OnSlotClicked?.Invoke(slotReference);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // (°æ¹Î) 0707 Ãß°¡
+        // (ê²½ë¯¼) 0707 ì¶”ê°€
         if (isShopSlot || isCraftingSlot)
             return;
 
@@ -217,7 +217,7 @@ public class ItemSlotView : MonoBehaviour,
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        // (°æ¹Î) 0707 Ãß°¡
+        // (ê²½ë¯¼) 0707 ì¶”ê°€
         if (isShopSlot || isCraftingSlot)
             return;
 

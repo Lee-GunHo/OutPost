@@ -13,8 +13,8 @@ public enum ChestSlotArea
 }
 
 /// <summary>
-/// Ã¢°í UI¿¡¼­ »ç¿ëÇÏ´Â ÀÏ¹İ ½½·Ô View
-/// ¿ìÅ¬¸¯ µå·¡±× ½ÃÀÛ°ú ½½·Ô Å¬¸¯ ÀÔ·Â¸¸ Presenter¿¡ Àü´Ş
+/// ì°½ê³  UIì—ì„œ ì‚¬ìš©í•˜ëŠ” ì¼ë°˜ ìŠ¬ë¡¯ View
+/// ìš°í´ë¦­ ë“œë˜ê·¸ ì‹œì‘ê³¼ ìŠ¬ë¡¯ í´ë¦­ ì…ë ¥ë§Œ Presenterì— ì „ë‹¬
 /// </summary>
 public class ChestSlotView : MonoBehaviour,
     IPointerClickHandler,
@@ -28,7 +28,7 @@ public class ChestSlotView : MonoBehaviour,
     [SerializeField] private Image itemIcon;
     [SerializeField] private TMP_Text countText;
 
-    [Header("½½·Ô ¹è°æ")]
+    [Header("ìŠ¬ë¡¯ ë°°ê²½")]
     [SerializeField] private Image slotBackground;
     [SerializeField] private Sprite defaultSlotSprite;
     [SerializeField] private Sprite selectedSlotSprite;
@@ -104,7 +104,7 @@ public class ChestSlotView : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // ¿ìÅ¬¸¯ µå·¡±×¸¦ ³¡³½ ÇÁ·¹ÀÓ¿¡ ¿ìÅ¬¸¯ ÀÌº¥Æ®±îÁö ¹ß»ıÇÏ´Â °ÍÀ» ¸·À½
+        // ìš°í´ë¦­ ë“œë˜ê·¸ë¥¼ ëë‚¸ í”„ë ˆì„ì— ìš°í´ë¦­ ì´ë²¤íŠ¸ê¹Œì§€ ë°œìƒí•˜ëŠ” ê²ƒì„ ë§‰ìŒ
         if (Time.frameCount == lastDragEndFrame)
             return;
 
@@ -138,7 +138,7 @@ public class ChestSlotView : MonoBehaviour,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // ÀÌ ±â´ÉÀº ¿ìÅ¬¸¯ µå·¡±×·Î¸¸ ½ÃÀÛ
+        // ì´ ê¸°ëŠ¥ì€ ìš°í´ë¦­ ë“œë˜ê·¸ë¡œë§Œ ì‹œì‘
         if (eventData.button != PointerEventData.InputButton.Right)
             return;
 
@@ -152,7 +152,7 @@ public class ChestSlotView : MonoBehaviour,
 
     public void OnDrag(PointerEventData eventData)
     {
-        // Ä¿¼­ ¾ÆÀÌÄÜ À§Ä¡´Â ChestView.Update¿¡¼­ Ã³¸®
+        // ì»¤ì„œ ì•„ì´ì½˜ ìœ„ì¹˜ëŠ” ChestView.Updateì—ì„œ ì²˜ë¦¬
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -163,8 +163,8 @@ public class ChestSlotView : MonoBehaviour,
         isRightDragging = false;
         lastDragEndFrame = Time.frameCount;
 
-        // µå·¡±×°¡ ³¡³ªµµ Presenter°¡ µé°í ÀÖ´Â ¾ÆÀÌÅÛÀº À¯ÁöµÊ
-        // ÀÌÈÄ ÁÂÅ¬¸¯ÇÒ ¶§¸¶´Ù 1°³¾¿ ³õÀ½
+        // ë“œë˜ê·¸ê°€ ëë‚˜ë„ Presenterê°€ ë“¤ê³  ìˆëŠ” ì•„ì´í…œì€ ìœ ì§€ë¨
+        // ì´í›„ ì¢Œí´ë¦­í•  ë•Œë§ˆë‹¤ 1ê°œì”© ë†“ìŒ
     }
 
     private static bool IsEmpty(ItemStack itemStack)

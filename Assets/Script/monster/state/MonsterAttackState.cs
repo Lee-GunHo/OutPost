@@ -18,7 +18,7 @@ public class MonsterAttackState : IMonsterState
     {
         monsterPresenter.StopMove();
 
-        // °ø°İ »óÅÂ¿¡ µé¾î¿ÀÀÚ¸¶ÀÚ ¹Ù·Î °ø°İ °¡´É
+        // ê³µê²© ìƒíƒœì— ë“¤ì–´ì˜¤ìë§ˆì ë°”ë¡œ ê³µê²© ê°€ëŠ¥
         currentCooldown = 0f;
     }
 

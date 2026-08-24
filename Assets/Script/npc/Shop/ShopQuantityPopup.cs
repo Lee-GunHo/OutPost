@@ -6,14 +6,14 @@ using UnityEngine.UI;
 
 public class ShopQuantityPopup : MonoBehaviour
 {
-    [Header("ÀüÃ¼ ÆĞ³Î")]
+    [Header("ì „ì²´ íŒ¨ë„")]
     [SerializeField] private GameObject panel;
 
-    [Header("ÅØ½ºÆ®")]
+    [Header("í…ìŠ¤íŠ¸")]
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text amountText;
 
-    [Header("¹öÆ°")]
+    [Header("ë²„íŠ¼")]
     [SerializeField] private Button plusButton;
     [SerializeField] private Button minusButton;
     [SerializeField] private Button sellButton;

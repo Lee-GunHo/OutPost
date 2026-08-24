@@ -108,7 +108,7 @@ public class PlacedBlockSaveManager : MonoBehaviour
         if (showDebugLog)
         {
             Debug.Log(
-                $"¼³Ä¡ ºí·Ï ÀúÀå: Cell({globalCell.x}, {globalCell.y}), itemID={itemId}"
+                $"ì„¤ì¹˜ ë¸”ë¡ ì €ì¥: Cell({globalCell.x}, {globalCell.y}), itemID={itemId}"
             );
         }
 
@@ -132,7 +132,7 @@ public class PlacedBlockSaveManager : MonoBehaviour
         if (showDebugLog)
         {
             Debug.Log(
-                $"¼³Ä¡ ºí·Ï Á¦°Å ÀúÀå: Cell({globalCell.x}, {globalCell.y})"
+                $"ì„¤ì¹˜ ë¸”ë¡ ì œê±° ì €ì¥: Cell({globalCell.x}, {globalCell.y})"
             );
         }
 
@@ -152,7 +152,7 @@ public class PlacedBlockSaveManager : MonoBehaviour
         }
         catch (Exception exception)
         {
-            Debug.LogError("¼³Ä¡ ºí·Ï ÀúÀå ½ÇÆĞ: " + exception);
+            Debug.LogError("ì„¤ì¹˜ ë¸”ë¡ ì €ì¥ ì‹¤íŒ¨: " + exception);
         }
     }
 
@@ -197,7 +197,7 @@ public class PlacedBlockSaveManager : MonoBehaviour
         }
         catch (Exception exception)
         {
-            Debug.LogError("¼³Ä¡ ºí·Ï ºÒ·¯¿À±â ½ÇÆĞ: " + exception);
+            Debug.LogError("ì„¤ì¹˜ ë¸”ë¡ ë¶ˆëŸ¬ì˜¤ê¸° ì‹¤íŒ¨: " + exception);
             saveData = CreateEmptySaveData();
         }
     }

@@ -21,12 +21,12 @@ public class GameSaveManager : MonoBehaviour
             }
         }
 
-        Debug.Log("ÀúÀå °æ·Î: " + SavePath);
+        Debug.Log("ì €ì¥ ê²½ë¡œ: " + SavePath);
     }
 
     private IEnumerator Start()
     {
-        // ´Ù¸¥ ½ºÅ©¸³Æ®°¡ Start¿¡¼­ ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ ÃÊ±âÈ­ÇÒ ¼ö ÀÖÀ¸´Ï±î ÇÑ ÇÁ·¹ÀÓ ´Ê°Ô ·Îµå
+        // ë‹¤ë¥¸ ìŠ¤í¬ë¦½íŠ¸ê°€ Startì—ì„œ í”Œë ˆì´ì–´ ìœ„ì¹˜ë¥¼ ì´ˆê¸°í™”í•  ìˆ˜ ìˆìœ¼ë‹ˆê¹Œ í•œ í”„ë ˆì„ ëŠ¦ê²Œ ë¡œë“œ
         yield return null;
 
         LoadGame();
@@ -67,7 +67,7 @@ public class GameSaveManager : MonoBehaviour
     {
         if (playerPresenter == null)
         {
-            Debug.LogWarning("ÀúÀå ½ÇÆĞ: PlayerPresenter°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ì €ì¥ ì‹¤íŒ¨: PlayerPresenterê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -78,7 +78,7 @@ public class GameSaveManager : MonoBehaviour
             currentHp = playerPresenter.CurrentHp,
             currentMp = playerPresenter.CurrentMp,
 
-            // ±âÁ¸ È£È¯¿ë. ·Îµå¿¡¼­´Â »ç¿ëÇÏÁö ¾Ê´Â °É ÃßÃµ.
+            // ê¸°ì¡´ í˜¸í™˜ìš©. ë¡œë“œì—ì„œëŠ” ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ê±¸ ì¶”ì²œ.
             attackPower = playerPresenter.AttackPower,
             defensePower = playerPresenter.DefensePower,
 
@@ -92,7 +92,7 @@ public class GameSaveManager : MonoBehaviour
             defenseUpgradeLevel = playerPresenter.DefenseUpgradeLevel,
             moveSpeedUpgradeLevel = playerPresenter.MoveSpeedUpgradeLevel,
 
-            // ÁøÇàµµ ÀúÀå Á¤º¸
+            // ì§„í–‰ë„ ì €ì¥ ì •ë³´
             normalMonsterKillCount = GameProgressManager.Instance != null
                 ? GameProgressManager.Instance.NormalMonsterKillCount
                 : 0,
@@ -117,20 +117,20 @@ public class GameSaveManager : MonoBehaviour
 
         File.WriteAllText(SavePath, json);
 
-        Debug.Log("°ÔÀÓ ÀúÀå ¿Ï·á: " + SavePath);
+        Debug.Log("ê²Œì„ ì €ì¥ ì™„ë£Œ: " + SavePath);
     }
 
     public void LoadGame()
     {
         if (playerPresenter == null)
         {
-            Debug.LogWarning("ºÒ·¯¿À±â ½ÇÆĞ: PlayerPresenter°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ë¶ˆëŸ¬ì˜¤ê¸° ì‹¤íŒ¨: PlayerPresenterê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (!File.Exists(SavePath))
         {
-            Debug.Log("ÀúÀå ÆÄÀÏÀÌ ¾ø½À´Ï´Ù. »õ °ÔÀÓÀ¸·Î ½ÃÀÛÇÕ´Ï´Ù.");
+            Debug.Log("ì €ì¥ íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤. ìƒˆ ê²Œì„ìœ¼ë¡œ ì‹œì‘í•©ë‹ˆë‹¤.");
             return;
         }
 
@@ -152,10 +152,10 @@ public class GameSaveManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("GameProgressManager.Instance°¡ ¾ø¾î¼­ ÁøÇàµµ µ¥ÀÌÅÍ¸¦ ºÒ·¯¿ÀÁö ¸øÇß½À´Ï´Ù.");
+            Debug.LogWarning("GameProgressManager.Instanceê°€ ì—†ì–´ì„œ ì§„í–‰ë„ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
         }
 
-        Debug.Log("°ÔÀÓ ºÒ·¯¿À±â ¿Ï·á: " + SavePath);
+        Debug.Log("ê²Œì„ ë¶ˆëŸ¬ì˜¤ê¸° ì™„ë£Œ: " + SavePath);
     }
 
     [ContextMenu("Delete Save File")]
@@ -163,12 +163,12 @@ public class GameSaveManager : MonoBehaviour
     {
         if (!File.Exists(SavePath))
         {
-            Debug.Log("»èÁ¦ÇÒ ÀúÀå ÆÄÀÏÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log("ì‚­ì œí•  ì €ì¥ íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         File.Delete(SavePath);
 
-        Debug.Log("ÀúÀå ÆÄÀÏ »èÁ¦ ¿Ï·á: " + SavePath);
+        Debug.Log("ì €ì¥ íŒŒì¼ ì‚­ì œ ì™„ë£Œ: " + SavePath);
     }
 }

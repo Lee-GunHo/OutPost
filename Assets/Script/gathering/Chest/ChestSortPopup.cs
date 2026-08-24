@@ -3,22 +3,22 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Ã¢°í Á¤·Ä ¹æ½Ä ¼±ÅÃ ÆË¾÷
-/// ÇöÀç Ä¿¼­ À§Ä¡¿¡ Ç¥½ÃµÇ¸ç,
-/// Á¤·Ä ¹öÆ° ¿ÜºÎ ¿µ¿ª Å¬¸¯½Ã ´İÈû
+/// ì°½ê³  ì •ë ¬ ë°©ì‹ ì„ íƒ íŒì—…
+/// í˜„ì¬ ì»¤ì„œ ìœ„ì¹˜ì— í‘œì‹œë˜ë©°,
+/// ì •ë ¬ ë²„íŠ¼ ì™¸ë¶€ ì˜ì—­ í´ë¦­ì‹œ ë‹«í˜
 /// </summary>
 public class ChestSortPopup : MonoBehaviour
 {
-    [Header("ÀüÃ¼ ÆË¾÷")]
+    [Header("ì „ì²´ íŒì—…")]
     [SerializeField] private GameObject popupRoot;
 
-    [Header("À§Ä¡°¡ ÀÌµ¿ÇÒ ÆË¾÷ ÆĞ³Î")]
+    [Header("ìœ„ì¹˜ê°€ ì´ë™í•  íŒì—… íŒ¨ë„")]
     [SerializeField] private RectTransform popupPanel;
 
-    [Header("ÆË¾÷ ¿ÜºÎ Å¬¸¯ °¨Áö")]
+    [Header("íŒì—… ì™¸ë¶€ í´ë¦­ ê°ì§€")]
     [SerializeField] private Button backdropButton;
 
-    [Header("Á¤·Ä ¹öÆ°")]
+    [Header("ì •ë ¬ ë²„íŠ¼")]
     [SerializeField] private Button gatherButton;
     [SerializeField] private Button sortByTypeButton;
 
@@ -66,7 +66,7 @@ public class ChestSortPopup : MonoBehaviour
         isInitialized = true;
     }
 
-    // ÁöÁ¤µÈ È­¸é ÁÂÇ¥¿¡ ÆË¾÷À» Ç¥½Ã
+    // ì§€ì •ëœ í™”ë©´ ì¢Œí‘œì— íŒì—…ì„ í‘œì‹œ
     public void Open(
         Vector2 screenPosition,
         Canvas parentCanvas)
@@ -78,7 +78,7 @@ public class ChestSortPopup : MonoBehaviour
 
         PositionPopup(screenPosition, parentCanvas);
 
-        // Backdropº¸´Ù ¾Õ¿¡ Ç¥½Ã
+        // Backdropë³´ë‹¤ ì•ì— í‘œì‹œ
         popupPanel.SetAsLastSibling();
     }
 

@@ -13,14 +13,14 @@ public class SaveDummyCreator : MonoBehaviour
     {
         if (File.Exists(SavePath))
         {
-            Debug.Log("ÀÌ¹Ì ¼¼ÀÌºê ÆÄÀÏÀÌ Á¸ÀçÇÔ");
+            Debug.Log("ì´ë¯¸ ì„¸ì´ë¸Œ íŒŒì¼ì´ ì¡´ì¬í•¨");
             return;
         }
 
         string dummyJson = "{ \"isDummy\": true }";
         File.WriteAllText(SavePath, dummyJson);
 
-        Debug.Log($"´õ¹Ì ¼¼ÀÌºê »ı¼º ¿Ï·á\nPath: {SavePath}");
+        Debug.Log($"ë”ë¯¸ ì„¸ì´ë¸Œ ìƒì„± ì™„ë£Œ\nPath: {SavePath}");
     }
 
     [ContextMenu("Delete Save")]
@@ -28,6 +28,6 @@ public class SaveDummyCreator : MonoBehaviour
     {
         if (!File.Exists(SavePath)) return;
         File.Delete(SavePath);
-        Debug.Log("¼¼ÀÌºê ÆÄÀÏ »èÁ¦ ¿Ï·á");
+        Debug.Log("ì„¸ì´ë¸Œ íŒŒì¼ ì‚­ì œ ì™„ë£Œ");
     }
 }

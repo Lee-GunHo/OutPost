@@ -24,7 +24,7 @@ public class PlayerPhysicsDebug : MonoBehaviour
         Collider[] colliders =
             GetComponentsInChildren<Collider>(true);
 
-        Debug.Log($"[PLAYER] 3D Collider °³¼ö = {colliders.Length}");
+        Debug.Log($"[PLAYER] 3D Collider ê°œìˆ˜ = {colliders.Length}");
 
         foreach (Collider col in colliders)
         {
@@ -63,7 +63,7 @@ public class PlayerPhysicsDebug : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[DOWN RAY] ¾Æ·¡¿¡ Collider ¾øÀ½");
+            Debug.LogWarning("[DOWN RAY] ì•„ë˜ì— Collider ì—†ìŒ");
         }
     }
 

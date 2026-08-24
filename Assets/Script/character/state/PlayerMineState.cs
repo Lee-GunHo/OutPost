@@ -15,7 +15,7 @@ public class PlayerMineState : IPlayerState
     {
         hasMined = false;
 
-        Debug.Log("Mine State ÁøÀÔ");
+        Debug.Log("Mine State ì§„ì…");
     }
 
     public void Update()

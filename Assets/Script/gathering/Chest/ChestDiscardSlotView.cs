@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// »èÁ¦ ´ë±â ¾ÆÀÌÅÛÀ» Ç¥½ÃÇÏ°í ÁÂÅ¬¸¯ ÀÔ·ÂÀ» Presenter¿¡ Àü´Ş
-/// Ä¿¼­¿¡ ¾ÆÀÌÅÛÀ» µé°í ÀÖÀ» ¶§ ÁÂÅ¬¸¯ÇÏ¸é 1°³¾¿ µé¾î°¨
+/// ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œì„ í‘œì‹œí•˜ê³  ì¢Œí´ë¦­ ì…ë ¥ì„ Presenterì— ì „ë‹¬
+/// ì»¤ì„œì— ì•„ì´í…œì„ ë“¤ê³  ìˆì„ ë•Œ ì¢Œí´ë¦­í•˜ë©´ 1ê°œì”© ë“¤ì–´ê°
 /// </summary>
 [RequireComponent(typeof(Image))]
 public class ChestDiscardSlotView : MonoBehaviour, IPointerClickHandler

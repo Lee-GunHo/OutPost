@@ -43,7 +43,7 @@ public class GameProgressManager : MonoBehaviour
     {
         normalMonsterKillCount++;
 
-        Debug.Log("ÀÏ¹İ ¸ó½ºÅÍ Ã³Ä¡ ¼ö: " + normalMonsterKillCount);
+        Debug.Log("ì¼ë°˜ ëª¬ìŠ¤í„° ì²˜ì¹˜ ìˆ˜: " + normalMonsterKillCount);
 
         CheckNormalMonsterProgress();
 
@@ -55,7 +55,7 @@ public class GameProgressManager : MonoBehaviour
         bossKillCount++;
         bossKilled = true;
 
-        Debug.Log("º¸½º Ã³Ä¡ ¼ö: " + bossKillCount);
+        Debug.Log("ë³´ìŠ¤ ì²˜ì¹˜ ìˆ˜: " + bossKillCount);
 
         OnBossKilled?.Invoke();
     }
@@ -64,7 +64,7 @@ public class GameProgressManager : MonoBehaviour
     {
         raidClearCount++;
 
-        Debug.Log("½À°İ Å¬¸®¾î ¼ö: " + raidClearCount);
+        Debug.Log("ìŠµê²© í´ë¦¬ì–´ ìˆ˜: " + raidClearCount);
 
         OnRaidClearCountChanged?.Invoke(raidClearCount);
     }
@@ -75,7 +75,7 @@ public class GameProgressManager : MonoBehaviour
         {
             progressLevel = 1;
 
-            Debug.Log("ÁøÇàµµ »ó½Â. Progress Level: " + progressLevel);
+            Debug.Log("ì§„í–‰ë„ ìƒìŠ¹. Progress Level: " + progressLevel);
 
             OnProgressLevelChanged?.Invoke(progressLevel);
         }
@@ -100,12 +100,12 @@ public class GameProgressManager : MonoBehaviour
         OnProgressLevelChanged?.Invoke(progressLevel);
 
         Debug.Log(
-            "ÁøÇàµµ µ¥ÀÌÅÍ ·Îµå ¿Ï·á" +
-            " / ÀÏ¹İ ¸ó½ºÅÍ Ã³Ä¡ ¼ö: " + normalMonsterKillCount +
-            " / º¸½º Ã³Ä¡ ¼ö: " + bossKillCount +
-            " / º¸½º Ã³Ä¡ ¿©ºÎ: " + bossKilled +
-            " / ½À°İ Å¬¸®¾î ¼ö: " + raidClearCount +
-            " / ÁøÇàµµ ·¹º§: " + progressLevel
+            "ì§„í–‰ë„ ë°ì´í„° ë¡œë“œ ì™„ë£Œ" +
+            " / ì¼ë°˜ ëª¬ìŠ¤í„° ì²˜ì¹˜ ìˆ˜: " + normalMonsterKillCount +
+            " / ë³´ìŠ¤ ì²˜ì¹˜ ìˆ˜: " + bossKillCount +
+            " / ë³´ìŠ¤ ì²˜ì¹˜ ì—¬ë¶€: " + bossKilled +
+            " / ìŠµê²© í´ë¦¬ì–´ ìˆ˜: " + raidClearCount +
+            " / ì§„í–‰ë„ ë ˆë²¨: " + progressLevel
         );
     }
 }

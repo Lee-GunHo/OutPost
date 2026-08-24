@@ -4,11 +4,11 @@ using System.IO;
 using UnityEngine;
 
 /// <summary>
-/// ÀıÂ÷ÀûÀ¸·Î »ı¼ºµÈ º®°ú ³ª¹«ÀÇ ÆÄ±« »óÅÂ¸¦ ÀúÀå
+/// ì ˆì°¨ì ìœ¼ë¡œ ìƒì„±ëœ ë²½ê³¼ ë‚˜ë¬´ì˜ íŒŒê´´ ìƒíƒœë¥¼ ì €ì¥
 ///
-/// ÇÙ½É ½Äº°ÀÚ´Â "¿ùµå Å¸ÀÏ ÁÂÇ¥"
-/// Ã»Å©°¡ ¾ğ·ÎµåµÇ°Å³ª ´Ù½Ã »ı¼ºµÇ¾îµµ °°Àº Å¸ÀÏÀº Ç×»ó °°Àº Å°¸¦ »ç¿ë
-/// ±âÁ¸ Ã»Å© ÁÂÇ¥ + ·ÎÄÃ ÁÂÇ¥ ¹æ½Äµµ ÇÔ²² º¸°üÇÏ¿© ÀÌÀü ÀúÀå ÆÄÀÏ°ú È£È¯
+/// í•µì‹¬ ì‹ë³„ìëŠ” "ì›”ë“œ íƒ€ì¼ ì¢Œí‘œ"
+/// ì²­í¬ê°€ ì–¸ë¡œë“œë˜ê±°ë‚˜ ë‹¤ì‹œ ìƒì„±ë˜ì–´ë„ ê°™ì€ íƒ€ì¼ì€ í•­ìƒ ê°™ì€ í‚¤ë¥¼ ì‚¬ìš©
+/// ê¸°ì¡´ ì²­í¬ ì¢Œí‘œ + ë¡œì»¬ ì¢Œí‘œ ë°©ì‹ë„ í•¨ê»˜ ë³´ê´€í•˜ì—¬ ì´ì „ ì €ì¥ íŒŒì¼ê³¼ í˜¸í™˜
 /// </summary>
 public class ChunkModificationSaveManager : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
     public static ChunkModificationSaveManager Instance => instance;
 
     [Header("Save Settings")]
-    [Tooltip("ÀúÀå, Á¶È¸, ºÒ·¯¿À±â °úÁ¤À» Console¿¡ Ãâ·ÂÇÕ´Ï´Ù.")]
+    [Tooltip("ì €ì¥, ì¡°íšŒ, ë¶ˆëŸ¬ì˜¤ê¸° ê³¼ì •ì„ Consoleì— ì¶œë ¥í•©ë‹ˆë‹¤.")]
     [SerializeField] private bool showDebugLog = true;
 
     private int currentWorldSeed;
@@ -29,10 +29,10 @@ public class ChunkModificationSaveManager : MonoBehaviour
 
     private WorldModificationSaveData saveData = new WorldModificationSaveData();
 
-    // »õ ÀúÀå ¹æ½Ä: ¿ùµå Å¸ÀÏ ÁÂÇ¥ ±â¹İ Å°
+    // ìƒˆ ì €ì¥ ë°©ì‹: ì›”ë“œ íƒ€ì¼ ì¢Œí‘œ ê¸°ë°˜ í‚¤
     private readonly HashSet<string> destroyedGlobalKeys = new HashSet<string>();
 
-    // ÀÌÀü ÀúÀå ¹æ½Ä°úÀÇ È£È¯¿ë: Ã»Å© + ·ÎÄÃ ÁÂÇ¥ ±â¹İ Å°
+    // ì´ì „ ì €ì¥ ë°©ì‹ê³¼ì˜ í˜¸í™˜ìš©: ì²­í¬ + ë¡œì»¬ ì¢Œí‘œ ê¸°ë°˜ í‚¤
     private readonly HashSet<string> destroyedLegacyKeys = new HashSet<string>();
 
     [Serializable]
@@ -48,12 +48,12 @@ public class ChunkModificationSaveManager : MonoBehaviour
     {
         public string objectType;
 
-        // ¹öÀü 2 ½Äº°ÀÚ
+        // ë²„ì „ 2 ì‹ë³„ì
         public bool hasGlobalCell;
         public int globalCellX;
         public int globalCellZ;
 
-        // ¹öÀü 1 È£È¯ ½Äº°ÀÚ
+        // ë²„ì „ 1 í˜¸í™˜ ì‹ë³„ì
         public int chunkX;
         public int chunkZ;
         public int localX;
@@ -180,7 +180,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
         );
     }
 
-    // ÀÌÀü ÄÚµå È£È¯¿ë ¿À¹ö·Îµå
+    // ì´ì „ ì½”ë“œ í˜¸í™˜ìš© ì˜¤ë²„ë¡œë“œ
     public bool IsWallDestroyed(
         int worldSeed,
         Vector2Int chunkCoord,
@@ -223,7 +223,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
         if (showDebugLog && destroyed)
         {
             Debug.Log(
-                $"[{normalizedType} »ı¼º »ı·«] " +
+                $"[{normalizedType} ìƒì„± ìƒëµ] " +
                 $"GlobalCell({globalCellCoord.x}, {globalCellCoord.y}) " +
                 $"Chunk({chunkCoord.x}, {chunkCoord.y}) " +
                 $"Cell({localCellCoord.x}, {localCellCoord.y})"
@@ -265,7 +265,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
             );
         }
 
-        // ¸Ş¸ğ¸®¿¡ ½ÇÁ¦ µî·ÏµÇ¾ú´ÂÁö Áï½Ã °ËÁõ
+        // ë©”ëª¨ë¦¬ì— ì‹¤ì œ ë“±ë¡ë˜ì—ˆëŠ”ì§€ ì¦‰ì‹œ ê²€ì¦
         bool registered =
             destroyedGlobalKeys.Contains(globalKey) &&
             destroyedLegacyKeys.Contains(legacyKey);
@@ -273,7 +273,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
         if (!registered)
         {
             Debug.LogError(
-                $"{normalizedType} ÆÄ±« »óÅÂ µî·Ï ½ÇÆĞ: " +
+                $"{normalizedType} íŒŒê´´ ìƒíƒœ ë“±ë¡ ì‹¤íŒ¨: " +
                 $"GlobalKey={globalKey}, LegacyKey={legacyKey}"
             );
             return;
@@ -282,19 +282,19 @@ public class ChunkModificationSaveManager : MonoBehaviour
         if (showDebugLog)
         {
             Debug.Log(
-                $"[{normalizedType} ÆÄ±« »óÅÂ µî·Ï ¿Ï·á] " +
+                $"[{normalizedType} íŒŒê´´ ìƒíƒœ ë“±ë¡ ì™„ë£Œ] " +
                 $"GlobalCell({globalCellCoord.x}, {globalCellCoord.y}) " +
                 $"Chunk({chunkCoord.x}, {chunkCoord.y}) " +
                 $"Cell({localCellCoord.x}, {localCellCoord.y})"
             );
         }
 
-        // ¿µ±¸ ÀúÀå ±â´ÉÀÌ¹Ç·Î ÆÄ±« Áï½Ã ÆÄÀÏ¿¡ ±â·Ï
-        // InspectorÀÇ ÀÌÀü Á÷·ÄÈ­ °ª ¶§¹®¿¡ ÀúÀåÀÌ ²¨Áö´Â ¹®Á¦¸¦ ¸·±â À§ÇØ Ç×»ó ÀúÀå
+        // ì˜êµ¬ ì €ì¥ ê¸°ëŠ¥ì´ë¯€ë¡œ íŒŒê´´ ì¦‰ì‹œ íŒŒì¼ì— ê¸°ë¡
+        // Inspectorì˜ ì´ì „ ì§ë ¬í™” ê°’ ë•Œë¬¸ì— ì €ì¥ì´ êº¼ì§€ëŠ” ë¬¸ì œë¥¼ ë§‰ê¸° ìœ„í•´ í•­ìƒ ì €ì¥
         SaveNow();
     }
 
-    // ÀÌÀü ÄÚµå È£È¯¿ë »õ SeedMapGenerator¿¡¼­´Â »ç¿ëÇÏÁö ¾ÊÀ½
+    // ì´ì „ ì½”ë“œ í˜¸í™˜ìš© ìƒˆ SeedMapGeneratorì—ì„œëŠ” ì‚¬ìš©í•˜ì§€ ì•ŠìŒ
     public void RegisterDestroyedObject(
         int worldSeed,
         Vector2Int chunkCoord,
@@ -321,8 +321,8 @@ public class ChunkModificationSaveManager : MonoBehaviour
             }
         );
 
-        // ¿µ±¸ ÀúÀå ±â´ÉÀÌ¹Ç·Î ÆÄ±« Áï½Ã ÆÄÀÏ¿¡ ±â·Ï
-        // InspectorÀÇ ÀÌÀü Á÷·ÄÈ­ °ª ¶§¹®¿¡ ÀúÀåÀÌ ²¨Áö´Â ¹®Á¦¸¦ ¸·±â À§ÇØ Ç×»ó ÀúÀå
+        // ì˜êµ¬ ì €ì¥ ê¸°ëŠ¥ì´ë¯€ë¡œ íŒŒê´´ ì¦‰ì‹œ íŒŒì¼ì— ê¸°ë¡
+        // Inspectorì˜ ì´ì „ ì§ë ¬í™” ê°’ ë•Œë¬¸ì— ì €ì¥ì´ êº¼ì§€ëŠ” ë¬¸ì œë¥¼ ë§‰ê¸° ìœ„í•´ í•­ìƒ ì €ì¥
         SaveNow();
     }
 
@@ -351,14 +351,14 @@ public class ChunkModificationSaveManager : MonoBehaviour
             if (showDebugLog)
             {
                 Debug.Log(
-                    $"Ã»Å© º¯°æ»çÇ× JSON ÀúÀå ¿Ï·á: " +
-                    $"{saveData.destroyedObjects.Count}°³\n{savePath}"
+                    $"ì²­í¬ ë³€ê²½ì‚¬í•­ JSON ì €ì¥ ì™„ë£Œ: " +
+                    $"{saveData.destroyedObjects.Count}ê°œ\n{savePath}"
                 );
             }
         }
         catch (Exception exception)
         {
-            Debug.LogError("Ã»Å© º¯°æ»çÇ× ÀúÀå ½ÇÆĞ: " + exception);
+            Debug.LogError("ì²­í¬ ë³€ê²½ì‚¬í•­ ì €ì¥ ì‹¤íŒ¨: " + exception);
         }
     }
 
@@ -367,14 +367,14 @@ public class ChunkModificationSaveManager : MonoBehaviour
     {
         if (!isInitialized)
         {
-            Debug.Log("ÀúÀå °ü¸®ÀÚ°¡ ¾ÆÁ÷ ÃÊ±âÈ­µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.Log("ì €ì¥ ê´€ë¦¬ìê°€ ì•„ì§ ì´ˆê¸°í™”ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
         Debug.Log(
-            $"ÇöÀç ¿ùµå ½Ãµå: {currentWorldSeed}\n" +
-            $"ÆÄ±« ±â·Ï ¼ö: {saveData.destroyedObjects.Count}\n" +
-            $"ÀúÀå °æ·Î: {GetSaveFilePath(currentWorldSeed)}"
+            $"í˜„ì¬ ì›”ë“œ ì‹œë“œ: {currentWorldSeed}\n" +
+            $"íŒŒê´´ ê¸°ë¡ ìˆ˜: {saveData.destroyedObjects.Count}\n" +
+            $"ì €ì¥ ê²½ë¡œ: {GetSaveFilePath(currentWorldSeed)}"
         );
     }
 
@@ -383,7 +383,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
     {
         if (!isInitialized)
         {
-            Debug.LogWarning("»èÁ¦ÇÒ ¿ùµå°¡ ¾ÆÁ÷ ÃÊ±âÈ­µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("ì‚­ì œí•  ì›”ë“œê°€ ì•„ì§ ì´ˆê¸°í™”ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -408,11 +408,11 @@ public class ChunkModificationSaveManager : MonoBehaviour
             if (File.Exists(tempPath))
                 File.Delete(tempPath);
 
-            Debug.Log("ÇöÀç ¿ùµåÀÇ Ã»Å© º¯°æ»çÇ×À» ÃÊ±âÈ­Çß½À´Ï´Ù: " + savePath);
+            Debug.Log("í˜„ì¬ ì›”ë“œì˜ ì²­í¬ ë³€ê²½ì‚¬í•­ì„ ì´ˆê¸°í™”í–ˆìŠµë‹ˆë‹¤: " + savePath);
         }
         catch (Exception exception)
         {
-            Debug.LogError("Ã»Å© º¯°æ»çÇ× ÆÄÀÏ »èÁ¦ ½ÇÆĞ: " + exception);
+            Debug.LogError("ì²­í¬ ë³€ê²½ì‚¬í•­ íŒŒì¼ ì‚­ì œ ì‹¤íŒ¨: " + exception);
         }
     }
 
@@ -439,7 +439,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
             };
 
             if (showDebugLog)
-                Debug.Log("±âÁ¸ ÀúÀå ÆÄÀÏÀÌ ¾ø¾î »õ µ¥ÀÌÅÍ¸¦ »ç¿ëÇÕ´Ï´Ù: " + savePath);
+                Debug.Log("ê¸°ì¡´ ì €ì¥ íŒŒì¼ì´ ì—†ì–´ ìƒˆ ë°ì´í„°ë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤: " + savePath);
 
             return;
         }
@@ -452,7 +452,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
 
             if (loadedData == null || loadedData.worldSeed != currentWorldSeed)
             {
-                Debug.LogWarning("ÀúÀå ÆÄÀÏÀÇ ¿ùµå ½Ãµå°¡ ÇöÀç ½Ãµå¿Í ´Ş¶ó »õ µ¥ÀÌÅÍ¸¦ »ç¿ëÇÕ´Ï´Ù.");
+                Debug.LogWarning("ì €ì¥ íŒŒì¼ì˜ ì›”ë“œ ì‹œë“œê°€ í˜„ì¬ ì‹œë“œì™€ ë‹¬ë¼ ìƒˆ ë°ì´í„°ë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.");
                 CreateEmptySaveData();
                 return;
             }
@@ -490,14 +490,14 @@ public class ChunkModificationSaveManager : MonoBehaviour
             if (showDebugLog)
             {
                 Debug.Log(
-                    $"Ã»Å© º¯°æ»çÇ× ºÒ·¯¿À±â ¿Ï·á: " +
-                    $"{saveData.destroyedObjects.Count}°³\n{savePath}"
+                    $"ì²­í¬ ë³€ê²½ì‚¬í•­ ë¶ˆëŸ¬ì˜¤ê¸° ì™„ë£Œ: " +
+                    $"{saveData.destroyedObjects.Count}ê°œ\n{savePath}"
                 );
             }
         }
         catch (Exception exception)
         {
-            Debug.LogError("Ã»Å© º¯°æ»çÇ× ºÒ·¯¿À±â ½ÇÆĞ: " + exception);
+            Debug.LogError("ì²­í¬ ë³€ê²½ì‚¬í•­ ë¶ˆëŸ¬ì˜¤ê¸° ì‹¤íŒ¨: " + exception);
             CreateEmptySaveData();
         }
     }

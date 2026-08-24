@@ -522,6 +522,8 @@ MonoBehaviour:
   model: {fileID: 7910421769988821486}
   view: {fileID: 2969428886985262584}
   mapPresenter: {fileID: 3862820166605921218}
+  nexusPrefab: {fileID: 6865026967297497089, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
+  nexusSpawnPosition: {x: 0, y: 1, z: 0}
 --- !u!1 &6252360756361882342
 GameObject:
   m_ObjectHideFlags: 0

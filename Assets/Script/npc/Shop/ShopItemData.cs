@@ -1,18 +1,18 @@
 using UnityEngine;
 
 /// <summary>
-/// »óÁ¡ ¾ÆÀÌÅÛ ÇÏ³ªÀÇ Á¤º¸ ÀúÀå
+/// ìƒì  ì•„ì´í…œ í•˜ë‚˜ì˜ ì •ë³´ ì €ìž¥
 /// </summary>
 [System.Serializable]
 public class ShopItemData
 {
-    [Header("¾ÆÀÌÅÛ Á¤º¸")]
+    [Header("ì•„ì´í…œ ì •ë³´")]
     [SerializeField] private ItemData itemData;
 
-    [Header("°¡°Ý Á¤º¸")]
-    // ÇÃ·¹ÀÌ¾î°¡ ÀÌ ¾ÆÀÌÅÛÀ» ±¸¸ÅÇÒ ¶§ ÇÊ¿äÇÑ °¡°Ý
+    [Header("ê°€ê²© ì •ë³´")]
+    // í”Œë ˆì´ì–´ê°€ ì´ ì•„ì´í…œì„ êµ¬ë§¤í•  ë•Œ í•„ìš”í•œ ê°€ê²©
     [SerializeField] private int buyPrice;
-    // ÇÃ·¹ÀÌ¾î°¡ ÀÌ ¾ÆÀÌÅÛÀ» ÆÇ¸ÅÇÒ ¶§ ¹Þ´Â °¡°Ý
+    // í”Œë ˆì´ì–´ê°€ ì´ ì•„ì´í…œì„ íŒë§¤í•  ë•Œ ë°›ëŠ” ê°€ê²©
     [SerializeField] private int sellPrice;
 
     public ItemData ItemData => itemData;

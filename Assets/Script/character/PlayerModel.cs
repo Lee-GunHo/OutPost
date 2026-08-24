@@ -19,7 +19,7 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private float dashCooldown = 1f;
     [SerializeField] private float currentDashCooldown = 0f;
 
-    // (°æ¹Î) 1.5f¿¡¼­ 2f·Î º¯°æ
+    // (ê²½ë¯¼) 1.5fì—ì„œ 2fë¡œ ë³€ê²½
     [Header("Interaction Data")]
     [SerializeField] private float interactionRange = 2f;
 
@@ -46,21 +46,21 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private int defenseIncreasePerUpgrade = 1;
     [SerializeField] private float moveSpeedIncreasePerUpgrade = 0.2f;
 
-    // ÇöÀç ¾÷±×·¹ÀÌµå ·¹º§
+    // í˜„ì¬ ì—…ê·¸ë ˆì´ë“œ ë ˆë²¨
     private int hpUpgradeLevel;
     private int mpUpgradeLevel;
     private int attackUpgradeLevel;
     private int defenseUpgradeLevel;
     private int moveSpeedUpgradeLevel;
 
-    // Àåºñ º¸Á¤
+    // ì¥ë¹„ ë³´ì •
     private int equipmentHpBonus;
     private int equipmentMpBonus;
     private int equipmentAttackBonus;
     private int equipmentDefenseBonus;
     private float equipmentMoveSpeedBonus;
 
-    // »óÅÂ È¿°ú Ãß°¡ °ø°İ·Â, ¹æ¾î·Â
+    // ìƒíƒœ íš¨ê³¼ ì¶”ê°€ ê³µê²©ë ¥, ë°©ì–´ë ¥
     private int statusAttackBonus;
     private int statusDefenseBonus;
 
@@ -229,7 +229,7 @@ public class PlayerModel : MonoBehaviour
         currentHp += hpIncreasePerUpgrade;
         ClampCurrentHp();
 
-        Debug.Log($"HP °­È­ ¿Ï·á. °­È­ ·¹º§: {hpUpgradeLevel}, ÇöÀç HP: {currentHp}/{MaxHp}");
+        Debug.Log($"HP ê°•í™” ì™„ë£Œ. ê°•í™” ë ˆë²¨: {hpUpgradeLevel}, í˜„ì¬ HP: {currentHp}/{MaxHp}");
     }
 
     public void UpgradeMp()
@@ -239,28 +239,28 @@ public class PlayerModel : MonoBehaviour
         currentMp += mpIncreasePerUpgrade;
         ClampCurrentMp();
 
-        Debug.Log($"MP °­È­ ¿Ï·á. °­È­ ·¹º§: {mpUpgradeLevel}, ÇöÀç MP: {currentMp}/{MaxMp}");
+        Debug.Log($"MP ê°•í™” ì™„ë£Œ. ê°•í™” ë ˆë²¨: {mpUpgradeLevel}, í˜„ì¬ MP: {currentMp}/{MaxMp}");
     }
 
     public void UpgradeAttack()
     {
         attackUpgradeLevel++;
 
-        Debug.Log($"°ø°İ·Â °­È­ ¿Ï·á. °­È­ ·¹º§: {attackUpgradeLevel}, ÇöÀç °ø°İ·Â: {AttackPower}");
+        Debug.Log($"ê³µê²©ë ¥ ê°•í™” ì™„ë£Œ. ê°•í™” ë ˆë²¨: {attackUpgradeLevel}, í˜„ì¬ ê³µê²©ë ¥: {AttackPower}");
     }
 
     public void UpgradeDefense()
     {
         defenseUpgradeLevel++;
 
-        Debug.Log($"¹æ¾î·Â °­È­ ¿Ï·á. °­È­ ·¹º§: {defenseUpgradeLevel}, ÇöÀç ¹æ¾î·Â: {DefensePower}");
+        Debug.Log($"ë°©ì–´ë ¥ ê°•í™” ì™„ë£Œ. ê°•í™” ë ˆë²¨: {defenseUpgradeLevel}, í˜„ì¬ ë°©ì–´ë ¥: {DefensePower}");
     }
 
     public void UpgradeMoveSpeed()
     {
         moveSpeedUpgradeLevel++;
 
-        Debug.Log($"ÀÌµ¿¼Óµµ °­È­ ¿Ï·á. °­È­ ·¹º§: {moveSpeedUpgradeLevel}, ÇöÀç ÀÌµ¿¼Óµµ: {MoveSpeed}");
+        Debug.Log($"ì´ë™ì†ë„ ê°•í™” ì™„ë£Œ. ê°•í™” ë ˆë²¨: {moveSpeedUpgradeLevel}, í˜„ì¬ ì´ë™ì†ë„: {MoveSpeed}");
     }
 
     public void ToggleTool()
@@ -269,7 +269,7 @@ public class PlayerModel : MonoBehaviour
             ? ToolType.Sword
             : ToolType.Pickaxe;
 
-        Debug.Log("ÇöÀç µµ±¸ »óÅÂ: " + currentToolType);
+        Debug.Log("í˜„ì¬ ë„êµ¬ ìƒíƒœ: " + currentToolType);
     }
 
     public void LoadStatUpgradeLevels(
@@ -290,7 +290,7 @@ public class PlayerModel : MonoBehaviour
         ClampCurrentMp();
     }
 
-    // Àåºñ ´É·ÂÄ¡ ±¸Çö ( ÀÌ°ÇÈ£ ) 
+    // ì¥ë¹„ ëŠ¥ë ¥ì¹˜ êµ¬í˜„ ( ì´ê±´í˜¸ ) 
     public void AddEquipmentStats(ItemData item)
     {
         if (item == null)
@@ -306,13 +306,13 @@ public class PlayerModel : MonoBehaviour
         ClampCurrentHp();
         ClampCurrentMp();
 
-        Debug.Log("==========¾ÆÀÌÅÛ ÀåÂø==========");
-        Debug.Log($"ÀåÂøÇÑ ¾ÆÀÌÅÛ ´É·ÂÄ¡ - Ã¼·Â:{item.hpBonus}, °ø°İ·Â:{item.attackBonus}, ¹æ¾î·Â:{item.defenseBonus}, ÀÌµ¿¼Óµµ:{item.moveSpeedBonus}");
-        Debug.Log($"Ãß°¡µÈ ¾ÆÀÌÅÛ ´É·ÂÄ¡ - Ã¼·Â:{equipmentHpBonus}, °ø°İ·Â:{equipmentAttackBonus}, ¹æ¾î·Â:{equipmentDefenseBonus}, ÀÌµ¿¼Óµµ:{equipmentMoveSpeedBonus}");
-        Debug.Log($"Àåºñ ÀåÂø ÇöÀç ´É·ÂÄ¡ - Ã¼·Â:{MaxHp}, MP:{MaxMp}, °ø°İ·Â:{AttackPower}, ¹æ¾î·Â:{DefensePower}, ÀÌµ¿¼Óµµ:{MoveSpeed}");
+        Debug.Log("==========ì•„ì´í…œ ì¥ì°©==========");
+        Debug.Log($"ì¥ì°©í•œ ì•„ì´í…œ ëŠ¥ë ¥ì¹˜ - ì²´ë ¥:{item.hpBonus}, ê³µê²©ë ¥:{item.attackBonus}, ë°©ì–´ë ¥:{item.defenseBonus}, ì´ë™ì†ë„:{item.moveSpeedBonus}");
+        Debug.Log($"ì¶”ê°€ëœ ì•„ì´í…œ ëŠ¥ë ¥ì¹˜ - ì²´ë ¥:{equipmentHpBonus}, ê³µê²©ë ¥:{equipmentAttackBonus}, ë°©ì–´ë ¥:{equipmentDefenseBonus}, ì´ë™ì†ë„:{equipmentMoveSpeedBonus}");
+        Debug.Log($"ì¥ë¹„ ì¥ì°© í˜„ì¬ ëŠ¥ë ¥ì¹˜ - ì²´ë ¥:{MaxHp}, MP:{MaxMp}, ê³µê²©ë ¥:{AttackPower}, ë°©ì–´ë ¥:{DefensePower}, ì´ë™ì†ë„:{MoveSpeed}");
     }
 
-    // Àåºñ ´É·ÂÄ¡ Á¦°Å ±¸Çö ( ÀÌ°ÇÈ£ )
+    // ì¥ë¹„ ëŠ¥ë ¥ì¹˜ ì œê±° êµ¬í˜„ ( ì´ê±´í˜¸ )
     public void RemoveEquipmentStats(ItemData item)
     {
         if (item == null)
@@ -328,10 +328,10 @@ public class PlayerModel : MonoBehaviour
         ClampCurrentHp();
         ClampCurrentMp();
 
-        Debug.Log("==========¾ÆÀÌÅÛ ÇØÁ¦==========");
-        Debug.Log($"ÇØÁ¦ÇÑ ¾ÆÀÌÅÛ ´É·ÂÄ¡ - Ã¼·Â:{item.hpBonus}, °ø°İ·Â:{item.attackBonus}, ¹æ¾î·Â:{item.defenseBonus}, ÀÌµ¿¼Óµµ:{item.moveSpeedBonus}");
-        Debug.Log($"°¨¼ÒÇÑ ¾ÆÀÌÅÛ ´É·ÂÄ¡ - Ã¼·Â:{equipmentHpBonus}, °ø°İ·Â:{equipmentAttackBonus}, ¹æ¾î·Â:{equipmentDefenseBonus}, ÀÌµ¿¼Óµµ:{equipmentMoveSpeedBonus}");
-        Debug.Log($"Àåºñ ÇØÁ¦ ÇöÀç ´É·ÂÄ¡ - Ã¼·Â:{MaxHp}, MP:{MaxMp}, °ø°İ·Â:{AttackPower}, ¹æ¾î·Â:{DefensePower}, ÀÌµ¿¼Óµµ:{MoveSpeed}");
+        Debug.Log("==========ì•„ì´í…œ í•´ì œ==========");
+        Debug.Log($"í•´ì œí•œ ì•„ì´í…œ ëŠ¥ë ¥ì¹˜ - ì²´ë ¥:{item.hpBonus}, ê³µê²©ë ¥:{item.attackBonus}, ë°©ì–´ë ¥:{item.defenseBonus}, ì´ë™ì†ë„:{item.moveSpeedBonus}");
+        Debug.Log($"ê°ì†Œí•œ ì•„ì´í…œ ëŠ¥ë ¥ì¹˜ - ì²´ë ¥:{equipmentHpBonus}, ê³µê²©ë ¥:{equipmentAttackBonus}, ë°©ì–´ë ¥:{equipmentDefenseBonus}, ì´ë™ì†ë„:{equipmentMoveSpeedBonus}");
+        Debug.Log($"ì¥ë¹„ í•´ì œ í˜„ì¬ ëŠ¥ë ¥ì¹˜ - ì²´ë ¥:{MaxHp}, MP:{MaxMp}, ê³µê²©ë ¥:{AttackPower}, ë°©ì–´ë ¥:{DefensePower}, ì´ë™ì†ë„:{MoveSpeed}");
     }
 
     public void AddStatusStats(int attackModifier, int defenseModifier)
@@ -339,8 +339,8 @@ public class PlayerModel : MonoBehaviour
         statusAttackBonus += attackModifier;
         statusDefenseBonus += defenseModifier;
 
-        Debug.Log($"»óÅÂÈ¿°ú ½ºÅÈ Àû¿ë - °ø°İ·Â º¯È­:{attackModifier}, ¹æ¾î·Â º¯È­:{defenseModifier}");
-        Debug.Log($"ÇöÀç »óÅÂÈ¿°ú º¸Á¤ - °ø°İ·Â:{statusAttackBonus}, ¹æ¾î·Â:{statusDefenseBonus}");
+        Debug.Log($"ìƒíƒœíš¨ê³¼ ìŠ¤íƒ¯ ì ìš© - ê³µê²©ë ¥ ë³€í™”:{attackModifier}, ë°©ì–´ë ¥ ë³€í™”:{defenseModifier}");
+        Debug.Log($"í˜„ì¬ ìƒíƒœíš¨ê³¼ ë³´ì • - ê³µê²©ë ¥:{statusAttackBonus}, ë°©ì–´ë ¥:{statusDefenseBonus}");
     }
 
     public void RemoveStatusStats(int attackModifier, int defenseModifier)
@@ -348,7 +348,7 @@ public class PlayerModel : MonoBehaviour
         statusAttackBonus -= attackModifier;
         statusDefenseBonus -= defenseModifier;
 
-        Debug.Log($"»óÅÂÈ¿°ú ½ºÅÈ Á¦°Å - °ø°İ·Â º¯È­:{attackModifier}, ¹æ¾î·Â º¯È­:{defenseModifier}");
-        Debug.Log($"ÇöÀç »óÅÂÈ¿°ú º¸Á¤ - °ø°İ·Â:{statusAttackBonus}, ¹æ¾î·Â:{statusDefenseBonus}");
+        Debug.Log($"ìƒíƒœíš¨ê³¼ ìŠ¤íƒ¯ ì œê±° - ê³µê²©ë ¥ ë³€í™”:{attackModifier}, ë°©ì–´ë ¥ ë³€í™”:{defenseModifier}");
+        Debug.Log($"í˜„ì¬ ìƒíƒœíš¨ê³¼ ë³´ì • - ê³µê²©ë ¥:{statusAttackBonus}, ë°©ì–´ë ¥:{statusDefenseBonus}");
     }
 }

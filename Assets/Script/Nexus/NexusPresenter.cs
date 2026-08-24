@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// NexusModel°ú NexusView¸¦ ¿¬°áÇÕ´Ï´Ù.
-/// ³Ø¼­½º´Â IDamageableÀ» ±¸ÇöÇØ¼­ ¸ó½ºÅÍ °ø°İ ´ë»óÀÌ µÉ ¼ö ÀÖ½À´Ï´Ù.
+/// NexusModelê³¼ NexusViewë¥¼ ì—°ê²°í•©ë‹ˆë‹¤.
+/// ë„¥ì„œìŠ¤ëŠ” IDamageableì„ êµ¬í˜„í•´ì„œ ëª¬ìŠ¤í„° ê³µê²© ëŒ€ìƒì´ ë  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 /// </summary>
 [RequireComponent(typeof(NexusModel))]
 public class NexusPresenter : MonoBehaviour, IDamageable
 {
-    [Header("³Ø¼­½º ±¸¼º ¿ä¼Ò")]
+    [Header("ë„¥ì„œìŠ¤ êµ¬ì„± ìš”ì†Œ")]
     [SerializeField] private NexusModel nexusModel;
     [SerializeField] private NexusView nexusView;
 
@@ -51,7 +51,7 @@ public class NexusPresenter : MonoBehaviour, IDamageable
     {
         if (nexusModel == null)
         {
-            Debug.LogError($"{gameObject.name}¿¡ NexusModelÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{gameObject.name}ì— NexusModelì´ ì—†ìŠµë‹ˆë‹¤.");
             enabled = false;
             return;
         }
@@ -79,7 +79,7 @@ public class NexusPresenter : MonoBehaviour, IDamageable
     }
 
     /// <summary>
-    /// ÀûÀÇ °ø°İ ½ºÅ©¸³Æ®¿¡¼­ È£Ãâ
+    /// ì ì˜ ê³µê²© ìŠ¤í¬ë¦½íŠ¸ì—ì„œ í˜¸ì¶œ
     /// </summary>
     public void TakeDamage(int damage)
     {
@@ -115,7 +115,7 @@ public class NexusPresenter : MonoBehaviour, IDamageable
 
         isGameOverProcessed = true;
 
-        Debug.Log("³Ø¼­½ºÀÇ Ã¼·ÂÀÌ ¸ğµÎ ¼ÒÁøµÇ¾ú½À´Ï´Ù. °ÔÀÓ ¿À¹ö Ã³¸®.");
+        Debug.Log("ë„¥ì„œìŠ¤ì˜ ì²´ë ¥ì´ ëª¨ë‘ ì†Œì§„ë˜ì—ˆìŠµë‹ˆë‹¤. ê²Œì„ ì˜¤ë²„ ì²˜ë¦¬.");
         SceneManager.LoadScene(GameOverSceneName);
 
         if (gameOverPanel != null)
@@ -129,13 +129,13 @@ public class NexusPresenter : MonoBehaviour, IDamageable
         }
     }
 
-    [ContextMenu("Å×½ºÆ® ÇÇÇØ 100")]
+    [ContextMenu("í…ŒìŠ¤íŠ¸ í”¼í•´ 100")]
     private void TestDamage()
     {
         TakeDamage(100);
     }
 
-    [ContextMenu("Å×½ºÆ® ³Ø¼­½º ÆÄ±«")]
+    [ContextMenu("í…ŒìŠ¤íŠ¸ ë„¥ì„œìŠ¤ íŒŒê´´")]
     private void TestDestroyNexus()
     {
         TakeDamage(MaxHealth);

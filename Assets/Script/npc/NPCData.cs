@@ -1,23 +1,23 @@
 using UnityEngine;
 
 /// <summary>
-///  NPC °¢°¢ÀÇ °íÁ¤ Á¤º¸¸¦ ÀúÀåÇÏ´Â µ¥ÀÌÅÍ ÆÄÀÏ
+///  NPC ê°ê°ì˜ ê³ ì • ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” ë°ì´í„° íŒŒì¼
 /// </summary>
 [CreateAssetMenu(fileName = "NPCData", menuName = "NPC/NPC Data")]
 public class NPCData : ScriptableObject
 {
-    [Header("NPC ±âº» Á¤º¸")]
+    [Header("NPC ê¸°ë³¸ ì •ë³´")]
     [SerializeField] private string npcName;
 
-    [Header("´ëÈ­ Á¤º¸")]
+    [Header("ëŒ€í™” ì •ë³´")]
     [TextArea]
     [SerializeField] private string[] dialogueLines;
 
-    [Header("»óÁ¡ Á¤º¸")]
+    [Header("ìƒì  ì •ë³´")]
     [SerializeField] private bool canTrade;
     [SerializeField] private ShopData shopData;
 
-    [Header("Äù½ºÆ® Á¤º¸")]
+    [Header("í€˜ìŠ¤íŠ¸ ì •ë³´")]
     [SerializeField] private bool canGiveQuest;
     [SerializeField] private QuestData questData;
 

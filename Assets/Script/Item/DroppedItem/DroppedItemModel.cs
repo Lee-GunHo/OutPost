@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// µå·Ó ¾ÆÀÌÅÛÀÇ µ¥ÀÌÅÍ¿Í È¹µæ »óÅÂ¸¦ °ü¸®
-/// Ãæµ¹ °¨Áö³ª GameObject Á¦°Å´Â ´ã´çÇÏÁö ¾ÊÀ½.
+/// ë“œë¡­ ì•„ì´í…œì˜ ë°ì´í„°ì™€ íšë“ ìƒíƒœë¥¼ ê´€ë¦¬
+/// ì¶©ëŒ ê°ì§€ë‚˜ GameObject ì œê±°ëŠ” ë‹´ë‹¹í•˜ì§€ ì•ŠìŒ.
 /// </summary>
 public class DroppedItemModel : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class DroppedItemModel : MonoBehaviour
     public bool IsPickedUp => isPickedUp;
 
     /// <summary>
-    /// ±âÁ¸ DroppedItem ÄÄÆ÷³ÍÆ®ÀÇ Á÷·ÄÈ­ µ¥ÀÌÅÍ¸¦ ¿Å±æ ¶§ »ç¿ë
+    /// ê¸°ì¡´ DroppedItem ì»´í¬ë„ŒíŠ¸ì˜ ì§ë ¬í™” ë°ì´í„°ë¥¼ ì˜®ê¸¸ ë•Œ ì‚¬ìš©
     /// </summary>
     public void Configure(ItemData newItemData, int newAmount)
     {

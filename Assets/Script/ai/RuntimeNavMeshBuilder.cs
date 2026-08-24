@@ -10,7 +10,7 @@ public class RuntimeNavMeshBuilder : MonoBehaviour
 
     private IEnumerator Start()
     {
-        Debug.Log("RuntimeNavMeshBuilder Start È£ÃâµÊ");
+        Debug.Log("RuntimeNavMeshBuilder Start í˜¸ì¶œë¨");
 
         yield return new WaitForSeconds(buildDelay);
 
@@ -24,18 +24,18 @@ public class RuntimeNavMeshBuilder : MonoBehaviour
 
         if (navMeshSurface == null)
         {
-            Debug.LogWarning("NavMeshSurface°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù. ÇöÀç ¿ÀºêÁ§Æ®: " + gameObject.name);
+            Debug.LogWarning("NavMeshSurfaceê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤. í˜„ì¬ ì˜¤ë¸Œì íŠ¸: " + gameObject.name);
             return;
         }
 
-        Debug.Log("NavMeshSurface Ã£À½: " + navMeshSurface.gameObject.name);
+        Debug.Log("NavMeshSurface ì°¾ìŒ: " + navMeshSurface.gameObject.name);
 
         navMeshSurface.BuildNavMesh();
 
         NavMeshTriangulation triangulation = NavMesh.CalculateTriangulation();
 
-        Debug.Log("·±Å¸ÀÓ NavMesh ºôµå ¿Ï·á");
-        Debug.Log("ÇöÀç NavMesh Á¤Á¡ ¼ö: " + triangulation.vertices.Length);
+        Debug.Log("ëŸ°íƒ€ì„ NavMesh ë¹Œë“œ ì™„ë£Œ");
+        Debug.Log("í˜„ì¬ NavMesh ì •ì  ìˆ˜: " + triangulation.vertices.Length);
     }
 
     private void ResolveNavMeshSurface()

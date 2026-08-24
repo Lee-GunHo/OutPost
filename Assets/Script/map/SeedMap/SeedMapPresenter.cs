@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// SeedMapModelÀÇ »ı¼º ±ÔÄ¢°ú SeedMapViewÀÇ ¿ÀºêÁ§Æ® »ı¼ºÀ» ¿¬°áÇÔ.
-/// ÀúÀå °ü¸®ÀÚ Á¶È¸¿Í ¼¿ ´ÜÀ§ »ı¼º ¼ø¼­¸¦ Á¶Á¤
+/// SeedMapModelì˜ ìƒì„± ê·œì¹™ê³¼ SeedMapViewì˜ ì˜¤ë¸Œì íŠ¸ ìƒì„±ì„ ì—°ê²°í•¨.
+/// ì €ì¥ ê´€ë¦¬ì ì¡°íšŒì™€ ì…€ ë‹¨ìœ„ ìƒì„± ìˆœì„œë¥¼ ì¡°ì •
 /// </summary>
 public class SeedMapPresenter : MonoBehaviour
 {
@@ -12,7 +12,7 @@ public class SeedMapPresenter : MonoBehaviour
 
     public float CellSize => model != null ? model.CellSize : 1f;
 
-    // ±âÁ¸ generator.cellSize Á¢±ÙÀ» À§ÇÑ ÀĞ±â Àü¿ë È£È¯ ÇÁ·ÎÆÛÆ¼
+    // ê¸°ì¡´ generator.cellSize ì ‘ê·¼ì„ ìœ„í•œ ì½ê¸° ì „ìš© í˜¸í™˜ í”„ë¡œí¼í‹°
     public float cellSize => CellSize;
 
     public GameObject GenerateChunk(
@@ -55,13 +55,13 @@ public class SeedMapPresenter : MonoBehaviour
     {
         if (model == null)
         {
-            Debug.LogError("SeedMapPresenter ¿À·ù: SeedMapModelÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.", this);
+            Debug.LogError("SeedMapPresenter ì˜¤ë¥˜: SeedMapModelì´ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.", this);
             return false;
         }
 
         if (view == null)
         {
-            Debug.LogError("SeedMapPresenter ¿À·ù: SeedMapView°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.", this);
+            Debug.LogError("SeedMapPresenter ì˜¤ë¥˜: SeedMapViewê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.", this);
             return false;
         }
 
@@ -164,7 +164,7 @@ public class SeedMapPresenter : MonoBehaviour
             return;
         }
 
-        // ÀúÀå ¿©ºÎ¿Í »ó°ü¾øÀÌ ±âÁ¸°ú °°Àº Random È£Ãâ ¼ø¼­¸¦ À¯Áö
+        // ì €ì¥ ì—¬ë¶€ì™€ ìƒê´€ì—†ì´ ê¸°ì¡´ê³¼ ê°™ì€ Random í˜¸ì¶œ ìˆœì„œë¥¼ ìœ ì§€
         bool shouldCreateWall = model.ShouldCreateWall(random);
 
         if (!shouldCreateWall)
@@ -218,11 +218,11 @@ public class SeedMapPresenter : MonoBehaviour
         if (itemData == null)
         {
             Debug.LogWarning(
-                $"¼³Ä¡ ºí·Ï ItemData¸¦ Ã£Áö ¸øÇß½À´Ï´Ù. itemID = {itemId}",
+                $"ì„¤ì¹˜ ë¸”ë¡ ItemDataë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. itemID = {itemId}",
                 this
             );
 
-            // ÀúÀå ±â·ÏÀÌ Á¸ÀçÇÏ¹Ç·Î ±âÁ¸ ÀÚ¿¬ »ı¼º¹°Àº ¸·¾Æ¾ßÇÔ.
+            // ì €ì¥ ê¸°ë¡ì´ ì¡´ì¬í•˜ë¯€ë¡œ ê¸°ì¡´ ìì—° ìƒì„±ë¬¼ì€ ë§‰ì•„ì•¼í•¨.
             return true;
         }
 
@@ -250,7 +250,7 @@ public class SeedMapPresenter : MonoBehaviour
         ChunkModificationSaveManager saveManager,
         bool suppressCreation)
     {
-        // ÆÄ±«/¼³Ä¡ ¿©ºÎº¸´Ù ¸ÕÀú RandomÀ» È£ÃâÇÏ¿© ½Ãµå °á°ú¸¦ º¸Á¸
+        // íŒŒê´´/ì„¤ì¹˜ ì—¬ë¶€ë³´ë‹¤ ë¨¼ì € Randomì„ í˜¸ì¶œí•˜ì—¬ ì‹œë“œ ê²°ê³¼ë¥¼ ë³´ì¡´
         bool shouldCreateTree = model.ShouldCreateTree(random);
 
         if (!shouldCreateTree)

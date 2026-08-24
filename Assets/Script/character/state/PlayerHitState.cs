@@ -13,7 +13,7 @@ public class PlayerHitState : IPlayerState
 
     public void Enter()
     {
-        Debug.Log("Player Hit State ÁøÀÔ");
+        Debug.Log("Player Hit State ì§„ì…");
 
         playerPresenter.StopMove();
         hitTimer = playerPresenter.HitDuration;

@@ -10,7 +10,7 @@ public class MonsterWaveSpawner : MonoBehaviour
     {
         public GameObject monsterPrefab;
 
-        [Tooltip("¸ó½ºÅÍ µîÀå °¡ÁßÄ¡. Å×½ºÆ®´Â 1·Î µÎ¸é µÊ. ³ªÁß¿¡ 0.1, 0.05Ã³·³ ³·°Ô ¼³Á¤ °¡´É")]
+        [Tooltip("ëª¬ìŠ¤í„° ë“±ì¥ ê°€ì¤‘ì¹˜. í…ŒìŠ¤íŠ¸ëŠ” 1ë¡œ ë‘ë©´ ë¨. ë‚˜ì¤‘ì— 0.1, 0.05ì²˜ëŸ¼ ë‚®ê²Œ ì„¤ì • ê°€ëŠ¥")]
         [Range(0f, 1f)]
         public float spawnWeight = 1f;
     }
@@ -20,13 +20,13 @@ public class MonsterWaveSpawner : MonoBehaviour
     {
         public string waveName = "Wave";
 
-        [Tooltip("ÀÌ ¿şÀÌºê¿¡¼­ ÃÑ ¸î ¸¶¸® ¼ÒÈ¯ÇÒÁö")]
+        [Tooltip("ì´ ì›¨ì´ë¸Œì—ì„œ ì´ ëª‡ ë§ˆë¦¬ ì†Œí™˜í• ì§€")]
         public int monsterCount = 5;
 
-        [Tooltip("¸ó½ºÅÍ¸¦ ¸î ÃÊ °£°İÀ¸·Î ÇÑ ¸¶¸®¾¿ ¼ÒÈ¯ÇÒÁö")]
+        [Tooltip("ëª¬ìŠ¤í„°ë¥¼ ëª‡ ì´ˆ ê°„ê²©ìœ¼ë¡œ í•œ ë§ˆë¦¬ì”© ì†Œí™˜í• ì§€")]
         public float spawnInterval = 0.5f;
 
-        [Tooltip("ÀÌ ¿şÀÌºê¿¡¼­ ³ª¿Ã ¸ó½ºÅÍ ¸ñ·Ï")]
+        [Tooltip("ì´ ì›¨ì´ë¸Œì—ì„œ ë‚˜ì˜¬ ëª¬ìŠ¤í„° ëª©ë¡")]
         public MonsterSpawnData[] monsterSpawnDatas;
     }
 
@@ -94,13 +94,13 @@ public class MonsterWaveSpawner : MonoBehaviour
 
         if (player == null)
         {
-            Debug.LogWarning("Player°¡ ¾ø¾î¼­ ¿şÀÌºê¸¦ ½ÃÀÛÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("Playerê°€ ì—†ì–´ì„œ ì›¨ì´ë¸Œë¥¼ ì‹œì‘í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (waves == null || waves.Length == 0)
         {
-            Debug.LogWarning("Wave Data°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("Wave Dataê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -120,7 +120,7 @@ public class MonsterWaveSpawner : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("¸ğµç ¿şÀÌºê Á¾·á");
+                    Debug.Log("ëª¨ë“  ì›¨ì´ë¸Œ ì¢…ë£Œ");
                     isRunning = false;
                     yield break;
                 }
@@ -128,15 +128,15 @@ public class MonsterWaveSpawner : MonoBehaviour
 
             WaveData currentWave = waves[currentWaveIndex];
 
-            Debug.Log($"¿şÀÌºê ½ÃÀÛ: {currentWaveIndex + 1} / {waves.Length}, ÀÌ¸§: {currentWave.waveName}");
+            Debug.Log($"ì›¨ì´ë¸Œ ì‹œì‘: {currentWaveIndex + 1} / {waves.Length}, ì´ë¦„: {currentWave.waveName}");
 
             yield return StartCoroutine(SpawnWave(currentWave));
 
-            Debug.Log($"¿şÀÌºê ½ºÆù ¿Ï·á: {currentWave.waveName}");
+            Debug.Log($"ì›¨ì´ë¸Œ ìŠ¤í° ì™„ë£Œ: {currentWave.waveName}");
 
             yield return StartCoroutine(WaitUntilWaveClear());
 
-            Debug.Log($"¿şÀÌºê Å¬¸®¾î: {currentWave.waveName}");
+            Debug.Log($"ì›¨ì´ë¸Œ í´ë¦¬ì–´: {currentWave.waveName}");
 
             currentWaveIndex++;
 
@@ -171,13 +171,13 @@ public class MonsterWaveSpawner : MonoBehaviour
     {
         if (!TryGetRandomMonsterPrefab(wave, out GameObject monsterPrefab))
         {
-            Debug.LogWarning("¼±ÅÃ °¡´ÉÇÑ ¸ó½ºÅÍ ÇÁ¸®ÆÕÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ì„ íƒ ê°€ëŠ¥í•œ ëª¬ìŠ¤í„° í”„ë¦¬íŒ¹ì´ ì—†ìŠµë‹ˆë‹¤.");
             return false;
         }
 
         if (!TryGetSpawnPosition(out Vector3 spawnPosition))
         {
-            Debug.LogWarning("½ºÆù À§Ä¡¸¦ Ã£Áö ¸øÇß½À´Ï´Ù.");
+            Debug.LogWarning("ìŠ¤í° ìœ„ì¹˜ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
             return false;
         }
 
@@ -197,7 +197,7 @@ public class MonsterWaveSpawner : MonoBehaviour
 
         spawnedMonsters.Add(monster);
 
-        Debug.Log("¿şÀÌºê ¸ó½ºÅÍ ½ºÆù: " + monster.name);
+        Debug.Log("ì›¨ì´ë¸Œ ëª¬ìŠ¤í„° ìŠ¤í°: " + monster.name);
 
         return true;
     }

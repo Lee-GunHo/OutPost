@@ -4,11 +4,11 @@ using System.IO;
 using UnityEngine;
 
 /// <summary>
-/// ¸ğµç Ã¢°í µ¥ÀÌÅÍ¸¦ JSON ÆÄÀÏ·Î ¿µ±¸ ÀúÀåÇÏ´Â °ü¸®ÀÚ
-/// ÀúÀå ÆÄÀÏÀº Application.persistentDataPath¿¡ »ı¼ºµÊ.
+/// ëª¨ë“  ì°½ê³  ë°ì´í„°ë¥¼ JSON íŒŒì¼ë¡œ ì˜êµ¬ ì €ì¥í•˜ëŠ” ê´€ë¦¬ì
+/// ì €ì¥ íŒŒì¼ì€ Application.persistentDataPathì— ìƒì„±ë¨.
 ///
-/// Ã¢°í ³»¿ëÀÌ º¯°æµÉ ¶§¸¶´Ù Áï½Ã ÀúÀåÇÏ¹Ç·Î °ÔÀÓÀ» Á¤»ó Á¾·áÇÏÁö ¾Ê¾Æµµ
-/// ¸¶Áö¸· º¯°æ ³»¿ëÀÌ ÆÄÀÏ¿¡ ³²¿ò.
+/// ì°½ê³  ë‚´ìš©ì´ ë³€ê²½ë  ë•Œë§ˆë‹¤ ì¦‰ì‹œ ì €ì¥í•˜ë¯€ë¡œ ê²Œì„ì„ ì •ìƒ ì¢…ë£Œí•˜ì§€ ì•Šì•„ë„
+/// ë§ˆì§€ë§‰ ë³€ê²½ ë‚´ìš©ì´ íŒŒì¼ì— ë‚¨ì›€.
 /// </summary>
 public class ChestSaveManager : MonoBehaviour
 {
@@ -17,11 +17,11 @@ public class ChestSaveManager : MonoBehaviour
     private const int CurrentSaveVersion = 1;
     private const string SaveFileName = "chest_save.json";
 
-    [Header("¾ÆÀÌÅÛ µ¥ÀÌÅÍº£ÀÌ½º")]
-    [Tooltip("ÀúÀåµÈ itemID¸¦ ItemData·Î º¹¿øÇÏ±â À§ÇØ ÇÊ¿äÇÕ´Ï´Ù.")]
+    [Header("ì•„ì´í…œ ë°ì´í„°ë² ì´ìŠ¤")]
+    [Tooltip("ì €ì¥ëœ itemIDë¥¼ ItemDataë¡œ ë³µì›í•˜ê¸° ìœ„í•´ í•„ìš”í•©ë‹ˆë‹¤.")]
     [SerializeField] private ItemDatabase itemDatabase;
 
-    [Header("µğ¹ö±×")]
+    [Header("ë””ë²„ê·¸")]
     [SerializeField] private bool showDebugLog = true;
 
     private ChestSaveFileData saveData = new ChestSaveFileData();
@@ -92,17 +92,17 @@ public class ChestSaveManager : MonoBehaviour
         Instance = managerObject.AddComponent<ChestSaveManager>();
 
         Debug.LogError(
-            "ChestSaveManager°¡ ¾À¿¡ ¾ø¾î ÀÚµ¿ »ı¼ºÇßÁö¸¸ ItemDatabase°¡ ¾ø½À´Ï´Ù. " +
-            "ÇöÀç ½ÇÇà¿¡¼­´Â Ã¢°í ÀúÀå°ú ºÒ·¯¿À±â¸¦ Áß´ÜÇÕ´Ï´Ù. " +
-            "¾À¿¡ ChestSaveManager¸¦ Á÷Á¢ ¹èÄ¡ÇÏ°í ItemDatabase¸¦ ¿¬°áÇØÁÖ¼¼¿ä."
+            "ChestSaveManagerê°€ ì”¬ì— ì—†ì–´ ìë™ ìƒì„±í–ˆì§€ë§Œ ItemDatabaseê°€ ì—†ìŠµë‹ˆë‹¤. " +
+            "í˜„ì¬ ì‹¤í–‰ì—ì„œëŠ” ì°½ê³  ì €ì¥ê³¼ ë¶ˆëŸ¬ì˜¤ê¸°ë¥¼ ì¤‘ë‹¨í•©ë‹ˆë‹¤. " +
+            "ì”¬ì— ChestSaveManagerë¥¼ ì§ì ‘ ë°°ì¹˜í•˜ê³  ItemDatabaseë¥¼ ì—°ê²°í•´ì£¼ì„¸ìš”."
         );
 
         return Instance;
     }
 
     /// <summary>
-    /// Æ¯Á¤ Ã¢°íÀÇ ÀúÀå µ¥ÀÌÅÍ¸¦ ºÒ·¯¿È.
-    /// ÀúÀå µ¥ÀÌÅÍ°¡ ¾øÀ¸¸é false¸¦ ¹İÈ¯
+    /// íŠ¹ì • ì°½ê³ ì˜ ì €ì¥ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜´.
+    /// ì €ì¥ ë°ì´í„°ê°€ ì—†ìœ¼ë©´ falseë¥¼ ë°˜í™˜
     /// </summary>
     public bool TryLoadChest(
         string chestId,
@@ -115,7 +115,7 @@ public class ChestSaveManager : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(chestId))
         {
-            Debug.LogError("Ã¢°í µ¥ÀÌÅÍ¸¦ ºÒ·¯¿Ã ¼ö ¾ø½À´Ï´Ù: Chest ID°¡ ºñ¾î ÀÖ½À´Ï´Ù.");
+            Debug.LogError("ì°½ê³  ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: Chest IDê°€ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
             return false;
         }
 
@@ -127,8 +127,8 @@ public class ChestSaveManager : MonoBehaviour
         if (itemDatabase == null)
         {
             Debug.LogError(
-                "Ã¢°í µ¥ÀÌÅÍ¸¦ º¹¿øÇÒ ¼ö ¾ø½À´Ï´Ù: ChestSaveManager¿¡ " +
-                "ItemDatabase°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù."
+                "ì°½ê³  ë°ì´í„°ë¥¼ ë³µì›í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤: ChestSaveManagerì— " +
+                "ItemDatabaseê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."
             );
 
             return false;
@@ -146,7 +146,7 @@ public class ChestSaveManager : MonoBehaviour
                 slotRecord.slotIndex >= loadedItems.Count)
             {
                 Debug.LogWarning(
-                    $"Ã¢°í {chestId}ÀÇ Àß¸øµÈ ½½·Ô ÀÎµ¦½º¸¦ ¹«½ÃÇß½À´Ï´Ù: " +
+                    $"ì°½ê³  {chestId}ì˜ ì˜ëª»ëœ ìŠ¬ë¡¯ ì¸ë±ìŠ¤ë¥¼ ë¬´ì‹œí–ˆìŠµë‹ˆë‹¤: " +
                     slotRecord.slotIndex
                 );
 
@@ -175,8 +175,8 @@ public class ChestSaveManager : MonoBehaviour
         if (showDebugLog)
         {
             Debug.Log(
-                $"Ã¢°í ºÒ·¯¿À±â ¿Ï·á: ID={chestId}, " +
-                $"ÀúÀå ½½·Ô ¼ö={chestRecord.slots.Count}"
+                $"ì°½ê³  ë¶ˆëŸ¬ì˜¤ê¸° ì™„ë£Œ: ID={chestId}, " +
+                $"ì €ì¥ ìŠ¬ë¡¯ ìˆ˜={chestRecord.slots.Count}"
             );
         }
 
@@ -184,8 +184,8 @@ public class ChestSaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Æ¯Á¤ Ã¢°íÀÇ ÇöÀç ½½·Ô »óÅÂ¸¦ Áï½Ã ÆÄÀÏ¿¡ ÀúÀå
-    /// ºó ½½·ÔÀº JSON¿¡ ±â·ÏÇÏÁö ¾ÊÀ½.
+    /// íŠ¹ì • ì°½ê³ ì˜ í˜„ì¬ ìŠ¬ë¡¯ ìƒíƒœë¥¼ ì¦‰ì‹œ íŒŒì¼ì— ì €ì¥
+    /// ë¹ˆ ìŠ¬ë¡¯ì€ JSONì— ê¸°ë¡í•˜ì§€ ì•ŠìŒ.
     /// </summary>
     public void SaveChest(
         string chestId,
@@ -195,13 +195,13 @@ public class ChestSaveManager : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(chestId))
         {
-            Debug.LogError("Ã¢°í¸¦ ÀúÀåÇÒ ¼ö ¾ø½À´Ï´Ù: Chest ID°¡ ºñ¾î ÀÖ½À´Ï´Ù.");
+            Debug.LogError("ì°½ê³ ë¥¼ ì €ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤: Chest IDê°€ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (items == null)
         {
-            Debug.LogError($"Ã¢°í {chestId}¸¦ ÀúÀåÇÒ ¼ö ¾ø½À´Ï´Ù: ½½·Ô µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogError($"ì°½ê³  {chestId}ë¥¼ ì €ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤: ìŠ¬ë¡¯ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -245,15 +245,15 @@ public class ChestSaveManager : MonoBehaviour
         if (showDebugLog)
         {
             Debug.Log(
-                $"Ã¢°í ÀúÀå ¿Ï·á: ID={chestId}, " +
-                $"ÀúÀå ½½·Ô ¼ö={chestRecord.slots.Count}"
+                $"ì°½ê³  ì €ì¥ ì™„ë£Œ: ID={chestId}, " +
+                $"ì €ì¥ ìŠ¬ë¡¯ ìˆ˜={chestRecord.slots.Count}"
             );
         }
     }
 
     /// <summary>
-    /// ¸Ş¸ğ¸®¿¡ ÀÖ´Â ¸ğµç Ã¢°í µ¥ÀÌÅÍ¸¦ JSON ÆÄÀÏ¿¡ ±â·Ï
-    /// ÀÓ½Ã ÆÄÀÏÀ» °ÅÃÄ ±³Ã¼ÇÏ¿© ÀúÀå Áß ÆÄÀÏ ¼Õ»óÀ» ÁÙÀÓ.
+    /// ë©”ëª¨ë¦¬ì— ìˆëŠ” ëª¨ë“  ì°½ê³  ë°ì´í„°ë¥¼ JSON íŒŒì¼ì— ê¸°ë¡
+    /// ì„ì‹œ íŒŒì¼ì„ ê±°ì³ êµì²´í•˜ì—¬ ì €ì¥ ì¤‘ íŒŒì¼ ì†ìƒì„ ì¤„ì„.
     /// </summary>
     public void SaveNow()
     {
@@ -290,12 +290,12 @@ public class ChestSaveManager : MonoBehaviour
         }
         catch (Exception exception)
         {
-            Debug.LogError("Ã¢°í ÀúÀå ½ÇÆĞ: " + exception);
+            Debug.LogError("ì°½ê³  ì €ì¥ ì‹¤íŒ¨: " + exception);
         }
     }
 
     /// <summary>
-    /// Æ¯Á¤ Ã¢°íÀÇ ÀúÀå µ¥ÀÌÅÍ¸¸ °­Á¦·Î »èÁ¦ÇÕ´Ï´Ù.
+    /// íŠ¹ì • ì°½ê³ ì˜ ì €ì¥ ë°ì´í„°ë§Œ ê°•ì œë¡œ ì‚­ì œí•©ë‹ˆë‹¤.
     /// </summary>
     public bool DeleteChestSave(string chestId)
     {
@@ -311,13 +311,13 @@ public class ChestSaveManager : MonoBehaviour
         saveData.chests.Remove(record);
         SaveNow();
 
-        Debug.Log($"Ã¢°í ÀúÀå µ¥ÀÌÅÍ »èÁ¦ ¿Ï·á: ID={chestId}");
+        Debug.Log($"ì°½ê³  ì €ì¥ ë°ì´í„° ì‚­ì œ ì™„ë£Œ: ID={chestId}");
         return true;
     }
 
     /// <summary>
-    /// ¸ğµç Ã¢°í ÀúÀå µ¥ÀÌÅÍ¸¦ °­Á¦·Î »èÁ¦
-    /// ÀÌ ÇÔ¼ö¸¦ È£ÃâÇÏÁö ¾Ê´Â ÇÑ ÀúÀå ÆÄÀÏÀº °è¼Ó À¯Áö
+    /// ëª¨ë“  ì°½ê³  ì €ì¥ ë°ì´í„°ë¥¼ ê°•ì œë¡œ ì‚­ì œ
+    /// ì´ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ì§€ ì•ŠëŠ” í•œ ì €ì¥ íŒŒì¼ì€ ê³„ì† ìœ ì§€
     /// </summary>
     [ContextMenu("Delete All Chest Saves")]
     public void DeleteAllChestSaves()
@@ -347,18 +347,18 @@ public class ChestSaveManager : MonoBehaviour
 
             isLoaded = true;
 
-            Debug.Log("¸ğµç Ã¢°í ÀúÀå µ¥ÀÌÅÍ¸¦ °­Á¦·Î »èÁ¦Çß½À´Ï´Ù: " + savePath);
+            Debug.Log("ëª¨ë“  ì°½ê³  ì €ì¥ ë°ì´í„°ë¥¼ ê°•ì œë¡œ ì‚­ì œí–ˆìŠµë‹ˆë‹¤: " + savePath);
         }
         catch (Exception exception)
         {
-            Debug.LogError("Ã¢°í ÀúÀå ÆÄÀÏ »èÁ¦ ½ÇÆĞ: " + exception);
+            Debug.LogError("ì°½ê³  ì €ì¥ íŒŒì¼ ì‚­ì œ ì‹¤íŒ¨: " + exception);
         }
     }
 
     [ContextMenu("Print Chest Save Path")]
     private void PrintChestSavePath()
     {
-        Debug.Log("Ã¢°í ÀúÀå °æ·Î: " + GetSaveFilePath());
+        Debug.Log("ì°½ê³  ì €ì¥ ê²½ë¡œ: " + GetSaveFilePath());
     }
 
     private void EnsureLoaded()
@@ -387,7 +387,7 @@ public class ChestSaveManager : MonoBehaviour
 
             if (showDebugLog)
             {
-                Debug.Log("±âÁ¸ Ã¢°í ÀúÀå ÆÄÀÏÀÌ ¾ø¾î »õ µ¥ÀÌÅÍ¸¦ »ç¿ëÇÕ´Ï´Ù: " + savePath);
+                Debug.Log("ê¸°ì¡´ ì°½ê³  ì €ì¥ íŒŒì¼ì´ ì—†ì–´ ìƒˆ ë°ì´í„°ë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤: " + savePath);
             }
 
             return;
@@ -402,7 +402,7 @@ public class ChestSaveManager : MonoBehaviour
             if (loadedData == null)
             {
                 CreateEmptySaveData();
-                Debug.LogWarning("Ã¢°í ÀúÀå ÆÄÀÏÀÌ ºñ¾î ÀÖ¾î »õ µ¥ÀÌÅÍ¸¦ »ç¿ëÇÕ´Ï´Ù.");
+                Debug.LogWarning("ì°½ê³  ì €ì¥ íŒŒì¼ì´ ë¹„ì–´ ìˆì–´ ìƒˆ ë°ì´í„°ë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.");
                 return;
             }
 
@@ -429,7 +429,7 @@ public class ChestSaveManager : MonoBehaviour
                 if (chestById.ContainsKey(chestRecord.chestId))
                 {
                     Debug.LogWarning(
-                        "Áßº¹µÈ Ã¢°í ID ÀúÀå µ¥ÀÌÅÍ¸¦ ¹«½ÃÇß½À´Ï´Ù: " +
+                        "ì¤‘ë³µëœ ì°½ê³  ID ì €ì¥ ë°ì´í„°ë¥¼ ë¬´ì‹œí–ˆìŠµë‹ˆë‹¤: " +
                         chestRecord.chestId
                     );
 
@@ -444,14 +444,14 @@ public class ChestSaveManager : MonoBehaviour
             if (showDebugLog)
             {
                 Debug.Log(
-                    $"Ã¢°í ÀúÀå µ¥ÀÌÅÍ ºÒ·¯¿À±â ¿Ï·á: " +
-                    $"Ã¢°í {chestById.Count}°³\n{savePath}"
+                    $"ì°½ê³  ì €ì¥ ë°ì´í„° ë¶ˆëŸ¬ì˜¤ê¸° ì™„ë£Œ: " +
+                    $"ì°½ê³  {chestById.Count}ê°œ\n{savePath}"
                 );
             }
         }
         catch (Exception exception)
         {
-            Debug.LogError("Ã¢°í ÀúÀå µ¥ÀÌÅÍ ºÒ·¯¿À±â ½ÇÆĞ: " + exception);
+            Debug.LogError("ì°½ê³  ì €ì¥ ë°ì´í„° ë¶ˆëŸ¬ì˜¤ê¸° ì‹¤íŒ¨: " + exception);
             CreateEmptySaveData();
         }
     }

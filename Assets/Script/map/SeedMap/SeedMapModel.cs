@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ½Ãµå ±â¹İ ¸Ê »ı¼º ±ÔÄ¢°ú ¼³Á¤À» ´ã´ç
-/// ÇÁ¸®ÆÕ »ı¼ºÀÌ³ª GameObject Á¶ÀÛÀº ´ã´çÇÏÁö ¾ÊÀ½.
+/// ì‹œë“œ ê¸°ë°˜ ë§µ ìƒì„± ê·œì¹™ê³¼ ì„¤ì •ì„ ë‹´ë‹¹
+/// í”„ë¦¬íŒ¹ ìƒì„±ì´ë‚˜ GameObject ì¡°ì‘ì€ ë‹´ë‹¹í•˜ì§€ ì•ŠìŒ.
 /// </summary>
 public class SeedMapModel : MonoBehaviour
 {
@@ -36,11 +36,11 @@ public class SeedMapModel : MonoBehaviour
     }
 
     [Header("Generator Settings")]
-    [Tooltip("°¢ Ä­¿¡ º®ÀÌ »ı¼ºµÉ È®·ü")]
+    [Tooltip("ê° ì¹¸ì— ë²½ì´ ìƒì„±ë  í™•ë¥ ")]
     [Range(0, 100)]
     [SerializeField] private int wallPercent = 35;
 
-    [Tooltip("Å¸ÀÏ ÇÑ Ä­ÀÇ ½ÇÁ¦ ¿ùµå Å©±â")]
+    [Tooltip("íƒ€ì¼ í•œ ì¹¸ì˜ ì‹¤ì œ ì›”ë“œ í¬ê¸°")]
     [Min(0.01f)]
     [SerializeField] private float cellSize = 1f;
 
@@ -48,7 +48,7 @@ public class SeedMapModel : MonoBehaviour
     [SerializeField] private Vector3 playerStartPosition = Vector3.zero;
 
     [Header("Square Wall Ranges - Tile Distance")]
-    [Tooltip("½ÃÀÛÁ¡¿¡¼­ X ¶Ç´Â Z ¹æÇâÀ¸·Î ÀÌ Ä­ ¼ö ÀÌ³»¿¡´Â º®À» ¸¸µéÁö ¾ÊÀ½")]
+    [Tooltip("ì‹œì‘ì ì—ì„œ X ë˜ëŠ” Z ë°©í–¥ìœ¼ë¡œ ì´ ì¹¸ ìˆ˜ ì´ë‚´ì—ëŠ” ë²½ì„ ë§Œë“¤ì§€ ì•ŠìŒ")]
     [SerializeField] private int safeRange = 10;
     [SerializeField] private int dirtOnlyRange = 13;
     [SerializeField] private int dirtStoneRange = 15;
@@ -60,21 +60,21 @@ public class SeedMapModel : MonoBehaviour
     [SerializeField] private int silverGoldRange = 30;
 
     [Header("Tree Clearing")]
-    [Tooltip("Ã»Å© ÇÏ³ª¿¡ ³ª¹« °øÅÍ°¡ »ı±æ È®·ü")]
+    [Tooltip("ì²­í¬ í•˜ë‚˜ì— ë‚˜ë¬´ ê³µí„°ê°€ ìƒê¸¸ í™•ë¥ ")]
     [Range(0, 100)]
     [SerializeField] private int treeClearingChance = 10;
 
     [SerializeField] private int clearingWidth = 5;
     [SerializeField] private int clearingLength = 10;
 
-    [Tooltip("°øÅÍ ³»ºÎ ÇÑ Ä­¿¡ ³ª¹«°¡ »ı¼ºµÉ È®·ü")]
+    [Tooltip("ê³µí„° ë‚´ë¶€ í•œ ì¹¸ì— ë‚˜ë¬´ê°€ ìƒì„±ë  í™•ë¥ ")]
     [Range(0, 100)]
     [SerializeField] private int treeFillPercent = 35;
 
     [SerializeField] private int clearingMargin = 1;
 
     [Header("Player Placed Blocks")]
-    [Tooltip("itemID·Î ¼³Ä¡ ºí·Ï µ¥ÀÌÅÍ¸¦ º¹±¸ÇÒ ¶§ »ç¿ëÇÏ´Â ¸ñ·Ï")]
+    [Tooltip("itemIDë¡œ ì„¤ì¹˜ ë¸”ë¡ ë°ì´í„°ë¥¼ ë³µêµ¬í•  ë•Œ ì‚¬ìš©í•˜ëŠ” ëª©ë¡")]
     [SerializeField]
     private List<ItemData> placeableBlockItems =
         new List<ItemData>();

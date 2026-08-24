@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// NPCModel, NPCView, UI, Äù½ºÆ®, »óÁ¡ ¿¬°áÇÏ´Â ½ºÅ©¸³Æ®
+/// NPCModel, NPCView, UI, í€˜ìŠ¤íŠ¸, ìƒì  ì—°ê²°í•˜ëŠ” ìŠ¤í¬ë¦½íŠ¸
 /// </summary>
 public class NPCPresenter : MonoBehaviour, IInteractable
 {
@@ -19,12 +19,12 @@ public class NPCPresenter : MonoBehaviour, IInteractable
 
         if (npcModel == null)
         {
-            Debug.LogWarning(gameObject.name + "¿¡ NPCModelÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning(gameObject.name + "ì— NPCModelì´ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         if (npcView == null)
         {
-            Debug.LogWarning(gameObject.name + "¿¡ NPCView°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning(gameObject.name + "ì— NPCViewê°€ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         HideInteractionMark();
@@ -42,7 +42,7 @@ public class NPCPresenter : MonoBehaviour, IInteractable
 
         ShowInteractionMarkIfPossible();
 
-        Debug.Log("NPC »óÈ£ÀÛ¿ë ¹üÀ§ ÁøÀÔ");
+        Debug.Log("NPC ìƒí˜¸ì‘ìš© ë²”ìœ„ ì§„ì…");
     }
 
     private void OnTriggerExit(Collider other)
@@ -60,11 +60,11 @@ public class NPCPresenter : MonoBehaviour, IInteractable
 
         HideInteractionMark();
 
-        Debug.Log("NPC »óÈ£ÀÛ¿ë ¹üÀ§ ÀÌÅ»");
+        Debug.Log("NPC ìƒí˜¸ì‘ìš© ë²”ìœ„ ì´íƒˆ");
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î°¡ ÀÌ NPC¿Í »óÈ£ÀÛ¿ëÇÏ¸é È£ÃâµÇ´Â ÇÔ¼ö
+    /// í”Œë ˆì´ì–´ê°€ ì´ NPCì™€ ìƒí˜¸ì‘ìš©í•˜ë©´ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
     /// </summary>
     /// <param name="player"></param>
     public void Interact(PlayerPresenter player)
@@ -76,7 +76,7 @@ public class NPCPresenter : MonoBehaviour, IInteractable
 
         if (currentPlayer != player)
         {
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ NPC »óÈ£ÀÛ¿ë ¹üÀ§ ¹Û¿¡ ÀÖ½À´Ï´Ù.");
+            Debug.Log("í”Œë ˆì´ì–´ê°€ NPC ìƒí˜¸ì‘ìš© ë²”ìœ„ ë°–ì— ìˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -87,7 +87,7 @@ public class NPCPresenter : MonoBehaviour, IInteractable
 
         if (NPCInteractionUI.Instance == null)
         {
-            Debug.LogWarning("NPCInteractionUI°¡ ¾À¿¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("NPCInteractionUIê°€ ì”¬ì— ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 

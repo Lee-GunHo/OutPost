@@ -566,7 +566,8 @@ GameObject:
   - component: {fileID: 914011479017039206}
   - component: {fileID: 3642054860478274492}
   - component: {fileID: 1645015311918667932}
-  m_Layer: 0
+  - component: {fileID: 6078944321361964987}
+  m_Layer: 7
   m_Name: Nexus
   m_TagString: Nexus
   m_Icon: {fileID: 0}
@@ -687,6 +688,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NexusView
   healthSlider: {fileID: 7035749336755795524}
   healthText: {fileID: 3510017226529686688}
+--- !u!64 &6078944321361964987
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6865026967297497089}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4004734294062682529, guid: 648933eed6bd7824cb83e7a12ad54063, type: 3}
 --- !u!1 &7955211947792938870
 GameObject:
   m_ObjectHideFlags: 0

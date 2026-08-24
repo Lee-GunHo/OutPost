@@ -11,11 +11,11 @@ public class MainSceneManager : MonoBehaviour
     [SerializeField] private GameObject panelCredit;
 
     [Header("Scene")]
-    [Tooltip("Build Settings¿¡ µî·ÏµÈ °ÔÀÓ ¾À ÀÌ¸§")]
+    [Tooltip("Build Settingsì— ë“±ë¡ëœ ê²Œì„ ì”¬ ì´ë¦„")]
     [SerializeField] private string gameplaySceneName = "GameScene";
 
     [Header("Save")]
-    [Tooltip("GlobalDataManager°¡ »ç¿ëÇÏ´Â ÀúÀå ÆÄÀÏ¸í°ú µ¿ÀÏÇØ¾ß ÇÔ")]
+    [Tooltip("GlobalDataManagerê°€ ì‚¬ìš©í•˜ëŠ” ì €ì¥ íŒŒì¼ëª…ê³¼ ë™ì¼í•´ì•¼ í•¨")]
     [SerializeField] private string saveFileName = "SaveFile.json";
 
     private void Start()
@@ -99,11 +99,11 @@ public class MainSceneManager : MonoBehaviour
         try
         {
             File.Delete(path);
-            Debug.Log("[TITLE] ¼¼ÀÌºê ÆÄÀÏ »èÁ¦ ¿Ï·á");
+            Debug.Log("[TITLE] ì„¸ì´ë¸Œ íŒŒì¼ ì‚­ì œ ì™„ë£Œ");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"¼¼ÀÌºê ÆÄÀÏ »èÁ¦ ½ÇÆĞ : {e.Message}");
+            Debug.LogError($"ì„¸ì´ë¸Œ íŒŒì¼ ì‚­ì œ ì‹¤íŒ¨ : {e.Message}");
         }
     }
 
@@ -118,15 +118,15 @@ public class MainSceneManager : MonoBehaviour
 
     public void ContinueButton()
     {
-        Debug.Log("[TITLE] ÀÌ¾îÇÏ±â ¼±ÅÃ");
+        Debug.Log("[TITLE] ì´ì–´í•˜ê¸° ì„ íƒ");
 
         if (HasSaveFile())
         {
-            Debug.Log("[TITLE] ¼¼ÀÌºê ÆÄÀÏ È®ÀÎ ¿Ï·á");
+            Debug.Log("[TITLE] ì„¸ì´ë¸Œ íŒŒì¼ í™•ì¸ ì™„ë£Œ");
         }
         else
         {
-            Debug.LogWarning("[TITLE] ¼¼ÀÌºê ÆÄÀÏ ¾øÀ½");
+            Debug.LogWarning("[TITLE] ì„¸ì´ë¸Œ íŒŒì¼ ì—†ìŒ");
         }
 
         LoadGameplayScene();
@@ -134,26 +134,26 @@ public class MainSceneManager : MonoBehaviour
 
     public void NewGameButton()
     {
-        Debug.Log("[TITLE] »õ·ÎÇÏ±â ¼±ÅÃ");
+        Debug.Log("[TITLE] ìƒˆë¡œí•˜ê¸° ì„ íƒ");
 
         if (HasSaveFile())
         {
-            Debug.Log("[TITLE] ±âÁ¸ ¼¼ÀÌºê ¹ß°ß");
+            Debug.Log("[TITLE] ê¸°ì¡´ ì„¸ì´ë¸Œ ë°œê²¬");
             DeleteSaveFileIfExists();
         }
         else
         {
-            Debug.Log("[TITLE] ±âÁ¸ ¼¼ÀÌºê ¾øÀ½");
+            Debug.Log("[TITLE] ê¸°ì¡´ ì„¸ì´ë¸Œ ì—†ìŒ");
         }
 
-        Debug.Log("[TITLE] »õ °ÔÀÓ ½ÃÀÛ");
+        Debug.Log("[TITLE] ìƒˆ ê²Œì„ ì‹œì‘");
 
         LoadGameplayScene();
     }
 
     public void QuitGame()
     {
-        Debug.Log("[TITLE] °ÔÀÓ Á¾·á");
+        Debug.Log("[TITLE] ê²Œì„ ì¢…ë£Œ");
 
         Application.Quit();
 
@@ -170,15 +170,15 @@ public class MainSceneManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(gameplaySceneName))
         {
-            Debug.LogError("[TITLE] gameplaySceneNameÀÌ ºñ¾îÀÖÀ½");
+            Debug.LogError("[TITLE] gameplaySceneNameì´ ë¹„ì–´ìˆìŒ");
             return;
         }
 
         if (!Application.CanStreamedLevelBeLoaded(gameplaySceneName))
         {
             Debug.LogError(
-                $"[TITLE] '{gameplaySceneName}' ¾ÀÀ» Ã£À» ¼ö ¾øÀ½.\n" +
-                $"Build Settings¿¡ Ãß°¡µÇ¾ú´ÂÁö È®ÀÎÇÏ¼¼¿ä."
+                $"[TITLE] '{gameplaySceneName}' ì”¬ì„ ì°¾ì„ ìˆ˜ ì—†ìŒ.\n" +
+                $"Build Settingsì— ì¶”ê°€ë˜ì—ˆëŠ”ì§€ í™•ì¸í•˜ì„¸ìš”."
             );
             return;
         }

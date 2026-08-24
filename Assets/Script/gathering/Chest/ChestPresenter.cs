@@ -3,16 +3,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// ChestModel°ú ChestView¸¦ ¿¬°áÇÏ°í ¾ÆÀÌÅÛ ÀÌµ¿, ÇÑ °³¾¿ ¹èÄ¡,
-/// »èÁ¦ ´ë±â ¹× »èÁ¦ È®Á¤À» Ã³¸®
+/// ChestModelê³¼ ChestViewë¥¼ ì—°ê²°í•˜ê³  ì•„ì´í…œ ì´ë™, í•œ ê°œì”© ë°°ì¹˜,
+/// ì‚­ì œ ëŒ€ê¸° ë° ì‚­ì œ í™•ì •ì„ ì²˜ë¦¬
 ///
-/// Á¶ÀÛ ¹æ½Ä
-/// - ¾ÆÀÌÅÛ ½½·ÔÀ» ¿ìÅ¬¸¯ÇÑ Ã¤ µå·¡±×: ÇØ´ç ½ºÅÃ ÀüÃ¼¸¦ Ä¿¼­·Î µë.
-/// - Ä¿¼­¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ» ¶§ ÀÏ¹İ ½½·Ô ÁÂÅ¬¸¯: 1°³¸¦ ³õÀ½
-/// - Ä¿¼­¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ» ¶§ ¾²·¹±âÅë ÁÂÅ¬¸¯: 1°³¸¦ »èÁ¦ ´ë±â·Î ¿Å±è
-/// - ¾²·¹±âÅë ¹öÆ° Å¬¸¯: »èÁ¦ ´ë±â ¾ÆÀÌÅÛÀ» ¿µ±¸ »èÁ¦
-/// - Ä¿¼­¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ» ¶§ ½½·Ô ¿ìÅ¬¸¯: ³²Àº ¾ÆÀÌÅÛÀ» ¿ø·¡ ½½·ÔÀ¸·Î µ¹·Á³õÀ½
-/// - Ä¿¼­°¡ ºñ¾î ÀÖÀ» ¶§ Shift + ÁÂÅ¬¸¯: ±âÁ¸ ÀüÃ¼ ºü¸¥ ÀÌµ¿À» ¼öÇà
+/// ì¡°ì‘ ë°©ì‹
+/// - ì•„ì´í…œ ìŠ¬ë¡¯ì„ ìš°í´ë¦­í•œ ì±„ ë“œë˜ê·¸: í•´ë‹¹ ìŠ¤íƒ ì „ì²´ë¥¼ ì»¤ì„œë¡œ ë“¬.
+/// - ì»¤ì„œì— ì•„ì´í…œì´ ìˆì„ ë•Œ ì¼ë°˜ ìŠ¬ë¡¯ ì¢Œí´ë¦­: 1ê°œë¥¼ ë†“ìŒ
+/// - ì»¤ì„œì— ì•„ì´í…œì´ ìˆì„ ë•Œ ì“°ë ˆê¸°í†µ ì¢Œí´ë¦­: 1ê°œë¥¼ ì‚­ì œ ëŒ€ê¸°ë¡œ ì˜®ê¹€
+/// - ì“°ë ˆê¸°í†µ ë²„íŠ¼ í´ë¦­: ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œì„ ì˜êµ¬ ì‚­ì œ
+/// - ì»¤ì„œì— ì•„ì´í…œì´ ìˆì„ ë•Œ ìŠ¬ë¡¯ ìš°í´ë¦­: ë‚¨ì€ ì•„ì´í…œì„ ì›ë˜ ìŠ¬ë¡¯ìœ¼ë¡œ ëŒë ¤ë†“ìŒ
+/// - ì»¤ì„œê°€ ë¹„ì–´ ìˆì„ ë•Œ Shift + ì¢Œí´ë¦­: ê¸°ì¡´ ì „ì²´ ë¹ ë¥¸ ì´ë™ì„ ìˆ˜í–‰
 /// </summary>
 public class ChestPresenter : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class ChestPresenter : MonoBehaviour
     [Header("View")]
     [SerializeField] private ChestView chestView;
 
-    [Header("ÇÃ·¹ÀÌ¾î Hotbar")]
+    [Header("í”Œë ˆì´ì–´ Hotbar")]
     [SerializeField] private HotbarPresenter hotbarPresenter;
 
     private ChestModel currentChest;
@@ -100,7 +100,7 @@ public class ChestPresenter : MonoBehaviour
 
         if (chestView == null)
         {
-            Debug.LogError("ChestPresenter ¿À·ù: ChestView°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogError("ChestPresenter ì˜¤ë¥˜: ChestViewê°€ ì—†ìŠµë‹ˆë‹¤.");
             enabled = false;
             return;
         }
@@ -143,14 +143,14 @@ public class ChestPresenter : MonoBehaviour
     {
         if (chestModel == null)
         {
-            Debug.LogWarning("Ã¢°í¸¦ ¿­ ¼ö ¾ø½À´Ï´Ù: ChestModelÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ì°½ê³ ë¥¼ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: ChestModelì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (player == null || player.PlayerInventory == null)
         {
             Debug.LogWarning(
-                "Ã¢°í¸¦ ¿­ ¼ö ¾ø½À´Ï´Ù: ÇÃ·¹ÀÌ¾î InventoryModelÀÌ ¾ø½À´Ï´Ù."
+                "ì°½ê³ ë¥¼ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: í”Œë ˆì´ì–´ InventoryModelì´ ì—†ìŠµë‹ˆë‹¤."
             );
             return;
         }
@@ -181,7 +181,7 @@ public class ChestPresenter : MonoBehaviour
     public void Close()
     {
         Debug.Log(
-            $"[´İ±â ¹öÆ°] ChestPresenter.Close È£Ãâ / isOpen : {isOpen}"
+            $"[ë‹«ê¸° ë²„íŠ¼] ChestPresenter.Close í˜¸ì¶œ / isOpen : {isOpen}"
         );
 
         if (!isOpen)
@@ -197,7 +197,7 @@ public class ChestPresenter : MonoBehaviour
         chestView.Hide();
 
         Debug.Log(
-            $"[´İ±â ¹öÆ°] ChestView.Hide ½ÇÇà ¿Ï·á"
+            $"[ë‹«ê¸° ë²„íŠ¼] ChestView.Hide ì‹¤í–‰ ì™„ë£Œ"
         );
 
         UIState.SetInventoryOpen(false);
@@ -214,8 +214,8 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÏ¹İ ½½·Ô Å¬¸¯ ÀÔ·Â
-    /// ¾ÆÀÌÅÛÀ» µé°í ÀÖ´Ù¸é ÁÂÅ¬¸¯À¸·Î 1°³ ¹èÄ¡
+    /// ì¼ë°˜ ìŠ¬ë¡¯ í´ë¦­ ì…ë ¥
+    /// ì•„ì´í…œì„ ë“¤ê³  ìˆë‹¤ë©´ ì¢Œí´ë¦­ìœ¼ë¡œ 1ê°œ ë°°ì¹˜
     /// </summary>
     public void OnSlotClicked(
         ChestSlotArea area,
@@ -243,12 +243,12 @@ public class ChestPresenter : MonoBehaviour
             return;
         }
 
-        // »èÁ¦ ´ë±â ¾ÆÀÌÅÛÀÌ ÀÖÀ¸¸é »èÁ¦ ¶Ç´Â Ã¢ ´İ±â·Î ¸ÕÀú Ã³¸®ÇØ¾ß ÇÔ
-        // ÀÌ¸¦ ÅëÇØ »èÁ¦ Ãë¼Ò ½Ã ¿ø·¡ ½½·ÔÀ¸·Î ¾ÈÀüÇÏ°Ô º¹¿øÇÒ ¼ö ÀÖÀ½
+        // ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œì´ ìˆìœ¼ë©´ ì‚­ì œ ë˜ëŠ” ì°½ ë‹«ê¸°ë¡œ ë¨¼ì € ì²˜ë¦¬í•´ì•¼ í•¨
+        // ì´ë¥¼ í†µí•´ ì‚­ì œ ì·¨ì†Œ ì‹œ ì›ë˜ ìŠ¬ë¡¯ìœ¼ë¡œ ì•ˆì „í•˜ê²Œ ë³µì›í•  ìˆ˜ ìˆìŒ
         if (pendingDiscard != null)
         {
             Debug.Log(
-                "»èÁ¦ ´ë±â ¾ÆÀÌÅÛÀÌ ÀÖ½À´Ï´Ù. »èÁ¦ ¹öÆ°À» ´©¸£°Å³ª Ã¢°í¸¦ ´İ¾Æ Ãë¼ÒÇÏ¼¼¿ä."
+                "ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œì´ ìˆìŠµë‹ˆë‹¤. ì‚­ì œ ë²„íŠ¼ì„ ëˆ„ë¥´ê±°ë‚˜ ì°½ê³ ë¥¼ ë‹«ì•„ ì·¨ì†Œí•˜ì„¸ìš”."
             );
             return;
         }
@@ -278,8 +278,8 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ¾ÆÀÌÅÛÀÌ ÀÖ´Â ½½·Ô¿¡¼­ ¿ìÅ¬¸¯ µå·¡±×¸¦ ½ÃÀÛÇÏ¸é
-    /// ¿øº» ½ºÅÃ ÀüÃ¼¸¦ Ä¿¼­·Î ¿Å±è
+    /// ì•„ì´í…œì´ ìˆëŠ” ìŠ¬ë¡¯ì—ì„œ ìš°í´ë¦­ ë“œë˜ê·¸ë¥¼ ì‹œì‘í•˜ë©´
+    /// ì›ë³¸ ìŠ¤íƒ ì „ì²´ë¥¼ ì»¤ì„œë¡œ ì˜®ê¹€
     /// </summary>
     public void OnRightDragStarted(ChestSlotArea area, int slotIndex)
     {
@@ -289,7 +289,7 @@ public class ChestPresenter : MonoBehaviour
         if (pendingDiscard != null)
         {
             Debug.Log(
-                "»èÁ¦ ´ë±â ¾ÆÀÌÅÛÀ» ¸ÕÀú »èÁ¦ÇÏ°Å³ª Ã¢°í¸¦ ´İ¾Æ Ãë¼ÒÇØ¾ß ÇÕ´Ï´Ù."
+                "ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œì„ ë¨¼ì € ì‚­ì œí•˜ê±°ë‚˜ ì°½ê³ ë¥¼ ë‹«ì•„ ì·¨ì†Œí•´ì•¼ í•©ë‹ˆë‹¤."
             );
             return;
         }
@@ -306,7 +306,7 @@ public class ChestPresenter : MonoBehaviour
             sourceItem.amount
         );
 
-        // ¿øº» ½½·Ô¿¡¼­ ½ºÅÃÀ» Á¦°ÅÇÏ°í Ä¿¼­°¡ ½ÇÁ¦ ¼ö·®À» º¸°ü
+        // ì›ë³¸ ìŠ¬ë¡¯ì—ì„œ ìŠ¤íƒì„ ì œê±°í•˜ê³  ì»¤ì„œê°€ ì‹¤ì œ ìˆ˜ëŸ‰ì„ ë³´ê´€
         SetSlotItem(area, slotIndex, null);
 
         chestView.HideTooltip();
@@ -315,7 +315,7 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// °°Àº ¾ÆÀÌÅÛ ½ºÅÃÀ» ÇÕÄ¡°í ºó ½½·ÔÀ» µÚ·Î ÀÌµ¿
+    /// ê°™ì€ ì•„ì´í…œ ìŠ¤íƒì„ í•©ì¹˜ê³  ë¹ˆ ìŠ¬ë¡¯ì„ ë’¤ë¡œ ì´ë™
     /// </summary>
     public void OnGatherItemsClicked()
     {
@@ -325,11 +325,11 @@ public class ChestPresenter : MonoBehaviour
         currentChest.GartherItems();
         chestView.CloseSortPopup();
 
-        Debug.Log("Ã¢°í ¾ÆÀÌÅÛÀ» À§·Î ¸ğ¾Ò½À´Ï´Ù.");
+        Debug.Log("ì°½ê³  ì•„ì´í…œì„ ìœ„ë¡œ ëª¨ì•˜ìŠµë‹ˆë‹¤.");
     }
 
     /// <summary>
-    /// Å¸ÀÔ, Èñ±Íµµ, ¾ÆÀÌÅÛ ID ¼øÀ¸·Î Á¤·Ä
+    /// íƒ€ì…, í¬ê·€ë„, ì•„ì´í…œ ID ìˆœìœ¼ë¡œ ì •ë ¬
     /// </summary>
     public void OnSortByTypeClicked()
     {
@@ -339,7 +339,7 @@ public class ChestPresenter : MonoBehaviour
         currentChest.SortItemsByType();
         chestView.CloseSortPopup();
 
-        Debug.Log("Ã¢°í ¾ÆÀÌÅÛÀ» Á¾·ùº°·Î Á¤·ÄÇß½À´Ï´Ù.");
+        Debug.Log("ì°½ê³  ì•„ì´í…œì„ ì¢…ë¥˜ë³„ë¡œ ì •ë ¬í–ˆìŠµë‹ˆë‹¤.");
     }
 
     private bool CanSortChest()
@@ -350,7 +350,7 @@ public class ChestPresenter : MonoBehaviour
         if(carriedStack != null)
         {
             Debug.Log(
-                "Ä¿¼­¿¡ µé°í ÀÖ´Â ¾ÆÀÌÅÛÀ» ¸ÕÀú ³õ¾Æ¾ß Á¤·ÄÇÒ ¼ö ÀÖ½À´Ï´Ù."
+                "ì»¤ì„œì— ë“¤ê³  ìˆëŠ” ì•„ì´í…œì„ ë¨¼ì € ë†“ì•„ì•¼ ì •ë ¬í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
             );
 
             return false;
@@ -359,7 +359,7 @@ public class ChestPresenter : MonoBehaviour
         if(pendingDiscard != null)
         {
             Debug.Log(
-                "»èÁ¦ ´ë±â ¾ÆÀÌÅÛÀ» ¸ÕÀú »èÁ¦ÇÏ°Å³ª Ãë¼ÒÇØ¾ß Á¤·ÄÇÒ ¼ö ÀÖ½À´Ï´Ù."
+                "ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œì„ ë¨¼ì € ì‚­ì œí•˜ê±°ë‚˜ ì·¨ì†Œí•´ì•¼ ì •ë ¬í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
             );
 
             return false;
@@ -369,7 +369,7 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ¾²·¹±âÅë ½½·Ô ÁÂÅ¬¸¯ ½Ã Ä¿¼­ ¾ÆÀÌÅÛ 1°³¸¦ »èÁ¦ ´ë±â·Î ÀÌµ¿
+    /// ì“°ë ˆê¸°í†µ ìŠ¬ë¡¯ ì¢Œí´ë¦­ ì‹œ ì»¤ì„œ ì•„ì´í…œ 1ê°œë¥¼ ì‚­ì œ ëŒ€ê¸°ë¡œ ì´ë™
     /// </summary>
     public void OnDiscardSlotClicked(
         PointerEventData.InputButton button)
@@ -392,7 +392,7 @@ public class ChestPresenter : MonoBehaviour
         if (pendingDiscard.Item != carriedStack.Item)
         {
             Debug.Log(
-                "¾²·¹±âÅë ½½·Ô¿¡´Â ÇÑ Á¾·ùÀÇ ¾ÆÀÌÅÛ¸¸ ³ÖÀ» ¼ö ÀÖ½À´Ï´Ù."
+                "ì“°ë ˆê¸°í†µ ìŠ¬ë¡¯ì—ëŠ” í•œ ì¢…ë¥˜ì˜ ì•„ì´í…œë§Œ ë„£ì„ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
             );
             return;
         }
@@ -405,9 +405,9 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ¾²·¹±âÅë ¹öÆ°À» ´©¸£¸é »èÁ¦ ´ë±â ¾ÆÀÌÅÛÀ» ¿µ±¸ »èÁ¦
-    /// »èÁ¦ ´ë±â ¼ö·®Àº ÀÌ¹Ì ¿øº» ÀúÀå¼Ò¿¡¼­ ºüÁø »óÅÂÀÌ¹Ç·Î
-    /// ¿©±â¼­´Â º¹¿ø Á¤º¸¸¦ Á¦°ÅÇÏ´Â °ÍÀ¸·Î »èÁ¦°¡ È®Á¤
+    /// ì“°ë ˆê¸°í†µ ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œì„ ì˜êµ¬ ì‚­ì œ
+    /// ì‚­ì œ ëŒ€ê¸° ìˆ˜ëŸ‰ì€ ì´ë¯¸ ì›ë³¸ ì €ì¥ì†Œì—ì„œ ë¹ ì§„ ìƒíƒœì´ë¯€ë¡œ
+    /// ì—¬ê¸°ì„œëŠ” ë³µì› ì •ë³´ë¥¼ ì œê±°í•˜ëŠ” ê²ƒìœ¼ë¡œ ì‚­ì œê°€ í™•ì •
     /// </summary>
     public void OnDiscardButtonClicked()
     {
@@ -420,7 +420,7 @@ public class ChestPresenter : MonoBehaviour
         ClearPendingDiscard();
 
         Debug.Log(
-            $"¾ÆÀÌÅÛ »èÁ¦: {discardedItem.itemName} x{discardedAmount}"
+            $"ì•„ì´í…œ ì‚­ì œ: {discardedItem.itemName} x{discardedAmount}"
         );
 
         if (currentChest != null)
@@ -455,7 +455,7 @@ public class ChestPresenter : MonoBehaviour
         {
             if (targetItem.item != carriedStack.Item)
             {
-                Debug.Log("´Ù¸¥ Á¾·ùÀÇ ¾ÆÀÌÅÛ À§¿¡´Â ³õÀ» ¼ö ¾ø½À´Ï´Ù.");
+                Debug.Log("ë‹¤ë¥¸ ì¢…ë¥˜ì˜ ì•„ì´í…œ ìœ„ì—ëŠ” ë†“ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 return;
             }
 
@@ -463,7 +463,7 @@ public class ChestPresenter : MonoBehaviour
 
             if (targetItem.amount >= maxStack)
             {
-                Debug.Log("ÇØ´ç ½½·ÔÀÇ ¾ÆÀÌÅÛ ½ºÅÃÀÌ °¡µæ Ã¡½À´Ï´Ù.");
+                Debug.Log("í•´ë‹¹ ìŠ¬ë¡¯ì˜ ì•„ì´í…œ ìŠ¤íƒì´ ê°€ë“ ì°¼ìŠµë‹ˆë‹¤.");
                 return;
             }
 
@@ -543,7 +543,7 @@ public class ChestPresenter : MonoBehaviour
         if (!restored)
         {
             Debug.LogError(
-                "Ä¿¼­ ¾ÆÀÌÅÛÀ» ¿ø·¡ ½½·ÔÀ¸·Î µÇµ¹¸®Áö ¸øÇß½À´Ï´Ù."
+                "ì»¤ì„œ ì•„ì´í…œì„ ì›ë˜ ìŠ¬ë¡¯ìœ¼ë¡œ ë˜ëŒë¦¬ì§€ ëª»í–ˆìŠµë‹ˆë‹¤."
             );
             return;
         }
@@ -565,7 +565,7 @@ public class ChestPresenter : MonoBehaviour
             if (!restored)
             {
                 Debug.LogError(
-                    "Ã¢°í¸¦ ´İ´Â Áß Ä¿¼­ ¾ÆÀÌÅÛ º¹¿ø¿¡ ½ÇÆĞÇß½À´Ï´Ù."
+                    "ì°½ê³ ë¥¼ ë‹«ëŠ” ì¤‘ ì»¤ì„œ ì•„ì´í…œ ë³µì›ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."
                 );
             }
         }
@@ -581,7 +581,7 @@ public class ChestPresenter : MonoBehaviour
             if (!restored)
             {
                 Debug.LogError(
-                    "Ã¢°í¸¦ ´İ´Â Áß »èÁ¦ ´ë±â ¾ÆÀÌÅÛ º¹¿ø¿¡ ½ÇÆĞÇß½À´Ï´Ù."
+                    "ì°½ê³ ë¥¼ ë‹«ëŠ” ì¤‘ ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œ ë³µì›ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."
                 );
             }
         }
@@ -592,9 +592,9 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ìÅ¬¸¯ µå·¡±×¸¦ ½ÃÀÛÇÑ ¿ø·¡ ½½·Ô¿¡ ¼ö·®À» º¹¿ø
-    /// ÀÌ ±â´ÉÀÌ µ¿ÀÛÇÏ´Â µ¿¾È ´Ù¸¥ ¾ÆÀÌÅÛ ½ºÅÃÀ» »õ·Î µé ¼ö ¾øÀ¸¹Ç·Î
-    /// ¿ø·¡ ½½·ÔÀº Ç×»ó ºñ¾î ÀÖ°Å³ª °°Àº ¾ÆÀÌÅÛ¸¸ Æ÷ÇÔ
+    /// ìš°í´ë¦­ ë“œë˜ê·¸ë¥¼ ì‹œì‘í•œ ì›ë˜ ìŠ¬ë¡¯ì— ìˆ˜ëŸ‰ì„ ë³µì›
+    /// ì´ ê¸°ëŠ¥ì´ ë™ì‘í•˜ëŠ” ë™ì•ˆ ë‹¤ë¥¸ ì•„ì´í…œ ìŠ¤íƒì„ ìƒˆë¡œ ë“¤ ìˆ˜ ì—†ìœ¼ë¯€ë¡œ
+    /// ì›ë˜ ìŠ¬ë¡¯ì€ í•­ìƒ ë¹„ì–´ ìˆê±°ë‚˜ ê°™ì€ ì•„ì´í…œë§Œ í¬í•¨
     /// </summary>
     private bool AddToOriginSlot(
         SlotAddress origin,
@@ -656,7 +656,7 @@ public class ChestPresenter : MonoBehaviour
         }
     }
 
-    // ±âÁ¸ Shift + ÁÂÅ¬¸¯ ÀüÃ¼ ÀÌµ¿ ±â´É
+    // ê¸°ì¡´ Shift + ì¢Œí´ë¦­ ì „ì²´ ì´ë™ ê¸°ëŠ¥
     private void Transfer(
         ChestSlotArea sourceArea,
         int sourceIndex,
@@ -693,7 +693,7 @@ public class ChestPresenter : MonoBehaviour
 
         if (movedAmount <= 0)
         {
-            Debug.Log("¾ÆÀÌÅÛÀ» ÀÌµ¿ÇÒ ºó °ø°£ÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log("ì•„ì´í…œì„ ì´ë™í•  ë¹ˆ ê³µê°„ì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -1039,11 +1039,11 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÎº¥Åä¸® ¾ÆÀÌÅÛ Áß Ã¢°í¿¡ ÀÌ¹Ì °°Àº Á¾·ù°¡ Á¸ÀçÇÏ´Â ¾ÆÀÌÅÛÀ»
-    /// °¡´ÉÇÑ ¼ö·®¸¸Å­ ¸ğµÎ Ã¢°í·Î ÀÌµ¿
+    /// ì¸ë²¤í† ë¦¬ ì•„ì´í…œ ì¤‘ ì°½ê³ ì— ì´ë¯¸ ê°™ì€ ì¢…ë¥˜ê°€ ì¡´ì¬í•˜ëŠ” ì•„ì´í…œì„
+    /// ê°€ëŠ¥í•œ ìˆ˜ëŸ‰ë§Œí¼ ëª¨ë‘ ì°½ê³ ë¡œ ì´ë™
     ///
-    /// °°Àº ¾ÆÀÌÅÛÀÌ Ã¢°í¿¡ ÇÏ³ª¶óµµ Á¸ÀçÇÏ¸é ÀÚµ¿ º¸°ü ´ë»óÀÌ µÇ¸ç,
-    /// ±âÁ¸ ½ºÅÃÀ» Ã¤¿î ÈÄ Ã¢°íÀÇ ºó ½½·Ô¿¡µµ »õ·Î¿î ½ºÅÃÀ» »ı¼º
+    /// ê°™ì€ ì•„ì´í…œì´ ì°½ê³ ì— í•˜ë‚˜ë¼ë„ ì¡´ì¬í•˜ë©´ ìë™ ë³´ê´€ ëŒ€ìƒì´ ë˜ë©°,
+    /// ê¸°ì¡´ ìŠ¤íƒì„ ì±„ìš´ í›„ ì°½ê³ ì˜ ë¹ˆ ìŠ¬ë¡¯ì—ë„ ìƒˆë¡œìš´ ìŠ¤íƒì„ ìƒì„±
     /// </summary>
     public void OnAutoStoreClicked()
     {
@@ -1064,13 +1064,13 @@ public class ChestPresenter : MonoBehaviour
 
             ItemData item = inventoryStack.item;
 
-            // Ã¢°í¿¡ °°Àº Á¾·ùÀÇ ¾ÆÀÌÅÛÀÌ ¾øÀ¸¸é ÀÚµ¿ º¸°üÇÏÁö ¾ÊÀ½
+            // ì°½ê³ ì— ê°™ì€ ì¢…ë¥˜ì˜ ì•„ì´í…œì´ ì—†ìœ¼ë©´ ìë™ ë³´ê´€í•˜ì§€ ì•ŠìŒ
             if (!ChestContainsItem(item))
                 continue;
 
             int originalAmount = inventoryStack.amount;
 
-            // ±âÁ¸ ½ºÅÃÀ» Ã¤¿î µÚ ºó ½½·Ô±îÁö »ç¿ëÇÏ¿© ÀüºÎ º¸°ü ½Ãµµ
+            // ê¸°ì¡´ ìŠ¤íƒì„ ì±„ìš´ ë’¤ ë¹ˆ ìŠ¬ë¡¯ê¹Œì§€ ì‚¬ìš©í•˜ì—¬ ì „ë¶€ ë³´ê´€ ì‹œë„
             int remainingAmount =
                 currentChest.AddItemAndGetRemaining(
                     item,
@@ -1098,19 +1098,19 @@ public class ChestPresenter : MonoBehaviour
         if (totalMovedAmount > 0)
         {
             Debug.Log(
-                $"ÀÚµ¿ º¸°ü ¿Ï·á: ÃÑ {totalMovedAmount}°³ÀÇ ¾ÆÀÌÅÛÀ» ÀÌµ¿Çß½À´Ï´Ù."
+                $"ìë™ ë³´ê´€ ì™„ë£Œ: ì´ {totalMovedAmount}ê°œì˜ ì•„ì´í…œì„ ì´ë™í–ˆìŠµë‹ˆë‹¤."
             );
         }
         else
         {
             Debug.Log(
-                "ÀÚµ¿ º¸°üÇÒ ¾ÆÀÌÅÛÀÌ ¾ø°Å³ª Ã¢°í °ø°£ÀÌ ºÎÁ·ÇÕ´Ï´Ù."
+                "ìë™ ë³´ê´€í•  ì•„ì´í…œì´ ì—†ê±°ë‚˜ ì°½ê³  ê³µê°„ì´ ë¶€ì¡±í•©ë‹ˆë‹¤."
             );
         }
     }
 
     /// <summary>
-    /// Ã¢°í¿¡ ÇØ´ç ¾ÆÀÌÅÛÀÌ ÇÏ³ª¶óµµ Á¸ÀçÇÏ´ÂÁö È®ÀÎ
+    /// ì°½ê³ ì— í•´ë‹¹ ì•„ì´í…œì´ í•˜ë‚˜ë¼ë„ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸
     /// </summary>
     private bool ChestContainsItem(ItemData targetItem)
     {
@@ -1133,7 +1133,7 @@ public class ChestPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÚµ¿ º¸°üÀ» ½ÇÇàÇÒ ¼ö ÀÖ´Â »óÅÂÀÎÁö °Ë»ç
+    /// ìë™ ë³´ê´€ì„ ì‹¤í–‰í•  ìˆ˜ ìˆëŠ” ìƒíƒœì¸ì§€ ê²€ì‚¬
     /// </summary>
     private bool CanUseAutoStore()
     {
@@ -1147,7 +1147,7 @@ public class ChestPresenter : MonoBehaviour
         if (carriedStack != null)
         {
             Debug.Log(
-                "Ä¿¼­¿¡ µé°í ÀÖ´Â ¾ÆÀÌÅÛÀ» ¸ÕÀú ³õ¾Æ¾ß ÀÚµ¿ º¸°üÇÒ ¼ö ÀÖ½À´Ï´Ù."
+                "ì»¤ì„œì— ë“¤ê³  ìˆëŠ” ì•„ì´í…œì„ ë¨¼ì € ë†“ì•„ì•¼ ìë™ ë³´ê´€í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
             );
 
             return false;
@@ -1156,7 +1156,7 @@ public class ChestPresenter : MonoBehaviour
         if (pendingDiscard != null)
         {
             Debug.Log(
-                "»èÁ¦ ´ë±â ¾ÆÀÌÅÛÀ» ¸ÕÀú »èÁ¦ÇÏ°Å³ª Ãë¼ÒÇØ¾ß ÀÚµ¿ º¸°üÇÒ ¼ö ÀÖ½À´Ï´Ù."
+                "ì‚­ì œ ëŒ€ê¸° ì•„ì´í…œì„ ë¨¼ì € ì‚­ì œí•˜ê±°ë‚˜ ì·¨ì†Œí•´ì•¼ ìë™ ë³´ê´€í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
             );
 
             return false;

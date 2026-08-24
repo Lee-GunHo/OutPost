@@ -2,14 +2,14 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// ³Ø¼­½ºÀÇ Ã¼·Â »óÅÂ °ü¸®
+/// ë„¥ì„œìŠ¤ì˜ ì²´ë ¥ ìƒíƒœ ê´€ë¦¬
 /// </summary>
 public class NexusModel : MonoBehaviour
 {
     public event Action<int, int> OnHealthChanged;
     public event Action OnHealthDepleted;
 
-    [Header("³Ø¼­½º Ã¼·Â")]
+    [Header("ë„¥ì„œìŠ¤ ì²´ë ¥")]
     [SerializeField] private int maxHealth = 1000;
 
     private int currentHealth;

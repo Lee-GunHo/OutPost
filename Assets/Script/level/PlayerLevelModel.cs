@@ -33,7 +33,7 @@ public class PlayerLevelModel : MonoBehaviour
 
         currentExp += amount;
 
-        Debug.Log($"°æÇèÄ¡ È¹µæ: {amount}, ÇöÀç °æÇèÄ¡: {currentExp}/{requiredExp}");
+        Debug.Log($"ê²½í—˜ì¹˜ íšë“: {amount}, í˜„ì¬ ê²½í—˜ì¹˜: {currentExp}/{requiredExp}");
 
         while (currentExp >= requiredExp)
         {
@@ -49,7 +49,7 @@ public class PlayerLevelModel : MonoBehaviour
         statPoint += statPointPerLevel;
         requiredExp += expIncreasePerLevel;
 
-        Debug.Log($"·¹º§¾÷! ÇöÀç ·¹º§: {level}, ½ºÅÈ Æ÷ÀÎÆ®: {statPoint}");
+        Debug.Log($"ë ˆë²¨ì—…! í˜„ì¬ ë ˆë²¨: {level}, ìŠ¤íƒ¯ í¬ì¸íŠ¸: {statPoint}");
     }
 
     public bool UseStatPoint(int amount)
@@ -61,7 +61,7 @@ public class PlayerLevelModel : MonoBehaviour
 
         if (statPoint < amount)
         {
-            Debug.Log("½ºÅÈ Æ÷ÀÎÆ®°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log("ìŠ¤íƒ¯ í¬ì¸íŠ¸ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
             return false;
         }
 

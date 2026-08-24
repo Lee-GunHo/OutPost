@@ -113,7 +113,7 @@ public class HotbarModel : MonoBehaviour
         OnSelectedSlotChanged?.Invoke(SelectedIndex);
     }
 
-    // 0813 °æ¹Î ¼±ÅÃ ¾ÆÀÌÅÛ 1°³ Â÷°¨ ±â´É Ãß°¡
+    // 0813 ê²½ë¯¼ ì„ íƒ ì•„ì´í…œ 1ê°œ ì°¨ê° ê¸°ëŠ¥ ì¶”ê°€
     public bool ConsumeSelectedItem(int amount = 1)
     {
         if (amount <= 0)

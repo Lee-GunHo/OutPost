@@ -9,14 +9,14 @@ public class SoundSettingManager : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioMixer audioMixer;
-    [SerializeField] private string exposedParam = "MasterVol"; // AudioMixer Exposed Parameter ÀÌ¸§
+    [SerializeField] private string exposedParam = "MasterVol"; // AudioMixer Exposed Parameter ì´ë¦„
 
     private const string PrefKey = "MasterVolume_0to100";
     private const float MinDb = -80f;
 
     private void Awake()
     {
-        // ¾ÈÀü: ½½¶óÀÌ´õ ¹üÀ§ °­Á¦
+        // ì•ˆì „: ìŠ¬ë¼ì´ë” ë²”ìœ„ ê°•ì œ
         if (masterSlider != null)
         {
             masterSlider.minValue = 0f;
@@ -26,12 +26,12 @@ public class SoundSettingManager : MonoBehaviour
 
     private void Start()
     {
-        // ÀúÀå°ª ·Îµå(¾øÀ¸¸é 100)
+        // ì €ìž¥ê°’ ë¡œë“œ(ì—†ìœ¼ë©´ 100)
         float saved = PlayerPrefs.GetFloat(PrefKey, 100f);
         Apply(saved, save: false);
     }
 
-    // Slider OnValueChanged(float) ¿¡ ¿¬°á
+    // Slider OnValueChanged(float) ì— ì—°ê²°
     public void OnMasterSliderChanged(float value0to100)
     {
         Apply(value0to100, save: true);
@@ -39,11 +39,11 @@ public class SoundSettingManager : MonoBehaviour
 
     private void Apply(float value0to100, bool save)
     {
-        // UI ¾÷µ¥ÀÌÆ®(ÀÌº¥Æ® Àç¹ßµ¿ ¹æÁö)
+        // UI ì—…ë°ì´íŠ¸(ì´ë²¤íŠ¸ ìž¬ë°œë™ ë°©ì§€)
         if (masterSlider != null)
             masterSlider.SetValueWithoutNotify(value0to100);
 
-        // 0~100 -> 0.0001~1 (0¿¡¼­ log ÅÍÁü ¹æÁö)
+        // 0~100 -> 0.0001~1 (0ì—ì„œ log í„°ì§ ë°©ì§€)
         float linear = Mathf.Clamp(value0to100 / 100f, 0.0001f, 1f);
 
         // linear -> dB

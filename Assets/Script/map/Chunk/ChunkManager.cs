@@ -1,6 +1,6 @@
 /// <summary>
-/// ±âÁ¸ ChunkManager ÂüÁ¶¸¦ À¯ÁöÇÏ±â À§ÇÑ È£È¯ÇÏ´Â Å¬·¡½º
-/// ½ÇÁ¦ Presenter µ¿ÀÛÀº ChunkPresenter°¡ ´ã´çÇÔ.
+/// ê¸°ì¡´ ChunkManager ì°¸ì¡°ë¥¼ ìœ ì§€í•˜ê¸° ìœ„í•œ í˜¸í™˜í•˜ëŠ” í´ë˜ìŠ¤
+/// ì‹¤ì œ Presenter ë™ì‘ì€ ChunkPresenterê°€ ë‹´ë‹¹í•¨.
 /// </summary>
 public class ChunkManager : ChunkPresenter
 {

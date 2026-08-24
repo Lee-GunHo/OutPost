@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// »ı¼ºµÈ Ã»Å© GameObjectÀÇ µî·Ï, ºÎ¸ğ ¼³Á¤, Á¦°Å¸¦ ´ã´ç
-/// ¾î¶² Ã»Å©°¡ ÇÊ¿äÇÑÁö´Â ÆÇ´ÜÇÏÁö ¾ÊÀ½.
+/// ìƒì„±ëœ ì²­í¬ GameObjectì˜ ë“±ë¡, ë¶€ëª¨ ì„¤ì •, ì œê±°ë¥¼ ë‹´ë‹¹
+/// ì–´ë–¤ ì²­í¬ê°€ í•„ìš”í•œì§€ëŠ” íŒë‹¨í•˜ì§€ ì•ŠìŒ.
 /// </summary>
 public class ChunkView : MonoBehaviour
 {
     [Header("Chunk Parent")]
-    [Tooltip("»ı¼ºµÈ Ã»Å©µéÀ» Á¤¸®ÇÒ ºÎ¸ğ ¿ÀºêÁ§Æ®")]
+    [Tooltip("ìƒì„±ëœ ì²­í¬ë“¤ì„ ì •ë¦¬í•  ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸")]
     [SerializeField] private Transform chunkParent;
 
     private readonly Dictionary<Vector2Int, GameObject> loadedChunks =

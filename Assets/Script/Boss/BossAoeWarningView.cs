@@ -9,7 +9,7 @@ public class BossAoeWarningView : MonoBehaviour
     {
         GameObject warningObject = new GameObject("Boss AOE Warning");
 
-        // ¶¥ÀÌ¶û °ãÃÄ¼­ ¾È º¸ÀÌ´Â °É ¸·±â À§ÇØ »ìÂ¦ À§·Î ¿Ã¸²
+        // ë•…ì´ë‘ ê²¹ì³ì„œ ì•ˆ ë³´ì´ëŠ” ê±¸ ë§‰ê¸° ìœ„í•´ ì‚´ì§ ìœ„ë¡œ ì˜¬ë¦¼
         warningObject.transform.position = center + Vector3.up * 0.12f;
 
         BossAoeWarningView warningView = warningObject.AddComponent<BossAoeWarningView>();
@@ -56,7 +56,7 @@ public class BossAoeWarningView : MonoBehaviour
             int current = i + 1;
             int next = i == SegmentCount - 1 ? 1 : i + 2;
 
-            // À§¿¡¼­ º¸ÀÌµµ·Ï »ï°¢Çü ¹æÇâ ¼öÁ¤
+            // ìœ„ì—ì„œ ë³´ì´ë„ë¡ ì‚¼ê°í˜• ë°©í–¥ ìˆ˜ì •
             triangles[triangleIndex] = 0;
             triangles[triangleIndex + 1] = next;
             triangles[triangleIndex + 2] = current;

@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// ¸Ê ¿ÀºêÁ§Æ®ÀÇ ½ÇÁ¦ »ı¼º°ú BreakableWall ÃÊ±âÈ­¸¦ ´ã´ç.
-/// »ı¼º È®·üÀÌ³ª ±¤¹° ±¸°£ ÆÇ´ÜÀº ´ã´çÇÏÁö ¾ÊÀ½.
+/// ë§µ ì˜¤ë¸Œì íŠ¸ì˜ ì‹¤ì œ ìƒì„±ê³¼ BreakableWall ì´ˆê¸°í™”ë¥¼ ë‹´ë‹¹.
+/// ìƒì„± í™•ë¥ ì´ë‚˜ ê´‘ë¬¼ êµ¬ê°„ íŒë‹¨ì€ ë‹´ë‹¹í•˜ì§€ ì•ŠìŒ.
 /// </summary>
 public class SeedMapView : MonoBehaviour
 {
@@ -83,8 +83,8 @@ public class SeedMapView : MonoBehaviour
         if (breakableWalls.Length == 0)
         {
             Debug.LogWarning(
-                $"{wallPrefab.name} ÇÁ¸®ÆÕ ¶Ç´Â ÀÚ½Ä¿¡ BreakableWallÀÌ ¾ø¾î " +
-                "ÆÄ±« »óÅÂ¸¦ ÀúÀåÇÒ ¼ö ¾ø½À´Ï´Ù.",
+                $"{wallPrefab.name} í”„ë¦¬íŒ¹ ë˜ëŠ” ìì‹ì— BreakableWallì´ ì—†ì–´ " +
+                "íŒŒê´´ ìƒíƒœë¥¼ ì €ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
                 wallObject
             );
             return true;
@@ -133,8 +133,8 @@ public class SeedMapView : MonoBehaviour
         if (breakableTrees.Length == 0)
         {
             Debug.LogWarning(
-                $"{treePrefab.name} ÇÁ¸®ÆÕ ¶Ç´Â ÀÚ½Ä¿¡ BreakableWallÀÌ ¾ø¾î " +
-                "³ª¹« ÆÄ±« »óÅÂ¸¦ ÀúÀåÇÒ ¼ö ¾ø½À´Ï´Ù.",
+                $"{treePrefab.name} í”„ë¦¬íŒ¹ ë˜ëŠ” ìì‹ì— BreakableWallì´ ì—†ì–´ " +
+                "ë‚˜ë¬´ íŒŒê´´ ìƒíƒœë¥¼ ì €ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
                 treeObject
             );
             return true;
@@ -169,7 +169,7 @@ public class SeedMapView : MonoBehaviour
         if (itemData.placeablePrefab == null)
         {
             Debug.LogWarning(
-                $"{itemData.itemName}ÀÇ placeablePrefabÀÌ ºñ¾î ÀÖ½À´Ï´Ù."
+                $"{itemData.itemName}ì˜ placeablePrefabì´ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤."
             );
             return false;
         }
@@ -192,7 +192,7 @@ public class SeedMapView : MonoBehaviour
         if (breakableWalls.Length == 0)
         {
             Debug.LogWarning(
-                $"{itemData.placeablePrefab.name}¿¡ BreakableWallÀÌ ¾ø½À´Ï´Ù.",
+                $"{itemData.placeablePrefab.name}ì— BreakableWallì´ ì—†ìŠµë‹ˆë‹¤.",
                 blockObject
             );
             return true;

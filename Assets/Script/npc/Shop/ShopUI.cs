@@ -7,38 +7,38 @@ public class ShopUI : MonoBehaviour
 {
     public static ShopUI Instance { get; private set; }
 
-    [Header("ÀüÃ¼ »óÁ¡ ÆĞ³Î")]
+    [Header("ì „ì²´ ìƒì  íŒ¨ë„")]
     [SerializeField] private GameObject panel;
 
-    [Header("»óÁ¡ ÀÌ¸§")]
+    [Header("ìƒì  ì´ë¦„")]
     [SerializeField] private TMP_Text shopTitleText;
 
-    [Header("»óÁ¡ ¾ÆÀÌÅÛ ½ºÅ©·Ñ Content")]
+    [Header("ìƒì  ì•„ì´í…œ ìŠ¤í¬ë¡¤ Content")]
     [SerializeField] private Transform shopContent;
 
-    [Header("ÇÃ·¹ÀÌ¾î ÀÎº¥Åä¸® ½ºÅ©·Ñ Content")]
+    [Header("í”Œë ˆì´ì–´ ì¸ë²¤í† ë¦¬ ìŠ¤í¬ë¡¤ Content")]
     [SerializeField] private Transform playerContent;
 
-    [Header("½½·Ô ÇÁ¸®ÆÕ")]
+    [Header("ìŠ¬ë¡¯ í”„ë¦¬íŒ¹")]
     [SerializeField] private ShopSlotView slotPrefab;
 
-    [Header("½½·Ô »ı¼º ¼ö·®")]
+    [Header("ìŠ¬ë¡¯ ìƒì„± ìˆ˜ëŸ‰")]
     [SerializeField] private int ShopSlotCount;
     [SerializeField] private int playerSlotCount;
 
-    [Header("ÆÇ¸Å ÆË¾÷")]
+    [Header("íŒë§¤ íŒì—…")]
     [SerializeField] private ShopQuantityPopup quantitySellPopup;
     [SerializeField] private ShopConfirmPopup confirmSellPopup;
 
-    [Header("±¸¸Å ÆË¾÷")]
+    [Header("êµ¬ë§¤ íŒì—…")]
     [SerializeField] private ShopQuantityPopup quantityBuyPopup;
     [SerializeField] private ShopConfirmPopup confirmBuyPopup;
 
-    [Header("±¸¸Å ¼³Á¤")]
+    [Header("êµ¬ë§¤ ì„¤ì •")]
     [Min(1)]
     [SerializeField] private int maxBuyAmount = 99;
 
-    [Header("¹öÆ°")]
+    [Header("ë²„íŠ¼")]
     [SerializeField] private Button closeButton;
 
     private ShopData currentShopData;
@@ -99,8 +99,8 @@ public class ShopUI : MonoBehaviour
 
         if (shopTitleText != null)
         {
-            string npcName = currentNPC != null ? currentNPC.GetNPCName() : "»óÁ¡";
-            shopTitleText.text = npcName + " »óÁ¡";
+            string npcName = currentNPC != null ? currentNPC.GetNPCName() : "ìƒì ";
+            shopTitleText.text = npcName + " ìƒì ";
         }
 
         ClearSelectedItem();
@@ -114,13 +114,13 @@ public class ShopUI : MonoBehaviour
 
         if (currentShopData == null)
         {
-            Debug.LogWarning("ShopUI ¿À·ù: currentShopData°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ShopUI ì˜¤ë¥˜: currentShopDataê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (currentShopData.SellItems == null)
         {
-            Debug.LogWarning("ShopUI ¿À·ù: ShopData.SellItems°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ShopUI ì˜¤ë¥˜: ShopData.SellItemsê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -162,19 +162,19 @@ public class ShopUI : MonoBehaviour
 
         if (currentPlayer == null)
         {
-            Debug.LogWarning("ShopUI ¿À·ù: currentPlayer°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ShopUI ì˜¤ë¥˜: currentPlayerê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if(currentInventory == null)
         {
-            Debug.LogWarning("ShopUI ¿À·ù: ÇÃ·¹ÀÌ¾î¿¡°Ô InventoryModelÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ShopUI ì˜¤ë¥˜: í”Œë ˆì´ì–´ì—ê²Œ InventoryModelì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (currentInventory.Items == null)
         {
-            Debug.LogWarning("ShopUI ¿À·ù: InventoryModel.Items°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ShopUI ì˜¤ë¥˜: InventoryModel.Itemsê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -214,19 +214,19 @@ public class ShopUI : MonoBehaviour
 
         if(count <= 0)
         {
-            Debug.LogWarning("ShopUI °æ°í : »ı¼ºÇÒ ½½·Ô ¼ö·®ÀÌ 0 ÀÌÇÏÀÔ´Ï´Ù.");
+            Debug.LogWarning("ShopUI ê²½ê³  : ìƒì„±í•  ìŠ¬ë¡¯ ìˆ˜ëŸ‰ì´ 0 ì´í•˜ì…ë‹ˆë‹¤.");
             return createdSlots;
         }
 
         if (slotPrefab == null)
         {
-            Debug.LogError("ShopUI ¿À·ù : SlotPrefabÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù. Inspector¿¡¼­ Slot Prefab¿¡ ShopSlotView ÇÁ¸®ÆÕÀ» ³Ö¾îÁÖ¼¼¿ä.");
+            Debug.LogError("ShopUI ì˜¤ë¥˜ : SlotPrefabì´ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤. Inspectorì—ì„œ Slot Prefabì— ShopSlotView í”„ë¦¬íŒ¹ì„ ë„£ì–´ì£¼ì„¸ìš”.");
             return null;
         }
 
         if(parent == null)
         {
-            Debug.LogError("ShopUI ¿À·ù: Content TransformÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù. shopContent ¶Ç´Â playerContent¸¦ ¿¬°áÇØÁÖ¼¼¿ä.");
+            Debug.LogError("ShopUI ì˜¤ë¥˜: Content Transformì´ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤. shopContent ë˜ëŠ” playerContentë¥¼ ì—°ê²°í•´ì£¼ì„¸ìš”.");
             return null;
         }
 
@@ -236,7 +236,7 @@ public class ShopUI : MonoBehaviour
 
             if(slotView == null)
             {
-                Debug.LogError("ShopUI ¿À·ù: »ı¼ºµÈ ½½·Ô¿¡ ShopSlotView ÄÄÆ÷³ÍÆ®°¡ ¾ø½À´Ï´Ù.");
+                Debug.LogError("ShopUI ì˜¤ë¥˜: ìƒì„±ëœ ìŠ¬ë¡¯ì— ShopSlotView ì»´í¬ë„ŒíŠ¸ê°€ ì—†ìŠµë‹ˆë‹¤.");
                 continue;
             }
 
@@ -330,7 +330,7 @@ public class ShopUI : MonoBehaviour
 
         if(quantityBuyPopup == null)
         {
-            Debug.LogWarning("±¸¸Å ¼ö·® ÆË¾÷ÀÌ ShopUI¿¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("êµ¬ë§¤ ìˆ˜ëŸ‰ íŒì—…ì´ ShopUIì— ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -341,7 +341,7 @@ public class ShopUI : MonoBehaviour
         int limit = Mathf.Max(1, maxBuyAmount);
 
         quantityBuyPopup.Open(
-            item.itemName + " ¸î °³¸¦ ±¸¸ÅÇÏ½Ã°Ú½À´Ï±î?",
+            item.itemName + " ëª‡ ê°œë¥¼ êµ¬ë§¤í•˜ì‹œê² ìŠµë‹ˆê¹Œ?",
             limit,
             selectedBuyAmount => OpenBuyConfirmPopup(slotIndex, selectedBuyAmount)
         );
@@ -356,17 +356,17 @@ public class ShopUI : MonoBehaviour
 
         if(confirmBuyPopup == null)
         {
-            Debug.LogWarning("±¸¸Å È®ÀÎ ÆË¾÷ÀÌ ShopUI¿¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("êµ¬ë§¤ í™•ì¸ íŒì—…ì´ ShopUIì— ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
         ItemData item = shopItem.ItemData;
         int totalPrice = shopItem.BuyPrice * amount;
-        string message = item.itemName + " " + amount + "°³¸¦ ±¸¸ÅÇÏ½Ã°Ú½À´Ï±î?";
+        string message = item.itemName + " " + amount + "ê°œë¥¼ êµ¬ë§¤í•˜ì‹œê² ìŠµë‹ˆê¹Œ?";
 
         if(shopItem.BuyPrice > 0)
         {
-            message += "\n°¡°İ : " + totalPrice;
+            message += "\nê°€ê²© : " + totalPrice;
         }
 
         confirmBuyPopup.Open(
@@ -384,7 +384,7 @@ public class ShopUI : MonoBehaviour
 
         if(currentInventory == null)
         {
-            Debug.LogWarning("±¸¸Å ½ÇÆĞ : ÇÃ·¹ÀÌ¾î InventoryModelÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("êµ¬ë§¤ ì‹¤íŒ¨ : í”Œë ˆì´ì–´ InventoryModelì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -395,7 +395,7 @@ public class ShopUI : MonoBehaviour
 
         if(!currentInventory.CanAddItem(item, amount))
         {
-            Debug.Log("±¸¸Å ½ÇÆĞ : ÀÎº¥Åä¸® °ø°£ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log("êµ¬ë§¤ ì‹¤íŒ¨ : ì¸ë²¤í† ë¦¬ ê³µê°„ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.");
             return;
         }
 
@@ -403,12 +403,12 @@ public class ShopUI : MonoBehaviour
 
         if(!success)
         {
-            Debug.LogWarning("¾ÆÀÌÅÛ ±¸¸Å¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+            Debug.LogWarning("ì•„ì´í…œ êµ¬ë§¤ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
         int totalPrice = shopItem.BuyPrice * amount;
-        Debug.Log(item.itemName + " " + amount + "°³¸¦ ±¸¸ÅÇß½À´Ï´Ù. °¡°İ : " + totalPrice);
+        Debug.Log(item.itemName + " " + amount + "ê°œë¥¼ êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤. ê°€ê²© : " + totalPrice);
 
         RefreshPlayerItems();
     }
@@ -434,12 +434,12 @@ public class ShopUI : MonoBehaviour
 
         if(quantitySellPopup == null)
         {
-            Debug.LogWarning("ÆÇ¸Å ¼ö·® ÆË¾÷ÀÌ ShopUI¿¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("íŒë§¤ ìˆ˜ëŸ‰ íŒì—…ì´ ShopUIì— ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
         quantitySellPopup.Open(
-            item.itemName + " ¸î °³¸¦ ÆÇ¸ÅÇÏ½Ã°Ú½À´Ï±î?",
+            item.itemName + " ëª‡ ê°œë¥¼ íŒë§¤í•˜ì‹œê² ìŠµë‹ˆê¹Œ?",
             amount,
             selectedSellAmount => OpenSellConfirmPopup(slotIndex, selectedSellAmount)
         );
@@ -454,12 +454,12 @@ public class ShopUI : MonoBehaviour
 
         if(confirmSellPopup == null)
         {
-            Debug.LogWarning("ÆÇ¸Å È®ÀÎ ÆË¾÷ÀÌ ShopUI¿¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("íŒë§¤ í™•ì¸ íŒì—…ì´ ShopUIì— ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
         ItemData item = itemStack.item;
-        string message = item.itemName + " " + amount + "°³¸¦ ÆÇ¸ÅÇÏ½Ã°Ú½À´Ï±î?";
+        string message = item.itemName + " " + amount + "ê°œë¥¼ íŒë§¤í•˜ì‹œê² ìŠµë‹ˆê¹Œ?";
 
         confirmSellPopup.Open(
             message,
@@ -482,7 +482,7 @@ public class ShopUI : MonoBehaviour
 
         if(amount > currentAmount)
         {
-            Debug.Log("ÆÇ¸ÅÇÒ ¾ÆÀÌÅÛ ¼ö·®ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log("íŒë§¤í•  ì•„ì´í…œ ìˆ˜ëŸ‰ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.");
             return;
         }
 
@@ -490,11 +490,11 @@ public class ShopUI : MonoBehaviour
 
         if(!success)
         {
-            Debug.LogWarning("¾ÆÀÌÅÛ ÆÇ¸Å¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+            Debug.LogWarning("ì•„ì´í…œ íŒë§¤ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
-        Debug.Log(item.itemName + " " + amount + "°³¸¦ ÆÇ¸ÅÇß½À´Ï´Ù.");
+        Debug.Log(item.itemName + " " + amount + "ê°œë¥¼ íŒë§¤í–ˆìŠµë‹ˆë‹¤.");
 
         RefreshPlayerItems();
     }
@@ -595,7 +595,7 @@ public class ShopUI : MonoBehaviour
             closedNPC.ShowInteractionMarkIfPossible();
         }
 
-        Debug.Log("»óÁ¡ ´İÈû: UIState.SetShopOpen(false)");
-        UIState.DebugLogState("ShopUI.Close ÀÌÈÄ");
+        Debug.Log("ìƒì  ë‹«í˜: UIState.SetShopOpen(false)");
+        UIState.DebugLogState("ShopUI.Close ì´í›„");
     }
 }

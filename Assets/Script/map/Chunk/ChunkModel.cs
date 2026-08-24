@@ -2,22 +2,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Ã»Å© ½Ã½ºÅÛ ¼³Á¤ ¹× ÁÂÇ¥ °è»ê ´ã´ç
-/// GameObject »ı¼º/»èÁ¦¿Í ÇÃ·¹ÀÌ¾î ÃßÀûÀº ´ã´çÇÏÁö ¾ÊÀ½.
+/// ì²­í¬ ì‹œìŠ¤í…œ ì„¤ì • ë° ì¢Œí‘œ ê³„ì‚° ë‹´ë‹¹
+/// GameObject ìƒì„±/ì‚­ì œì™€ í”Œë ˆì´ì–´ ì¶”ì ì€ ë‹´ë‹¹í•˜ì§€ ì•ŠìŒ.
 /// </summary>
 public class ChunkModel : MonoBehaviour
 {
     [Header("Chunk Settings")]
-    [Tooltip("Ã»Å© ÇÑ º¯ÀÇ Å¸ÀÏ °³¼ö")]
+    [Tooltip("ì²­í¬ í•œ ë³€ì˜ íƒ€ì¼ ê°œìˆ˜")]
     [Min(1)]
     [SerializeField] private int chunkSize = 16;
 
-    [Tooltip("ÇÃ·¹ÀÌ¾î ÁÖº¯ ¸î Ã»Å©±îÁö À¯ÁöÇÒÁö")]
+    [Tooltip("í”Œë ˆì´ì–´ ì£¼ë³€ ëª‡ ì²­í¬ê¹Œì§€ ìœ ì§€í• ì§€")]
     [Min(0)]
     [SerializeField] private int viewDistance = 2;
 
     [Header("Seed Settings")]
-    [Tooltip("ÀüÃ¼ ¸ÊÀÇ ±âÁØ ½Ãµå")]
+    [Tooltip("ì „ì²´ ë§µì˜ ê¸°ì¤€ ì‹œë“œ")]
     [SerializeField] private int globalSeed = 1234;
 
     private Vector2Int currentChunkCoord;
@@ -37,7 +37,7 @@ public class ChunkModel : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ ¹İ¿µÇÏ°í, Ã»Å©°¡ º¯°æµÇ¾ú´ÂÁö ¹İÈ¯
+    /// í”Œë ˆì´ì–´ ìœ„ì¹˜ë¥¼ ë°˜ì˜í•˜ê³ , ì²­í¬ê°€ ë³€ê²½ë˜ì—ˆëŠ”ì§€ ë°˜í™˜
     /// </summary>
     public bool UpdatePlayerPosition(Vector3 playerPosition, float cellSize)
     {

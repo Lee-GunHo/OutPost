@@ -6,22 +6,22 @@ using UnityEngine.UI;
 using UnityEngine.Serialization;
 
 /// <summary>
-/// Ã¢°í UI Ç¥½Ã¿Í UI ÀÌº¥Æ® ¿¬°á¸¸ ´ã´ç
+/// ì°½ê³  UI í‘œì‹œì™€ UI ì´ë²¤íŠ¸ ì—°ê²°ë§Œ ë‹´ë‹¹
 /// </summary>
 public class ChestView : MonoBehaviour
 {
-    [Header("ÀüÃ¼ ÆĞ³Î")]
+    [Header("ì „ì²´ íŒ¨ë„")]
     [SerializeField] private GameObject panel;
 
-    [Header("½½·Ô Content")]
+    [Header("ìŠ¬ë¡¯ Content")]
     [SerializeField] private Transform hotbarContent;
     [SerializeField] private Transform inventoryContent;
     [SerializeField] private Transform chestContent;
 
-    [Header("ÀÏ¹İ ½½·Ô ÇÁ¸®ÆÕ")]
+    [Header("ì¼ë°˜ ìŠ¬ë¡¯ í”„ë¦¬íŒ¹")]
     [SerializeField] private ChestSlotView slotPrefab;
 
-    [Header("½½·Ô °³¼ö")]
+    [Header("ìŠ¬ë¡¯ ê°œìˆ˜")]
     [SerializeField, Min(1)] private int hotbarSlotCount = 10;
     [SerializeField, Min(1)] private int inventorySlotCount = 40;
     [SerializeField, Min(1)] private int chestSlotCount = 40;
@@ -29,24 +29,24 @@ public class ChestView : MonoBehaviour
     [Header("Canvas")]
     [SerializeField] private Canvas parentCanvas;
 
-    [Header("Á¤·Ä UI")]
+    [Header("ì •ë ¬ UI")]
     [SerializeField] private Button sortButton;
     [SerializeField] private ChestSortPopup sortPopup;
 
-    [Header("º¸°ü UI")]
+    [Header("ë³´ê´€ UI")]
     [SerializeField] private Button autoStoreButton;
 
-    [Header("¹ö¸®±â UI")]
+    [Header("ë²„ë¦¬ê¸° UI")]
     [SerializeField] private ChestDiscardSlotView discardSlotView;
     [SerializeField] private Button discardButton;
 
-    [Header("Ä¿¼­¿¡ µé°í ÀÖ´Â ¾ÆÀÌÅÛ UI")]
+    [Header("ì»¤ì„œì— ë“¤ê³  ìˆëŠ” ì•„ì´í…œ UI")]
     [FormerlySerializedAs("dragIcon")]
     [SerializeField] private Image carriedItemIcon;
     [FormerlySerializedAs("dragAmountText")]
     [SerializeField] private TMP_Text carriedItemAmountText;
 
-    [Header("±âÅ¸ UI")]
+    [Header("ê¸°íƒ€ UI")]
     [SerializeField] private Button closeButton;
     [SerializeField] private ItemTooltipView tooltipView;
 
@@ -167,7 +167,7 @@ public class ChestView : MonoBehaviour
         else
         {
             Debug.LogWarning(
-                "ChestViewÀÇ Auto Store ButtonÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.",
+                "ChestViewì˜ Auto Store Buttonì´ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.",
                 this
             );
         }
@@ -175,14 +175,14 @@ public class ChestView : MonoBehaviour
         if (closeButton == null)
         {
             Debug.LogError(
-                "ChestView ¿À·ù : CloseButtonÀÌ Inspector¿¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.",
+                "ChestView ì˜¤ë¥˜ : CloseButtonì´ Inspectorì— ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.",
                 this
             );
         }
         else
         {
             Debug.Log(
-                $"Ã¢°í ´İ±â ¹öÆ° ¿¬°á ¿Ï·á : {closeButton.gameObject.name}",
+                $"ì°½ê³  ë‹«ê¸° ë²„íŠ¼ ì—°ê²° ì™„ë£Œ : {closeButton.gameObject.name}",
                 closeButton
             );
 
@@ -216,7 +216,7 @@ public class ChestView : MonoBehaviour
         if(panel == null)
         {
             Debug.LogError(
-                "ChestViewÀÇ PanelÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù."
+                "ChestViewì˜ Panelì´ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."
             );
             return;
         }
@@ -395,7 +395,7 @@ public class ChestView : MonoBehaviour
         if (content == null)
         {
             Debug.LogError(
-                $"ChestView ¿À·ù: {area} Content°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù."
+                $"ChestView ì˜¤ë¥˜: {area} Contentê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."
             );
             return;
         }
@@ -420,8 +420,8 @@ public class ChestView : MonoBehaviour
             if (slotPrefab == null)
             {
                 Debug.LogError(
-                    $"ChestView ¿À·ù: {area} ½½·ÔÀÌ {requiredCount}°³ ÇÊ¿äÇÏÁö¸¸ " +
-                    $"ÇöÀç {result.Count}°³ÀÌ¸ç Slot PrefabÀÌ ¾ø½À´Ï´Ù."
+                    $"ChestView ì˜¤ë¥˜: {area} ìŠ¬ë¡¯ì´ {requiredCount}ê°œ í•„ìš”í•˜ì§€ë§Œ " +
+                    $"í˜„ì¬ {result.Count}ê°œì´ë©° Slot Prefabì´ ì—†ìŠµë‹ˆë‹¤."
                 );
                 break;
             }

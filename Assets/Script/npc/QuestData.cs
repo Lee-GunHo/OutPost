@@ -1,22 +1,22 @@
 using UnityEngine;
 
 /// <summary>
-/// Äù½ºÆ® ÇÏ³ªÀÇ °íÁ¤ Á¤º¸¸¦ ÀúÀåÇÏ´Â µ¥ÀÌÅÍ
+/// í€˜ìŠ¤íŠ¸ í•˜ë‚˜ì˜ ê³ ì • ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” ë°ì´í„°
 /// </summary>
 [CreateAssetMenu(fileName = "QuestData", menuName = "NPC/Quest Data")]
 public class QuestData : ScriptableObject
 {
-    [Header("Äù½ºÆ® ±âº» Á¤º¸")]
+    [Header("í€˜ìŠ¤íŠ¸ ê¸°ë³¸ ì •ë³´")]
     [SerializeField] private string questId;
     [SerializeField] private string questTitle;
     [TextArea]
     [SerializeField] private string questDescription;
 
-    [Header("Äù½ºÆ® ¿Ï·á Á¶°Ç")]
+    [Header("í€˜ìŠ¤íŠ¸ ì™„ë£Œ ì¡°ê±´")]
     [SerializeField] private ItemData requiredItem;
     [SerializeField] private int requiredAmount;
 
-    [Header("Äù½ºÆ® º¸»ó")]
+    [Header("í€˜ìŠ¤íŠ¸ ë³´ìƒ")]
     [SerializeField] private ItemData rewardItem;
     [SerializeField] private int rewardAmount;
     [SerializeField] private int rewardGold;

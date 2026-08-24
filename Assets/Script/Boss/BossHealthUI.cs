@@ -19,7 +19,7 @@ public class BossHealthUI : MonoBehaviour
 
     private void Start()
     {
-        // º¸½º°¡ Ã³À½ºÎÅÍ ¾À¿¡ ÀÖ´Â °æ¿ì ´ëºñ
+        // ë³´ìŠ¤ê°€ ì²˜ìŒë¶€í„° ì”¬ì— ìˆëŠ” ê²½ìš° ëŒ€ë¹„
         if (bossPresenter == null)
         {
             BossPresenter foundBoss = FindFirstObjectByType<BossPresenter>();

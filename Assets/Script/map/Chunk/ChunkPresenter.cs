@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ È®ÀÎÇÏ°í ModelÀÇ °è»ê °á°ú¿¡ µû¶ó
-/// View¿Í SeedMapPresenter¸¦ Á¦¾îÇÔ.
+/// í”Œë ˆì´ì–´ ìœ„ì¹˜ë¥¼ í™•ì¸í•˜ê³  Modelì˜ ê³„ì‚° ê²°ê³¼ì— ë”°ë¼
+/// Viewì™€ SeedMapPresenterë¥¼ ì œì–´í•¨.
 /// </summary>
 public class ChunkPresenter : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ ÃßÀûÇÏ±â À§ÇØ ÇÊ¿ä")]
+    [Tooltip("í”Œë ˆì´ì–´ ìœ„ì¹˜ë¥¼ ì¶”ì í•˜ê¸° ìœ„í•´ í•„ìš”")]
     [SerializeField] private Transform player;
 
     [Header("MVP")]
@@ -16,47 +16,58 @@ public class ChunkPresenter : MonoBehaviour
     [SerializeField] private ChunkView view;
     [SerializeField] private SeedMapPresenter mapPresenter;
 
+    [Header("Nexus")]
+    [Tooltip("ê²Œì„ ì‹œì‘ ì‹œ ì²­í¬ ì‹œìŠ¤í…œê³¼ ì—°ë™ë˜ì–´ ì„¤ì¹˜ë  ë„¥ì„œìŠ¤ í”„ë¦¬íŒ¹")]
+    [SerializeField] private GameObject nexusPrefab;
+
+    [Tooltip("ë„¥ì„œìŠ¤ê°€ ì„¤ì¹˜ë  ì›”ë“œ ì¢Œí‘œ")]
+    [SerializeField] private Vector3 nexusSpawnPosition = new Vector3(0f, 1f, 0f);
+
+    private GameObject spawnedNexus;
+
     public int ChunkSize => model != null ? model.ChunkSize : 16;
     public int ViewDistance => model != null ? model.ViewDistance : 0;
     public int GlobalSeed => model != null ? model.GlobalSeed : 0;
     public float CellSize => mapPresenter != null ? mapPresenter.CellSize : 1f;
 
-    // ±âÁ¸ ÄÚµå¿¡¼­ ¼Ò¹®ÀÚ ÇÊµå¸¦ ÀĞ´ø °æ¿ì¸¦ À§ÇÑ ÀĞ±â Àü¿ë È£È¯ ÇÁ·ÎÆÛÆ¼
+    // ê¸°ì¡´ ì½”ë“œì—ì„œ ì†Œë¬¸ì í•„ë“œë¥¼ ì½ë˜ ê²½ìš°ë¥¼ ìœ„í•œ ì½ê¸° ì „ìš© í˜¸í™˜ í”„ë¡œí¼í‹°
     public int chunkSize => ChunkSize;
     public int viewDistance => ViewDistance;
     public int globalSeed => GlobalSeed;
 
     protected virtual void Start()
     {
-        Debug.Log("1. ChunkPresenter Start ½ÇÇà");
+        Debug.Log("1. ChunkPresenter Start ì‹¤í–‰");
 
         if (!ValidateReferences())
         {
-            Debug.LogError("2. ChunkPresenter ÂüÁ¶ °Ë»ç ½ÇÆĞ");
+            Debug.LogError("2. ChunkPresenter ì°¸ì¡° ê²€ì‚¬ ì‹¤íŒ¨");
             enabled = false;
             return;
         }
 
-        Debug.Log("2. ChunkPresenter ÂüÁ¶ °Ë»ç ¼º°ø");
+        Debug.Log("2. ChunkPresenter ì°¸ì¡° ê²€ì‚¬ ì„±ê³µ");
 
         ChunkModificationSaveManager saveManager =
             ChunkModificationSaveManager.GetOrCreate();
 
         saveManager.InitializeWorld(GlobalSeed);
 
-        Debug.Log("3. ÀúÀå ½Ã½ºÅÛ ÃÊ±âÈ­ ¿Ï·á");
+        Debug.Log("3. ì €ì¥ ì‹œìŠ¤í…œ ì´ˆê¸°í™” ì™„ë£Œ");
 
         model.Initialize(player.position, CellSize);
 
         Debug.Log(
-            $"4. ChunkModel ÃÊ±âÈ­ ¿Ï·á / ÇöÀç Ã»Å©: {model.CurrentChunkCoord}"
+            $"4. ChunkModel ì´ˆê¸°í™” ì™„ë£Œ / í˜„ì¬ ì²­í¬: {model.CurrentChunkCoord}"
         );
 
         RefreshChunks();
 
-        Debug.Log("5. RefreshChunks ¿Ï·á");
+        Debug.Log("5. RefreshChunks ì™„ë£Œ");
 
         model.ConfirmCurrentChunk();
+
+        SpawnNexus();
     }
 
     protected virtual void Update()
@@ -117,25 +128,25 @@ public class ChunkPresenter : MonoBehaviour
     {
         if (player == null)
         {
-            Debug.LogError("ChunkPresenter ¿À·ù: Player°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.", this);
+            Debug.LogError("ChunkPresenter ì˜¤ë¥˜: Playerê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.", this);
             return false;
         }
 
         if (model == null)
         {
-            Debug.LogError("ChunkPresenter ¿À·ù: ChunkModelÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.", this);
+            Debug.LogError("ChunkPresenter ì˜¤ë¥˜: ChunkModelì´ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.", this);
             return false;
         }
 
         if (view == null)
         {
-            Debug.LogError("ChunkPresenter ¿À·ù: ChunkView°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.", this);
+            Debug.LogError("ChunkPresenter ì˜¤ë¥˜: ChunkViewê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.", this);
             return false;
         }
 
         if (mapPresenter == null)
         {
-            Debug.LogError("ChunkPresenter ¿À·ù: SeedMapPresenter°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.", this);
+            Debug.LogError("ChunkPresenter ì˜¤ë¥˜: SeedMapPresenterê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.", this);
             return false;
         }
 
@@ -162,7 +173,7 @@ public class ChunkPresenter : MonoBehaviour
 
     private void CreateChunk(Vector2Int chunkCoord)
     {
-        Debug.Log($"Ã»Å© »ı¼º ½ÃÀÛ : {chunkCoord}");
+        Debug.Log($"ì²­í¬ ìƒì„± ì‹œì‘ : {chunkCoord}");
 
         GameObject chunkObject = mapPresenter.GenerateChunk(
             chunkCoord,
@@ -170,21 +181,41 @@ public class ChunkPresenter : MonoBehaviour
             GlobalSeed
         );
 
-        Debug.Log($"GenerateChunk ¹İÈ¯ : {chunkCoord}");
+        Debug.Log($"GenerateChunk ë°˜í™˜ : {chunkCoord}");
 
         if (chunkObject == null)
         {
-            Debug.LogError($"Ã»Å© »ı¼º ½ÇÆĞ: {chunkCoord}", this);
+            Debug.LogError($"ì²­í¬ ìƒì„± ì‹¤íŒ¨: {chunkCoord}", this);
             return;
         }
 
         if (!view.AddChunk(chunkCoord, chunkObject))
         {
-            Debug.LogWarning($"Ã»Å© µî·Ï ½ÇÆĞ ¶Ç´Â Áßº¹: {chunkCoord}", this);
+            Debug.LogWarning($"ì²­í¬ ë“±ë¡ ì‹¤íŒ¨ ë˜ëŠ” ì¤‘ë³µ: {chunkCoord}", this);
             Destroy(chunkObject);
             return;
         }
 
-        Debug.Log($"Ã»Å© »ı¼º ¿Ï·á : {chunkCoord}");
+        Debug.Log($"ì²­í¬ ìƒì„± ì™„ë£Œ : {chunkCoord}");
+    }
+
+    /// <summary>
+    /// ì²­í¬ ì‹œìŠ¤í…œ ì´ˆê¸°í™”ì— ë§ì¶° ë„¥ì„œìŠ¤ë¥¼ ì§€ì •ëœ ì›”ë“œ ì¢Œí‘œì— ì„¤ì¹˜
+    /// </summary>
+    private void SpawnNexus()
+    {
+        if (spawnedNexus != null)
+            return;
+
+        if (nexusPrefab == null)
+        {
+            Debug.LogWarning("ChunkPresenter ê²½ê³ : NexusPrefabì´ ì—°ê²°ë˜ì§€ ì•Šì•„ ë„¥ì„œìŠ¤ë¥¼ ì„¤ì¹˜í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.", this);
+            return;
+        }
+
+        spawnedNexus = Instantiate(nexusPrefab, nexusSpawnPosition, Quaternion.identity);
+        spawnedNexus.name = "Nexus";
+
+        Debug.Log($"6. ë„¥ì„œìŠ¤ ì„¤ì¹˜ ì™„ë£Œ / ìœ„ì¹˜: {nexusSpawnPosition}");
     }
 }

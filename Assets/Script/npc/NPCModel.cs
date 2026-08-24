@@ -1,15 +1,15 @@
 using UnityEngine;
 
 /// <summary>
-/// NPCÀÇ µ¥ÀÌÅÍ¸¦ º¸°üÇÏ°í
-/// Äù½ºÆ® ¼ö¶ô ¿©ºÎ, ¿Ï·á ¿©ºÎÃ³·³ °ÔÀÓ µµÁß º¯ÇÏ´Â »óÅÂ¸¦ °ü¸®
+/// NPCì˜ ë°ì´í„°ë¥¼ ë³´ê´€í•˜ê³ 
+/// í€˜ìŠ¤íŠ¸ ìˆ˜ë½ ì—¬ë¶€, ì™„ë£Œ ì—¬ë¶€ì²˜ëŸ¼ ê²Œì„ ë„ì¤‘ ë³€í•˜ëŠ” ìƒíƒœë¥¼ ê´€ë¦¬
 /// </summary>
 public class NPCModel : MonoBehaviour
 {
-    [Header("NPC µ¥ÀÌÅÍ")]
+    [Header("NPC ë°ì´í„°")]
     [SerializeField] private NPCData npcData;
 
-    [Header("Äù½ºÆ® ÁøÇà »óÅÂ")]
+    [Header("í€˜ìŠ¤íŠ¸ ì§„í–‰ ìƒíƒœ")]
     private bool isQuestAccepted;
     private bool isQuestCompleted;
 
@@ -27,12 +27,12 @@ public class NPCModel : MonoBehaviour
     {
         if (npcData == null)
         {
-            Debug.LogWarning(gameObject.name + "¿¡ NPCData°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning(gameObject.name + "ì— NPCDataê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
     }
 
     /// <summary>
-    /// Äù½ºÆ®¸¦ ¼ö¶ôÇßÀ» ¶§ È£ÃâÇÏ´Â ÇÔ¼ö
+    /// í€˜ìŠ¤íŠ¸ë¥¼ ìˆ˜ë½í–ˆì„ ë•Œ í˜¸ì¶œí•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public void AcceptQuest()
     {

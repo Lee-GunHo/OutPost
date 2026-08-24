@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// ¿ùµå Ã¢°í¿Í ÇÃ·¹ÀÌ¾î FÅ° »óÈ£ÀÛ¿ë ¿¬°á
+/// ì›”ë“œ ì°½ê³ ì™€ í”Œë ˆì´ì–´ Fí‚¤ ìƒí˜¸ì‘ìš© ì—°ê²°
 /// </summary>
 [RequireComponent(typeof(ChestModel))]
 public class ChestInteractable :
@@ -11,7 +11,7 @@ public class ChestInteractable :
     [Header("Model")]
     [SerializeField] private ChestModel chestModel;
 
-    [Header("»óÈ£ÀÛ¿ë Ç¥½Ã")]
+    [Header("ìƒí˜¸ì‘ìš© í‘œì‹œ")]
     [SerializeField] private GameObject interactionMark;
 
     private PlayerPresenter currentPlayer;
@@ -73,7 +73,7 @@ public class ChestInteractable :
             player != currentPlayer)
         {
             Debug.Log(
-                "ÇÃ·¹ÀÌ¾î°¡ Ã¢°í »óÈ£ÀÛ¿ë ¹üÀ§ ¹Û¿¡ ÀÖ½À´Ï´Ù."
+                "í”Œë ˆì´ì–´ê°€ ì°½ê³  ìƒí˜¸ì‘ìš© ë²”ìœ„ ë°–ì— ìˆìŠµë‹ˆë‹¤."
             );
 
             return;
@@ -83,7 +83,7 @@ public class ChestInteractable :
         {
             Debug.LogWarning(
                 gameObject.name +
-                "¿¡ ChestModelÀÌ ¾ø½À´Ï´Ù."
+                "ì— ChestModelì´ ì—†ìŠµë‹ˆë‹¤."
             );
 
             return;
@@ -92,7 +92,7 @@ public class ChestInteractable :
         if (ChestPresenter.Instance == null)
         {
             Debug.LogWarning(
-                "¾À¿¡ ChestPresenter°¡ ¾ø½À´Ï´Ù."
+                "ì”¬ì— ChestPresenterê°€ ì—†ìŠµë‹ˆë‹¤."
             );
 
             return;

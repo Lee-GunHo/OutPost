@@ -31,7 +31,7 @@ public class InventoryModel : MonoBehaviour
         if (item == null || amount <= 0)
             return false;
 
-        // ÀüÃ¼ ¼ö·®ÀÌ µé¾î°¥ °ø°£ÀÌ ÀÖ´ÂÁö ¸ÕÀú °Ë»ç
+        // ì „ì²´ ìˆ˜ëŸ‰ì´ ë“¤ì–´ê°ˆ ê³µê°„ì´ ìžˆëŠ”ì§€ ë¨¼ì € ê²€ì‚¬
         if (!CanAddItem(item, amount))
             return false;
 
@@ -57,7 +57,7 @@ public class InventoryModel : MonoBehaviour
             }
         }
 
-        // ¾Æ·¡ÂÊÀÇ ºó ½½·Ô¿¡ Ãß°¡ÇÏ´Â ±âÁ¸ ÄÚµå´Â ±×´ë·Î À¯Áö
+        // ì•„ëž˜ìª½ì˜ ë¹ˆ ìŠ¬ë¡¯ì— ì¶”ê°€í•˜ëŠ” ê¸°ì¡´ ì½”ë“œëŠ” ê·¸ëŒ€ë¡œ ìœ ì§€
 
         for (int i = 0; i < Items.Count; i++)
         {
@@ -132,7 +132,7 @@ public class InventoryModel : MonoBehaviour
         return Items[index];
     }
 
-    // (°æ¹Î) 0707 NPC Äù½ºÆ® °ü·Ã ÄÚµå Ãß°¡
+    // (ê²½ë¯¼) 0707 NPC í€˜ìŠ¤íŠ¸ ê´€ë ¨ ì½”ë“œ ì¶”ê°€
     public int GetItemCount(ItemData item)
     {
         if(item == null)
@@ -151,7 +151,7 @@ public class InventoryModel : MonoBehaviour
         return count;
     }
 
-    // (°æ¹Î) 0707 NPC Äù½ºÆ® °ü·Ã ÄÚµå Ãß°¡
+    // (ê²½ë¯¼) 0707 NPC í€˜ìŠ¤íŠ¸ ê´€ë ¨ ì½”ë“œ ì¶”ê°€
     public bool HasItem(ItemData item, int amount)
     {
         if(item == null || amount <= 0) 
@@ -160,7 +160,7 @@ public class InventoryModel : MonoBehaviour
         return GetItemCount(item) >= amount;
     }
 
-    // (°æ¹Î) 0707 NPC Äù½ºÆ® °ü·Ã ÄÚµå Ãß°¡
+    // (ê²½ë¯¼) 0707 NPC í€˜ìŠ¤íŠ¸ ê´€ë ¨ ì½”ë“œ ì¶”ê°€
     public bool CanAddItem(ItemData item, int amount)
     {
         if(item == null || amount <= 0)
@@ -196,7 +196,7 @@ public class InventoryModel : MonoBehaviour
         return false;
     }
 
-    // (°æ¹Î) 0707 NPC Äù½ºÆ® °ü·Ã ÄÚµå Ãß°¡
+    // (ê²½ë¯¼) 0707 NPC í€˜ìŠ¤íŠ¸ ê´€ë ¨ ì½”ë“œ ì¶”ê°€
     public bool RemoveItem(ItemData item, int amount)
     {
         if(item == null || amount <= 0)

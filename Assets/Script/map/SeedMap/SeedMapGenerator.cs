@@ -1,6 +1,6 @@
 /// <summary>
-/// ±âÁ¸ SeedMapGenerator ÂüÁ¶¸¦ À¯ÁöÇÏ±â À§ÇÑ È£È¯ Å¬·¡½º.
-/// ½ÇÁ¦ Presenter µ¿ÀÛÀº SeedMapPresenter°¡ ´ã´çÇÑ´Ù.
+/// ê¸°ì¡´ SeedMapGenerator ì°¸ì¡°ë¥¼ ìœ ì§€í•˜ê¸° ìœ„í•œ í˜¸í™˜ í´ë˜ìŠ¤.
+/// ì‹¤ì œ Presenter ë™ì‘ì€ SeedMapPresenterê°€ ë‹´ë‹¹í•œë‹¤.
 /// </summary>
 public class SeedMapGenerator : SeedMapPresenter
 {

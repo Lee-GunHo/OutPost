@@ -55,10 +55,10 @@ public class ItemData : ScriptableObject
     public string description;
 
     [Header("Placeable Block")]
-    [Tooltip("ToolTypeÀÌ PlaceableÀÏ ¶§ ¿ùµå¿¡ »ı¼ºÇÒ º®/ºí·Ï ÇÁ¸®ÆÕ")]
+    [Tooltip("ToolTypeì´ Placeableì¼ ë•Œ ì›”ë“œì— ìƒì„±í•  ë²½/ë¸”ë¡ í”„ë¦¬íŒ¹")]
     public GameObject placeablePrefab;
 
-    [Tooltip("¹Ù´Ú ±âÁØ ¼³Ä¡ ³ôÀÌ. ±âÁ¸ º®ÀÇ wallYOffset°ú °°Àº °ªÀ¸·Î ¸ÂÃß¼¼¿ä.")]
+    [Tooltip("ë°”ë‹¥ ê¸°ì¤€ ì„¤ì¹˜ ë†’ì´. ê¸°ì¡´ ë²½ì˜ wallYOffsetê³¼ ê°™ì€ ê°’ìœ¼ë¡œ ë§ì¶”ì„¸ìš”.")]
     public float placeableYOffset = 1f;
 
 

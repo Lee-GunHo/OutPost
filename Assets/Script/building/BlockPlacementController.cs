@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// ÇÃ·¹ÀÌ¾î ÀÎº¥Åä¸®¿¡¼­ Ã¹ ¹øÂ° ¼³Ä¡ °¡´É ¾ÆÀÌÅÛÀ» Ã£¾Æ ºí·ÏÀ» ¼³Ä¡
+/// í”Œë ˆì´ì–´ ì¸ë²¤í† ë¦¬ì—ì„œ ì²« ë²ˆì§¸ ì„¤ì¹˜ ê°€ëŠ¥ ì•„ì´í…œì„ ì°¾ì•„ ë¸”ë¡ì„ ì„¤ì¹˜
 /// </summary>
 public class BlockPlacementController : MonoBehaviour
 {
@@ -22,7 +22,7 @@ public class BlockPlacementController : MonoBehaviour
     [SerializeField] private bool autoScalePreview = true;
 
     [Header("Placement Check")]
-    [Tooltip("Floor ·¹ÀÌ¾î´Â Á¦¿ÜÇÏ°í Wall, Player, NPC, Building µîÀ» Æ÷ÇÔÇÏ¼¼¿ä.")]
+    [Tooltip("Floor ë ˆì´ì–´ëŠ” ì œì™¸í•˜ê³  Wall, Player, NPC, Building ë“±ì„ í¬í•¨í•˜ì„¸ìš”.")]
     [SerializeField] private LayerMask placementBlockerMask;
     [SerializeField] private float checkCenterY = 1f;
     [SerializeField] private float checkHeight = 1.8f;
@@ -80,15 +80,15 @@ public class BlockPlacementController : MonoBehaviour
             return;
         }
 
-        // ÀÎº¥Åä¸® ¾ÕÂÊ ½½·ÔºÎÅÍ ¼³Ä¡ °¡´ÉÇÑ ¾ÆÀÌÅÛÀ» ÀÚµ¿ °Ë»ö
+        // ì¸ë²¤í† ë¦¬ ì•ìª½ ìŠ¬ë¡¯ë¶€í„° ì„¤ì¹˜ ê°€ëŠ¥í•œ ì•„ì´í…œì„ ìë™ ê²€ìƒ‰
         if (!TryGetPlaceableItem(out ItemData placeableItem))
         {
-            Debug.LogWarning("ÇöÀç Hotbar ¼±ÅÃ ¾ÆÀÌÅÛÀº ¼³Ä¡ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("í˜„ì¬ Hotbar ì„ íƒ ì•„ì´í…œì€ ì„¤ì¹˜í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             HidePreview();
             return;
         }
 
-        Debug.Log("¼³Ä¡ ¾ÆÀÌÅÛ °¨Áö: " + placeableItem.itemName);
+        Debug.Log("ì„¤ì¹˜ ì•„ì´í…œ ê°ì§€: " + placeableItem.itemName);
 
         if (!TryGetMouseGlobalCell(out Vector2Int globalCell))
         {
@@ -101,7 +101,7 @@ public class BlockPlacementController : MonoBehaviour
             previewYOffset
         );
 
-        // ±âÁ¸ º®À» ºÎ¼ú ¼ö ÀÖ´Â °Å¸®¿Í µ¿ÀÏÇÑ ¹üÀ§¿¡¼­¸¸ Ç¥½Ã ¹× ¼³Ä¡
+        // ê¸°ì¡´ ë²½ì„ ë¶€ìˆ  ìˆ˜ ìˆëŠ” ê±°ë¦¬ì™€ ë™ì¼í•œ ë²”ìœ„ì—ì„œë§Œ í‘œì‹œ ë° ì„¤ì¹˜
         if (!IsWithinBreakRange(currentGridWorldPosition))
         {
             HidePreview();
@@ -160,11 +160,11 @@ public class BlockPlacementController : MonoBehaviour
 
         ItemData itemData = selectedStack.item;
 
-        // ¼³Ä¡ °¡´ÉÇÑ ¾ÆÀÌÅÛÀÎÁö È®ÀÎ
+        // ì„¤ì¹˜ ê°€ëŠ¥í•œ ì•„ì´í…œì¸ì§€ í™•ì¸
         if (itemData.toolType != ToolType.Placeable)
             return false;
 
-        // ¼³Ä¡ÇÒ ÇÁ¸®ÆÕÀÌ Á¸ÀçÇÏ´ÂÁö È®ÀÎ
+        // ì„¤ì¹˜í•  í”„ë¦¬íŒ¹ì´ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸
         if (itemData.placeablePrefab == null)
             return false;
 
@@ -218,7 +218,7 @@ public class BlockPlacementController : MonoBehaviour
             return false;
         }
 
-        // ÇÃ·¹ÀÌ¾î°¡ ÇöÀç ¼­ ÀÖ´Â ¼¿ ¶Ç´Â ½ÇÁ¦ ¸öÃ¼¿Í °ãÄ¡´Â ¼¿¿¡´Â ¼³Ä¡ÇÏÁö ¾ÊÀ½
+        // í”Œë ˆì´ì–´ê°€ í˜„ì¬ ì„œ ìˆëŠ” ì…€ ë˜ëŠ” ì‹¤ì œ ëª¸ì²´ì™€ ê²¹ì¹˜ëŠ” ì…€ì—ëŠ” ì„¤ì¹˜í•˜ì§€ ì•ŠìŒ
         if(IsPlayerOccupyingCell(globalCell)) 
             return false;
 
@@ -246,15 +246,15 @@ public class BlockPlacementController : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î°¡ ¼­ ÀÖ´Â ±×¸®µå Ä­°ú ÇÃ·¹ÀÌ¾îÀÇ ½ÇÁ¦ ºñ-Trigger Äİ¶óÀÌ´õ°¡
-    /// °ãÄ¡´Â Ä­À» ¼³Ä¡ ºÒ°¡·Î ÆÇÁ¤
+    /// í”Œë ˆì´ì–´ê°€ ì„œ ìˆëŠ” ê·¸ë¦¬ë“œ ì¹¸ê³¼ í”Œë ˆì´ì–´ì˜ ì‹¤ì œ ë¹„-Trigger ì½œë¼ì´ë”ê°€
+    /// ê²¹ì¹˜ëŠ” ì¹¸ì„ ì„¤ì¹˜ ë¶ˆê°€ë¡œ íŒì •
     /// </summary>
     private bool IsPlayerOccupyingCell(Vector2Int globalCell)
     {
         if (playerPresenter == null || chunkManager == null)
             return false;
 
-        // Äİ¶óÀÌ´õ ¼³Á¤°ú °ü°è¾øÀÌ ÇÃ·¹ÀÌ¾î ±âÁØ ÁÂÇ¥°¡ ¼ÓÇÑ ¼¿Àº Ç×»ó Â÷´Ü
+        // ì½œë¼ì´ë” ì„¤ì •ê³¼ ê´€ê³„ì—†ì´ í”Œë ˆì´ì–´ ê¸°ì¤€ ì¢Œí‘œê°€ ì†í•œ ì…€ì€ í•­ìƒ ì°¨ë‹¨
         Vector2Int playerCell =
             chunkManager.WorldToGlobalCell(playerPresenter.transform.position);
 
@@ -299,7 +299,7 @@ public class BlockPlacementController : MonoBehaviour
         if (itemData == null || itemData.placeablePrefab == null)
             return;
 
-        // ¼³Ä¡ Á÷Àü¿¡ ¾ÆÀÌÅÛÀÌ ¾ÆÁ÷ Á¸ÀçÇÏ´ÂÁö ´Ù½Ã È®ÀÎ
+        // ì„¤ì¹˜ ì§ì „ì— ì•„ì´í…œì´ ì•„ì§ ì¡´ì¬í•˜ëŠ”ì§€ ë‹¤ì‹œ í™•ì¸
         ItemStack selectedStack = hotbarPresenter.GetSelectedItem();
 
         if (selectedStack == null ||
@@ -360,7 +360,7 @@ public class BlockPlacementController : MonoBehaviour
             );
         }
 
-        // ÀÎº¥Åä¸®¿¡¼­ ºí·Ï 1°³¸¦ Â÷°¨
+        // ì¸ë²¤í† ë¦¬ì—ì„œ ë¸”ë¡ 1ê°œë¥¼ ì°¨ê°
         bool consumed = hotbarPresenter.ConsumeSelectedItem(1);
 
         if (!consumed)

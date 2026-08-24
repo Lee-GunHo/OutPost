@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// BreakableWallModel°ú BreakableWallView¸¦ ¿¬°áÇÏ°í
-/// ÆÄ±« ÀúÀå ¹× ¼³Ä¡ ºí·Ï ÀúÀå Á¦°Å¸¦ Á¦¾î
+/// BreakableWallModelê³¼ BreakableWallViewë¥¼ ì—°ê²°í•˜ê³ 
+/// íŒŒê´´ ì €ì¥ ë° ì„¤ì¹˜ ë¸”ë¡ ì €ì¥ ì œê±°ë¥¼ ì œì–´
 /// </summary>
 [RequireComponent(typeof(BreakableWallModel))]
 [RequireComponent(typeof(BreakableWallView))]
@@ -21,7 +21,7 @@ public class BreakableWallPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ±âÁ¸ BreakableWall Inspector µ¥ÀÌÅÍ¸¦ Model·Î Àü´ŞÇÏ±â À§ÇÑ È®Àå ÁöÁ¡
+    /// ê¸°ì¡´ BreakableWall Inspector ë°ì´í„°ë¥¼ Modelë¡œ ì „ë‹¬í•˜ê¸° ìœ„í•œ í™•ì¥ ì§€ì 
     /// </summary>
     protected virtual void ApplyLegacySerializedData()
     {
@@ -96,7 +96,7 @@ public class BreakableWallPresenter : MonoBehaviour
         );
     }
 
-    // ÀÌÀü SeedMapGenerator¿ÍÀÇ ÄÄÆÄÀÏ È£È¯¿ë ¿À¹ö·Îµå
+    // ì´ì „ SeedMapGeneratorì™€ì˜ ì»´íŒŒì¼ í˜¸í™˜ìš© ì˜¤ë²„ë¡œë“œ
     public void InitializeGeneratedWall(
         int worldSeed,
         Vector2Int chunkCoord,
@@ -140,7 +140,7 @@ public class BreakableWallPresenter : MonoBehaviour
 
         if (model == null)
         {
-            Debug.LogError(gameObject.name + "¿¡ BreakableWallModelÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogError(gameObject.name + "ì— BreakableWallModelì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -162,7 +162,7 @@ public class BreakableWallPresenter : MonoBehaviour
 
         if (model == null || view == null)
         {
-            Debug.LogError(gameObject.name + "ÀÇ BreakableWall MVP ±¸¼ºÀÌ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù.");
+            Debug.LogError(gameObject.name + "ì˜ BreakableWall MVP êµ¬ì„±ì´ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -173,7 +173,7 @@ public class BreakableWallPresenter : MonoBehaviour
         {
             Debug.LogWarning(
                 gameObject.name +
-                ": »ı¼º ÁÂÇ¥°¡ Àü´ŞµÇÁö ¾Ê¾Æ ÆÄ±« »óÅÂ¸¦ ÀúÀåÇÒ ¼ö ¾ø½À´Ï´Ù."
+                ": ìƒì„± ì¢Œí‘œê°€ ì „ë‹¬ë˜ì§€ ì•Šì•„ íŒŒê´´ ìƒíƒœë¥¼ ì €ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤."
             );
         }
         else if (model.IsPlayerPlaced)
@@ -205,7 +205,7 @@ public class BreakableWallPresenter : MonoBehaviour
             return;
 
         Debug.LogWarning(
-            "¼³Ä¡ ºí·Ï ÀúÀå ±â·ÏÀ» Ã£Áö ¸øÇß½À´Ï´Ù. " +
+            "ì„¤ì¹˜ ë¸”ë¡ ì €ì¥ ê¸°ë¡ì„ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. " +
             $"GlobalCell({model.GlobalCellCoord.x}, {model.GlobalCellCoord.y})"
         );
     }
@@ -234,7 +234,7 @@ public class BreakableWallPresenter : MonoBehaviour
         if (!saveVerified)
         {
             Debug.LogError(
-                $"[{model.GeneratedObjectType} ÀúÀå °ËÁõ ½ÇÆĞ] " +
+                $"[{model.GeneratedObjectType} ì €ì¥ ê²€ì¦ ì‹¤íŒ¨] " +
                 $"GlobalCell({model.GlobalCellCoord.x}, {model.GlobalCellCoord.y})"
             );
 
@@ -245,7 +245,7 @@ public class BreakableWallPresenter : MonoBehaviour
             return;
 
         Debug.Log(
-            $"[{model.GeneratedObjectType} ÀúÀå °ËÁõ ¿Ï·á] " +
+            $"[{model.GeneratedObjectType} ì €ì¥ ê²€ì¦ ì™„ë£Œ] " +
             $"Seed({model.WorldSeed}) " +
             $"GlobalCell({model.GlobalCellCoord.x}, {model.GlobalCellCoord.y}) " +
             $"Chunk({model.ChunkCoord.x}, {model.ChunkCoord.y}) " +

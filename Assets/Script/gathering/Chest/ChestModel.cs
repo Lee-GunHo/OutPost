@@ -4,22 +4,22 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Ã¢°íÀÇ ¾ÆÀÌÅÛ µ¥ÀÌÅÍ¸¸ °ü¸®
-/// ChestSaveManager¿Í ¿¬°áµÇ¾î °ÔÀÓÀ» Á¾·áÇØµµ ½½·Ô »óÅÂ¸¦ À¯Áö
+/// ì°½ê³ ì˜ ì•„ì´í…œ ë°ì´í„°ë§Œ ê´€ë¦¬
+/// ChestSaveManagerì™€ ì—°ê²°ë˜ì–´ ê²Œì„ì„ ì¢…ë£Œí•´ë„ ìŠ¬ë¡¯ ìƒíƒœë¥¼ ìœ ì§€
 /// </summary>
 public class ChestModel : MonoBehaviour
 {
     public event Action OnChestChanged;
 
-    [Header("¿µ±¸ ÀúÀå ID")]
-    [Tooltip("¸ğµç Ã¢°í°¡ ¼­·Î ´Ù¸¥ °ªÀ» °¡Á®¾ß ÇÕ´Ï´Ù. ÇÑ¹ø »ç¿ëÇÑ ID´Â ¹Ù²ÙÁö ¸¶¼¼¿ä.")]
+    [Header("ì˜êµ¬ ì €ì¥ ID")]
+    [Tooltip("ëª¨ë“  ì°½ê³ ê°€ ì„œë¡œ ë‹¤ë¥¸ ê°’ì„ ê°€ì ¸ì•¼ í•©ë‹ˆë‹¤. í•œë²ˆ ì‚¬ìš©í•œ IDëŠ” ë°”ê¾¸ì§€ ë§ˆì„¸ìš”.")]
     [SerializeField] private string persistentChestId;
 
-    [Header("Ã¢°í ¼³Á¤")]
+    [Header("ì°½ê³  ì„¤ì •")]
     [SerializeField, Min(1)] private int maxSlots = 40;
 
-    [Header("ÃÖÃÊ 1È¸ ½ÃÀÛ ¾ÆÀÌÅÛ")]
-    [Tooltip("ÀúÀå µ¥ÀÌÅÍ°¡ ¾ÆÁ÷ ¾ø´Â »õ Ã¢°í¿¡¸¸ Àû¿ëµË´Ï´Ù.")]
+    [Header("ìµœì´ˆ 1íšŒ ì‹œì‘ ì•„ì´í…œ")]
+    [Tooltip("ì €ì¥ ë°ì´í„°ê°€ ì•„ì§ ì—†ëŠ” ìƒˆ ì°½ê³ ì—ë§Œ ì ìš©ë©ë‹ˆë‹¤.")]
     [SerializeField]
     private List<ItemStack> startingItems =
         new List<ItemStack>();
@@ -48,8 +48,8 @@ public class ChestModel : MonoBehaviour
         if (!isInitialized)
             return;
 
-        // ¸ğµç º¯°æÀº ¹ß»ı Áï½Ã ÀúÀåµÇ¹Ç·Î ÆÄ±« ½Ã¿¡´Â ±¸µ¶¸¸ ÇØÁ¦
-        // ¾ÖÇÃ¸®ÄÉÀÌ¼Ç Á¾·á Áß Manager°¡ ¸ÕÀú ÆÄ±«µÈ °æ¿ì Àç»ı¼ºµÇ´Â ¹®Á¦µµ ¹æÁö
+        // ëª¨ë“  ë³€ê²½ì€ ë°œìƒ ì¦‰ì‹œ ì €ì¥ë˜ë¯€ë¡œ íŒŒê´´ ì‹œì—ëŠ” êµ¬ë…ë§Œ í•´ì œ
+        // ì• í”Œë¦¬ì¼€ì´ì…˜ ì¢…ë£Œ ì¤‘ Managerê°€ ë¨¼ì € íŒŒê´´ëœ ê²½ìš° ì¬ìƒì„±ë˜ëŠ” ë¬¸ì œë„ ë°©ì§€
         OnChestChanged -= SaveCurrentState;
     }
 
@@ -59,22 +59,22 @@ public class ChestModel : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀıÂ÷ »ı¼º Ã¢°í´Â »ı¼º Á÷ÈÄ Start ÀÌÀü¿¡ ÀÌ ÇÔ¼ö¸¦ È£ÃâÇÏ¿©
-    /// ¿ùµå ÁÂÇ¥ ±â¹İ ID µîÀ» Á÷Á¢ ÁöÁ¤ÇÒ ¼ö ÀÖÀ½.
+    /// ì ˆì°¨ ìƒì„± ì°½ê³ ëŠ” ìƒì„± ì§í›„ Start ì´ì „ì— ì´ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ì—¬
+    /// ì›”ë“œ ì¢Œí‘œ ê¸°ë°˜ ID ë“±ì„ ì§ì ‘ ì§€ì •í•  ìˆ˜ ìˆìŒ.
     /// </summary>
     public void SetPersistentChestId(string chestId)
     {
         if (string.IsNullOrWhiteSpace(chestId))
         {
-            Debug.LogError("Chest ID¸¦ ºó °ªÀ¸·Î ¼³Á¤ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError("Chest IDë¥¼ ë¹ˆ ê°’ìœ¼ë¡œ ì„¤ì •í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (isInitialized)
         {
             Debug.LogWarning(
-                $"{gameObject.name}: ÀÌ¹Ì ÀúÀå ½Ã½ºÅÛÀÌ ÃÊ±âÈ­µÈ µÚ¿¡´Â " +
-                "Chest ID¸¦ º¯°æÇÏÁö ¾Ê´Â °ÍÀÌ ¾ÈÀüÇÕ´Ï´Ù."
+                $"{gameObject.name}: ì´ë¯¸ ì €ì¥ ì‹œìŠ¤í…œì´ ì´ˆê¸°í™”ëœ ë’¤ì—ëŠ” " +
+                "Chest IDë¥¼ ë³€ê²½í•˜ì§€ ì•ŠëŠ” ê²ƒì´ ì•ˆì „í•©ë‹ˆë‹¤."
             );
         }
 
@@ -85,7 +85,7 @@ public class ChestModel : MonoBehaviour
     private void GenerateNewChestId()
     {
         persistentChestId = Guid.NewGuid().ToString("N");
-        Debug.Log($"»õ Chest ID »ı¼º ¿Ï·á: {persistentChestId}", this);
+        Debug.Log($"ìƒˆ Chest ID ìƒì„± ì™„ë£Œ: {persistentChestId}", this);
     }
 
     [ContextMenu("Delete This Chest Save")]
@@ -98,7 +98,7 @@ public class ChestModel : MonoBehaviour
 
         if (!deleted)
         {
-            Debug.Log("»èÁ¦ÇÒ ±âÁ¸ Ã¢°í ÀúÀå µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.", this);
+            Debug.Log("ì‚­ì œí•  ê¸°ì¡´ ì°½ê³  ì €ì¥ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.", this);
         }
     }
 
@@ -193,16 +193,16 @@ public class ChestModel : MonoBehaviour
     }
 
     /// <summary>
-    /// °°Àº ¾ÆÀÌÅÛ ½ºÅÃÀ» ÇÕÄ¡°í ¸ğµç ºó ½½·ÔÀ» µÚ·Î º¸³¿.
-    /// ¾ÆÀÌÅÛ Á¾·ùÀÇ ¼ø¼­´Â ±âÁ¸ ½½·Ô¿¡¼­ Ã³À½ µîÀåÇÑ ¼ø¼­¸¦ À¯Áö
+    /// ê°™ì€ ì•„ì´í…œ ìŠ¤íƒì„ í•©ì¹˜ê³  ëª¨ë“  ë¹ˆ ìŠ¬ë¡¯ì„ ë’¤ë¡œ ë³´ëƒ„.
+    /// ì•„ì´í…œ ì¢…ë¥˜ì˜ ìˆœì„œëŠ” ê¸°ì¡´ ìŠ¬ë¡¯ì—ì„œ ì²˜ìŒ ë“±ì¥í•œ ìˆœì„œë¥¼ ìœ ì§€
     /// </summary>
     public void GartherItems()
     {
-        // ¾ÆÀÌÅÛ º° ÀüÃ¼ ¼ö·®
+        // ì•„ì´í…œ ë³„ ì „ì²´ ìˆ˜ëŸ‰
         Dictionary<ItemData, int> totalAmounts =
             new Dictionary<ItemData, int>();
 
-        // ±âÁ¸¿¡ Ã³À½ µîÀåÇÑ ¼ø¼­
+        // ê¸°ì¡´ì— ì²˜ìŒ ë“±ì¥í•œ ìˆœì„œ
         List<ItemData> itemOrder = 
             new List<ItemData>();
 
@@ -249,8 +249,8 @@ public class ChestModel : MonoBehaviour
     }
 
     /// <summary>
-    /// ¾ÆÀÌÅÛ Å¸ÀÔ -> Èñ±Íµµ -> ¾ÆÀÌÅÛ ID ¼ø¼­·Î Á¤·Ä
-    /// °°Àº ¾ÆÀÌÅÛÀÇ ½ºÅÃÀº ÇÕÄ¡Áö ¾ÊÀ½
+    /// ì•„ì´í…œ íƒ€ì… -> í¬ê·€ë„ -> ì•„ì´í…œ ID ìˆœì„œë¡œ ì •ë ¬
+    /// ê°™ì€ ì•„ì´í…œì˜ ìŠ¤íƒì€ í•©ì¹˜ì§€ ì•ŠìŒ
     /// </summary>
     public void SortItemsByType()
     {
@@ -271,9 +271,9 @@ public class ChestModel : MonoBehaviour
     }
 
     /// <summary>
-    /// Á¾·ùº° Á¤·Ä ºñ±³ ÇÔ¼ö
-    /// Å¸ÀÔÀº ¿À¸§Â÷¼ø, Èñ±Íµµ´Â ³ôÀº µî±Ş ºÎÅÍ,
-    /// ID´Â ³·Àº ¹øÈ£ºÎÅÍ Á¤·Ä
+    /// ì¢…ë¥˜ë³„ ì •ë ¬ ë¹„êµ í•¨ìˆ˜
+    /// íƒ€ì…ì€ ì˜¤ë¦„ì°¨ìˆœ, í¬ê·€ë„ëŠ” ë†’ì€ ë“±ê¸‰ ë¶€í„°,
+    /// IDëŠ” ë‚®ì€ ë²ˆí˜¸ë¶€í„° ì •ë ¬
     /// </summary>
     private static int CompareItemStacks(
         ItemStack first,
@@ -291,18 +291,18 @@ public class ChestModel : MonoBehaviour
         ItemData firstItem = first.item;
         ItemData secondItem = second.item;
 
-        // 1. ¾ÆÀÌÅÛ Å¸ÀÔ ¿À¸§Â÷¼ø
+        // 1. ì•„ì´í…œ íƒ€ì… ì˜¤ë¦„ì°¨ìˆœ
         int typeCompare = 
             firstItem.itemType.CompareTo(secondItem.itemType);
 
         if(typeCompare != 0)
             return typeCompare;
 
-        // 2. Èñ±Íµµ ³»¸²Â÷¼ø
+        // 2. í¬ê·€ë„ ë‚´ë¦¼ì°¨ìˆœ
         int gradeCompare = 
             secondItem.itemGrade.CompareTo(firstItem.itemGrade);
 
-        /* 2-1. Èñ±Íµµ ¿À¸§Â÷¼ø
+        /* 2-1. í¬ê·€ë„ ì˜¤ë¦„ì°¨ìˆœ
         int gradeCompare = 
             firstItem.itemGrade.CompateTo(secondItem.itemGrade);
         */
@@ -310,14 +310,14 @@ public class ChestModel : MonoBehaviour
         if(gradeCompare != 0)
             return gradeCompare;
 
-        // 3. ¾ÆÀÌÅÛ ID ¿À¸§Â÷¼ø
+        // 3. ì•„ì´í…œ ID ì˜¤ë¦„ì°¨ìˆœ
         return firstItem.itemID.CompareTo(secondItem.itemID);
     }
 
     /// <summary>
-    /// Á¤·Ä °á°ú¸¦ ÀüÃ¼ Ã¢°í ½½·Ô¿¡ Àû¿ëÇÏ°í
-    /// ³²´Â ½½·ÔÀº null·Î ÃÊ±âÈ­
-    /// ÀÌº¥Æ®¿Í ÀúÀåÀº ÇÑ ¹ø¸¸ ½ÇÇà
+    /// ì •ë ¬ ê²°ê³¼ë¥¼ ì „ì²´ ì°½ê³  ìŠ¬ë¡¯ì— ì ìš©í•˜ê³ 
+    /// ë‚¨ëŠ” ìŠ¬ë¡¯ì€ nullë¡œ ì´ˆê¸°í™”
+    /// ì´ë²¤íŠ¸ì™€ ì €ì¥ì€ í•œ ë²ˆë§Œ ì‹¤í–‰
     /// </summary>
     private void ApplySortedItems(
         IReadOnlyList<ItemStack> sortedItems)
@@ -355,8 +355,8 @@ public class ChestModel : MonoBehaviour
         if (saveManager == null || !saveManager.IsReady)
         {
             Debug.LogError(
-                $"{gameObject.name}: ChestSaveManager¿¡ ItemDatabase°¡ ¿¬°áµÇÁö ¾Ê¾Æ " +
-                "Ã¢°í ¿µ±¸ ÀúÀåÀ» ½ÃÀÛÇÏÁö ¾Ê½À´Ï´Ù. ±âÁ¸ ÀúÀå ÆÄÀÏÀº µ¤¾î¾²Áö ¾Ê½À´Ï´Ù.",
+                $"{gameObject.name}: ChestSaveManagerì— ItemDatabaseê°€ ì—°ê²°ë˜ì§€ ì•Šì•„ " +
+                "ì°½ê³  ì˜êµ¬ ì €ì¥ì„ ì‹œì‘í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ê¸°ì¡´ ì €ì¥ íŒŒì¼ì€ ë®ì–´ì“°ì§€ ì•ŠìŠµë‹ˆë‹¤.",
                 this
             );
 
@@ -385,11 +385,11 @@ public class ChestModel : MonoBehaviour
         OnChestChanged += SaveCurrentState;
         isInitialized = true;
 
-        // »õ Ã¢°íµµ Áï½Ã ÆÄÀÏ¿¡ µî·Ï
+        // ìƒˆ ì°½ê³ ë„ ì¦‰ì‹œ íŒŒì¼ì— ë“±ë¡
         SaveCurrentState();
 
-        // Presenter/View°¡ ÀÌ¹Ì ±¸µ¶ÇÑ °æ¿ì ÇöÀç »óÅÂ¸¦ °»½Å
-        // SaveCurrentState´Â Á÷Á¢ È£ÃâÇßÀ¸¹Ç·Î ÀúÀå ÀÌº¥Æ®¸¦ ´Ù½Ã È£ÃâÇÏÁö ¾ÊÀ½.
+        // Presenter/Viewê°€ ì´ë¯¸ êµ¬ë…í•œ ê²½ìš° í˜„ì¬ ìƒíƒœë¥¼ ê°±ì‹ 
+        // SaveCurrentStateëŠ” ì§ì ‘ í˜¸ì¶œí–ˆìœ¼ë¯€ë¡œ ì €ì¥ ì´ë²¤íŠ¸ë¥¼ ë‹¤ì‹œ í˜¸ì¶œí•˜ì§€ ì•ŠìŒ.
     }
 
     private void SaveCurrentState()
@@ -416,8 +416,8 @@ public class ChestModel : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(persistentChestId))
             return;
 
-        // ¼öµ¿ ID°¡ ¾øÀ» ¶§ »ç¿ëÇÏ´Â ¾ÈÁ¤ÀûÀÎ ÀÓ½Ã ±ÔÄ¢
-        // Á¤ÀûÀÎ Ã¢°í´Â °°Àº ¾À°ú °°Àº À§Ä¡¿¡ ÀÖÀ¸¸é °°Àº ID¸¦ »ç¿ë
+        // ìˆ˜ë™ IDê°€ ì—†ì„ ë•Œ ì‚¬ìš©í•˜ëŠ” ì•ˆì •ì ì¸ ì„ì‹œ ê·œì¹™
+        // ì •ì ì¸ ì°½ê³ ëŠ” ê°™ì€ ì”¬ê³¼ ê°™ì€ ìœ„ì¹˜ì— ìˆìœ¼ë©´ ê°™ì€ IDë¥¼ ì‚¬ìš©
         string sceneName = SceneManager.GetActiveScene().name;
         Vector3 position = transform.position;
 
@@ -429,9 +429,9 @@ public class ChestModel : MonoBehaviour
             $"{sceneName}_Chest_{positionX}_{positionY}_{positionZ}";
 
         Debug.LogWarning(
-            $"{gameObject.name}: Chest ID°¡ ºñ¾î ÀÖ¾î À§Ä¡ ±â¹İ ID¸¦ ÀÚµ¿ »ı¼ºÇß½À´Ï´Ù. " +
-            $"ID={persistentChestId}. Ã¢°í°¡ ÀÌµ¿ÇÏ°Å³ª °°Àº À§Ä¡¿¡ ¿©·¯ °³ ÀÖ´Ù¸é " +
-            "Inspector ¸Ş´ºÀÇ Generate New Chest ID¸¦ »ç¿ëÇÏ¼¼¿ä.",
+            $"{gameObject.name}: Chest IDê°€ ë¹„ì–´ ìˆì–´ ìœ„ì¹˜ ê¸°ë°˜ IDë¥¼ ìë™ ìƒì„±í–ˆìŠµë‹ˆë‹¤. " +
+            $"ID={persistentChestId}. ì°½ê³ ê°€ ì´ë™í•˜ê±°ë‚˜ ê°™ì€ ìœ„ì¹˜ì— ì—¬ëŸ¬ ê°œ ìˆë‹¤ë©´ " +
+            "Inspector ë©”ë‰´ì˜ Generate New Chest IDë¥¼ ì‚¬ìš©í•˜ì„¸ìš”.",
             this
         );
     }

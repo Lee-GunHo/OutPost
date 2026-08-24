@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// »óÁ¡ ÇÏ³ªÀÇ ÆÇ¸Å ¸ñ·ÏÀ» ÀúÀåÇÏ´Â µ¥ÀÌÅÍ
-/// ¹«±â »óÁ¡, ½Ä·áÇ° »óÁ¡ Ã³·³ µû·Î ¸¸µé ¼ö ÀÖÀ½
+/// ìƒì  í•˜ë‚˜ì˜ íŒë§¤ ëª©ë¡ì„ ì €ì¥í•˜ëŠ” ë°ì´í„°
+/// ë¬´ê¸° ìƒì , ì‹ë£Œí’ˆ ìƒì  ì²˜ëŸ¼ ë”°ë¡œ ë§Œë“¤ ìˆ˜ ìˆìŒ
 /// </summary>
 [CreateAssetMenu(fileName = "ShopData", menuName = "NPC/Shop Data")]
 public class ShopData : ScriptableObject
 {
-    [Header("±¸¸Å ½½·Ô¿¡ Ç¥½ÃÇÒ ¾ÆÀÌÅÛ ¸ñ·Ï")]
+    [Header("êµ¬ë§¤ ìŠ¬ë¡¯ì— í‘œì‹œí•  ì•„ì´í…œ ëª©ë¡")]
     [SerializeField] private List<ShopItemData> shopSellItems = new List<ShopItemData>();
 
-    [Header("ÆÇ¸Å ½½·Ô¿¡ Ç¥½ÃÇÒ ¾ÆÀÌÅÛ ¸ñ·Ï")]
+    [Header("íŒë§¤ ìŠ¬ë¡¯ì— í‘œì‹œí•  ì•„ì´í…œ ëª©ë¡")]
     [SerializeField] private List<ShopItemData> shopBuyItems = new List<ShopItemData>();
 
     public List<ShopItemData> SellItems => shopSellItems;

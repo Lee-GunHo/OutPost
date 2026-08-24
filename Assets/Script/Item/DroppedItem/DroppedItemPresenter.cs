@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// DroppedItemModel°ú DroppedItemView¸¦ ¿¬°áÇÏ°í
-/// ÇÃ·¹ÀÌ¾î ÀÎº¥Åä¸®¿¡ ¾ÆÀÌÅÛÀ» Ãß°¡
+/// DroppedItemModelê³¼ DroppedItemViewë¥¼ ì—°ê²°í•˜ê³ 
+/// í”Œë ˆì´ì–´ ì¸ë²¤í† ë¦¬ì— ì•„ì´í…œì„ ì¶”ê°€
 /// </summary>
 [RequireComponent(typeof(DroppedItemModel))]
 [RequireComponent(typeof(DroppedItemView))]
@@ -35,7 +35,7 @@ public class DroppedItemPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// ±âÁ¸ DroppedItem Å¬·¡½ºÀÇ Inspector µ¥ÀÌÅÍ¸¦ Model·Î Àü´ŞÇÏ±â À§ÇÑ È®Àå ÁöÁ¡
+    /// ê¸°ì¡´ DroppedItem í´ë˜ìŠ¤ì˜ Inspector ë°ì´í„°ë¥¼ Modelë¡œ ì „ë‹¬í•˜ê¸° ìœ„í•œ í™•ì¥ ì§€ì 
     /// </summary>
     protected virtual void ApplyLegacySerializedData()
     {
@@ -73,13 +73,13 @@ public class DroppedItemPresenter : MonoBehaviour
 
         if (inventory == null)
         {
-            Debug.LogWarning("ÇÃ·¹ÀÌ¾î¿¡°Ô InventoryModelÀÌ ¿¬°áµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù.");
+            Debug.LogWarning("í”Œë ˆì´ì–´ì—ê²Œ InventoryModelì´ ì—°ê²°ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (model.ItemData == null)
         {
-            Debug.LogWarning(gameObject.name + "¿¡ ItemData°¡ ¿¬°áµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù.");
+            Debug.LogWarning(gameObject.name + "ì— ItemDataê°€ ì—°ê²°ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -87,7 +87,7 @@ public class DroppedItemPresenter : MonoBehaviour
 
         if (!success)
         {
-            Debug.Log("ÀÎº¥Åä¸®°¡ °¡µæ Â÷¼­ ¾ÆÀÌÅÛÀ» È¹µæÇÏÁö ¸øÇß½À´Ï´Ù.");
+            Debug.Log("ì¸ë²¤í† ë¦¬ê°€ ê°€ë“ ì°¨ì„œ ì•„ì´í…œì„ íšë“í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 

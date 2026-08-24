@@ -18,7 +18,7 @@ public class PlayerDeadState : IPlayerState
 
     public void Enter()
     {
-        Debug.Log("Player Dead State ÁøÀÔ");
+        Debug.Log("Player Dead State ì§„ì…");
 
         playerPresenter.StopMove();
 

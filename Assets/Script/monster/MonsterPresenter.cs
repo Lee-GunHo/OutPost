@@ -5,8 +5,8 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 {
     public enum MonsterBehaviorMode
     {
-        Wild,          // ÀÚ¿¬ »ı¼º ¸ó½ºÅÍ
-        NexusAssault   // ¿şÀÌºê ¸ó½ºÅÍ
+        Wild,          // ìì—° ìƒì„± ëª¬ìŠ¤í„°
+        NexusAssault   // ì›¨ì´ë¸Œ ëª¬ìŠ¤í„°
     }
 
 
@@ -63,11 +63,11 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         if (player != null)
         {
             playerTransform = player.transform;
-            Debug.Log("ÇÃ·¹ÀÌ¾î Ã£À½: " + player.name);
+            Debug.Log("í”Œë ˆì´ì–´ ì°¾ìŒ: " + player.name);
         }
         else
         {
-            Debug.LogWarning("Player ÅÂ±×¸¦ °¡Áø ¿ÀºêÁ§Æ®¸¦ Ã£Áö ¸øÇß½À´Ï´Ù.");
+            Debug.LogWarning("Player íƒœê·¸ë¥¼ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
         }
     }
 
@@ -75,7 +75,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     {
         if (playerTransform == null)
         {
-            Debug.LogWarning("playerTransformÀÌ nullÀÔ´Ï´Ù.");
+            Debug.LogWarning("playerTransformì´ nullì…ë‹ˆë‹¤.");
             return false;
         }
 
@@ -115,14 +115,14 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         if (agent == null)
         {
-            Debug.LogWarning("NavMeshAgent°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("NavMeshAgentê°€ ì—†ìŠµë‹ˆë‹¤.");
             StopMove();
             return;
         }
 
         if (!agent.isOnNavMesh)
         {
-            Debug.LogWarning("¸ó½ºÅÍ°¡ NavMesh À§¿¡ ÀÖÁö ¾Ê½À´Ï´Ù.");
+            Debug.LogWarning("ëª¬ìŠ¤í„°ê°€ NavMesh ìœ„ì— ìˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
             StopMove();
             return;
         }
@@ -155,7 +155,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
             if (player == null)
             {
-                Debug.LogWarning("³Ë¹é ±âÁØ ÇÃ·¹ÀÌ¾î¸¦ Ã£Áö ¸øÇß½À´Ï´Ù.");
+                Debug.LogWarning("ë„‰ë°± ê¸°ì¤€ í”Œë ˆì´ì–´ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
                 return;
             }
 
@@ -174,7 +174,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         rigid.linearVelocity = knockbackDirection * KnockbackPower;
 
-        Debug.Log("¸ó½ºÅÍ ³Ë¹é");
+        Debug.Log("ëª¬ìŠ¤í„° ë„‰ë°±");
     }
 
     public void Attack()
@@ -183,13 +183,13 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         if (currentTarget == null)
         {
-            Debug.LogWarning("°ø°İÇÒ ´ë»óÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ê³µê²©í•  ëŒ€ìƒì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (!IsCurrentTargetInAttackRange())
         {
-            Debug.Log("´ë»óÀÌ °ø°İ ¹üÀ§ ¹ÛÀÔ´Ï´Ù.");
+            Debug.Log("ëŒ€ìƒì´ ê³µê²© ë²”ìœ„ ë°–ì…ë‹ˆë‹¤.");
             return;
         }
 
@@ -197,13 +197,13 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         if (damageable == null)
         {
-            Debug.LogWarning("ÇöÀç Å¸°Ù¿¡°Ô IDamageableÀÌ ¾ø½À´Ï´Ù: " + currentTarget.name);
+            Debug.LogWarning("í˜„ì¬ íƒ€ê²Ÿì—ê²Œ IDamageableì´ ì—†ìŠµë‹ˆë‹¤: " + currentTarget.name);
             return;
         }
 
         damageable.TakeDamage(monsterModel.AttackPower);
 
-        Debug.Log("¸ó½ºÅÍ°¡ Å¸°Ù¿¡°Ô µ¥¹ÌÁö ÁÜ: " + monsterModel.AttackPower);
+        Debug.Log("ëª¬ìŠ¤í„°ê°€ íƒ€ê²Ÿì—ê²Œ ë°ë¯¸ì§€ ì¤Œ: " + monsterModel.AttackPower);
 
         if (currentTarget == playerTransform)
         {
@@ -223,7 +223,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         monsterModel.TakeDamage(damage);
 
-        Debug.Log("¸ó½ºÅÍ ÇÇ°İ, ÇöÀç Ã¼·Â: " + monsterModel.CurrentHp);
+        Debug.Log("ëª¬ìŠ¤í„° í”¼ê²©, í˜„ì¬ ì²´ë ¥: " + monsterModel.CurrentHp);
 
         if (monsterModel.IsDead)
         {
@@ -246,7 +246,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         StopMove();
 
-        Debug.Log("¸ó½ºÅÍ »ç¸Á");
+        Debug.Log("ëª¬ìŠ¤í„° ì‚¬ë§");
 
         GiveExpToPlayer();
 
@@ -259,7 +259,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     {
         if (GameProgressManager.Instance == null)
         {
-            Debug.LogWarning("GameProgressManager°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("GameProgressManagerê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -272,7 +272,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         if (playerObject == null)
         {
-            Debug.LogWarning("°æÇèÄ¡¸¦ ÁÙ ÇÃ·¹ÀÌ¾î¸¦ Ã£Áö ¸øÇß½À´Ï´Ù.");
+            Debug.LogWarning("ê²½í—˜ì¹˜ë¥¼ ì¤„ í”Œë ˆì´ì–´ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -280,28 +280,28 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         if (player == null)
         {
-            Debug.LogWarning("PlayerPresenter¸¦ Ã£Áö ¸øÇß½À´Ï´Ù.");
+            Debug.LogWarning("PlayerPresenterë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
         player.AddExp(ExpReward);
 
-        Debug.Log("ÇÃ·¹ÀÌ¾î¿¡°Ô °æÇèÄ¡ Áö±Ş: " + ExpReward);
+        Debug.Log("í”Œë ˆì´ì–´ì—ê²Œ ê²½í—˜ì¹˜ ì§€ê¸‰: " + ExpReward);
     }
 
     private void TryApplyStatusEffectToPlayer()
     {
-        Debug.Log("»óÅÂÈ¿°ú ºÎ¿© ½Ãµµ");
+        Debug.Log("ìƒíƒœíš¨ê³¼ ë¶€ì—¬ ì‹œë„");
 
         if (monsterModel.AttackStatusEffectType == StatusEffectType.None)
         {
-            Debug.Log("¸ó½ºÅÍ »óÅÂÈ¿°ú ¾øÀ½");
+            Debug.Log("ëª¬ìŠ¤í„° ìƒíƒœíš¨ê³¼ ì—†ìŒ");
             return;
         }
 
         if (Random.value > monsterModel.StatusEffectChance)
         {
-            Debug.Log("»óÅÂÈ¿°ú È®·ü ½ÇÆĞ");
+            Debug.Log("ìƒíƒœíš¨ê³¼ í™•ë¥  ì‹¤íŒ¨");
             return;
         }
 
@@ -309,7 +309,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         if (player == null)
         {
-            Debug.LogWarning("»óÅÂÈ¿°ú¸¦ Àû¿ëÇÒ PlayerPresenter¸¦ Ã£Áö ¸øÇß½À´Ï´Ù.");
+            Debug.LogWarning("ìƒíƒœíš¨ê³¼ë¥¼ ì ìš©í•  PlayerPresenterë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -324,7 +324,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         player.AddStatusEffect(effectData);
 
-        Debug.Log("¸ó½ºÅÍ°¡ »óÅÂÈ¿°ú ºÎ¿©: " + monsterModel.AttackStatusEffectType);
+        Debug.Log("ëª¬ìŠ¤í„°ê°€ ìƒíƒœíš¨ê³¼ ë¶€ì—¬: " + monsterModel.AttackStatusEffectType);
     }
 
     public void InitializeAsWaveMonster(Transform nexus)
@@ -335,7 +335,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         isPlayerAggro = false;
         SetTargetToNexus();
 
-        Debug.Log("¿şÀÌºê ¸ó½ºÅÍ·Î ÃÊ±âÈ­µÊ. ¸ñÇ¥: Nexus");
+        Debug.Log("ì›¨ì´ë¸Œ ëª¬ìŠ¤í„°ë¡œ ì´ˆê¸°í™”ë¨. ëª©í‘œ: Nexus");
     }
 
     private void SetTargetToNexus()
@@ -366,20 +366,20 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         {
             float playerDistance = Vector3.Distance(transform.position, playerTransform.position);
 
-            // ÇÃ·¹ÀÌ¾î°¡ ÀÎ½Ä ¹üÀ§ ¾ÈÀ¸·Î µé¾î¿À¸é ÇÃ·¹ÀÌ¾î¸¦ °ø°İ
+            // í”Œë ˆì´ì–´ê°€ ì¸ì‹ ë²”ìœ„ ì•ˆìœ¼ë¡œ ë“¤ì–´ì˜¤ë©´ í”Œë ˆì´ì–´ë¥¼ ê³µê²©
             if (playerDistance <= ChaseRange)
             {
                 SetTargetToPlayer();
                 return;
             }
 
-            // ÇÃ·¹ÀÌ¾î¸¦ ÂÑ´ø Áß ³Ê¹« ¸Ö¾îÁö¸é ¾î±×·Î ÇØÁ¦
+            // í”Œë ˆì´ì–´ë¥¼ ì«“ë˜ ì¤‘ ë„ˆë¬´ ë©€ì–´ì§€ë©´ ì–´ê·¸ë¡œ í•´ì œ
             if (isPlayerAggro && playerDistance > playerAggroReleaseRange)
             {
                 isPlayerAggro = false;
             }
 
-            // ¾ÆÁ÷ ÇÃ·¹ÀÌ¾î ¾î±×·Î°¡ À¯Áö ÁßÀÌ¸é °è¼Ó ÇÃ·¹ÀÌ¾î ÃßÀû
+            // ì•„ì§ í”Œë ˆì´ì–´ ì–´ê·¸ë¡œê°€ ìœ ì§€ ì¤‘ì´ë©´ ê³„ì† í”Œë ˆì´ì–´ ì¶”ì 
             if (isPlayerAggro)
             {
                 currentTarget = playerTransform;
@@ -387,14 +387,14 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
             }
         }
 
-        // ¿şÀÌºê ¸ó½ºÅÍ´Â ÇÃ·¹ÀÌ¾î ¾î±×·Î°¡ ¾øÀ¸¸é ³Ø¼­½º °ø°İ
+        // ì›¨ì´ë¸Œ ëª¬ìŠ¤í„°ëŠ” í”Œë ˆì´ì–´ ì–´ê·¸ë¡œê°€ ì—†ìœ¼ë©´ ë„¥ì„œìŠ¤ ê³µê²©
         if (behaviorMode == MonsterBehaviorMode.NexusAssault)
         {
             SetTargetToNexus();
             return;
         }
 
-        // ÀÚ¿¬ ¸ó½ºÅÍ´Â ÇÃ·¹ÀÌ¾î°¡ ¾øÀ¸¸é ¾Æ¹« ¸ñÇ¥ ¾øÀ½
+        // ìì—° ëª¬ìŠ¤í„°ëŠ” í”Œë ˆì´ì–´ê°€ ì—†ìœ¼ë©´ ì•„ë¬´ ëª©í‘œ ì—†ìŒ
         currentTarget = null;
     }
 
@@ -407,11 +407,11 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
             return;
         }
 
-        // ÀÎ½Ä ¹üÀ§
+        // ì¸ì‹ ë²”ìœ„
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, model.ChaseRange);
 
-        // °ø°İ ¹üÀ§
+        // ê³µê²© ë²”ìœ„
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, model.AttackRange);
     }

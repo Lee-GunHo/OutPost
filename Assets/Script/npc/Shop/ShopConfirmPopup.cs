@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class ShopConfirmPopup : MonoBehaviour
 {
-    [Header("ÀüÃ¼ ÆĞ³Î")]
+    [Header("ì „ì²´ íŒ¨ë„")]
     [SerializeField] private GameObject panel;
 
-    [Header("ÅØ½ºÆ®")]
+    [Header("í…ìŠ¤íŠ¸")]
     [SerializeField] private TMP_Text messageText;
 
-    [Header("¹öÆ°")]
+    [Header("ë²„íŠ¼")]
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button cancelButton;
 

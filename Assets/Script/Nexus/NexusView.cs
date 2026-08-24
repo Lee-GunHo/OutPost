@@ -3,11 +3,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// ³Ø¼­½ºÀÇ Ã¼·ÂÀ» UI¿¡ Ç¥½Ã
+/// ë„¥ì„œìŠ¤ì˜ ì²´ë ¥ì„ UIì— í‘œì‹œ
 /// </summary>
 public class NexusView : MonoBehaviour
 {
-    [Header("Ã¼·Â UI")]
+    [Header("ì²´ë ¥ UI")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private TMP_Text healthText;
 
