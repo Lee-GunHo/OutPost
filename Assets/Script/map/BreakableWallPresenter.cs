@@ -166,7 +166,14 @@ public class BreakableWallPresenter : MonoBehaviour
             return;
         }
 
-        if (!model.TryBeginBreak())
+        if (model.IsBroken)
+            return;
+
+        bool isFullyBroken = model.AdvanceStage(out int clearedStage);
+
+        view.DestroyStageParts(GetVisualRoot(), clearedStage);
+
+        if (!isFullyBroken)
             return;
 
         if (!model.HasGeneratedIdentity)
@@ -193,6 +200,16 @@ public class BreakableWallPresenter : MonoBehaviour
         );
 
         view.DestroyTarget(model.GeneratedRootObject);
+    }
+
+    /// <summary>
+    /// 단계별 파츠(Up{n}/Down{n})를 제거할 대상 루트. 생성 좌표가 아직 없으면 이 오브젝트 자신을 사용
+    /// </summary>
+    private GameObject GetVisualRoot()
+    {
+        return model.GeneratedRootObject != null
+            ? model.GeneratedRootObject
+            : gameObject;
     }
 
     private void RemovePlacedBlockRecord()
