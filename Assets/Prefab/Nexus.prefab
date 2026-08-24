@@ -563,10 +563,10 @@ GameObject:
   - component: {fileID: 3984666073804806571}
   - component: {fileID: 4707184067742150723}
   - component: {fileID: 2178441196065570836}
+  - component: {fileID: 6078944321361964987}
   - component: {fileID: 914011479017039206}
   - component: {fileID: 3642054860478274492}
   - component: {fileID: 1645015311918667932}
-  - component: {fileID: 6078944321361964987}
   m_Layer: 7
   m_Name: Nexus
   m_TagString: Nexus
@@ -647,6 +647,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &6078944321361964987
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6865026967297497089}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4004734294062682529, guid: 648933eed6bd7824cb83e7a12ad54063, type: 3}
 --- !u!114 &914011479017039206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -674,6 +696,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NexusPresenter
   nexusModel: {fileID: 914011479017039206}
   nexusView: {fileID: 1645015311918667932}
+  gameOverPanel: {fileID: 0}
+  pauseGameOnNexusDestroyed: 1
 --- !u!114 &1645015311918667932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -688,20 +712,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NexusView
   healthSlider: {fileID: 7035749336755795524}
   healthText: {fileID: 3510017226529686688}
---- !u!64 &6078944321361964987
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6865026967297497089}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4004734294062682529, guid: 648933eed6bd7824cb83e7a12ad54063, type: 3}
 --- !u!1 &7955211947792938870
 GameObject:
   m_ObjectHideFlags: 0

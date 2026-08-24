@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 8128546742245472134}
   - component: {fileID: 6992250234673152822}
   - component: {fileID: 4119040639541758471}
+  - component: {fileID: 7855133188680078249}
   m_Layer: 10
   m_Name: Chest
   m_TagString: Untagged
@@ -285,6 +286,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChestInteractable
   chestModel: {fileID: 6992250234673152822}
   interactionMark: {fileID: 9070068515343920060}
+--- !u!64 &7855133188680078249
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642490396178773992}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8176808469412331427, guid: e1c868a2d9af1ba4d976a2485a05713c, type: 3}
 --- !u!1 &5645578272692926416
 GameObject:
   m_ObjectHideFlags: 0
