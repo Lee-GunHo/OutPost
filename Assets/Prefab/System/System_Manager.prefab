@@ -681,15 +681,10 @@ MonoBehaviour:
   wallPercent: 1
   cellSize: 1
   playerStartPosition: {x: 0, y: 1, z: 0}
-  safeRange: 10
-  dirtOnlyRange: 13
-  dirtStoneRange: 15
-  stoneOnlyRange: 18
-  stoneCopperRange: 20
-  copperOnlyRange: 23
-  copperSilverRange: 25
-  silverOnlyRange: 28
-  silverGoldRange: 30
+  safeRange: 16
+  dirtRange: 176
+  stoneCopperRange: 336
+  silverGoldRange: 496
   treeClearingChance: 10
   clearingWidth: 5
   clearingLength: 10

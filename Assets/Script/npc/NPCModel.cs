@@ -31,6 +31,11 @@ public class NPCModel : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        LoadQuestStateFromSave();
+    }
+
     /// <summary>
     /// 퀘스트를 수락했을 때 호출하는 함수
     /// </summary>
@@ -42,6 +47,8 @@ public class NPCModel : MonoBehaviour
         }
 
         isQuestAccepted = true;
+
+        SaveQuestState();
     }
 
     public void CompleteQuest()
@@ -52,5 +59,47 @@ public class NPCModel : MonoBehaviour
         }
 
         isQuestCompleted = true;
+
+        SaveQuestState();
+    }
+
+    /// <summary>
+    /// 저장된 퀘스트 상태(수락/완료 여부)를 불러와서 복원
+    /// 저장된 데이터가 없으면 초기 상태(false, false)를 그대로 사용
+    /// </summary>
+    private void LoadQuestStateFromSave()
+    {
+        if (npcData == null || npcData.QuestData == null)
+        {
+            return;
+        }
+
+        QuestSaveManager saveManager = QuestSaveManager.GetOrCreate();
+
+        if (saveManager.TryLoadQuestState(
+            npcData.QuestData.QuestId,
+            out bool savedAccepted,
+            out bool savedCompleted))
+        {
+            isQuestAccepted = savedAccepted;
+            isQuestCompleted = savedCompleted;
+        }
+    }
+
+    /// <summary>
+    /// 현재 퀘스트 상태(수락/완료 여부)를 즉시 파일에 저장
+    /// </summary>
+    private void SaveQuestState()
+    {
+        if (npcData == null || npcData.QuestData == null)
+        {
+            return;
+        }
+
+        QuestSaveManager.GetOrCreate().SaveQuestState(
+            npcData.QuestData.QuestId,
+            isQuestAccepted,
+            isQuestCompleted
+        );
     }
 }

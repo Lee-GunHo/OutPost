@@ -4402,7 +4402,7 @@ MonoBehaviour:
   parentCanvas: {fileID: 3074685785776251283}
   sortButton: {fileID: 9106764742852060219}
   sortPopup: {fileID: 6587067363858218503}
-  autoStoreButton: {fileID: 0}
+  autoStoreButton: {fileID: 6776050449991616366}
   discardSlotView: {fileID: 5802366542158360353}
   discardButton: {fileID: 6588895138108824573}
   carriedItemIcon: {fileID: 252427864255660893}

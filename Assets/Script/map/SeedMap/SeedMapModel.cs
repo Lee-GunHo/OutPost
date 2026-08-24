@@ -48,16 +48,17 @@ public class SeedMapModel : MonoBehaviour
     [SerializeField] private Vector3 playerStartPosition = Vector3.zero;
 
     [Header("Square Wall Ranges - Tile Distance")]
-    [Tooltip("시작점에서 X 또는 Z 방향으로 이 칸 수 이내에는 벽을 만들지 않음")]
-    [SerializeField] private int safeRange = 10;
-    [SerializeField] private int dirtOnlyRange = 13;
-    [SerializeField] private int dirtStoneRange = 15;
-    [SerializeField] private int stoneOnlyRange = 18;
-    [SerializeField] private int stoneCopperRange = 20;
-    [SerializeField] private int copperOnlyRange = 23;
-    [SerializeField] private int copperSilverRange = 25;
-    [SerializeField] private int silverOnlyRange = 28;
-    [SerializeField] private int silverGoldRange = 30;
+    [Tooltip("시작점에서 X 또는 Z 방향으로 이 칸 수 이내에는 벽을 만들지 않음 (안전구역 바깥 경계, 32x32 => 16)")]
+    [SerializeField] private int safeRange = 16;
+
+    [Tooltip("나무, 흙 구역의 바깥 경계 (안전구역 기준 폭 160칸, 160x160)")]
+    [SerializeField] private int dirtRange = 176;
+
+    [Tooltip("돌, 구리 구역의 바깥 경계 (폭 160칸, 160x160)")]
+    [SerializeField] private int stoneCopperRange = 336;
+
+    [Tooltip("철, 금 구역의 바깥 경계 (폭 160칸, 160x160)")]
+    [SerializeField] private int silverGoldRange = 496;
 
     [Header("Tree Clearing")]
     [Tooltip("청크 하나에 나무 공터가 생길 확률")]
@@ -151,27 +152,15 @@ public class SeedMapModel : MonoBehaviour
         float distance,
         System.Random random)
     {
-        if (distance <= dirtOnlyRange)
+        // 나무, 흙 구역 (safeRange ~ dirtRange)
+        if (distance <= dirtRange)
             return WallType.Dirt;
 
-        if (distance <= dirtStoneRange)
-            return ChooseHalf(WallType.Dirt, WallType.Stone, random);
-
-        if (distance <= stoneOnlyRange)
-            return WallType.Stone;
-
+        // 돌, 구리 구역 (dirtRange ~ stoneCopperRange)
         if (distance <= stoneCopperRange)
             return ChooseHalf(WallType.Stone, WallType.Copper, random);
 
-        if (distance <= copperOnlyRange)
-            return WallType.Copper;
-
-        if (distance <= copperSilverRange)
-            return ChooseHalf(WallType.Copper, WallType.Silver, random);
-
-        if (distance <= silverOnlyRange)
-            return WallType.Silver;
-
+        // 철, 금 구역 (stoneCopperRange ~ silverGoldRange)
         if (distance <= silverGoldRange)
             return ChooseHalf(WallType.Silver, WallType.Gold, random);
 
@@ -247,14 +236,9 @@ public class SeedMapModel : MonoBehaviour
         cellSize = Mathf.Max(0.01f, cellSize);
 
         safeRange = Mathf.Max(0, safeRange);
-        dirtOnlyRange = Mathf.Max(safeRange, dirtOnlyRange);
-        dirtStoneRange = Mathf.Max(dirtOnlyRange, dirtStoneRange);
-        stoneOnlyRange = Mathf.Max(dirtStoneRange, stoneOnlyRange);
-        stoneCopperRange = Mathf.Max(stoneOnlyRange, stoneCopperRange);
-        copperOnlyRange = Mathf.Max(stoneCopperRange, copperOnlyRange);
-        copperSilverRange = Mathf.Max(copperOnlyRange, copperSilverRange);
-        silverOnlyRange = Mathf.Max(copperSilverRange, silverOnlyRange);
-        silverGoldRange = Mathf.Max(silverOnlyRange, silverGoldRange);
+        dirtRange = Mathf.Max(safeRange, dirtRange);
+        stoneCopperRange = Mathf.Max(dirtRange, stoneCopperRange);
+        silverGoldRange = Mathf.Max(stoneCopperRange, silverGoldRange);
 
         treeClearingChance = Mathf.Clamp(treeClearingChance, 0, 100);
         treeFillPercent = Mathf.Clamp(treeFillPercent, 0, 100);
