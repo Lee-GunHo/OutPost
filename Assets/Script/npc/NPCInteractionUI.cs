@@ -1,3 +1,4 @@
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -145,8 +146,46 @@ public class NPCInteractionUI : MonoBehaviour
 
     /// <summary>
     /// 대화 버튼을 눌렀을 때 실행되는 함수
+    /// ChatGPT로 인사말을 생성해서 보여주고, 실패하면 기존 고정 대사로 대체함
     /// </summary>
     private void OnDialogueButtonClicked()
+    {
+        if (currentNPC == null)
+        {
+            return;
+        }
+
+        if (dialogueText != null)
+        {
+            dialogueText.text = "...";
+        }
+
+        OpenAIChatService.GetOrCreate().RequestGreeting(
+            currentNPC.GetNPCName(),
+            OnGreetingReceived,
+            OnGreetingFailed
+        );
+    }
+
+    private void OnGreetingReceived(string greeting)
+    {
+        if (dialogueText != null)
+        {
+            dialogueText.text = greeting;
+        }
+    }
+
+    private void OnGreetingFailed(string error)
+    {
+        Debug.LogWarning("ChatGPT 인사말 생성 실패, 기존 대사로 대체함: " + error);
+
+        ShowRandomStaticDialogue();
+    }
+
+    /// <summary>
+    /// ChatGPT 호출이 실패했을 때 쓰던 기존 방식(고정 대사 중 랜덤 출력)
+    /// </summary>
+    private void ShowRandomStaticDialogue()
     {
         if (currentNPC == null)
         {
@@ -265,11 +304,15 @@ public class NPCInteractionUI : MonoBehaviour
             currentNPC.AcceptQuest();
 
             Debug.Log("퀘스트 수락 : " + questData.QuestTitle);
-            Debug.Log("필요 아이템 : " + questData.RequiredItem.itemName + " x " + questData.RequiredAmount);
+
+            if (questData.RequiredItem != null)
+            {
+                Debug.Log("필요 아이템 : " + questData.RequiredItem.itemName + " x " + questData.RequiredAmount);
+            }
 
             if(dialogueText != null)
             {
-                dialogueText.text = "퀘스트를 수락했습니다.";
+                dialogueText.text = BuildQuestInfoText(questData);
             }
 
             RefreshQuestButtonText();
@@ -277,6 +320,58 @@ public class NPCInteractionUI : MonoBehaviour
         }
 
         TryCompleteQuest(questData);
+    }
+
+    /// <summary>
+    /// 퀘스트 수락 시 대화창에 보여줄 퀘스트 기본 정보(제목, 설명, 필요 아이템, 보상) 문자열 생성
+    /// </summary>
+    private string BuildQuestInfoText(QuestData questData)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.AppendLine("[퀘스트 수락] " + questData.QuestTitle);
+
+        if (!string.IsNullOrEmpty(questData.QuestDescription))
+        {
+            sb.AppendLine();
+            sb.AppendLine(questData.QuestDescription);
+        }
+
+        sb.AppendLine();
+
+        if (questData.RequiredItem != null)
+        {
+            sb.AppendLine(
+                "필요 아이템 : " +
+                questData.RequiredItem.itemName +
+                " x " + questData.RequiredAmount
+            );
+        }
+
+        bool hasRewardItem = questData.RewardItem != null && questData.RewardAmount > 0;
+        bool hasRewardGold = questData.RewardGold > 0;
+
+        if (hasRewardItem || hasRewardGold)
+        {
+            sb.Append("보상 : ");
+
+            if (hasRewardItem)
+            {
+                sb.Append(questData.RewardItem.itemName + " x " + questData.RewardAmount);
+            }
+
+            if (hasRewardItem && hasRewardGold)
+            {
+                sb.Append(", ");
+            }
+
+            if (hasRewardGold)
+            {
+                sb.Append("골드 " + questData.RewardGold);
+            }
+        }
+
+        return sb.ToString();
     }
 
     private void RefreshQuestButtonText()
