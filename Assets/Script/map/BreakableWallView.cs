@@ -38,4 +38,25 @@ public class BreakableWallView : MonoBehaviour
     {
         Destroy(target != null ? target : gameObject);
     }
+
+    /// <summary>
+    /// root의 자식 중 "{root 이름}Up{stageIndex}", "{root 이름}Down{stageIndex}"
+    /// 이름을 가진 오브젝트를 제거. 해당 이름의 파츠가 없는 프리팹(단일 단계)에서는 아무 동작도 하지 않음.
+    /// </summary>
+    public void DestroyStageParts(GameObject root, int stageIndex)
+    {
+        if (root == null)
+            return;
+
+        DestroyChildIfExists(root.transform, root.name + "Up" + stageIndex);
+        DestroyChildIfExists(root.transform, root.name + "Down" + stageIndex);
+    }
+
+    private void DestroyChildIfExists(Transform parent, string childName)
+    {
+        Transform child = parent.Find(childName);
+
+        if (child != null)
+            Destroy(child.gameObject);
+    }
 }

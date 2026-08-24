@@ -21,6 +21,13 @@ public class BreakableWallModel : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool showSaveDebugLog = true;
 
+    [Header("Stage Settings")]
+    [Tooltip("완전히 파괴되기까지 필요한 채굴 횟수. Up0/Down0, Up1/Down1 ... 형태로 단계가 나뉜 프리팹에서 사용")]
+    [Min(1)]
+    [SerializeField] private int stageCount = 1;
+
+    private int currentStage;
+
     private bool hasGeneratedIdentity;
     private bool isPlayerPlaced;
     private bool isBroken;
@@ -41,6 +48,9 @@ public class BreakableWallModel : MonoBehaviour
     public bool HasGeneratedIdentity => hasGeneratedIdentity;
     public bool IsPlayerPlaced => isPlayerPlaced;
     public bool IsBroken => isBroken;
+
+    public int StageCount => Mathf.Max(1, stageCount);
+    public int CurrentStage => currentStage;
 
     public int WorldSeed => worldSeed;
     public Vector2Int ChunkCoord => chunkCoord;
@@ -90,15 +100,30 @@ public class BreakableWallModel : MonoBehaviour
         hasGeneratedIdentity = true;
         isPlayerPlaced = playerPlaced;
         isBroken = false;
+        currentStage = 0;
     }
 
-    public bool TryBeginBreak()
+    /// <summary>
+    /// 채굴 한 번을 진행. 남은 단계가 있으면 currentStage만 증가시키고 false를 반환(부분 파괴)
+    /// 마지막 단계였다면 isBroken을 true로 만들고 true를 반환(완전 파괴)
+    /// clearedStage에는 이번에 제거해야 할 단계 번호(Up{n}/Down{n})가 담김
+    /// </summary>
+    public bool AdvanceStage(out int clearedStage)
     {
+        clearedStage = currentStage;
+
         if (isBroken)
             return false;
 
-        isBroken = true;
-        return true;
+        currentStage++;
+
+        if (currentStage >= StageCount)
+        {
+            isBroken = true;
+            return true;
+        }
+
+        return false;
     }
 
     private void OnValidate()
@@ -106,5 +131,6 @@ public class BreakableWallModel : MonoBehaviour
         minDropCount = Mathf.Max(0, minDropCount);
         maxDropCount = Mathf.Max(minDropCount, maxDropCount);
         dropSpread = Mathf.Max(0f, dropSpread);
+        stageCount = Mathf.Max(1, stageCount);
     }
 }

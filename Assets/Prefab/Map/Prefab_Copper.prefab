@@ -98,6 +98,7 @@ MonoBehaviour:
   maxDropCount: 1
   dropSpread: 0.3
   showSaveDebugLog: 1
+  stageCount: 3
 --- !u!114 &7337498562534896903
 MonoBehaviour:
   m_ObjectHideFlags: 0
