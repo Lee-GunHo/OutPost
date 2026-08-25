@@ -13,6 +13,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     private MonsterStateManager stateManager;
     private Rigidbody rigid;
     private Transform playerTransform;
+    private MonsterView monsterView;
 
     public float MoveSpeed => monsterModel.MoveSpeed;
     public float ChaseRange => monsterModel.ChaseRange;
@@ -58,6 +59,12 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         stateManager = GetComponent<MonsterStateManager>();
         rigid = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
+        monsterView = GetComponent<MonsterView>();
+
+        if (monsterView == null)
+        {
+            monsterView = GetComponentInChildren<MonsterView>();
+        }
 
         if (agent != null && monsterModel != null)
         {
@@ -257,6 +264,11 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         }
 
         monsterModel.TakeDamage(damage);
+
+        if (monsterView != null)
+        {
+            monsterView.PlayHitBlinkEffect(HitDuration);
+        }
 
         Debug.Log("몬스터 피격, 현재 체력: " + monsterModel.CurrentHp);
 

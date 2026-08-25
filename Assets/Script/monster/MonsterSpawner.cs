@@ -32,7 +32,7 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private float spawnRadius = 12f;
 
     [Tooltip("동시에 존재 가능한 최대 몬스터 수")]
-    [SerializeField] private int maxAliveMonsterCount = 20;
+    [SerializeField] private int maxAliveMonsterCount = 12;
 
     [Header("Spawn Check")]
     [Tooltip("스폰 위치 주변 장애물 검사 반경")]

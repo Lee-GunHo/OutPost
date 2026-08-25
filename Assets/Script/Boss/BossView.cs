@@ -2,29 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerView : MonoBehaviour
+public class BossView : MonoBehaviour
 {
     [Header("Renderer")]
-    [Tooltip("ì‹¤ì œ ë³´ì´ëŠ” FBX ì˜¤ë¸Œì íŠ¸ë¥¼ ë„£ìœ¼ì„¸ìš”. ë¹„ì›Œë‘ë©´ ìì‹ Renderer ì¤‘ í˜„ì¬ ì¼œì ¸ ìˆëŠ” ê²ƒë§Œ ìë™ìœ¼ë¡œ ì¡ìŠµë‹ˆë‹¤.")]
+    [Tooltip("½ÇÁ¦ º¸ÀÌ´Â º¸½º FBX ¿ÀºêÁ§Æ®¸¦ ³ÖÀ¸¼¼¿ä. ºñ¿öµÎ¸é ÀÚ½Ä Renderer Áß ÇöÀç ÄÑÁ® ÀÖ´Â °Í¸¸ ÀÚµ¿À¸·Î Àâ½À´Ï´Ù.")]
     [SerializeField] private Transform visualRoot;
 
-    [Header("Dash Effect")]
-    [SerializeField] private GameObject dashEffectPrefab;
-    [SerializeField] private Transform dashEffectSpawnPoint;
+    [Header("Hit Blink")]
+    [SerializeField] private float blinkDuration = 0.4f;
+    [SerializeField] private float blinkInterval = 0.04f;
 
     private readonly List<Renderer> hitBlinkRenderers = new List<Renderer>();
     private readonly List<bool> originalRendererEnabledStates = new List<bool>();
 
-    private Coroutine hitEffectCoroutine;
+    private Coroutine hitBlinkCoroutine;
 
     private void Awake()
     {
         CacheRenderers();
-
-        if (dashEffectSpawnPoint == null)
-        {
-            dashEffectSpawnPoint = transform;
-        }
     }
 
     private void CacheRenderers()
@@ -43,13 +38,13 @@ public class PlayerView : MonoBehaviour
                 continue;
             }
 
-            // Player ë£¨íŠ¸ ì˜¤ë¸Œì íŠ¸ì— ë¶™ì€ ìˆ¨ê¹€ìš© RendererëŠ” ì œì™¸
+            // º¸½º ·çÆ® ¿ÀºêÁ§Æ®¿¡ ¼û°ÜµĞ Renderer°¡ ÀÖÀ¸¸é Á¦¿Ü
             if (renderer.transform == transform)
             {
                 continue;
             }
 
-            // ì²˜ìŒë¶€í„° êº¼ì ¸ ìˆë˜ RendererëŠ” ê¹œë¹¡ì„ ëŒ€ìƒì—ì„œ ì œì™¸
+            // Ã³À½ºÎÅÍ ²¨Á® ÀÖ´ø Renderer´Â ±ôºıÀÓ ´ë»ó¿¡¼­ Á¦¿Ü
             if (!renderer.enabled)
             {
                 continue;
@@ -60,7 +55,7 @@ public class PlayerView : MonoBehaviour
         }
     }
 
-    public void PlayHitBlinkEffect(float duration)
+    public void PlayHitBlinkEffect()
     {
         if (hitBlinkRenderers.Count == 0)
         {
@@ -69,25 +64,24 @@ public class PlayerView : MonoBehaviour
 
         if (hitBlinkRenderers.Count == 0)
         {
-            Debug.LogWarning("PlayerView: ê¹œë¹¡ì„ì— ì‚¬ìš©í•  Rendererê°€ ì—†ìŠµë‹ˆë‹¤.");
+            Debug.LogWarning("BossView: ±ôºıÀÓ¿¡ »ç¿ëÇÒ Renderer°¡ ¾ø½À´Ï´Ù.");
             return;
         }
 
-        if (hitEffectCoroutine != null)
+        if (hitBlinkCoroutine != null)
         {
-            StopCoroutine(hitEffectCoroutine);
+            StopCoroutine(hitBlinkCoroutine);
             RestoreOriginalRendererStates();
         }
 
-        hitEffectCoroutine = StartCoroutine(HitBlinkEffect(duration));
+        hitBlinkCoroutine = StartCoroutine(HitBlinkRoutine());
     }
 
-    private IEnumerator HitBlinkEffect(float duration)
+    private IEnumerator HitBlinkRoutine()
     {
         float timer = 0f;
-        float blinkInterval = 0.08f;
 
-        while (timer < duration)
+        while (timer < blinkDuration)
         {
             SetRenderersVisible(false);
             yield return new WaitForSeconds(blinkInterval);
@@ -99,7 +93,7 @@ public class PlayerView : MonoBehaviour
         }
 
         RestoreOriginalRendererStates();
-        hitEffectCoroutine = null;
+        hitBlinkCoroutine = null;
     }
 
     private void SetRenderersVisible(bool isVisible)
@@ -130,22 +124,5 @@ public class PlayerView : MonoBehaviour
 
             renderer.enabled = originalRendererEnabledStates[i];
         }
-    }
-
-    public void PlayDashEffect()
-    {
-        if (dashEffectPrefab == null)
-        {
-            Debug.Log("ëŒ€ì‹œ ì´í™íŠ¸ í”„ë¦¬íŒ¹ì´ ì•„ì§ ì—†ìŠµë‹ˆë‹¤.");
-            return;
-        }
-
-        GameObject effect = Instantiate(
-            dashEffectPrefab,
-            dashEffectSpawnPoint.position,
-            transform.rotation
-        );
-
-        Destroy(effect, 1f);
     }
 }

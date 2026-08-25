@@ -1597,6 +1597,30 @@ PrefabInstance:
       propertyPath: hotbarView
       value: 
       objectReference: {fileID: 9100000000000004}
+    - target: {fileID: 749635384692914969, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 749635384692914969, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: spawnInterval
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 749635384692914969, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: monsterSpawnDatas.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 749635384692914969, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: monsterSpawnDatas.Array.data[0].spawnChance
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 749635384692914969, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: monsterSpawnDatas.Array.data[1].spawnChance
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 749635384692914969, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: monsterSpawnDatas.Array.data[1].monsterPrefab
+      value: 
+      objectReference: {fileID: 5159088055879067741, guid: ab93d9577017ae8419873e91bdea8644, type: 3}
     - target: {fileID: 2346226157108010335, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1804,7 +1828,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2755503468725175595, guid: a01ed79afe260f340a82212b2bfaea8c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 2755503468725175595, guid: a01ed79afe260f340a82212b2bfaea8c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1842,6 +1866,10 @@ PrefabInstance:
       propertyPath: hotbarPresenter
       value: 
       objectReference: {fileID: 431132914}
+    - target: {fileID: 5882457632691409337, guid: a01ed79afe260f340a82212b2bfaea8c, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: 4c9a7d225c3f7d9419ef67a9089567a7, type: 2}
     - target: {fileID: 6432780198911931881, guid: a01ed79afe260f340a82212b2bfaea8c, type: 3}
       propertyPath: m_Name
       value: Player_Main

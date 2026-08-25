@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 532494707179239367}
   - component: {fileID: 7032925041197915797}
   - component: {fileID: 1872789830787411175}
+  - component: {fileID: 7171666555886192951}
   m_Layer: 0
   m_Name: Monster_Main
   m_TagString: Untagged
@@ -104,7 +105,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5159088055879067741}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 4c9a7d225c3f7d9419ef67a9089567a7, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -190,6 +191,10 @@ MonoBehaviour:
   behaviorMode: 0
   nexusTransform: {fileID: 0}
   playerAggroReleaseRange: 12
+  attackCooldown: 1
+  nexusAttackRange: 2
+  nexusStoppingDistance: 1
+  nexusNavMeshSearchRadius: 5
 --- !u!114 &7032925041197915797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,7 +216,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 5159088055879067741}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.1
   m_Speed: 3
   m_Acceleration: 20
   avoidancePriority: 50
@@ -224,6 +229,20 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7171666555886192951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5159088055879067741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dad5126ecfd39cd4682000936f17ff23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterView
+  visualRoot: {fileID: 2187354892439223061}
+  blinkInterval: 0.08
 --- !u!1001 &1860464740374945022
 PrefabInstance:
   m_ObjectHideFlags: 0

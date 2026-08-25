@@ -83,12 +83,12 @@ public class BlockPlacementController : MonoBehaviour
         // 인벤토리 앞쪽 슬롯부터 설치 가능한 아이템을 자동 검색
         if (!TryGetPlaceableItem(out ItemData placeableItem))
         {
-            Debug.LogWarning("현재 Hotbar 선택 아이템은 설치할 수 없습니다.");
+            //Debug.LogWarning("현재 Hotbar 선택 아이템은 설치할 수 없습니다.");
             HidePreview();
             return;
         }
 
-        Debug.Log("설치 아이템 감지: " + placeableItem.itemName);
+        //Debug.Log("설치 아이템 감지: " + placeableItem.itemName);
 
         if (!TryGetMouseGlobalCell(out Vector2Int globalCell))
         {
