@@ -680,6 +680,7 @@ MonoBehaviour:
   raidClearCount: 0
   progressLevel: 0
   normalMonsterKillRequiredForProgress: 10
+  isMonsterWaveInProgress: 0
 --- !u!1 &7579109593351765646
 GameObject:
   m_ObjectHideFlags: 0
@@ -726,19 +727,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f60e66f322d46734e9b2535c0e1b7700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeedMapModel
-  wallPercent: 1
+  wallPercent: 35
   cellSize: 1
-  playerStartPosition: {x: 0, y: 1, z: 0}
+  playerStartPosition: {x: -5, y: 1, z: 0}
   safeRange: 16
   dirtRange: 176
   stoneCopperRange: 336
   silverGoldRange: 496
-  treeClearingChance: 10
+  treeClearingChance: 50
   clearingWidth: 5
   clearingLength: 10
   treeFillPercent: 35
   clearingMargin: 1
-  placeableBlockItems: []
+  placeableBlockItems:
+  - {fileID: 11400000, guid: ac2140e5959e36b47a92575bf18debd6, type: 2}
 --- !u!114 &4354002464865711106
 MonoBehaviour:
   m_ObjectHideFlags: 0

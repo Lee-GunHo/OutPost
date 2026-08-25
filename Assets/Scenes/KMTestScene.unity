@@ -296,6 +296,7 @@ MonoBehaviour:
   raidClearCount: 0
   progressLevel: 0
   normalMonsterKillRequiredForProgress: 10
+  isMonsterWaveInProgress: 0
 --- !u!114 &269063969 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2642659949904781940, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}

@@ -329,6 +329,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerModel
   baseMaxHp: 100
   currentHp: 100
+  baseMaxMp: 100
+  currentMp: 100
   baseMoveSpeed: 5
   dashSpeed: 8
   dashDuration: 0.35
@@ -341,8 +343,13 @@ MonoBehaviour:
   hitDuration: 0.25
   attackBoxHalfSize: {x: 0.75, y: 0.75, z: 0.75}
   attackBoxDistance: 1.2
-  currentToolType: 1
-  breakRange: 5
+  currentToolType: 0
+  breakRange: 1.5
+  hpIncreasePerUpgrade: 10
+  mpIncreasePerUpgrade: 10
+  attackIncreasePerUpgrade: 2
+  defenseIncreasePerUpgrade: 1
+  moveSpeedIncreasePerUpgrade: 0.2
 --- !u!114 &1125514678234943918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,10 +362,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaaff2a60e7aa554f81d88fd2776badd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPresenter
+  mouseActionRayRadius: 0.25
+  mouseActionHeightOffset: 0.8
+  reviveInvincibleDuration: 2
   wallLayer:
     serializedVersion: 2
     m_Bits: 128
   hotbarPresenter: {fileID: 0}
+  loadGroundProbeHeight: 50
+  loadGroundProbeDistance: 200
+  loadGroundPadding: 0.05
+  loadGroundWaitFrames: 2
   inventoryModel: {fileID: 0}
 --- !u!114 &4288115900196487004
 MonoBehaviour:
