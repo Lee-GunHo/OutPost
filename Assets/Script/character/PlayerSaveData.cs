@@ -28,4 +28,5 @@ public class PlayerSaveData
     public bool bossKilled;
     public int raidClearCount;
     public int progressLevel;
+    public bool isMonsterWaveInProgress;
 }

@@ -17,6 +17,13 @@ public class GameProgressManager : MonoBehaviour
     [SerializeField] private int progressLevel = 0;
     [SerializeField] private int normalMonsterKillRequiredForProgress = 10;
 
+    [Header("Wave Progress")]
+    [SerializeField] private bool isMonsterWaveInProgress = false;
+
+    public bool IsMonsterWaveInProgress => isMonsterWaveInProgress;
+
+    public event Action<bool> OnMonsterWaveProgressChanged;
+
     public int NormalMonsterKillCount => normalMonsterKillCount;
     public int BossKillCount => bossKillCount;
     public bool BossKilled => bossKilled;
@@ -81,12 +88,41 @@ public class GameProgressManager : MonoBehaviour
         }
     }
 
+    public void StartMonsterWaveProgress()
+    {
+        if (isMonsterWaveInProgress)
+        {
+            return;
+        }
+
+        isMonsterWaveInProgress = true;
+
+        Debug.Log("몬스터 웨이브 진행 상태: 시작");
+
+        OnMonsterWaveProgressChanged?.Invoke(isMonsterWaveInProgress);
+    }
+
+    public void EndMonsterWaveProgress()
+    {
+        if (!isMonsterWaveInProgress)
+        {
+            return;
+        }
+
+        isMonsterWaveInProgress = false;
+
+        Debug.Log("몬스터 웨이브 진행 상태: 종료");
+
+        OnMonsterWaveProgressChanged?.Invoke(isMonsterWaveInProgress);
+    }
+
     public void LoadProgressData(
     int savedNormalMonsterKillCount,
     int savedBossKillCount,
     bool savedBossKilled,
     int savedRaidClearCount,
-    int savedProgressLevel
+    int savedProgressLevel,
+    bool savedIsMonsterWaveInProgress
 )
     {
         normalMonsterKillCount = Mathf.Max(0, savedNormalMonsterKillCount);
@@ -95,9 +131,12 @@ public class GameProgressManager : MonoBehaviour
         raidClearCount = Mathf.Max(0, savedRaidClearCount);
         progressLevel = Mathf.Max(0, savedProgressLevel);
 
+        isMonsterWaveInProgress = savedIsMonsterWaveInProgress;
+
         OnNormalMonsterKillCountChanged?.Invoke(normalMonsterKillCount);
         OnRaidClearCountChanged?.Invoke(raidClearCount);
         OnProgressLevelChanged?.Invoke(progressLevel);
+        OnMonsterWaveProgressChanged?.Invoke(isMonsterWaveInProgress);
 
         Debug.Log(
             "진행도 데이터 로드 완료" +
@@ -105,7 +144,8 @@ public class GameProgressManager : MonoBehaviour
             " / 보스 처치 수: " + bossKillCount +
             " / 보스 처치 여부: " + bossKilled +
             " / 습격 클리어 수: " + raidClearCount +
-            " / 진행도 레벨: " + progressLevel
+            " / 진행도 레벨: " + progressLevel +
+            " / 몬스터 웨이브 진행 여부: " + isMonsterWaveInProgress
         );
     }
 }

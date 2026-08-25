@@ -14,6 +14,20 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     private EquipmentModel equipmentModel;
     private StatusEffectModel statusEffectModel;
 
+    [Header("Mouse Action Ray")]
+    [SerializeField] private float mouseActionRayRadius = 0.25f;
+    [SerializeField] private float mouseActionHeightOffset = 0.8f;
+
+    [Header("Invincible Data")]
+    [SerializeField] private float reviveInvincibleDuration = 2f;
+
+    private bool isDashInvincible;
+    private bool isReviveInvincible;
+    private Coroutine reviveInvincibleCoroutine;
+
+    public bool IsDamageInvincible => isDashInvincible || isReviveInvincible;
+    public bool IsStatusDamageInvincible => isReviveInvincible;
+
     public event Action OnPlayerStatusChanged;
 
     private Vector3 lastMoveDirection = Vector3.forward;
@@ -306,6 +320,12 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return;
         }
 
+        if (IsDamageInvincible)
+        {
+            Debug.Log("무적 상태라 데미지를 받지 않았습니다.");
+            return;
+        }
+
         playerModel.TakeDamage(damage);
         NotifyStatusChanged();
 
@@ -319,6 +339,61 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         }
 
         stateManager.ChangeState(stateManager.HitState);
+    }
+
+    public void ReviveAtNexusFront()
+    {
+        Vector3 revivePosition = new Vector3(0f, 1f, -2f);
+
+        int reviveHp = Mathf.Max(1, MaxHp / 2);
+        int reviveMp = Mathf.Max(0, MaxMp / 2);
+
+        // 체력 회복 전에 먼저 부활 무적을 켠다.
+        StartReviveInvincible();
+
+        playerModel.LoadSavedHealth(reviveHp);
+        playerModel.LoadSavedMp(reviveMp);
+
+        SetPhysicsPosition(revivePosition);
+
+        NotifyStatusChanged();
+
+        Debug.Log(
+            $"플레이어 부활 완료. 위치: {revivePosition}, " +
+            $"HP: {CurrentHp}/{MaxHp}, MP: {CurrentMp}/{MaxMp}"
+        );
+
+        stateManager.ChangeState(stateManager.IdleState);
+    }
+
+    public void SetDashInvincible(bool value)
+    {
+        isDashInvincible = value;
+
+        Debug.Log("대시 무적 상태: " + isDashInvincible);
+    }
+
+    public void StartReviveInvincible()
+    {
+        if (reviveInvincibleCoroutine != null)
+        {
+            StopCoroutine(reviveInvincibleCoroutine);
+        }
+
+        isReviveInvincible = true;
+        reviveInvincibleCoroutine = StartCoroutine(ReviveInvincibleRoutine());
+    }
+
+    private IEnumerator ReviveInvincibleRoutine()
+    {
+        Debug.Log("부활 무적 시작");
+
+        yield return new WaitForSeconds(reviveInvincibleDuration);
+
+        isReviveInvincible = false;
+        reviveInvincibleCoroutine = null;
+
+        Debug.Log("부활 무적 종료");
     }
 
     private void OnDrawGizmosSelected()
@@ -384,34 +459,145 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             ? selectedItem.item
             : null;
 
-        // 아직 아이템 시스템 테스트 전이면 item이 null이어도 테스트 공격 허용
-        if (item == null)
+        ExecuteMousePriorityAction(item);
+    }
+
+    private void ExecuteMousePriorityAction(ItemData item)
+    {
+        if (!TryGetMouseWorldPosition(out Vector3 mouseWorldPosition))
         {
-            Debug.Log("손에 든 아이템 없음 - 테스트용 기본 공격/채굴 실행");
+            Attack(item);
+            return;
+        }
 
-            bool testHitTarget = Attack();
+        Vector3 direction = mouseWorldPosition - transform.position;
+        direction.y = 0f;
 
-            if (!testHitTarget)
+        if (direction == Vector3.zero)
+        {
+            Attack(item);
+            return;
+        }
+
+        direction.Normalize();
+
+        transform.rotation = Quaternion.LookRotation(direction);
+
+        float attackReach = AttackBoxDistance + Mathf.Max(AttackBoxHalfSize.x, AttackBoxHalfSize.z);
+        float actionRange = Mathf.Max(attackReach, BreakRange);
+
+        Vector3 rayOrigin = transform.position + Vector3.up * mouseActionHeightOffset;
+
+        RaycastHit[] hits = Physics.SphereCastAll(
+            rayOrigin,
+            mouseActionRayRadius,
+            direction,
+            actionRange,
+            ~0,
+            QueryTriggerInteraction.Collide
+        );
+
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider == null)
             {
-                TryBreakWall(null);
+                continue;
             }
 
-            return;
+            if (hit.collider.GetComponentInParent<PlayerPresenter>() != null)
+            {
+                continue;
+            }
+
+            IDamageable damageable = hit.collider.GetComponentInParent<IDamageable>();
+
+            if (damageable != null)
+            {
+                int finalDamage = GetAttackDamage(item);
+                damageable.TakeDamage(finalDamage);
+
+                Debug.Log("마우스 방향 선 판정: 적 공격 / 데미지 " + finalDamage);
+                return;
+            }
+
+            BreakableWall wall = hit.collider.GetComponent<BreakableWall>();
+
+            if (wall == null)
+            {
+                wall = hit.collider.GetComponentInParent<BreakableWall>();
+            }
+
+            if (wall != null)
+            {
+                float distanceToWall = Vector3.Distance(transform.position, wall.transform.position);
+
+                if (distanceToWall <= BreakRange)
+                {
+                    wall.Break();
+                    Debug.Log("마우스 방향 선 판정: 벽 파괴");
+                    return;
+                }
+
+                Debug.Log("벽이 너무 멀다.");
+                return;
+            }
         }
 
-        if (!IsUsableTool(item))
-        {
-            Debug.Log("공격/채굴 가능한 도구가 아님: " + item.itemName);
-            return;
-        }
-
-        bool hitTarget = Attack();
-
-        if (!hitTarget)
-        {
-            TryBreakWall(item);
-        }
+        Attack(item);
     }
+
+    private bool TryGetMouseWorldPosition(out Vector3 mouseWorldPosition)
+    {
+        mouseWorldPosition = Vector3.zero;
+
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+
+            if (mainCamera == null)
+            {
+                return false;
+            }
+        }
+
+        if (Mouse.current == null)
+        {
+            return false;
+        }
+
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+
+        Plane groundPlane = new Plane(Vector3.up, transform.position);
+
+        if (!groundPlane.Raycast(ray, out float enter))
+        {
+            return false;
+        }
+
+        mouseWorldPosition = ray.GetPoint(enter);
+        return true;
+    }
+
+    private int GetAttackDamage(ItemData item)
+    {
+        int finalDamage = AttackPower;
+
+        if (item == null)
+        {
+            return Mathf.Max(1, finalDamage);
+        }
+
+        // 나중에 ItemData에 공격력 필드가 있으면 여기서 더하면 됨.
+        // 예시:
+        // finalDamage += item.attackDamage;
+        // finalDamage += item.weaponDamage;
+
+        return Mathf.Max(1, finalDamage);
+    }
+
     public void TryBreakWall(ItemData item)
     {
         if (UIState.IsAnyUIOpen)
@@ -504,7 +690,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         return transform.forward;
     }
 
-    public bool Attack()
+    public bool Attack(ItemData item = null)
     {
         if (UIState.IsAnyUIOpen)
         {
@@ -542,7 +728,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
                 continue;
             }
 
-            damageable.TakeDamage(AttackPower);
+            int finalDamage = GetAttackDamage(item);
+            damageable.TakeDamage(finalDamage);
 
             return true;
         }
@@ -577,6 +764,12 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     {
         if (playerModel.IsDead)
         {
+            return;
+        }
+
+        if (IsStatusDamageInvincible)
+        {
+            Debug.Log("무적 상태라 상태효과 데미지를 받지 않았습니다.");
             return;
         }
 

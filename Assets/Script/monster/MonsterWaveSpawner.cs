@@ -71,6 +71,16 @@ public class MonsterWaveSpawner : MonoBehaviour
                 player = playerObject.transform;
             }
         }
+
+        if (nexusTransform == null)
+        {
+            GameObject nexusObject = GameObject.FindGameObjectWithTag("Nexus");
+
+            if (nexusObject != null)
+            {
+                nexusTransform = nexusObject.transform;
+            }
+        }
     }
 
     private IEnumerator Start()
@@ -98,6 +108,12 @@ public class MonsterWaveSpawner : MonoBehaviour
             return;
         }
 
+        if (!TryResolveNexusTransform())
+        {
+            Debug.LogWarning("Nexus가 없어서 웨이브를 시작할 수 없습니다.");
+            return;
+        }
+
         if (waves == null || waves.Length == 0)
         {
             Debug.LogWarning("Wave Data가 없습니다.");
@@ -105,6 +121,14 @@ public class MonsterWaveSpawner : MonoBehaviour
         }
 
         isRunning = true;
+
+        if (GameProgressManager.Instance != null)
+        {
+            GameProgressManager.Instance.StartMonsterWaveProgress();
+        }
+
+        SetNexusHealthVisible(true);
+
         StartCoroutine(WaveRoutine());
     }
 
@@ -121,7 +145,7 @@ public class MonsterWaveSpawner : MonoBehaviour
                 else
                 {
                     Debug.Log("모든 웨이브 종료");
-                    isRunning = false;
+                    CompleteMonsterWave(true);
                     yield break;
                 }
             }
@@ -142,6 +166,103 @@ public class MonsterWaveSpawner : MonoBehaviour
 
             yield return new WaitForSeconds(nextWaveDelay);
         }
+    }
+
+    private bool TryResolveNexusTransform()
+    {
+        if (nexusTransform != null)
+        {
+            return true;
+        }
+
+        GameObject nexusObject = GameObject.FindGameObjectWithTag("Nexus");
+
+        if (nexusObject == null)
+        {
+            Debug.LogWarning("Nexus 태그가 붙은 오브젝트를 찾지 못했습니다.");
+            return false;
+        }
+
+        nexusTransform = nexusObject.transform;
+
+        Debug.Log("Nexus 자동 연결 완료: " + nexusTransform.name);
+
+        return true;
+    }
+
+    public void RestartWaveFromSavedProgress()
+    {
+        Debug.Log("저장된 웨이브 진행 상태 감지. 웨이브를 처음부터 재시작합니다.");
+
+        DespawnCurrentWaveMonsters();
+
+        currentWaveIndex = 0;
+        isRunning = false;
+
+        StartWaves();
+    }
+
+    private void DespawnCurrentWaveMonsters()
+    {
+        foreach (GameObject monster in spawnedMonsters)
+        {
+            if (monster != null)
+            {
+                Destroy(monster);
+            }
+        }
+
+        spawnedMonsters.Clear();
+
+        MonsterPresenter[] monsters =
+            FindObjectsByType<MonsterPresenter>(FindObjectsSortMode.None);
+
+        foreach (MonsterPresenter monster in monsters)
+        {
+            if (monster == null)
+            {
+                continue;
+            }
+
+            if (monster.GetComponent<BossPresenter>() != null)
+            {
+                continue;
+            }
+
+            Destroy(monster.gameObject);
+        }
+
+        Debug.Log("기존 웨이브 몬스터 제거 완료");
+    }
+
+    public void FailWaveByNexusDestroyed()
+    {
+        if (!isRunning)
+        {
+            return;
+        }
+
+        Debug.Log("넥서스 파괴로 웨이브 실패");
+
+        DespawnCurrentWaveMonsters();
+        CompleteMonsterWave(false);
+    }
+
+    private void CompleteMonsterWave(bool isCleared)
+    {
+        isRunning = false;
+
+        if (GameProgressManager.Instance != null)
+        {
+            GameProgressManager.Instance.EndMonsterWaveProgress();
+
+            if (isCleared)
+            {
+                GameProgressManager.Instance.AddRaidClear();
+            }
+        }
+
+        SetNexusHealthVisible(false);
     }
 
     private IEnumerator SpawnWave(WaveData wave)
@@ -364,6 +485,16 @@ public class MonsterWaveSpawner : MonoBehaviour
         if (nextWaveDelay < 0f)
         {
             nextWaveDelay = 0f;
+        }
+    }
+
+    private void SetNexusHealthVisible(bool isVisible)
+    {
+        NexusPresenter nexus = FindFirstObjectByType<NexusPresenter>();
+
+        if (nexus != null)
+        {
+            nexus.SetHealthVisible(isVisible);
         }
     }
 

@@ -14,6 +14,8 @@ public class PlayerDashState : IPlayerState
 
     public void Enter()
     {
+        playerPresenter.SetDashInvincible(true);
+
         dashTimer = playerPresenter.DashDuration;
         dashDirection = playerPresenter.GetDashDirection();
 
@@ -38,6 +40,7 @@ public class PlayerDashState : IPlayerState
 
     public void Exit()
     {
+        playerPresenter.SetDashInvincible(false);
         playerPresenter.StopMove();
     }
 }

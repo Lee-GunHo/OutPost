@@ -9,7 +9,6 @@ public class PlayerDeadState : IPlayerState
     private bool hasLoadedScene;
 
     private const float DeadDelay = 1f;
-    private const string GameOverSceneName = "GameOverScene";
 
     public PlayerDeadState(PlayerPresenter playerPresenter)
     {
@@ -38,7 +37,7 @@ public class PlayerDeadState : IPlayerState
         if (deadTimer <= 0f)
         {
             hasLoadedScene = true;
-            SceneManager.LoadScene(GameOverSceneName);
+            playerPresenter.ReviveAtNexusFront();
         }
     }
 

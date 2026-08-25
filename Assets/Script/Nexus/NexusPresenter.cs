@@ -115,6 +115,13 @@ public class NexusPresenter : MonoBehaviour, IDamageable
 
         isGameOverProcessed = true;
 
+        MonsterWaveSpawner waveSpawner = FindFirstObjectByType<MonsterWaveSpawner>();
+
+        if (waveSpawner != null)
+        {
+            waveSpawner.FailWaveByNexusDestroyed();
+        }
+
         Debug.Log("넥서스의 체력이 모두 소진되었습니다. 게임 오버 처리.");
         SceneManager.LoadScene(GameOverSceneName);
 
@@ -127,6 +134,11 @@ public class NexusPresenter : MonoBehaviour, IDamageable
         {
             Time.timeScale = 0f;
         }
+    }
+
+    public void SetHealthVisible(bool isVisible)
+    {
+        nexusView?.SetHealthVisible(isVisible);
     }
 
     [ContextMenu("테스트 피해 100")]

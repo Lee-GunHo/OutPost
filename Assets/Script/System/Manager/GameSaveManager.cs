@@ -110,7 +110,10 @@ public class GameSaveManager : MonoBehaviour
 
             progressLevel = GameProgressManager.Instance != null
                 ? GameProgressManager.Instance.ProgressLevel
-                : 0
+                : 0,
+
+            isMonsterWaveInProgress = GameProgressManager.Instance != null &&
+                          GameProgressManager.Instance.IsMonsterWaveInProgress
         };
 
         string json = JsonUtility.ToJson(saveData, true);
@@ -147,7 +150,8 @@ public class GameSaveManager : MonoBehaviour
                 saveData.bossKillCount,
                 saveData.bossKilled,
                 saveData.raidClearCount,
-                saveData.progressLevel
+                saveData.progressLevel,
+                saveData.isMonsterWaveInProgress
             );
         }
         else

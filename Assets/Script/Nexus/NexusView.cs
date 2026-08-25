@@ -11,6 +11,16 @@ public class NexusView : MonoBehaviour
     [SerializeField] private Slider healthSlider;
     [SerializeField] private TMP_Text healthText;
 
+    [SerializeField] private GameObject healthRoot;
+
+    public void SetHealthVisible(bool isVisible)
+    {
+        if (healthRoot != null)
+        {
+            healthRoot.SetActive(isVisible);
+        }
+    }
+
     public void Initialize(int currentHealth, int maxHealth)
     {
         if (healthSlider != null)
