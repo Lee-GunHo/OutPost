@@ -21,8 +21,8 @@ MonoBehaviour:
   attackBonus: 0
   defenseBonus: 0
   moveSpeedBonus: 0
-  toolType: 0
+  toolType: 6
   description: "\uB3CC\uB9F9\uC774"
-  placeablePrefab: {fileID: 0}
+  placeablePrefab: {fileID: 1903153408827292549, guid: 1f1b9fee778fab4419d48e2fee072e27, type: 3}
   placeableYOffset: 1
   maxStack: 99

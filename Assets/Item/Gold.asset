@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Gold
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 21300000, guid: 5a836737288d0e24eadb98830f644888, type: 3}
+  icon: {fileID: 21300000, guid: b1c1481f28fa85f43be82e7dff273a5c, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0
