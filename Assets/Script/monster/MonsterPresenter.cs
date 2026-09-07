@@ -39,6 +39,10 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     [Header("Target")]
     [SerializeField] private Transform nexusTransform;
     [SerializeField] private float playerAggroReleaseRange = 12f;
+    [SerializeField, Min(0f)] private float playerHitAggroDuration = 3f;
+
+    [Header("Knockback")]
+    [SerializeField, Min(0f)] private float knockbackDuration = 0.15f;
 
     [Header("Attack")]
     [SerializeField] private float attackCooldown = 1f;
@@ -52,6 +56,12 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     private Transform currentTarget;
     private bool isPlayerAggro;
+    private float playerHitAggroUntil;
+    private Vector3 knockbackVelocity;
+    private float knockbackTimeRemaining;
+    private float activeKnockbackDuration;
+
+    private bool CanNavigate => agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh;
 
     private void Awake()
     {
@@ -60,6 +70,12 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         rigid = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
         monsterView = GetComponent<MonsterView>();
+
+        // NavMesh owns movement, including knockback. Physics must not move the same body.
+        if (agent != null && rigid != null)
+        {
+            rigid.isKinematic = true;
+        }
 
         if (monsterView == null)
         {
@@ -92,22 +108,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     public bool IsPlayerInChaseRange()
     {
         UpdateTarget();
-
-        // 웨이브 몬스터는 플레이어 거리와 상관없이 넥서스 타겟이 있으면 추적 상태로 들어간다.
-        if (behaviorMode == MonsterBehaviorMode.NexusAssault)
-        {
-            return currentTarget != null;
-        }
-
-        if (playerTransform == null)
-        {
-            Debug.LogWarning("playerTransform이 null입니다.");
-            return false;
-        }
-
-        float distance = GetDistanceToPlayer();
-
-        return distance <= ChaseRange;
+        return HasTarget;
     }
 
     public bool IsCurrentTargetInAttackRange()
@@ -158,7 +159,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
             return;
         }
 
-        if (!agent.isOnNavMesh)
+        if (!CanNavigate)
         {
             Debug.LogWarning("몬스터가 NavMesh 위에 있지 않습니다.");
             StopMove();
@@ -168,7 +169,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         agent.isStopped = false;
         agent.speed = monsterModel.MoveSpeed;
 
-        if (behaviorMode == MonsterBehaviorMode.NexusAssault)
+        if (behaviorMode == MonsterBehaviorMode.NexusAssault && currentTarget == nexusTransform)
         {
             agent.stoppingDistance = nexusStoppingDistance;
             agent.SetDestination(GetNexusDestination());
@@ -201,31 +202,28 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     public void StopMove()
     {
-        if (agent != null && agent.isOnNavMesh)
+        knockbackTimeRemaining = 0f;
+        knockbackVelocity = Vector3.zero;
+
+        if (CanNavigate)
         {
             agent.isStopped = true;
             agent.ResetPath();
+            agent.velocity = Vector3.zero;
         }
 
-        if (rigid != null)
+        if (rigid != null && !rigid.isKinematic)
         {
             rigid.linearVelocity = Vector3.zero;
+            rigid.angularVelocity = Vector3.zero;
         }
     }
 
     public void KnockbackFromPlayer()
     {
-        if (playerTransform == null)
+        if (!TryResolvePlayer() || !CanNavigate)
         {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-            if (player == null)
-            {
-                Debug.LogWarning("넉백 기준 플레이어를 찾지 못했습니다.");
-                return;
-            }
-
-            playerTransform = player.transform;
+            return;
         }
 
         Vector3 knockbackDirection = transform.position - playerTransform.position;
@@ -238,9 +236,23 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         knockbackDirection = knockbackDirection.normalized;
 
-        rigid.linearVelocity = knockbackDirection * KnockbackPower;
+        activeKnockbackDuration = Mathf.Max(0f, Mathf.Min(knockbackDuration, HitDuration));
+        knockbackTimeRemaining = activeKnockbackDuration;
+        knockbackVelocity = knockbackDirection * Mathf.Max(0f, KnockbackPower);
+    }
 
-        Debug.Log("몬스터 넉백");
+    public void UpdateKnockback(float deltaTime)
+    {
+        if (knockbackTimeRemaining <= 0f || !CanNavigate)
+        {
+            return;
+        }
+
+        float step = Mathf.Min(deltaTime, knockbackTimeRemaining);
+        // Average speed over this step gives a short push that decelerates to zero.
+        float speedFactor = (knockbackTimeRemaining - step * 0.5f) / activeKnockbackDuration;
+        agent.Move(knockbackVelocity * speedFactor * step);
+        knockbackTimeRemaining -= step;
     }
 
     // 실제 공격 처리는 MonsterAttackState에서 한다.
@@ -252,16 +264,14 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     public void TakeDamage(int damage)
     {
-        // 웨이브 몬스터는 맞아도 플레이어로 어그로가 바뀌지 않고 넥서스를 계속 노린다.
-        if (behaviorMode != MonsterBehaviorMode.NexusAssault)
-        {
-            SetTargetToPlayer();
-        }
-
         if (monsterModel.IsDead)
         {
             return;
         }
+
+        SetTargetToPlayer();
+        // A hit outside the release range must still provoke a pursuit after hit recovery.
+        playerHitAggroUntil = Time.time + Mathf.Max(playerHitAggroDuration, HitDuration);
 
         monsterModel.TakeDamage(damage);
 
@@ -396,6 +406,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         nexusTransform = nexus;
 
         isPlayerAggro = false;
+        playerHitAggroUntil = 0f;
         SetTargetToNexus();
 
         if (agent != null)
@@ -422,7 +433,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     private void SetTargetToPlayer()
     {
-        if (playerTransform == null)
+        if (!TryResolvePlayer())
         {
             return;
         }
@@ -431,16 +442,23 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         isPlayerAggro = true;
     }
 
-    public void UpdateTarget()
+    private bool TryResolvePlayer()
     {
-        // 웨이브 몬스터는 무조건 넥서스를 목표로 한다.
-        if (behaviorMode == MonsterBehaviorMode.NexusAssault)
+        if (playerTransform == null)
         {
-            SetTargetToNexus();
-            return;
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                playerTransform = player.transform;
+            }
         }
 
-        if (playerTransform != null)
+        return playerTransform != null;
+    }
+
+    public void UpdateTarget()
+    {
+        if (TryResolvePlayer())
         {
             float playerDistance = Vector3.Distance(transform.position, playerTransform.position);
 
@@ -450,7 +468,8 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
                 return;
             }
 
-            if (isPlayerAggro && playerDistance > playerAggroReleaseRange)
+            float releaseRange = Mathf.Max(ChaseRange, playerAggroReleaseRange);
+            if (isPlayerAggro && playerDistance > releaseRange && Time.time >= playerHitAggroUntil)
             {
                 isPlayerAggro = false;
             }
@@ -462,7 +481,16 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
             }
         }
 
-        currentTarget = null;
+        isPlayerAggro = false;
+
+        if (behaviorMode == MonsterBehaviorMode.NexusAssault)
+        {
+            SetTargetToNexus();
+        }
+        else
+        {
+            currentTarget = null;
+        }
     }
 
     private void OnDrawGizmosSelected()

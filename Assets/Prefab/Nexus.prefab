@@ -155,7 +155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1015052734533427507
 RectTransform:
   m_ObjectHideFlags: 0
@@ -712,6 +712,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NexusView
   healthSlider: {fileID: 7035749336755795524}
   healthText: {fileID: 3510017226529686688}
+  healthRoot: {fileID: 1112818466090597142}
 --- !u!1 &7955211947792938870
 GameObject:
   m_ObjectHideFlags: 0
