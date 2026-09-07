@@ -5,7 +5,7 @@ public class MonsterAttackState : IMonsterState
     private MonsterPresenter monsterPresenter;
     private MonsterStateManager stateManager;
 
-    private float currentCooldown;
+    private float nextAttackTime = float.NegativeInfinity;
 
     public MonsterAttackState(MonsterPresenter monsterPresenter, MonsterStateManager stateManager)
     {
@@ -17,8 +17,7 @@ public class MonsterAttackState : IMonsterState
     {
         monsterPresenter.StopMove();
 
-        // 공격 상태에 들어오자마자 바로 한 번 공격 가능
-        currentCooldown = 0f;
+        // Keep the attack deadline when returning from chase or hit states.
     }
 
     public void Update()
@@ -39,16 +38,13 @@ public class MonsterAttackState : IMonsterState
 
         monsterPresenter.StopMove();
 
-        currentCooldown -= Time.deltaTime;
-
-        if (currentCooldown > 0f)
+        if (Time.time < nextAttackTime)
         {
             return;
         }
 
+        nextAttackTime = Time.time + monsterPresenter.AttackCooldown;
         AttackOnce();
-
-        currentCooldown = monsterPresenter.AttackCooldown;
     }
 
     public void FixedUpdate()

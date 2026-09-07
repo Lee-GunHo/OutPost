@@ -426,6 +426,12 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public void AddStatusEffect(StatusEffectData effectData)
     {
+        // Invincibility blocks new effects; existing damage-over-time has its own rule.
+        if (IsDamageInvincible)
+        {
+            return;
+        }
+
         statusEffectModel.AddEffect(effectData);
     }
 
@@ -509,6 +515,12 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             if (hit.collider.GetComponentInParent<PlayerPresenter>() != null)
             {
                 continue;
+            }
+
+            // The nexus blocks this attack without taking friendly damage.
+            if (IsNexusTarget(hit.collider))
+            {
+                return;
             }
 
             IDamageable damageable = hit.collider.GetComponentInParent<IDamageable>();
@@ -716,7 +728,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         foreach (Collider collider in colliders)
         {
-            if (collider.GetComponentInParent<PlayerPresenter>() != null)
+            if (collider.GetComponentInParent<PlayerPresenter>() != null || IsNexusTarget(collider))
             {
                 continue;
             }
@@ -735,6 +747,20 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         }
 
         Debug.Log("공격 범위 안에 대상이 없습니다.");
+        return false;
+    }
+
+    private static bool IsNexusTarget(Collider collider)
+    {
+        // Colliders on child objects inherit protection from a tagged parent.
+        for (Transform current = collider.transform; current != null; current = current.parent)
+        {
+            if (current.CompareTag("Nexus"))
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
