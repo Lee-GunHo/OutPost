@@ -53,6 +53,7 @@ public class MonsterHitState : IMonsterState
 
     public void FixedUpdate()
     {
+        monsterPresenter.UpdateKnockback(Time.fixedDeltaTime);
     }
 
     public void Exit()
