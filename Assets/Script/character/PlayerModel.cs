@@ -26,7 +26,7 @@ public class PlayerModel : MonoBehaviour
     [Header("Combat Data")]
     [SerializeField] private int baseAttackPower = 10;
     [SerializeField] private int baseDefensePower = 0;
-    [SerializeField] private float attackDuration = 0.35f;
+    [SerializeField, Min(0f)] private float attackDuration = 0.175f;
     [SerializeField] private float hitDuration = 0.25f;
 
     [Header("Attack Range Data")]
@@ -38,6 +38,7 @@ public class PlayerModel : MonoBehaviour
 
     [Header("Wall Break Data")]
     [SerializeField] private float breakRange = 5f;
+    [SerializeField, Min(0f)] private float wallBreakDuration = 0.175f;
 
     [Header("Stat Upgrade Data")]
     [SerializeField] private int hpIncreasePerUpgrade = 10;
@@ -93,6 +94,7 @@ public class PlayerModel : MonoBehaviour
     public float InteractionRange => interactionRange;
 
     public float AttackDuration => attackDuration;
+    public float WallBreakDuration => wallBreakDuration;
     public float HitDuration => hitDuration;
 
     public Vector3 AttackBoxHalfSize => attackBoxHalfSize;

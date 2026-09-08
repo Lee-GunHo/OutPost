@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ public class ChunkView : MonoBehaviour
         new Dictionary<Vector2Int, GameObject>();
 
     public IEnumerable<Vector2Int> LoadedChunkCoordinates => loadedChunks.Keys;
+
+    public event Action ChunksChanged;
 
     public bool ContainsChunk(Vector2Int chunkCoord)
     {
@@ -35,6 +38,7 @@ public class ChunkView : MonoBehaviour
             chunkObject.transform.SetParent(chunkParent, true);
 
         loadedChunks.Add(chunkCoord, chunkObject);
+        ChunksChanged?.Invoke();
         return true;
     }
 
@@ -46,7 +50,12 @@ public class ChunkView : MonoBehaviour
         loadedChunks.Remove(chunkCoord);
 
         if (chunkObject != null)
+        {
+            chunkObject.SetActive(false);
             Destroy(chunkObject);
+        }
+
+        ChunksChanged?.Invoke();
     }
 
     public bool TryGetLoadedChunk(
@@ -67,12 +76,19 @@ public class ChunkView : MonoBehaviour
 
     public void ClearAllChunks()
     {
+        if (loadedChunks.Count == 0)
+            return;
+
         foreach (GameObject chunkObject in loadedChunks.Values)
         {
             if (chunkObject != null)
+            {
+                chunkObject.SetActive(false);
                 Destroy(chunkObject);
+            }
         }
 
         loadedChunks.Clear();
+        ChunksChanged?.Invoke();
     }
 }

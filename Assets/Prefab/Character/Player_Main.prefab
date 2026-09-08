@@ -339,12 +339,13 @@ MonoBehaviour:
   interactionRange: 1.5
   baseAttackPower: 10
   baseDefensePower: 0
-  attackDuration: 0.35
+  attackDuration: 0.175
   hitDuration: 0.25
   attackBoxHalfSize: {x: 0.75, y: 0.75, z: 0.75}
   attackBoxDistance: 1.2
   currentToolType: 0
   breakRange: 1.5
+  wallBreakDuration: 0.175
   hpIncreasePerUpgrade: 10
   mpIncreasePerUpgrade: 10
   attackIncreasePerUpgrade: 2

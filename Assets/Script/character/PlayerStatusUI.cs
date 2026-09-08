@@ -36,6 +36,8 @@ public class PlayerStatusUI : MonoBehaviour
     [SerializeField] private Button defenseUpgradeButton;
     [SerializeField] private Button moveSpeedUpgradeButton;
 
+    private int statPanelClosedFrame = -1;
+
     private void Awake()
     {
         ResolvePlayerReferences();
@@ -84,6 +86,12 @@ public class PlayerStatusUI : MonoBehaviour
 
     private void Update()
     {
+        // ESC takes priority if L was also pressed during this frame.
+        if (statPanelClosedFrame == Time.frameCount)
+        {
+            return;
+        }
+
         if (playerInputManager == null)
         {
             ResolvePlayerReferences();
@@ -150,6 +158,18 @@ public class PlayerStatusUI : MonoBehaviour
         UIState.SetStatWindowOpen(nextState);
 
         RefreshStatusUI();
+    }
+
+    public void CloseStatPanel()
+    {
+        statPanelClosedFrame = Time.frameCount;
+
+        if (statPanel != null)
+        {
+            statPanel.SetActive(false);
+        }
+
+        UIState.SetStatWindowOpen(false);
     }
 
     public void RefreshStatusUI()

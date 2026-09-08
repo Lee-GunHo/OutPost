@@ -37,6 +37,18 @@ public class UIInputManager : MonoBehaviour
 
     private void HandlePause(InputAction.CallbackContext context)
     {
+        // Closing the stat window consumes ESC before any pause listeners run.
+        if (UIState.IsStatWindowOpen)
+        {
+            PlayerStatusUI statusUI = FindFirstObjectByType<PlayerStatusUI>();
+            if (statusUI != null)
+            {
+                statusUI.CloseStatPanel();
+            }
+
+            return;
+        }
+
         OnPausePressed?.Invoke();
     }
 }

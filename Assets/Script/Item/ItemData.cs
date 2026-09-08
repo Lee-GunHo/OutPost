@@ -46,6 +46,10 @@ public class ItemData : ScriptableObject
     public int defenseBonus;
     public float moveSpeedBonus;
 
+    [Header("Weapon Attack Timing")]
+    [Tooltip("공격 후딜(초). 0이면 플레이어 기본값 사용. 벽 파괴에는 적용하지 않습니다.")]
+    [Min(0f)] public float attackRecoveryDuration;
+
 
 
 

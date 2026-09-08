@@ -41,9 +41,6 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     [SerializeField] private float playerAggroReleaseRange = 12f;
     [SerializeField, Min(0f)] private float playerHitAggroDuration = 3f;
 
-    [Header("Knockback")]
-    [SerializeField, Min(0f)] private float knockbackDuration = 0.15f;
-
     [Header("Attack")]
     [SerializeField] private float attackCooldown = 1f;
 
@@ -236,7 +233,8 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         knockbackDirection = knockbackDirection.normalized;
 
-        activeKnockbackDuration = Mathf.Max(0f, Mathf.Min(knockbackDuration, HitDuration));
+        // Wild and wave monsters share the model's existing hit recovery duration.
+        activeKnockbackDuration = Mathf.Max(0f, HitDuration);
         knockbackTimeRemaining = activeKnockbackDuration;
         knockbackVelocity = knockbackDirection * Mathf.Max(0f, KnockbackPower);
     }

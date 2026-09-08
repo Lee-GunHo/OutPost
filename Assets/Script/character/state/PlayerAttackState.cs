@@ -16,20 +16,21 @@ public class PlayerAttackState : IPlayerState
     {
         playerPresenter.StopMove();
 
-        attackTimer = playerPresenter.AttackDuration;
+        attackTimer = 0f;
         hasAttacked = false;
 
     }
 
     public void Update()
     {
-        attackTimer -= Time.deltaTime;
-
         if (!hasAttacked)
         {
-            playerPresenter.ExecuteAttackAction();
+            // The actual target determines whether combat or wall-break recovery applies.
+            attackTimer = playerPresenter.ExecuteAttackAction();
             hasAttacked = true;
         }
+
+        attackTimer -= Time.deltaTime;
 
         if (attackTimer <= 0f)
         {

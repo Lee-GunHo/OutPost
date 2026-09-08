@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public class StatusEffectModel : MonoBehaviour
 
     // 외부에서 상태효과 목록을 읽기만 할 수 있게 제공
     public IReadOnlyList<StatusEffectData> ActiveEffects => activeEffects;
+
+    public event Action OnEffectsChanged;
 
     // 상태효과 데미지, 스탯 변경을 실제 플레이어에게 적용하기 위한 참조
     private PlayerPresenter playerPresenter;
@@ -43,12 +46,15 @@ public class StatusEffectModel : MonoBehaviour
 
         ApplyStatusEffectStart(newEffect);
 
+        OnEffectsChanged?.Invoke();
+
         Debug.Log("상태 효과 추가: " + newEffect.EffectType);
     }
 
     // 상태효과 제거
     public void RemoveEffect(StatusEffectType effectType)
     {
+        bool changed = false;
         for (int i = activeEffects.Count - 1; i >= 0; i--)
         {
             if (activeEffects[i].EffectType == effectType)
@@ -58,8 +64,12 @@ public class StatusEffectModel : MonoBehaviour
                 RemoveStatusEffectEnd(activeEffects[i]);
 
                 activeEffects.RemoveAt(i);
+                changed = true;
             }
         }
+
+        if (changed)
+            OnEffectsChanged?.Invoke();
     }
 
     // 특정 상태효과가 현재 적용 중인지 확인
@@ -79,6 +89,7 @@ public class StatusEffectModel : MonoBehaviour
     // 매 프레임 상태효과 시간 감소 및 효과 처리
     private void UpdateEffectDuration()
     {
+        bool changed = false;
         for (int i = activeEffects.Count - 1; i >= 0; i--)
         {
             StatusEffectData effect = activeEffects[i];
@@ -99,8 +110,12 @@ public class StatusEffectModel : MonoBehaviour
                 RemoveStatusEffectEnd(effect);
 
                 activeEffects.RemoveAt(i);
+                changed = true;
             }
         }
+
+        if (changed)
+            OnEffectsChanged?.Invoke();
     }
 
     // 지속 피해 계열 상태효과인지 확인

@@ -50,6 +50,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public int AttackPower => playerModel.AttackPower;
     public int DefensePower => playerModel.DefensePower;
     public float AttackDuration => playerModel.AttackDuration;
+    public float WallBreakDuration => playerModel.WallBreakDuration;
     public float HitDuration => playerModel.HitDuration;
 
     public Vector3 AttackBoxHalfSize => playerModel.AttackBoxHalfSize;
@@ -450,11 +451,11 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         playerModel.ToggleTool();
     }
 
-    public void ExecuteAttackAction()
+    public float ExecuteAttackAction()
     {
         if (UIState.IsAnyUIOpen)
         {
-            return;
+            return 0f;
         }
 
         ItemStack selectedItem = hotbarPresenter != null
@@ -465,15 +466,25 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             ? selectedItem.item
             : null;
 
-        ExecuteMousePriorityAction(item);
+        return ExecuteMousePriorityAction(item);
     }
 
-    private void ExecuteMousePriorityAction(ItemData item)
+    private float GetAttackRecoveryDuration(ItemData item)
     {
+        if (item != null && item.itemType == ItemType.Weapon && item.attackRecoveryDuration > 0f)
+            return item.attackRecoveryDuration;
+
+        return Mathf.Max(0f, AttackDuration);
+    }
+
+    private float ExecuteMousePriorityAction(ItemData item)
+    {
+        float attackRecoveryDuration = GetAttackRecoveryDuration(item);
+
         if (!TryGetMouseWorldPosition(out Vector3 mouseWorldPosition))
         {
             Attack(item);
-            return;
+            return attackRecoveryDuration;
         }
 
         Vector3 direction = mouseWorldPosition - transform.position;
@@ -482,7 +493,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         if (direction == Vector3.zero)
         {
             Attack(item);
-            return;
+            return attackRecoveryDuration;
         }
 
         direction.Normalize();
@@ -520,7 +531,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             // The nexus blocks this attack without taking friendly damage.
             if (IsNexusTarget(hit.collider))
             {
-                return;
+                return attackRecoveryDuration;
             }
 
             IDamageable damageable = hit.collider.GetComponentInParent<IDamageable>();
@@ -531,7 +542,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
                 damageable.TakeDamage(finalDamage);
 
                 Debug.Log("마우스 방향 선 판정: 적 공격 / 데미지 " + finalDamage);
-                return;
+                return attackRecoveryDuration;
             }
 
             BreakableWall wall = hit.collider.GetComponent<BreakableWall>();
@@ -549,15 +560,16 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
                 {
                     wall.Break();
                     Debug.Log("마우스 방향 선 판정: 벽 파괴");
-                    return;
+                    return Mathf.Max(0f, WallBreakDuration);
                 }
 
                 Debug.Log("벽이 너무 멀다.");
-                return;
+                return Mathf.Max(0f, WallBreakDuration);
             }
         }
 
         Attack(item);
+        return attackRecoveryDuration;
     }
 
     private bool TryGetMouseWorldPosition(out Vector3 mouseWorldPosition)
