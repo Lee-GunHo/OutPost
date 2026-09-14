@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class InventoryView : MonoBehaviour
@@ -27,9 +28,9 @@ public class InventoryView : MonoBehaviour
 
     private void Update()
     {
-        if (dragIcon.gameObject.activeSelf)
+        if (dragIcon.gameObject.activeSelf && Mouse.current != null)
         {
-            dragIcon.transform.position = Input.mousePosition;
+            dragIcon.transform.position = Mouse.current.position.ReadValue();
         }
     }
 

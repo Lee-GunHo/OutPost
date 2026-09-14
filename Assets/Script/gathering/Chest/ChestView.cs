@@ -310,10 +310,6 @@ public class ChestView : MonoBehaviour
             mousePosition =
                 Mouse.current.position.ReadValue();
         }
-        else
-        {
-            mousePosition = Input.mousePosition;
-        }
 
         sortPopup.Open(
             mousePosition,
