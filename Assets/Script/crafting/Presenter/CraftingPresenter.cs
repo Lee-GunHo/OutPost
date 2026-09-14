@@ -26,7 +26,6 @@ public class CraftingPresenter : MonoBehaviour
 
     private CraftingModel craftingModel;
 
-<<<<<<< Updated upstream
     private readonly List<CraftingRecipe> displayedRecipes
         = new List<CraftingRecipe>();
 
@@ -36,13 +35,6 @@ public class CraftingPresenter : MonoBehaviour
     private bool isOpen;
 
     public bool IsOpen => isOpen;
-=======
-    private readonly List<CraftingRecipe> activeRecipes
-        = new List<CraftingRecipe>();
-
-    private List<CraftingRecipe> currentStationRecipes;
-    private Component currentStation;
->>>>>>> Stashed changes
 
     private void Awake()
     {
@@ -55,7 +47,6 @@ public class CraftingPresenter : MonoBehaviour
         Instance = this;
     }
 
-<<<<<<< Updated upstream
     private void Update()
     {
         if (!isOpen)
@@ -71,8 +62,6 @@ public class CraftingPresenter : MonoBehaviour
         }
     }
 
-=======
->>>>>>> Stashed changes
     private void Start()
     {
         if (inventoryModel == null || craftingView == null)
@@ -89,14 +78,7 @@ public class CraftingPresenter : MonoBehaviour
         craftingView.OnRecipePointerExited += HandleRecipePointerExited;
         inventoryModel.OnInventoryChanged += RefreshCraftableState;
 
-<<<<<<< Updated upstream
         craftingView.SetVisible(false);
-=======
-        UIState.OnStateChanged += HandleUIStateChanged;
-        HandleUIStateChanged();
-
-        RefreshRecipeList();
->>>>>>> Stashed changes
     }
 
     private void OnDestroy()
@@ -113,11 +95,6 @@ public class CraftingPresenter : MonoBehaviour
             inventoryModel.OnInventoryChanged -= RefreshCraftableState;
         }
 
-<<<<<<< Updated upstream
-=======
-        UIState.OnStateChanged -= HandleUIStateChanged;
-
->>>>>>> Stashed changes
         if (Instance == this)
         {
             Instance = null;
@@ -125,7 +102,6 @@ public class CraftingPresenter : MonoBehaviour
     }
 
     /// <summary>
-<<<<<<< Updated upstream
     /// table이 있으면 그 제작대 전용 레시피만, 없으면 손 제작 레시피만 보여줌
     /// </summary>
     public void Open(
@@ -204,64 +180,6 @@ public class CraftingPresenter : MonoBehaviour
         {
             displayedRecipes.AddRange(handRecipes);
         }
-=======
-    /// 제작대 범위에 들어왔을 때 그 제작대의 레시피를 손 제작 목록에 합친다.
-    /// </summary>
-    public void EnterStation(Component station, List<CraftingRecipe> recipes)
-    {
-        currentStation = station;
-        currentStationRecipes = recipes;
-        RefreshRecipeList();
-    }
-
-    /// <summary>
-    /// 제작대 범위를 벗어났을 때 그 제작대의 레시피를 목록에서 뺀다.
-    /// 다른 제작대가 이미 새로 등록돼 있으면 무시한다.
-    /// </summary>
-    public void ExitStation(Component station)
-    {
-        if (currentStation != station)
-        {
-            return;
-        }
-
-        currentStation = null;
-        currentStationRecipes = null;
-        RefreshRecipeList();
-    }
-
-    private void HandleUIStateChanged()
-    {
-        if (craftingView != null)
-        {
-            craftingView.SetVisible(UIState.IsInventoryOpen);
-        }
-    }
-
-    private void RefreshRecipeList()
-    {
-        if (craftingView == null)
-        {
-            return;
-        }
-
-        activeRecipes.Clear();
-        activeRecipes.AddRange(handRecipes);
-
-        if (currentStationRecipes != null)
-        {
-            foreach (CraftingRecipe recipe in currentStationRecipes)
-            {
-                if (recipe != null && !activeRecipes.Contains(recipe))
-                {
-                    activeRecipes.Add(recipe);
-                }
-            }
-        }
-
-        craftingView.ShowRecipes(activeRecipes);
-        RefreshCraftableState();
->>>>>>> Stashed changes
     }
 
     private void HandleRecipeClicked(CraftingRecipe recipe)
@@ -335,15 +253,9 @@ public class CraftingPresenter : MonoBehaviour
             return;
         }
 
-<<<<<<< Updated upstream
         for (int i = 0; i < displayedRecipes.Count; i++)
         {
             bool canCraft = craftingModel.CanCraft(displayedRecipes[i]);
-=======
-        for (int i = 0; i < activeRecipes.Count; i++)
-        {
-            bool canCraft = craftingModel.CanCraft(activeRecipes[i]);
->>>>>>> Stashed changes
             craftingView.SetRecipeCraftable(i, canCraft);
         }
     }
