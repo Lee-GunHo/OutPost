@@ -1,6 +1,7 @@
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameSaveManager : MonoBehaviour
 {
@@ -47,17 +48,20 @@ public class GameSaveManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F5))
+        if (Keyboard.current == null)
+            return;
+
+        if (Keyboard.current.f5Key.wasPressedThisFrame)
         {
             SaveGame();
         }
 
-        if (Input.GetKeyDown(KeyCode.F9))
+        if (Keyboard.current.f9Key.wasPressedThisFrame)
         {
             LoadGame();
         }
 
-        if (Input.GetKeyDown(KeyCode.F10))
+        if (Keyboard.current.f10Key.wasPressedThisFrame)
         {
             DeleteSave();
         }

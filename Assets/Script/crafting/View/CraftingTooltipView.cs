@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class CraftingTooltipView : MonoBehaviour
@@ -30,10 +31,10 @@ public class CraftingTooltipView : MonoBehaviour
 
     private void Update()
     {
-        if (gameObject.activeSelf)
+        if (gameObject.activeSelf && Mouse.current != null)
         {
             transform.position =
-                (Vector2)Input.mousePosition + offset;
+                Mouse.current.position.ReadValue() + offset;
         }
     }
 

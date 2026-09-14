@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class ItemTooltipView : MonoBehaviour
@@ -31,9 +32,9 @@ public class ItemTooltipView : MonoBehaviour
 
     private void Update()
     {
-        if (gameObject.activeSelf)
+        if (gameObject.activeSelf && Mouse.current != null)
         {
-            transform.position = (Vector2)Input.mousePosition + offset;
+            transform.position = Mouse.current.position.ReadValue() + offset;
         }
     }
 
