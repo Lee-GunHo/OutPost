@@ -212,6 +212,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3737615672112863761}
   - component: {fileID: 8522807417517220883}
+  - component: {fileID: 7193309843701826410}
   m_Layer: 0
   m_Name: GameSaveManager
   m_TagString: Untagged
@@ -247,6 +248,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameSaveManager
   playerPresenter: {fileID: 0}
+--- !u!114 &7193309843701826410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2796574510906233991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbe38ff31dda7d049a908f21400fd9ad, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SaveManager
+  player: {fileID: 0}
+  saveFileName: SaveFile.json
+  inventoryModel: {fileID: 4499239461406420166}
+  hotbarModel: {fileID: 908441844663230652}
+  equipmentModel: {fileID: 8665865438965783495}
+  itemDatabase: {fileID: 11400000, guid: c89c0f40ef8d6bc408550c3ba47eda5a, type: 2}
+  inventoryPresenter: {fileID: 7554378811232708264}
+  playerModel: {fileID: 0}
 --- !u!1 &3120248532332773467
 GameObject:
   m_ObjectHideFlags: 0

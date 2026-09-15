@@ -45,8 +45,8 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     [SerializeField] private float attackCooldown = 1f;
 
     [Header("Nexus Assault")]
-    [SerializeField] private float nexusAttackRange = 2f;
-    [SerializeField] private float nexusStoppingDistance = 1f;
+    [SerializeField] private float nexusAttackRange = 1f;
+    [SerializeField] private float nexusStoppingDistance = 0.1f;
     [SerializeField] private float nexusNavMeshSearchRadius = 5f;
 
     public float AttackCooldown => attackCooldown;
@@ -57,11 +57,17 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     private Vector3 knockbackVelocity;
     private float knockbackTimeRemaining;
     private float activeKnockbackDuration;
+    private NexusPresenter nexusPresenter;
+    private NavMeshPath nexusPath;
+    private bool hasNexusPathRequest;
+    private float nextNexusPathRetryTime;
+    private bool defaultAutoBraking;
 
     private bool CanNavigate => agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh;
 
     private void Awake()
     {
+        nexusPath = new NavMeshPath();
         monsterModel = GetComponent<MonsterModel>();
         stateManager = GetComponent<MonsterStateManager>();
         rigid = GetComponent<Rigidbody>();
@@ -81,6 +87,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         if (agent != null && monsterModel != null)
         {
+            defaultAutoBraking = agent.autoBraking;
             agent.speed = monsterModel.MoveSpeed;
             agent.stoppingDistance = 1f;
             agent.updateRotation = true;
@@ -120,7 +127,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         if (behaviorMode == MonsterBehaviorMode.NexusAssault &&
             currentTarget == nexusTransform)
         {
-            float nexusDistance = Vector3.Distance(transform.position, nexusTransform.position);
+            float nexusDistance = Vector3.Distance(transform.position, GetNexusAttackPoint(transform.position));
             return nexusDistance <= nexusAttackRange;
         }
 
@@ -168,37 +175,115 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         if (behaviorMode == MonsterBehaviorMode.NexusAssault && currentTarget == nexusTransform)
         {
-            agent.stoppingDistance = nexusStoppingDistance;
-            agent.SetDestination(GetNexusDestination());
+            // Stop well inside melee range, rather than braking at a point near the
+            // inaccessible building pivot. The attack state explicitly stops movement.
+            agent.stoppingDistance = Mathf.Clamp(nexusStoppingDistance, 0f, nexusAttackRange * 0.25f);
+            agent.autoBraking = false;
+
+            bool needsPath = !hasNexusPathRequest ||
+                (!agent.pathPending && (!agent.hasPath || agent.isPathStale ||
+                    agent.pathStatus != NavMeshPathStatus.PathComplete ||
+                    agent.remainingDistance <= agent.stoppingDistance + 0.1f));
+
+            if (needsPath && !agent.pathPending && Time.time >= nextNexusPathRetryTime)
+            {
+                nextNexusPathRetryTime = Time.time + 0.5f;
+                if (TryGetNexusDestination(out Vector3 destination))
+                    hasNexusPathRequest = agent.SetDestination(destination);
+            }
         }
         else
         {
+            hasNexusPathRequest = false;
+            nextNexusPathRetryTime = 0f;
+            agent.autoBraking = defaultAutoBraking;
             agent.stoppingDistance = monsterModel.AttackRange * 0.8f;
             agent.SetDestination(currentTarget.position);
         }
     }
 
-    private Vector3 GetNexusDestination()
+    private NexusPresenter ResolveNexusPresenter()
     {
-        if (nexusTransform == null)
+        if (nexusPresenter == null && nexusTransform != null)
         {
-            return transform.position;
+            nexusPresenter = nexusTransform.GetComponentInParent<NexusPresenter>();
+            if (nexusPresenter == null)
+                nexusPresenter = nexusTransform.GetComponentInChildren<NexusPresenter>();
         }
+        return nexusPresenter;
+    }
 
-        if (NavMesh.SamplePosition(
-                nexusTransform.position,
-                out NavMeshHit hit,
-                nexusNavMeshSearchRadius,
-                NavMesh.AllAreas))
+    private Vector3 GetNexusAttackPoint(Vector3 fromPosition)
+    {
+        NexusPresenter nexus = ResolveNexusPresenter();
+        if (nexus != null)
+            return nexus.GetClosestAttackPoint(fromPosition);
+
+        Vector3 point = nexusTransform != null ? nexusTransform.position : fromPosition;
+        point.y = fromPosition.y;
+        return point;
+    }
+
+    private bool TryGetNexusDestination(out Vector3 destination)
+    {
+        destination = transform.position;
+        if (nexusTransform == null || !CanNavigate)
+            return false;
+
+        NexusPresenter nexus = ResolveNexusPresenter();
+        Bounds bounds = nexus != null
+            ? nexus.GetAttackBounds()
+            : new Bounds(nexusTransform.position, Vector3.zero);
+
+        // Prefer the side facing this monster. Only search other sides when that
+        // point cannot be reached, so a stationary nexus keeps a stable destination.
+        Vector3 direction = transform.position - bounds.center;
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.001f)
+            direction = Vector3.forward;
+        direction.Normalize();
+
+        NavMeshQueryFilter filter = new NavMeshQueryFilter
         {
-            return hit.position;
-        }
+            agentTypeID = agent.agentTypeID,
+            areaMask = agent.areaMask
+        };
+        float standOff = Mathf.Max(0.1f, nexusAttackRange * 0.35f);
+        float sampleRadius = Mathf.Max(0.1f, nexusNavMeshSearchRadius);
+        float availableRange = Mathf.Max(0f, nexusAttackRange - agent.stoppingDistance - 0.1f);
 
-        return nexusTransform.position;
+        for (int i = 0; i < 9; i++)
+        {
+            Vector3 side = i == 0 ? direction
+                : Quaternion.Euler(0f, (i - 1) * 45f, 0f) * direction;
+            Vector3 outside = bounds.center + side * (bounds.extents.magnitude + standOff + 1f);
+            outside.y = transform.position.y;
+            Vector3 edge = i == 0 ? GetNexusAttackPoint(transform.position) : GetNexusAttackPoint(outside);
+            Vector3 candidate = edge + side * standOff;
+            // Query the navigation plane rather than the elevated building pivot.
+            candidate.y = agent.nextPosition.y - agent.baseOffset;
+
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, sampleRadius, filter))
+                continue;
+
+            Vector3 surface = GetNexusAttackPoint(hit.position);
+            if (Vector3.Distance(hit.position, surface) > availableRange)
+                continue;
+
+            if (!agent.CalculatePath(hit.position, nexusPath) ||
+                nexusPath.status != NavMeshPathStatus.PathComplete)
+                continue;
+
+            destination = hit.position;
+            return true;
+        }
+        return false;
     }
 
     public void StopMove()
     {
+        hasNexusPathRequest = false;
+        nextNexusPathRetryTime = 0f;
         knockbackTimeRemaining = 0f;
         knockbackVelocity = Vector3.zero;
 
@@ -402,6 +487,9 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     {
         behaviorMode = MonsterBehaviorMode.NexusAssault;
         nexusTransform = nexus;
+        nexusPresenter = null;
+        hasNexusPathRequest = false;
+        nextNexusPathRetryTime = 0f;
 
         isPlayerAggro = false;
         playerHitAggroUntil = 0f;

@@ -107,19 +107,19 @@ public class PauseMenuManager : MonoBehaviour
 
     public void GoToMainScene()
     {
-        if (SaveManager.Instance != null)
-            SaveManager.Instance.SaveGame();
+        if (!SaveCurrentProgress())
+            return;
 
         IsMenuOpen = false;
-        UIState.SetPauseOpen(false);
+        UIState.ResetAll();
 
         SceneManager.LoadScene(mainMenuSceneName);
     }
 
     public void QuitGame()
     {
-        if (SaveManager.Instance != null)
-            SaveManager.Instance.SaveGame();
+        if (!SaveCurrentProgress())
+            return;
 
         IsMenuOpen = false;
         UIState.SetPauseOpen(false);
@@ -129,5 +129,14 @@ public class PauseMenuManager : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    private bool SaveCurrentProgress()
+    {
+        GameSaveManager gameSaveManager = FindFirstObjectByType<GameSaveManager>();
+        if (gameSaveManager != null)
+            return gameSaveManager.TrySaveGame();
+
+        return SaveManager.Instance == null || SaveManager.Instance.TrySaveGame();
     }
 }

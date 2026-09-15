@@ -7,7 +7,8 @@ Shader "OutPost/Player Vision Overlay"
         _ScreenScale ("Screen Scale", Vector) = (1, 1, 0, 0)
         _VisionRadius ("Vision Radius", Float) = 0.3
         _EdgeSoftness ("Edge Softness", Float) = 0.2
-        _DarknessOpacity ("Darkness Opacity", Range(0, 1)) = 1
+        _DarknessOpacity ("Darkness Opacity", Range(0, 1)) = 0.95
+        _InnerDarknessOpacity ("Inner Darkness Opacity", Range(0, 1)) = 0.15
     }
 
     SubShader
@@ -43,6 +44,7 @@ Shader "OutPost/Player Vision Overlay"
             float _VisionRadius;
             float _EdgeSoftness;
             float _DarknessOpacity;
+            float _InnerDarknessOpacity;
 
             Varyings vert(Attributes input)
             {
@@ -56,8 +58,11 @@ Shader "OutPost/Player Vision Overlay"
             {
                 // Equal pixel distances must give equal darkness on any aspect ratio.
                 float distanceFromPlayer = length((input.uv - _VisionCenter.xy) * _ScreenScale.xy);
-                float alpha = smoothstep(_VisionRadius, _VisionRadius + max(_EdgeSoftness, 0.001), distanceFromPlayer);
-                return fixed4(0, 0, 0, alpha * saturate(_DarknessOpacity));
+                float edgeBlend = smoothstep(_VisionRadius, _VisionRadius + max(_EdgeSoftness, 0.001), distanceFromPlayer);
+                float outerOpacity = saturate(_DarknessOpacity);
+                float innerOpacity = min(saturate(_InnerDarknessOpacity), outerOpacity);
+                float alpha = lerp(innerOpacity, outerOpacity, edgeBlend);
+                return fixed4(0, 0, 0, alpha);
             }
             ENDCG
         }

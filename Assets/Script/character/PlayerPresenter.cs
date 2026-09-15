@@ -142,7 +142,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         equipmentModel = GetComponent<EquipmentModel>();
         statusEffectModel = GetComponent<StatusEffectModel>();
         mainCamera = Camera.main;
-        initialSpawnPosition = transform.position;
+        initialSpawnPosition = playerModel.SpawnPosition;
+        SetPhysicsPosition(initialSpawnPosition);
 
         // (경민) 0707 NPC 퀘스트 관련 InventoryModel 연결 추가
         if (inventoryModel == null)
@@ -344,7 +345,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public void ReviveAtNexusFront()
     {
-        Vector3 revivePosition = new Vector3(0f, 1f, -2f);
+        Vector3 revivePosition = playerModel.SpawnPosition;
 
         int reviveHp = Mathf.Max(1, MaxHp / 2);
         int reviveMp = Mathf.Max(0, MaxMp / 2);

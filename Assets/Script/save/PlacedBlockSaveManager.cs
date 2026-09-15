@@ -69,6 +69,13 @@ public class PlacedBlockSaveManager : MonoBehaviour
         return instance;
     }
 
+    public void ResetCache()
+    {
+        placedBlocks.Clear();
+        saveData = new PlacedBlockSaveData();
+        isInitialized = false;
+    }
+
     public void InitializeWorld(int worldSeed)
     {
         if (isInitialized && currentWorldSeed == worldSeed)

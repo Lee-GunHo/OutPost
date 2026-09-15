@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.IO;
 
 public class MainSceneManager : MonoBehaviour
 {
@@ -10,12 +9,15 @@ public class MainSceneManager : MonoBehaviour
     [SerializeField] private GameObject panelSecond;
     [SerializeField] private GameObject panelCredit;
 
+    [Header("View")]
+    [SerializeField] private MainSceneView mainSceneView;
+
     [Header("Scene")]
     [Tooltip("Build Settings에 등록된 게임 씬 이름")]
     [SerializeField] private string gameplaySceneName = "GameScene";
 
     [Header("Save")]
-    [Tooltip("GlobalDataManager가 사용하는 저장 파일명과 동일해야 함")]
+    [Tooltip("SaveManager가 사용하는 인벤토리 저장 파일명")]
     [SerializeField] private string saveFileName = "SaveFile.json";
 
     private void Start()
@@ -67,44 +69,9 @@ public class MainSceneManager : MonoBehaviour
     // Save File
     // =========================
 
-    private string GetSavePath()
+    private GameSaveModel CreateSaveModel()
     {
-        return Path.Combine(Application.persistentDataPath, saveFileName);
-    }
-
-    private bool HasSaveFile()
-    {
-        string path = GetSavePath();
-
-        if (!File.Exists(path))
-            return false;
-
-        try
-        {
-            return new FileInfo(path).Length > 0;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    private void DeleteSaveFileIfExists()
-    {
-        string path = GetSavePath();
-
-        if (!File.Exists(path))
-            return;
-
-        try
-        {
-            File.Delete(path);
-            Debug.Log("[TITLE] 세이브 파일 삭제 완료");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"세이브 파일 삭제 실패 : {e.Message}");
-        }
+        return new GameSaveModel(Application.persistentDataPath, saveFileName);
     }
 
     // =========================
@@ -120,15 +87,26 @@ public class MainSceneManager : MonoBehaviour
     {
         Debug.Log("[TITLE] 이어하기 선택");
 
-        if (HasSaveFile())
+        if (!CanLoadGameplayScene())
+            return;
+
+        try
         {
-            Debug.Log("[TITLE] 세이브 파일 확인 완료");
+            if (!CreateSaveModel().HasPlayerSave())
+            {
+                if (mainSceneView != null)
+                    mainSceneView.ShowMessage("저장된 기록이 없습니다.\n새로하기로 게임을 시작해주세요.", panelSecond.transform);
+                Debug.LogWarning("[TITLE] 이어할 저장 기록이 없습니다. 새로하기를 선택해주세요.");
+                return;
+            }
         }
-        else
+        catch (System.Exception exception)
         {
-            Debug.LogWarning("[TITLE] 세이브 파일 없음");
+            Debug.LogError("[TITLE] 저장 기록 확인 실패: " + exception.Message);
+            return;
         }
 
+        GameSaveManager.ResetProgressCaches();
         LoadGameplayScene();
     }
 
@@ -136,16 +114,21 @@ public class MainSceneManager : MonoBehaviour
     {
         Debug.Log("[TITLE] 새로하기 선택");
 
-        if (HasSaveFile())
+        // Validate the destination before deleting the previous playthrough.
+        if (!CanLoadGameplayScene())
+            return;
+
+        try
         {
-            Debug.Log("[TITLE] 기존 세이브 발견");
-            DeleteSaveFileIfExists();
+            CreateSaveModel().DeleteAllProgress();
         }
-        else
+        catch (System.Exception exception)
         {
-            Debug.Log("[TITLE] 기존 세이브 없음");
+            Debug.LogError("[TITLE] 새 게임 초기화 실패: " + exception.Message);
+            return;
         }
 
+        GameSaveManager.ResetProgressCaches();
         Debug.Log("[TITLE] 새 게임 시작");
 
         LoadGameplayScene();
@@ -166,12 +149,12 @@ public class MainSceneManager : MonoBehaviour
     // Scene
     // =========================
 
-    private void LoadGameplayScene()
+    private bool CanLoadGameplayScene()
     {
         if (string.IsNullOrEmpty(gameplaySceneName))
         {
             Debug.LogError("[TITLE] gameplaySceneName이 비어있음");
-            return;
+            return false;
         }
 
         if (!Application.CanStreamedLevelBeLoaded(gameplaySceneName))
@@ -180,9 +163,15 @@ public class MainSceneManager : MonoBehaviour
                 $"[TITLE] '{gameplaySceneName}' 씬을 찾을 수 없음.\n" +
                 $"Build Settings에 추가되었는지 확인하세요."
             );
-            return;
+            return false;
         }
 
+        return true;
+    }
+
+    private void LoadGameplayScene()
+    {
+        UIState.ResetAll();
         SceneManager.LoadScene(gameplaySceneName);
     }
 

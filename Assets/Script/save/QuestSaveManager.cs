@@ -253,6 +253,13 @@ public class QuestSaveManager : MonoBehaviour
         Debug.Log("퀘스트 저장 경로: " + GetSaveFilePath());
     }
 
+    public void ResetCache()
+    {
+        questById.Clear();
+        saveData = new QuestSaveFileData();
+        isLoaded = false;
+    }
+
     private void EnsureLoaded()
     {
         if (!isLoaded)

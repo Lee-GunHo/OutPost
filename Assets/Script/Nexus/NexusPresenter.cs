@@ -18,6 +18,7 @@ public class NexusPresenter : MonoBehaviour, IDamageable
 
     private const string GameOverSceneName = "GameOverScene";
     private bool isGameOverProcessed;
+    private Collider[] bodyColliders;
 
     public int CurrentHealth => nexusModel != null ? nexusModel.CurrentHealth : 0;
     public int MaxHealth => nexusModel != null ? nexusModel.MaxHealth : 0;
@@ -25,6 +26,7 @@ public class NexusPresenter : MonoBehaviour, IDamageable
 
     private void Awake()
     {
+        bodyColliders = GetComponentsInChildren<Collider>(true);
         if (nexusModel == null)
         {
             nexusModel = GetComponent<NexusModel>();
@@ -89,6 +91,36 @@ public class NexusPresenter : MonoBehaviour, IDamageable
         }
 
         nexusModel?.TakeDamage(damage);
+    }
+
+    // Use the solid body's horizontal bounds as the melee footprint. This also
+    // supports non-convex MeshColliders without an unsupported ClosestPoint query.
+    public Bounds GetAttackBounds()
+    {
+        if (bodyColliders == null)
+            bodyColliders = GetComponentsInChildren<Collider>(true);
+
+        Bounds bounds = new Bounds(transform.position, Vector3.zero);
+        bool found = false;
+        foreach (Collider body in bodyColliders)
+        {
+            if (body == null || !body.enabled || body.isTrigger || !body.gameObject.activeInHierarchy)
+                continue;
+
+            if (!found)
+                bounds = body.bounds;
+            else
+                bounds.Encapsulate(body.bounds);
+            found = true;
+        }
+        return bounds;
+    }
+
+    public Vector3 GetClosestAttackPoint(Vector3 fromPosition)
+    {
+        Vector3 point = GetAttackBounds().ClosestPoint(fromPosition);
+        point.y = fromPosition.y;
+        return point;
     }
 
     public void Heal(int amount)

@@ -902,7 +902,8 @@ MonoBehaviour:
   overlayMaterial: {fileID: 2100000, guid: 6e5b2fbe3c54453bb8b3f646ab8c3ce9, type: 2}
   visionRadius: 0.3
   edgeSoftness: 0.2
-  darknessOpacity: 1
+  darknessOpacity: 0.95
+  innerDarknessOpacity: 0.15
 --- !u!114 &789369791 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2632601093522406277, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
@@ -1665,7 +1666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2755503468725175595, guid: a01ed79afe260f340a82212b2bfaea8c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 2755503468725175595, guid: a01ed79afe260f340a82212b2bfaea8c, type: 3}
       propertyPath: m_LocalRotation.w

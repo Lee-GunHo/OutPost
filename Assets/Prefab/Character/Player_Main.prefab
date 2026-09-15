@@ -327,6 +327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d069129c4977384bb8b9842fa4377ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerModel
+  spawnPosition: {x: 0, y: 1, z: -5}
   baseMaxHp: 100
   currentHp: 100
   baseMaxMp: 100

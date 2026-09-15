@@ -107,6 +107,14 @@ public class ChunkModificationSaveManager : MonoBehaviour
         return instance;
     }
 
+    public void ResetCache()
+    {
+        destroyedGlobalKeys.Clear();
+        destroyedLegacyKeys.Clear();
+        saveData = new WorldModificationSaveData();
+        isInitialized = false;
+    }
+
     public void InitializeWorld(int worldSeed)
     {
         if (isInitialized && currentWorldSeed == worldSeed)

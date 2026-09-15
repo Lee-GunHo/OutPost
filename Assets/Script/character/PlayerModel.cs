@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class PlayerModel : MonoBehaviour
 {
+    [Header("Spawn")]
+    [SerializeField] private Vector3 spawnPosition = new Vector3(0f, 1f, -5f);
+    public Vector3 SpawnPosition => spawnPosition;
+
     [Header("Health Data")]
     [SerializeField] private int baseMaxHp = 100;
     [SerializeField] private int currentHp = 100;

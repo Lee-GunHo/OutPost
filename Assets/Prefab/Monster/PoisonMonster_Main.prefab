@@ -190,8 +190,8 @@ MonoBehaviour:
   nexusTransform: {fileID: 0}
   playerAggroReleaseRange: 12
   attackCooldown: 1
-  nexusAttackRange: 2
-  nexusStoppingDistance: 1
+  nexusAttackRange: 1
+  nexusStoppingDistance: 0.1
   nexusNavMeshSearchRadius: 5
 --- !u!114 &7032925041197915797
 MonoBehaviour:
