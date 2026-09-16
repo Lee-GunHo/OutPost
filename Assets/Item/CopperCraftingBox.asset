@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: CopperCraftingBox
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: acfbcccce3244c40a546f651e2f484e5, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

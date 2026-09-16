@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: GoldPick
   itemType: 0
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 10bbed997b614a7cb4edba3e63181fc6, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

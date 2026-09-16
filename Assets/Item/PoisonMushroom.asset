@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: PoisonMushroom
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 91f0f337b8614d8c877592358c7416b4, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

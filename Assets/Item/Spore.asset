@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Spore
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a66612b8e7c34665a42e379190da0f80, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: SilverHat
   itemType: 1
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: ae0cf30b27b4493186b026a1e8f17bdb, type: 3}
   hpBonus: 30
   attackBonus: 0
   defenseBonus: 5

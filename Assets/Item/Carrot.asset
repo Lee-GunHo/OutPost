@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Carrot
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: b29905c961f443a9a0d59a1b5ea63400, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

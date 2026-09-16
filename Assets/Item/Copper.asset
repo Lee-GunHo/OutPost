@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Copper
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 21300000, guid: b1c1481f28fa85f43be82e7dff273a5c, type: 3}
+  icon: {fileID: 21300000, guid: d92303b491c9470fa866655117d77a35, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

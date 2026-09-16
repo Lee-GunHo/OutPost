@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: WoodRing
   itemType: 4
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: c0871f3857f948f99f30eef0b6aa364f, type: 3}
   hpBonus: 10
   attackBonus: 0
   defenseBonus: 5

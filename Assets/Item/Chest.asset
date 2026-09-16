@@ -21,6 +21,8 @@ MonoBehaviour:
   attackBonus: 0
   defenseBonus: 0
   moveSpeedBonus: 0
+  pickPower: 0
+  attackRecoveryDuration: 0
   toolType: 6
   description: "\uC0C1\uC790"
   placeablePrefab: {fileID: 1642490396178773992, guid: 5b12bdbdef78fcc41be2d42f8f43fa09, type: 3}

@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Silver
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 21300000, guid: b1c1481f28fa85f43be82e7dff273a5c, type: 3}
+  icon: {fileID: 21300000, guid: 9ece3f3d078b4e648f672b3ec6ad0605, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

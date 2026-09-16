@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: GoldArmor
   itemType: 2
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 0aad973c1fcb49fc8e633d96e49e938c, type: 3}
   hpBonus: 40
   attackBonus: 0
   defenseBonus: 5

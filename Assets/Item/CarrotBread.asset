@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: CarrotBread
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 0e870f6b0e694e8e9a0584129f97c421, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Pot
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: c6b3f9f224d14d0c85204d3d8aaa6611, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0

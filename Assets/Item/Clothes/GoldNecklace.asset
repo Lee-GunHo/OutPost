@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: GoldNecklace
   itemType: 5
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 7bc243f66e3d491ba717fbb81082bdf8, type: 3}
   hpBonus: 40
   attackBonus: 0
   defenseBonus: 5
