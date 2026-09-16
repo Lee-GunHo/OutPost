@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: MushroomHat
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 21
+  itemID: 201
   itemName: MushroomHat
   itemType: 1
   itemGrade: 0

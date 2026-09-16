@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: MushroomArmor
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 20
+  itemID: 200
   itemName: "\uBA38\uC26C\uB8F8 \uAC11\uC637"
   itemType: 2
   itemGrade: 0

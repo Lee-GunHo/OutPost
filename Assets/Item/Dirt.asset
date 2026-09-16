@@ -22,7 +22,7 @@ MonoBehaviour:
   defenseBonus: 0
   moveSpeedBonus: 0
   toolType: 6
-  description: "\uD759\uD759"
+  description: "\uD759"
   placeablePrefab: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}
   placeableYOffset: 0.5
   maxStack: 99

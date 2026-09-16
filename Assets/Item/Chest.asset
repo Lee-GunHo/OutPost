@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: Chest
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 100
-  itemName: "\uC0C1\uC790"
-  itemType: 6
+  itemID: 11
+  itemName: Chest
+  itemType: 7
   itemGrade: 0
   icon: {fileID: 21300000, guid: 3b7bec7a01eac954dbf8087501044c8a, type: 3}
   hpBonus: 0
@@ -22,7 +22,7 @@ MonoBehaviour:
   defenseBonus: 0
   moveSpeedBonus: 0
   toolType: 6
-  description: 
+  description: "\uC0C1\uC790"
   placeablePrefab: {fileID: 1642490396178773992, guid: 5b12bdbdef78fcc41be2d42f8f43fa09, type: 3}
   placeableYOffset: 0.5
-  maxStack: 99
+  maxStack: 1

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: MushroomRing
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 23
+  itemID: 203
   itemName: MushroomRing
   itemType: 4
   itemGrade: 0

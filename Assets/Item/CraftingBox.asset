@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: CraftingBox
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 30002
-  itemName: "\uC81C\uC791\uB300"
+  itemID: 10
+  itemName: CraftingBox
   itemType: 7
   itemGrade: 0
   icon: {fileID: 0}
@@ -22,7 +22,7 @@ MonoBehaviour:
   defenseBonus: 0
   moveSpeedBonus: 0
   toolType: 6
-  description: 
+  description: "\uC81C\uC791\uB300"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
-  maxStack: 99
+  maxStack: 1
