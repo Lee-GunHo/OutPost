@@ -22,6 +22,17 @@ public static class UIState
 
     public static event Action OnStateChanged;
 
+    public static void ResetAll()
+    {
+        IsInventoryOpen = false;
+        IsPauseOpen = false;
+        IsNPCInteractionOpen = false;
+        IsShopOpen = false;
+        IsStatWindowOpen = false;
+        IsCraftingOpen = false;
+        OnStateChanged?.Invoke();
+    }
+
     public static void SetInventoryOpen(bool isOpen)
     {
         IsInventoryOpen = isOpen;

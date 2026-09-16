@@ -668,6 +668,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1216275830}
   - component: {fileID: 1216275831}
+  - component: {fileID: 1216275832}
   m_Layer: 0
   m_Name: MainScene_Manager
   m_TagString: Untagged
@@ -706,8 +707,21 @@ MonoBehaviour:
   panelOption: {fileID: 1232162428}
   panelSecond: {fileID: 402521750}
   panelCredit: {fileID: 0}
+  mainSceneView: {fileID: 1216275832}
   gameplaySceneName: GameScene
   saveFileName: SaveFile.json
+--- !u!114 &1216275832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1216275829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7031733210b4d589503148955ac9277, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MainSceneView
 --- !u!1 &1232162428 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1769915939895503613, guid: 435d76dee61497041aab9f0137b77d61, type: 3}

@@ -25,7 +25,8 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _DarknessOpacity: 1
+    - _DarknessOpacity: 0.95
+    - _InnerDarknessOpacity: 0.15
     - _EdgeSoftness: 0.2
     - _VisionRadius: 0.3
     m_Colors:

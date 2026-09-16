@@ -361,6 +361,13 @@ public class ChestSaveManager : MonoBehaviour
         Debug.Log("창고 저장 경로: " + GetSaveFilePath());
     }
 
+    public void ResetCache()
+    {
+        chestById.Clear();
+        saveData = new ChestSaveFileData();
+        isLoaded = false;
+    }
+
     private void EnsureLoaded()
     {
         if (!isLoaded)

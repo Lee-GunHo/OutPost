@@ -15,18 +15,21 @@ public sealed class PlayerVisionOverlay : MonoBehaviour
     [SerializeField] private Material overlayMaterial;
 
     [Header("Visibility")]
-    [Tooltip("Fully visible radius, as a fraction of the shorter screen dimension.")]
+    [Tooltip("Inner visibility radius, as a fraction of the shorter screen dimension.")]
     [SerializeField, Range(0.05f, 1f)] private float visionRadius = 0.3f;
-    [Tooltip("Width of the gradual transition from clear to dark.")]
+    [Tooltip("Width of the gradual transition from inner to outer darkness.")]
     [SerializeField, Range(0.001f, 0.5f)] private float edgeSoftness = 0.2f;
     [Tooltip("Outer darkness: 0 is transparent, 1 is fully opaque.")]
-    [SerializeField, Range(0f, 1f)] private float darknessOpacity = 1f;
+    [SerializeField, Range(0f, 1f)] private float darknessOpacity = 0.95f;
+    [Tooltip("Darkness inside the visible area. Limited to the outer darkness.")]
+    [SerializeField, Range(0f, 1f)] private float innerDarknessOpacity = 0.15f;
 
     private static readonly int CenterId = Shader.PropertyToID("_VisionCenter");
     private static readonly int ScreenScaleId = Shader.PropertyToID("_ScreenScale");
     private static readonly int RadiusId = Shader.PropertyToID("_VisionRadius");
     private static readonly int SoftnessId = Shader.PropertyToID("_EdgeSoftness");
     private static readonly int OpacityId = Shader.PropertyToID("_DarknessOpacity");
+    private static readonly int InnerOpacityId = Shader.PropertyToID("_InnerDarknessOpacity");
 
     private Camera viewCamera;
     private Canvas overlayCanvas;
@@ -100,6 +103,7 @@ public sealed class PlayerVisionOverlay : MonoBehaviour
         runtimeMaterial.SetFloat(RadiusId, Mathf.Max(0.001f, visionRadius));
         runtimeMaterial.SetFloat(SoftnessId, Mathf.Max(0.001f, edgeSoftness));
         runtimeMaterial.SetFloat(OpacityId, Mathf.Clamp01(darknessOpacity));
+        runtimeMaterial.SetFloat(InnerOpacityId, Mathf.Clamp01(innerDarknessOpacity));
     }
 
     private void OnDisable()

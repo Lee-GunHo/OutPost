@@ -9,6 +9,7 @@ public class SaveManager : MonoBehaviour
 
     [SerializeField] private Transform player;
     [SerializeField] private string saveFileName = "SaveFile.json";
+    public string SaveFileName => saveFileName;
 
     //0721 건호 추가
     [Header("Inventory Save")]
@@ -26,14 +27,40 @@ public class SaveManager : MonoBehaviour
         Instance = this;
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
+    private bool ResolveReferences()
+    {
+        if (player == null)
+        {
+            PlayerPresenter presenter = FindFirstObjectByType<PlayerPresenter>();
+            if (presenter != null)
+                player = presenter.transform;
+        }
+        if (playerModel == null && player != null)
+            playerModel = player.GetComponent<PlayerModel>();
+
+        return player != null && playerModel != null && inventoryModel != null &&
+            hotbarModel != null && equipmentModel != null && itemDatabase != null;
+    }
+
     [ContextMenu("Save Game")]
 
     public void SaveGame()
     {
-        if (player == null)
+        TrySaveGame();
+    }
+
+    public bool TrySaveGame()
+    {
+        if (!ResolveReferences())
         {
-            Debug.LogError("[SAVE] Player가 연결되지 않았습니다.");
-            return;
+            Debug.LogError("[SAVE] 플레이어 또는 인벤토리 저장 참조가 연결되지 않았습니다.");
+            return false;
         }
 
         SaveData data = new SaveData();
@@ -53,14 +80,28 @@ public class SaveManager : MonoBehaviour
 
         string path = Path.Combine(Application.persistentDataPath, saveFileName);
 
-        File.WriteAllText(path, json);
+        try
+        {
+            File.WriteAllText(path, json);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError("[SAVE] 저장 실패: " + exception.Message);
+            return false;
+        }
 
         Debug.Log("[SAVE] 저장 완료: " + path);
+        return true;
     }
 
     //0721 건호 추가
     [ContextMenu("Load Game")]
     public void LoadGame()
+    {
+        TryLoadGame();
+    }
+
+    public bool TryLoadGame(bool restorePosition = true)
     {
         string path = Path.Combine(
             Application.persistentDataPath,
@@ -68,26 +109,33 @@ public class SaveManager : MonoBehaviour
 
         if (!File.Exists(path))
         {
-            Debug.LogWarning(
-                "[LOAD] 저장 파일이 없습니다: " + path);
-            return;
+            return true;
         }
 
-        string json = File.ReadAllText(path);
-        SaveData data = JsonUtility.FromJson<SaveData>(json);
+        SaveData data;
+        try
+        {
+            string json = File.ReadAllText(path);
+            data = JsonUtility.FromJson<SaveData>(json);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError("[LOAD] 저장 데이터 읽기 실패: " + exception.Message);
+            return false;
+        }
 
         if (data == null)
         {
             Debug.LogError(
                 "[LOAD] 저장 데이터를 읽지 못했습니다.");
-            return;
+            return false;
         }
 
-        if (itemDatabase == null)
+        if (!ResolveReferences())
         {
             Debug.LogError(
-                "[LOAD] ItemDatabase가 연결되지 않았습니다.");
-            return;
+                "[LOAD] 플레이어 또는 인벤토리 저장 참조가 연결되지 않았습니다.");
+            return false;
         }
 
         RemoveCurrentEquipmentStats();
@@ -96,7 +144,8 @@ public class SaveManager : MonoBehaviour
         hotbarModel.ClearAllItems();
         equipmentModel.ClearAllEquipment();
 
-        LoadPlayerData(data);
+        if (restorePosition)
+            LoadPlayerData(data);
         LoadInventoryItems(data);
         LoadHotbarItems(data);
         LoadEquipmentItems(data);
@@ -107,6 +156,7 @@ public class SaveManager : MonoBehaviour
             inventoryPresenter.RefreshAfterLoad();
 
         Debug.Log("[LOAD] 불러오기 완료: " + path);
+        return true;
     }
     private void RemoveCurrentEquipmentStats()
     {

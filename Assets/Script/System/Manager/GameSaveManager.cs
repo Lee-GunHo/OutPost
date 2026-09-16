@@ -2,13 +2,15 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameSaveManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PlayerPresenter playerPresenter;
 
-    private string SavePath => Path.Combine(Application.persistentDataPath, "player_save.json");
+    private string SavePath => Path.Combine(Application.persistentDataPath, GameSaveModel.PlayerFileName);
+    private bool isReady;
 
     private void Awake()
     {
@@ -69,11 +71,20 @@ public class GameSaveManager : MonoBehaviour
 
     public void SaveGame()
     {
-        if (playerPresenter == null)
+        TrySaveGame();
+    }
+
+    public bool TrySaveGame()
+    {
+        // Avoid overwriting a saved run before its initial load has finished.
+        if (!isReady || playerPresenter == null)
         {
-            Debug.LogWarning("저장 실패: PlayerPresenter가 없습니다.");
-            return;
+            Debug.LogWarning("저장 실패: 플레이어의 불러오기가 아직 완료되지 않았습니다.");
+            return false;
         }
+
+        if (SaveManager.Instance == null || !SaveManager.Instance.TrySaveGame())
+            return false;
 
         PlayerSaveData saveData = new PlayerSaveData
         {
@@ -122,28 +133,69 @@ public class GameSaveManager : MonoBehaviour
 
         string json = JsonUtility.ToJson(saveData, true);
 
-        File.WriteAllText(SavePath, json);
+        try
+        {
+            File.WriteAllText(SavePath, json);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError("플레이어 저장 실패: " + exception.Message);
+            return false;
+        }
+
+        if (QuestSaveManager.Instance != null)
+            QuestSaveManager.Instance.SaveNow();
+        if (ChestSaveManager.Instance != null)
+            ChestSaveManager.Instance.SaveNow();
+        if (ChunkModificationSaveManager.Instance != null)
+            ChunkModificationSaveManager.Instance.SaveNow();
+        if (PlacedBlockSaveManager.Instance != null)
+            PlacedBlockSaveManager.Instance.SaveNow();
 
         Debug.Log("게임 저장 완료: " + SavePath);
+        return true;
     }
 
     public void LoadGame()
     {
+        isReady = false;
+        if (playerPresenter == null)
+            playerPresenter = FindFirstObjectByType<PlayerPresenter>();
+
         if (playerPresenter == null)
         {
             Debug.LogWarning("불러오기 실패: PlayerPresenter가 없습니다.");
             return;
         }
 
-        if (!File.Exists(SavePath))
+        PlayerSaveData saveData = null;
+        if (File.Exists(SavePath))
         {
-            Debug.Log("저장 파일이 없습니다. 새 게임으로 시작합니다.");
-            return;
+            try
+            {
+                string json = File.ReadAllText(SavePath);
+                saveData = JsonUtility.FromJson<PlayerSaveData>(json);
+                if (saveData == null)
+                    throw new System.IO.InvalidDataException("플레이어 저장 데이터가 비어 있습니다.");
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError("플레이어 불러오기 실패: " + exception.Message);
+                return;
+            }
         }
 
-        string json = File.ReadAllText(SavePath);
+        // Equipment changes maximum HP/MP, so restore it before current HP/MP.
+        // Prefer the safe position restore in PlayerPresenter when both files exist.
+        if (SaveManager.Instance != null && !SaveManager.Instance.TryLoadGame(saveData == null))
+            return;
 
-        PlayerSaveData saveData = JsonUtility.FromJson<PlayerSaveData>(json);
+        if (saveData == null)
+        {
+            isReady = true;
+            Debug.Log("플레이어 성장 저장이 없어 기본 성장 데이터로 시작합니다.");
+            return;
+        }
 
         playerPresenter.LoadPlayerData(saveData);
 
@@ -164,19 +216,58 @@ public class GameSaveManager : MonoBehaviour
         }
 
         Debug.Log("게임 불러오기 완료: " + SavePath);
+        isReady = true;
     }
 
-    [ContextMenu("Delete Save File")]
+    public static void ResetProgressCaches()
+    {
+        if (QuestSaveManager.Instance != null)
+            QuestSaveManager.Instance.ResetCache();
+        if (ChestSaveManager.Instance != null)
+            ChestSaveManager.Instance.ResetCache();
+        if (ChunkModificationSaveManager.Instance != null)
+            ChunkModificationSaveManager.Instance.ResetCache();
+        if (PlacedBlockSaveManager.Instance != null)
+            PlacedBlockSaveManager.Instance.ResetCache();
+    }
+
+    [ContextMenu("Delete All Save Files")]
     public void DeleteSave()
     {
-        if (!File.Exists(SavePath))
+        const string mainSceneName = "MainScene";
+        if (Application.isPlaying && !Application.CanStreamedLevelBeLoaded(mainSceneName))
         {
-            Debug.Log("삭제할 저장 파일이 없습니다.");
+            Debug.LogError("저장 삭제 후 돌아갈 MainScene이 빌드 설정에 없습니다.");
             return;
         }
 
-        File.Delete(SavePath);
+        string inventoryFileName = SaveManager.Instance != null
+            ? SaveManager.Instance.SaveFileName : "SaveFile.json";
 
-        Debug.Log("저장 파일 삭제 완료: " + SavePath);
+        // Closing an open chest restores dragged items and may save its contents.
+        // Finish that before deletion so scene teardown cannot recreate old records.
+        if (Application.isPlaying && ChestPresenter.Instance != null)
+            ChestPresenter.Instance.Close();
+
+        try
+        {
+            new GameSaveModel(Application.persistentDataPath, inventoryFileName).DeleteAllProgress();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError("전체 저장 기록 삭제 실패: " + exception.Message);
+            return;
+        }
+
+        // Do not let quitting or pausing write the current character back to disk.
+        isReady = false;
+        ResetProgressCaches();
+        Debug.Log("플레이어, 아이템, 퀘스트, 상자, 맵 파괴/설치 저장 기록을 모두 삭제했습니다.");
+
+        if (Application.isPlaying)
+        {
+            UIState.ResetAll();
+            SceneManager.LoadScene(mainSceneName);
+        }
     }
 }
