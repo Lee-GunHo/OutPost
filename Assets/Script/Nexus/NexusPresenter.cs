@@ -26,11 +26,18 @@ public class NexusPresenter : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        bodyColliders = GetComponentsInChildren<Collider>(true);
         if (nexusModel == null)
         {
             nexusModel = GetComponent<NexusModel>();
         }
+
+        if (nexusView == null)
+            nexusView = GetComponent<NexusView>();
+        if (nexusView != null && nexusModel != null)
+            nexusView.ConfigureBlockingBody(nexusModel.MinimumBlockingHeight);
+
+        NavigationObstacleView.ApplyTo(gameObject);
+        bodyColliders = GetComponentsInChildren<Collider>(true);
     }
 
     private void OnEnable()

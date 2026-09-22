@@ -8,6 +8,20 @@ public static class UIState
     public static bool IsNPCInteractionOpen { get; private set; }
     public static bool IsShopOpen { get; private set; }
     public static bool IsStatWindowOpen { get; private set; }
+    public static bool IsChestOpen { get; private set; }
+
+    private static int escapeHandledFrame = -1;
+    public static bool WasEscapeHandledThisFrame => escapeHandledFrame == Time.frameCount;
+    public static bool CanOpenWindow => !IsAnyUIOpen && !WasEscapeHandledThisFrame;
+
+    public static bool TryConsumeEscape()
+    {
+        if (WasEscapeHandledThisFrame)
+            return false;
+
+        escapeHandledFrame = Time.frameCount;
+        return true;
+    }
 
     // 제작대 UI 열림 상태 추가
     public static bool IsCraftingOpen { get; private set; }
@@ -18,6 +32,7 @@ public static class UIState
         IsNPCInteractionOpen ||
         IsShopOpen ||
         IsStatWindowOpen ||
+        IsChestOpen ||
         IsCraftingOpen;
 
     public static event Action OnStateChanged;
@@ -30,12 +45,20 @@ public static class UIState
         IsShopOpen = false;
         IsStatWindowOpen = false;
         IsCraftingOpen = false;
+        IsChestOpen = false;
+        escapeHandledFrame = -1;
         OnStateChanged?.Invoke();
     }
 
     public static void SetInventoryOpen(bool isOpen)
     {
         IsInventoryOpen = isOpen;
+        OnStateChanged?.Invoke();
+    }
+
+    public static void SetChestOpen(bool isOpen)
+    {
+        IsChestOpen = isOpen;
         OnStateChanged?.Invoke();
     }
 

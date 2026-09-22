@@ -63,6 +63,9 @@ public class PauseMenuManager : MonoBehaviour
 
     private void OpenPausePanel()
     {
+        if (UIState.IsAnyUIOpen)
+            return;
+
         isPauseOpen = true;
         isOptionOpen = false;
         IsMenuOpen = true;
@@ -85,6 +88,9 @@ public class PauseMenuManager : MonoBehaviour
 
     public void OpenOptionPanel()
     {
+        if (!UIState.IsPauseOpen && !UIState.CanOpenWindow)
+            return;
+
         isPauseOpen = false;
         isOptionOpen = true;
         IsMenuOpen = true;
@@ -96,6 +102,9 @@ public class PauseMenuManager : MonoBehaviour
 
     public void CloseOptionPanel()
     {
+        if (!isOptionOpen)
+            return;
+
         isOptionOpen = false;
         isPauseOpen = true;
         IsMenuOpen = true;

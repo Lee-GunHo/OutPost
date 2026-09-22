@@ -66,15 +66,11 @@ public class InventoryPresenter : MonoBehaviour
         if (draggingItem == null)
             return;
 
-        bool escapePressed =
-            Keyboard.current != null &&
-            Keyboard.current.escapeKey.wasPressedThisFrame;
-
         bool rightClickPressed =
             Mouse.current != null &&
             Mouse.current.rightButton.wasPressedThisFrame;
 
-        if (escapePressed || rightClickPressed)
+        if (rightClickPressed)
         {
             CancelDrag();
         }
@@ -110,44 +106,55 @@ public class InventoryPresenter : MonoBehaviour
 
     private void ToggleInventory()
     {
-        if (PauseMenuManager.IsMenuOpen)
+        if (UIState.WasEscapeHandledThisFrame)
             return;
-
-        // (경민) 0709 상점 UI 닫을 때 인벤토리 UI도 같이 열렸는데 안닫혀서 수정
-        if(!isOpen && UIState.IsAnyUIOpen)
-        {
-            Debug.Log("다른 UI가 열려 있어서 인벤토리를 열 수 없습니다.");
-            return;
-        }
-
-        isOpen = !isOpen;
-
-        if (inventoryPanel != null)
-            inventoryPanel.SetActive(isOpen);
-
-        UIState.SetInventoryOpen(isOpen);
-
-        UpdateHotbarPosition();
-
-        if (isOpen && playerPresenter != null)
-            playerPresenter.StopMove();
 
         if (isOpen)
-        {
-            CraftingPresenter.Instance?.Open(null, playerPresenter, null);
-        }
+            CloseInventory();
         else
-        {
-            StopDrag();
-            inventoryView.HideTooltip();
-            CraftingPresenter.Instance?.Close();
-        }
+            OpenInventory();
+    }
+
+    private void OpenInventory()
+    {
+        if (!UIState.CanOpenWindow || inventoryPanel == null)
+            return;
+
+        isOpen = true;
+        UIState.SetInventoryOpen(true);
+        inventoryPanel.SetActive(true);
+        UpdateHotbarPosition();
+        playerPresenter?.StopMove();
+
+        // Hand crafting is an embedded part of the inventory window.
+        CraftingPresenter.Instance?.Open(null, playerPresenter, null);
+    }
+
+    public void CloseInventory()
+    {
+        if (!isOpen)
+            return;
+
+        // Split dragging temporarily removes items from their source slot.
+        // Return them before hiding the inventory, including when ESC closes it.
+        if (draggingItem != null)
+            CancelDrag();
+        inventoryView.HideTooltip();
+        CraftingPresenter.Instance?.Close();
+
+        isOpen = false;
+        UIState.SetInventoryOpen(false);
+        if (inventoryPanel != null)
+            inventoryPanel.SetActive(false);
+        UpdateHotbarPosition();
     }
 
     public void SetPanelVisible(bool visible)
     {
-        if (inventoryPanel != null)
-            inventoryPanel.SetActive(visible);
+        if (visible)
+            OpenInventory();
+        else
+            CloseInventory();
     }
 
     private void UpdateHotbarPosition()

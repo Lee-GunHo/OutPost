@@ -2,15 +2,20 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(UIPresenter))]
 public class UIInputManager : MonoBehaviour
 {
     private PlayerInputAction playerInputAction;
+    private UIPresenter uiPresenter;
 
     public event Action OnInventoryPressed;
     public event Action OnPausePressed;
 
     private void Awake()
     {
+        uiPresenter = GetComponent<UIPresenter>();
+        if (uiPresenter == null)
+            uiPresenter = gameObject.AddComponent<UIPresenter>();
         playerInputAction = new PlayerInputAction();
     }
 
@@ -32,22 +37,18 @@ public class UIInputManager : MonoBehaviour
 
     private void HandleInventory(InputAction.CallbackContext context)
     {
+        // Input action callback ordering must not turn ESC + inventory into pause.
+        if (UIState.WasEscapeHandledThisFrame ||
+            (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame))
+            return;
+
         OnInventoryPressed?.Invoke();
     }
 
     private void HandlePause(InputAction.CallbackContext context)
     {
-        // Closing the stat window consumes ESC before any pause listeners run.
-        if (UIState.IsStatWindowOpen)
-        {
-            PlayerStatusUI statusUI = FindFirstObjectByType<PlayerStatusUI>();
-            if (statusUI != null)
-            {
-                statusUI.CloseStatPanel();
-            }
-
+        if (uiPresenter.HandleEscape())
             return;
-        }
 
         OnPausePressed?.Invoke();
     }

@@ -185,6 +185,7 @@ public class SeedMapView : MonoBehaviour
         );
 
         blockObject.name = itemData.placeablePrefab.name;
+        NavigationObstacleView.ApplyTo(blockObject);
 
         BreakableWall[] breakableWalls =
             blockObject.GetComponentsInChildren<BreakableWall>(true);

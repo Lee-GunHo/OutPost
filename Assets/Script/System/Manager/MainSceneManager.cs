@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class MainSceneManager : MonoBehaviour
@@ -23,6 +24,17 @@ public class MainSceneManager : MonoBehaviour
     private void Start()
     {
         ShowFirst();
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame)
+            return;
+
+        if ((panelOption != null && panelOption.activeSelf) ||
+            (panelSecond != null && panelSecond.activeSelf) ||
+            (panelCredit != null && panelCredit.activeSelf))
+            ShowFirst();
     }
 
     // =========================

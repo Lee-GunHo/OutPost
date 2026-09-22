@@ -12,6 +12,10 @@ public class NexusModel : MonoBehaviour
     [Header("넥서스 체력")]
     [SerializeField] private int maxHealth = 1000;
 
+    [Header("Collision")]
+    [SerializeField, Min(0.1f)] private float minimumBlockingHeight = 2.5f;
+    public float MinimumBlockingHeight => Mathf.Max(0.1f, minimumBlockingHeight);
+
     private int currentHealth;
     private bool isHealthDepleted;
 

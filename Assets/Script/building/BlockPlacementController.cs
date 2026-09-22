@@ -370,10 +370,13 @@ public class BlockPlacementController : MonoBehaviour
                 globalCell
             );
 
+            blockObject.SetActive(false);
             Destroy(blockObject);
             return;
         }
 
+        playerPresenter.FaceActionTarget(blockPosition);
+        NavigationObstacleView.ApplyTo(blockObject);
         canPlaceCurrentCell = false;
         ShowPreview(currentGridWorldPosition, false);
     }

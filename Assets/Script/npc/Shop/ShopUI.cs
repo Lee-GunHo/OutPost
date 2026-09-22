@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class ShopUI : MonoBehaviour
@@ -71,20 +70,6 @@ public class ShopUI : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (panel == null || !panel.activeSelf)
-            return;
-
-        bool escapePressed =
-            Keyboard.current != null &&
-            Keyboard.current.escapeKey.wasPressedThisFrame;
-
-        if (escapePressed)
-        {
-            Close();
-        }
-    }
 
     private void Start()
     {
@@ -98,13 +83,13 @@ public class ShopUI : MonoBehaviour
 
     public void Open(ShopData shopData, PlayerPresenter player, NPCPresenter npc)
     {
+        if (!UIState.CanOpenWindow || panel == null)
+            return;
+
         currentShopData = shopData;
         currentPlayer = player;
         currentNPC = npc;
         currentInventory = currentPlayer != null ? currentPlayer.PlayerInventory : null;
-
-        UIState.SetInventoryOpen(false);
-        UIState.SetNPCInteractionOpen(false);
 
         UIState.SetShopOpen(true);
 
@@ -593,8 +578,6 @@ public class ShopUI : MonoBehaviour
         }
 
         UIState.SetShopOpen(false);
-        UIState.SetNPCInteractionOpen(false);
-        UIState.SetInventoryOpen(false);
 
         currentShopData = null;
         currentPlayer = null;

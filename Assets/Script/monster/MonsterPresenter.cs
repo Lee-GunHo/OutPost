@@ -384,6 +384,8 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         isDeathProcessed = true;
 
+        SpawnItemDrops();
+
         StopMove();
 
         Debug.Log("몬스터 사망");
@@ -393,6 +395,23 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         AddKillProgress();
 
         Destroy(gameObject, 1f);
+    }
+
+    private void SpawnItemDrops()
+    {
+        if (monsterModel.DropItemPrefab == null)
+            return;
+
+        int count = Random.Range(monsterModel.MinDropCount, monsterModel.MaxDropCount + 1);
+        if (count == 0)
+            return;
+
+        // Older monster prefabs may not have a view yet.
+        if (monsterView == null)
+            monsterView = gameObject.AddComponent<MonsterView>();
+
+        monsterView.SpawnDrops(monsterModel.DropItemPrefab, count,
+            transform.position, monsterModel.DropSpread);
     }
 
     private void AddKillProgress()

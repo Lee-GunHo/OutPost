@@ -1,7 +1,6 @@
 using System.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 
@@ -52,20 +51,6 @@ public class NPCInteractionUI : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (panel == null || !panel.activeSelf)
-            return;
-
-        bool escapePressed =
-            Keyboard.current != null &&
-            Keyboard.current.escapeKey.wasPressedThisFrame;
-
-        if (escapePressed)
-        {
-            Close();
-        }
-    }
 
     private void Start()
     {
@@ -97,6 +82,9 @@ public class NPCInteractionUI : MonoBehaviour
     /// <param name="player"></param>
     public void Open(NPCPresenter npc, PlayerPresenter player)
     {
+        if (!UIState.CanOpenWindow || panel == null)
+            return;
+
         currentNPC = npc;
         currentPlayer = player;
 
@@ -256,12 +244,15 @@ public class NPCInteractionUI : MonoBehaviour
             return;
         }
 
-        ShopUI.Instance.Open(shopData, currentPlayer, currentNPC);
+        // This button replaces the dialogue window rather than stacking a shop.
+        if (!UIState.IsNPCInteractionOpen || UIState.WasEscapeHandledThisFrame)
+            return;
 
-        if (panel != null)
-        {
-            panel.SetActive(false);
-        }
+        PlayerPresenter player = currentPlayer;
+        NPCPresenter npc = currentNPC;
+        Close();
+        ShopUI.Instance.Open(shopData, player, npc);
+        npc?.HideInteractionMark();
     }
 
     /// <summary>

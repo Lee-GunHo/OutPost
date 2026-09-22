@@ -15,6 +15,7 @@ public class PlayerAttackState : IPlayerState
     public void Enter()
     {
         playerPresenter.StopMove();
+        playerPresenter.FaceMouseAction();
 
         attackTimer = 0f;
         hasAttacked = false;

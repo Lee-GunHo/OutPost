@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class CraftingPresenter : MonoBehaviour
 {
@@ -47,20 +46,6 @@ public class CraftingPresenter : MonoBehaviour
         Instance = this;
     }
 
-    private void Update()
-    {
-        if (!isOpen)
-            return;
-
-        bool escapePressed =
-            Keyboard.current != null &&
-            Keyboard.current.escapeKey.wasPressedThisFrame;
-
-        if (escapePressed)
-        {
-            Close();
-        }
-    }
 
     private void Start()
     {
@@ -116,10 +101,11 @@ public class CraftingPresenter : MonoBehaviour
             return;
         }
 
-        if (isOpen)
-        {
-            Close();
-        }
+        // Hand crafting shares the inventory window; a workbench is standalone.
+        bool embeddedInInventory = table == null && UIState.IsInventoryOpen;
+        if (isOpen || UIState.WasEscapeHandledThisFrame ||
+            (!embeddedInInventory && !UIState.CanOpenWindow))
+            return;
 
         currentTable = table;
         currentPlayer = player;
@@ -149,6 +135,7 @@ public class CraftingPresenter : MonoBehaviour
         CraftingTableInteractable closedInteractable = currentInteractable;
 
         isOpen = false;
+        craftingTooltipView?.Hide();
         craftingView.SetVisible(false);
 
         UIState.SetCraftingOpen(false);

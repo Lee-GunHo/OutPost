@@ -20,6 +20,17 @@ public class MonsterModel : MonoBehaviour
     [Header("Reward Data")]
     [SerializeField] private int expReward = 20;
 
+    [Header("Item Drops")]
+    [SerializeField] private GameObject dropItemPrefab;
+    [SerializeField, Min(0)] private int minDropCount = 1;
+    [SerializeField, Min(0)] private int maxDropCount = 2;
+    [SerializeField, Min(0f)] private float dropSpread = 0.3f;
+
+    public GameObject DropItemPrefab => dropItemPrefab;
+    public int MinDropCount => Mathf.Max(0, minDropCount);
+    public int MaxDropCount => Mathf.Max(MinDropCount, maxDropCount);
+    public float DropSpread => Mathf.Max(0f, dropSpread);
+
     [Header("Status Effect Attack Data")]
     [SerializeField] private StatusEffectType attackStatusEffectType = StatusEffectType.None;
     [SerializeField] private float statusEffectDuration = 0f;

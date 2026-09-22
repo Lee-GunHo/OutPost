@@ -36,7 +36,9 @@ public class BreakableWallView : MonoBehaviour
 
     public void DestroyTarget(GameObject target)
     {
-        Destroy(target != null ? target : gameObject);
+        GameObject root = target != null ? target : gameObject;
+        root.SetActive(false);
+        Destroy(root);
     }
 
     /// <summary>
@@ -57,6 +59,9 @@ public class BreakableWallView : MonoBehaviour
         Transform child = parent.Find(childName);
 
         if (child != null)
+        {
+            child.gameObject.SetActive(false);
             Destroy(child.gameObject);
+        }
     }
 }

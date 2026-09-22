@@ -87,7 +87,7 @@ public class PlayerStatusUI : MonoBehaviour
     private void Update()
     {
         // ESC takes priority if L was also pressed during this frame.
-        if (statPanelClosedFrame == Time.frameCount)
+        if (statPanelClosedFrame == Time.frameCount || UIState.WasEscapeHandledThisFrame)
         {
             return;
         }
@@ -153,6 +153,8 @@ public class PlayerStatusUI : MonoBehaviour
         }
 
         bool nextState = !statPanel.activeSelf;
+        if (nextState && !UIState.CanOpenWindow)
+            return;
 
         statPanel.SetActive(nextState);
         UIState.SetStatWindowOpen(nextState);

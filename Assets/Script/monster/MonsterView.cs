@@ -21,6 +21,22 @@ public class MonsterView : MonoBehaviour
         CacheRenderers();
     }
 
+    public void SpawnDrops(GameObject prefab, int count, Vector3 origin, float spread)
+    {
+        if (prefab == null)
+            return;
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 position = origin;
+            position.x += Random.Range(-spread, spread);
+            position.z += Random.Range(-spread, spread);
+            // Match the existing wall drops on this flat map.
+            position.y = 0.5f;
+            Instantiate(prefab, position, Quaternion.identity);
+        }
+    }
+
     private void CacheRenderers()
     {
         hitBlinkRenderers.Clear();

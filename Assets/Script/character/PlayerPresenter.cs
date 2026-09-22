@@ -31,6 +31,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public event Action OnPlayerStatusChanged;
 
     private Vector3 lastMoveDirection = Vector3.forward;
+    private int actionFacingFrame = -1;
 
     public Vector2 MoveInput => UIState.IsAnyUIOpen ? Vector2.zero : inputManager.MoveInput;
     public bool IsDashPressed => !UIState.IsAnyUIOpen && inputManager.IsDashPressed;
@@ -177,12 +178,31 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     private void RotateToDirection(Vector3 direction)
     {
-        if (direction == Vector3.zero)
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.0001f)
         {
             return;
         }
 
-        transform.rotation = Quaternion.LookRotation(direction);
+        Quaternion rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        // Keep the interpolated physics body and visible transform in agreement.
+        if (rigid != null)
+            rigid.rotation = rotation;
+        transform.rotation = rotation;
+    }
+
+    public void FaceActionTarget(Vector3 worldPosition)
+    {
+        if (UIState.IsAnyUIOpen || IsDead)
+            return;
+
+        RotateToDirection(worldPosition - transform.position);
+        actionFacingFrame = Time.frameCount;
+    }
+
+    public void FaceMouseAction()
+    {
+        FaceActionTarget(transform.position + GetMouseDirectionFromPlayer());
     }
 
     public void Move()
@@ -199,7 +219,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         if (moveDirection != Vector3.zero)
         {
             lastMoveDirection = moveDirection;
-            RotateToDirection(moveDirection);
+            if (actionFacingFrame != Time.frameCount)
+                RotateToDirection(moveDirection);
         }
 
         Vector3 moveVelocity = moveDirection * MoveSpeed;
@@ -499,7 +520,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         direction.Normalize();
 
-        transform.rotation = Quaternion.LookRotation(direction);
+        FaceActionTarget(mouseWorldPosition);
 
         float attackReach = AttackBoxDistance + Mathf.Max(AttackBoxHalfSize.x, AttackBoxHalfSize.z);
         float actionRange = Mathf.Max(attackReach, BreakRange);
@@ -667,6 +688,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
             if (distance <= playerModel.BreakRange)
             {
+                FaceActionTarget(hit.point);
                 wall.Break();
                 Debug.Log("벽 부수기 성공");
             }
@@ -729,7 +751,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return false;
         }
 
-        transform.rotation = Quaternion.LookRotation(attackDirection);
+        FaceActionTarget(transform.position + attackDirection);
 
         Vector3 attackCenter = transform.position + attackDirection * AttackBoxDistance;
 
@@ -981,6 +1003,11 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             // 자기 자신의 몸 Collider는 바닥 후보에서 제외한다.
             if (hitTransform == transform || hitTransform.IsChildOf(transform))
                 continue;
+
+            // Old saves may be on the nexus roof. Do not restore onto its top or
+            // inside the new blocking collider; return to the default spawn.
+            if (IsNexusTarget(hit.collider))
+                return false;
 
             // 아래를 향한 Ray가 윗면을 맞은 경우만 바닥으로 취급한다.
             if (hit.normal.y <= 0.5f)

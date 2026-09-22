@@ -23,6 +23,7 @@ public class RuntimeNavMeshBuilder : MonoBehaviour
         chunkView = FindFirstObjectByType<ChunkView>();
         if (chunkView != null)
             chunkView.ChunksChanged += Build;
+        BreakableWallPresenter.GeometryChanged += Build;
 
         nextBuildTime = Time.unscaledTime + Mathf.Max(0f, buildDelay);
         buildRequested = true;
@@ -32,6 +33,7 @@ public class RuntimeNavMeshBuilder : MonoBehaviour
     {
         if (chunkView != null)
             chunkView.ChunksChanged -= Build;
+        BreakableWallPresenter.GeometryChanged -= Build;
 
         CancelUpdate();
     }

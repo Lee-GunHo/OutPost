@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(BreakableWallView))]
 public class BreakableWallPresenter : MonoBehaviour
 {
+    public static event System.Action GeometryChanged;
     [Header("MVP")]
     [SerializeField] private BreakableWallModel model;
     [SerializeField] private BreakableWallView view;
@@ -172,6 +173,10 @@ public class BreakableWallPresenter : MonoBehaviour
         bool isFullyBroken = model.AdvanceStage(out int clearedStage);
 
         view.DestroyStageParts(GetVisualRoot(), clearedStage);
+
+        // Placed blocks use carving. Natural walls belong to the baked geometry.
+        if (!model.IsPlayerPlaced)
+            GeometryChanged?.Invoke();
 
         if (!isFullyBroken)
             return;

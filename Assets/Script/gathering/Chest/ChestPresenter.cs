@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 /// <summary>
 /// ChestModel과 ChestView를 연결하고 아이템 이동, 한 개씩 줍기/놓기,
@@ -113,20 +112,6 @@ public class ChestPresenter : MonoBehaviour
         chestView.Init(this);
     }
 
-    private void Update()
-    {
-        if (!isOpen)
-            return;
-
-        bool escapePressed =
-            Keyboard.current != null &&
-            Keyboard.current.escapeKey.wasPressedThisFrame;
-
-        if (escapePressed)
-        {
-            Close();
-        }
-    }
 
     private void OnApplicationQuit()
     {
@@ -175,10 +160,8 @@ public class ChestPresenter : MonoBehaviour
             return;
         }
 
-        if (isOpen)
-        {
-            Close();
-        }
+        if (!UIState.CanOpenWindow || isOpen)
+            return;
 
         currentChest = chestModel;
         currentPlayer = player;
@@ -191,7 +174,7 @@ public class ChestPresenter : MonoBehaviour
 
         isOpen = true;
 
-        UIState.SetInventoryOpen(true);
+        UIState.SetChestOpen(true);
         currentPlayer.StopMove();
 
         chestView.Show();
@@ -220,7 +203,7 @@ public class ChestPresenter : MonoBehaviour
             $"[닫기 버튼] ChestView.Hide 실행 완료"
         );
 
-        UIState.SetInventoryOpen(false);
+        UIState.SetChestOpen(false);
 
         currentChest = null;
         currentInventory = null;
