@@ -25,7 +25,10 @@ public class DroppedItemPresenter : MonoBehaviour
         ResolveComponents();
 
         if (view != null)
+        {
             view.TriggerEntered += HandleTriggerEntered;
+            view.SetIcon(model != null && model.ItemData != null ? model.ItemData.icon : null);
+        }
     }
 
     protected virtual void OnDisable()

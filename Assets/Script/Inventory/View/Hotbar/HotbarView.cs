@@ -82,7 +82,9 @@ public class HotbarView : MonoBehaviour
         RectTransform slotRect = hotbarSlots[index].GetComponent<RectTransform>();
 
         selectedFrame.SetParent(slotRect, false);
-        selectedFrame.SetAsLastSibling();
+        // 아이템 아이콘/수량 텍스트보다 뒤에 그려지도록 맨 뒤로 보낸다.
+        // (맨 앞이면 선택 테두리가 아이콘을 가려 안 보이는 문제가 있었다.)
+        selectedFrame.SetAsFirstSibling();
 
         selectedFrame.anchorMin = Vector2.zero;
         selectedFrame.anchorMax = Vector2.one;
