@@ -17,14 +17,38 @@ public class PlayerView : MonoBehaviour
 
     private Coroutine hitEffectCoroutine;
 
+    [Header("Walking Animation")]
+    [SerializeField] private Animator walkingAnimator;
+    private static readonly int IsWalkingHash = Animator.StringToHash("IsWalking");
+    private bool isWalking;
+
     private void Awake()
     {
         CacheRenderers();
+
+        if (walkingAnimator == null && visualRoot != null)
+            walkingAnimator = visualRoot.GetComponentInChildren<Animator>(true);
 
         if (dashEffectSpawnPoint == null)
         {
             dashEffectSpawnPoint = transform;
         }
+    }
+
+    public void SetWalking(bool walking)
+    {
+        if (walkingAnimator == null || walkingAnimator.runtimeAnimatorController == null)
+            return;
+        if (isWalking == walking)
+            return;
+
+        isWalking = walking;
+        walkingAnimator.SetBool(IsWalkingHash, walking);
+    }
+
+    private void OnDisable()
+    {
+        SetWalking(false);
     }
 
     private void CacheRenderers()

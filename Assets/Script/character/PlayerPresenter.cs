@@ -171,6 +171,17 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         }
     }
 
+    private void LateUpdate()
+    {
+        if (playerView == null)
+            return;
+
+        Vector3 velocity = rigid != null ? rigid.linearVelocity : Vector3.zero;
+        velocity.y = 0f;
+        playerView.SetWalking(!IsDead && !UIState.IsAnyUIOpen &&
+            stateManager.IsMoving && MoveInput.sqrMagnitude > 0f && velocity.sqrMagnitude > 0.01f);
+    }
+
     public void NotifyStatusChanged()
     {
         OnPlayerStatusChanged?.Invoke();
@@ -241,6 +252,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     public void StopMove()
     {
+        if (playerView != null)
+            playerView.SetWalking(false);
         rigid.linearVelocity = Vector3.zero;
     }
 

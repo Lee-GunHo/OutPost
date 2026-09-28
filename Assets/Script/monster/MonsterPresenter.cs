@@ -14,6 +14,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     private Rigidbody rigid;
     private Transform playerTransform;
     private MonsterView monsterView;
+    public MonsterCombatPresenter Combat { get; private set; }
 
     public float MoveSpeed => monsterModel.MoveSpeed;
     public float ChaseRange => monsterModel.ChaseRange;
@@ -73,6 +74,9 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         rigid = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
         monsterView = GetComponent<MonsterView>();
+        Combat = GetComponent<MonsterCombatPresenter>();
+        if (Combat == null)
+            Combat = gameObject.AddComponent<MonsterCombatPresenter>();
 
         // NavMesh owns movement, including knockback. Physics must not move the same body.
         if (agent != null && rigid != null)
@@ -113,6 +117,12 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     {
         UpdateTarget();
         return HasTarget;
+    }
+
+    public bool CanStartAttack()
+    {
+        UpdateTarget();
+        return Combat != null && Combat.HasAvailableAttack();
     }
 
     public bool IsCurrentTargetInAttackRange()

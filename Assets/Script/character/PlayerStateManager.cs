@@ -13,6 +13,8 @@ public class PlayerStateManager : MonoBehaviour
     public IPlayerState HitState { get; private set; }
     public IPlayerState DeadState { get; private set; }
 
+    public bool IsMoving => currentState != null && currentState == MoveState;
+
     private PlayerPresenter playerPresenter;
 
     private void Awake()

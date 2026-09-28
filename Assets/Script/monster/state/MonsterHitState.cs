@@ -36,7 +36,7 @@ public class MonsterHitState : IMonsterState
             return;
         }
 
-        if (monsterPresenter.IsCurrentTargetInAttackRange())
+        if (monsterPresenter.CanStartAttack())
         {
             stateManager.ChangeState(stateManager.AttackState);
             return;
