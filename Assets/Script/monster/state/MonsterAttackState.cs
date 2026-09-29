@@ -2,10 +2,8 @@ using UnityEngine;
 
 public class MonsterAttackState : IMonsterState
 {
-    private MonsterPresenter monsterPresenter;
-    private MonsterStateManager stateManager;
-
-    private float nextAttackTime = float.NegativeInfinity;
+    private readonly MonsterPresenter monsterPresenter;
+    private readonly MonsterStateManager stateManager;
 
     public MonsterAttackState(MonsterPresenter monsterPresenter, MonsterStateManager stateManager)
     {
@@ -13,79 +11,26 @@ public class MonsterAttackState : IMonsterState
         this.stateManager = stateManager;
     }
 
-    public void Enter()
-    {
-        monsterPresenter.StopMove();
-
-        // Keep the attack deadline when returning from chase or hit states.
-    }
+    public void Enter() { monsterPresenter.StopMove(); }
 
     public void Update()
     {
         monsterPresenter.UpdateTarget();
-
+        MonsterCombatPresenter combat = monsterPresenter.Combat;
+        if (combat.IsExecuting)
+        {
+            combat.Tick(Time.deltaTime);
+            return;
+        }
         if (!monsterPresenter.HasTarget)
         {
             stateManager.ChangeState(stateManager.IdleState);
             return;
         }
-
-        if (!monsterPresenter.IsCurrentTargetInAttackRange())
-        {
+        if (!combat.TryStartSelectedAttack())
             stateManager.ChangeState(stateManager.ChaseState);
-            return;
-        }
-
-        monsterPresenter.StopMove();
-
-        if (Time.time < nextAttackTime)
-        {
-            return;
-        }
-
-        nextAttackTime = Time.time + monsterPresenter.AttackCooldown;
-        AttackOnce();
     }
 
-    public void FixedUpdate()
-    {
-        monsterPresenter.StopMove();
-    }
-
-    public void Exit()
-    {
-    }
-
-    private void AttackOnce()
-    {
-        Transform target = monsterPresenter.CurrentTarget;
-
-        if (target == null)
-        {
-            Debug.LogWarning("공격 대상이 없습니다.");
-            return;
-        }
-
-        IDamageable damageable = target.GetComponentInParent<IDamageable>();
-
-        if (damageable == null)
-        {
-            damageable = target.GetComponentInChildren<IDamageable>();
-        }
-
-        if (damageable == null)
-        {
-            Debug.LogWarning("현재 타겟에게 IDamageable이 없습니다: " + target.name);
-            return;
-        }
-
-        damageable.TakeDamage(monsterPresenter.AttackPower);
-
-        Debug.Log(
-            "몬스터 공격 성공 / 타겟: " + target.name +
-            " / 데미지: " + monsterPresenter.AttackPower
-        );
-
-        monsterPresenter.TryApplyStatusEffectToCurrentTarget();
-    }
+    public void FixedUpdate() { monsterPresenter.StopMove(); }
+    public void Exit() { monsterPresenter.Combat.Cancel(); }
 }

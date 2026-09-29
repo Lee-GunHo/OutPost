@@ -49,11 +49,7 @@ public class ChunkView : MonoBehaviour
 
         loadedChunks.Remove(chunkCoord);
 
-        if (chunkObject != null)
-        {
-            chunkObject.SetActive(false);
-            Destroy(chunkObject);
-        }
+        ReleaseChunkObject(chunkObject);
 
         ChunksChanged?.Invoke();
     }
@@ -80,15 +76,51 @@ public class ChunkView : MonoBehaviour
             return;
 
         foreach (GameObject chunkObject in loadedChunks.Values)
-        {
-            if (chunkObject != null)
-            {
-                chunkObject.SetActive(false);
-                Destroy(chunkObject);
-            }
-        }
+            ReleaseChunkObject(chunkObject);
 
         loadedChunks.Clear();
         ChunksChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// 청크 루트의 자식들을 파괴 대신 GameObjectPool로 되돌리고, 빈 청크 루트만 파괴함.
+    /// 채굴이 진행되어 일부 파츠가 이미 사라진 벽/나무는 재사용이 안전하지 않으므로 그대로 파괴함.
+    ///
+    /// 자식 각각에 SetParent를 거는 대신 DetachChildren으로 한 번에 떼어냄.
+    /// (자식 수만큼 SetParent를 반복 호출하는 쪽이 훨씬 느려서 청크 전환 시 버벅임이 오히려 심해졌었음)
+    /// </summary>
+    public static void ReleaseChunkObject(GameObject chunkObject)
+    {
+        if (chunkObject == null)
+            return;
+
+        Transform chunkTransform = chunkObject.transform;
+        int childCount = chunkTransform.childCount;
+
+        if (childCount > 0)
+        {
+            GameObject[] children = new GameObject[childCount];
+            for (int i = 0; i < childCount; i++)
+                children[i] = chunkTransform.GetChild(i).gameObject;
+
+            chunkTransform.DetachChildren();
+
+            GameObjectPool pool = GameObjectPool.GetOrCreate();
+
+            foreach (GameObject child in children)
+            {
+                BreakableWallModel breakableModel = child.GetComponent<BreakableWallModel>();
+
+                if (breakableModel != null && breakableModel.CurrentStage > 0)
+                {
+                    Destroy(child);
+                    continue;
+                }
+
+                pool.Despawn(child);
+            }
+        }
+
+        Destroy(chunkObject);
     }
 }

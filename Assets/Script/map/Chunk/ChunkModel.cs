@@ -29,6 +29,16 @@ public class ChunkModel : MonoBehaviour
     public int GlobalSeed => globalSeed;
     public Vector2Int CurrentChunkCoord => currentChunkCoord;
 
+    private void Awake()
+    {
+        // 새로하기로 생성된 랜덤 시드가 있으면 적용하고,
+        // 없으면(최초 실행 등) 현재 시드를 기준 시드로 저장해 이어하기와 값을 맞춤.
+        if (GlobalSeedManager.HasStoredSeed)
+            globalSeed = GlobalSeedManager.StoredSeed;
+        else
+            GlobalSeedManager.SetStoredSeed(globalSeed);
+    }
+
     public void Initialize(Vector3 playerPosition, float cellSize)
     {
         currentChunkCoord = WorldToChunkCoord(playerPosition, cellSize);

@@ -41,7 +41,7 @@ public class SeedMapView : MonoBehaviour
         Vector3 floorPosition = worldCellPosition;
         floorPosition.y += floorYOffset;
 
-        GameObject floorObject = Instantiate(
+        GameObject floorObject = GameObjectPool.GetOrCreate().Spawn(
             floorPrefab,
             floorPosition,
             Quaternion.identity,
@@ -68,7 +68,7 @@ public class SeedMapView : MonoBehaviour
         Vector3 wallPosition = worldCellPosition;
         wallPosition.y += wallYOffset;
 
-        GameObject wallObject = Instantiate(
+        GameObject wallObject = GameObjectPool.GetOrCreate().Spawn(
             wallPrefab,
             wallPosition,
             Quaternion.identity,
@@ -118,7 +118,7 @@ public class SeedMapView : MonoBehaviour
         Vector3 treePosition = worldCellPosition;
         treePosition.y += treeYOffset;
 
-        GameObject treeObject = Instantiate(
+        GameObject treeObject = GameObjectPool.GetOrCreate().Spawn(
             treePrefab,
             treePosition,
             Quaternion.identity,
@@ -177,7 +177,7 @@ public class SeedMapView : MonoBehaviour
         Vector3 blockPosition = worldCellPosition;
         blockPosition.y += itemData.placeableYOffset;
 
-        GameObject blockObject = Instantiate(
+        GameObject blockObject = GameObjectPool.GetOrCreate().Spawn(
             itemData.placeablePrefab,
             blockPosition,
             Quaternion.identity,
