@@ -375,7 +375,7 @@ MonoBehaviour:
   loadGroundProbeHeight: 50
   loadGroundProbeDistance: 200
   loadGroundPadding: 0.05
-  loadGroundWaitFrames: 2
+  loadGroundWaitFrames: 30
   inventoryModel: {fileID: 0}
 --- !u!114 &4288115900196487004
 MonoBehaviour:

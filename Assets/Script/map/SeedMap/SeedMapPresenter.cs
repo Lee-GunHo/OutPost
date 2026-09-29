@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -15,13 +16,24 @@ public class SeedMapPresenter : MonoBehaviour
     // 기존 generator.cellSize 접근을 위한 읽기 전용 호환 프로퍼티
     public float cellSize => CellSize;
 
-    public GameObject GenerateChunk(
+    /// <summary>
+    /// 청크 하나를 프레임에 걸쳐 나눠서 생성함. 한 프레임에 frameTimeBudgetMs(밀리초)만큼
+    /// 시간을 쓰면 그 자리에서 한 프레임을 양보함(칸 개수가 아니라 실제 걸린 시간 기준이라
+    /// 칸마다 비용이 다르거나 기기 성능이 달라도 프레임당 부담이 일정하게 유지됨).
+    /// 완료되면 onComplete로 생성된 청크 루트를 전달함(실패 시 null).
+    /// </summary>
+    public IEnumerator GenerateChunkRoutine(
         Vector2Int chunkCoord,
         int chunkSize,
-        int globalSeed)
+        int globalSeed,
+        float frameTimeBudgetMs,
+        System.Action<GameObject> onComplete)
     {
         if (!ValidateReferences())
-            return null;
+        {
+            onComplete?.Invoke(null);
+            yield break;
+        }
 
         ChunkModificationSaveManager saveManager =
             ChunkModificationSaveManager.GetOrCreate();
@@ -38,17 +50,18 @@ public class SeedMapPresenter : MonoBehaviour
 
         int chunkSeed = model.GetChunkSeed(globalSeed, chunkCoord);
 
-        GenerateObjects(
+        yield return GenerateObjectsRoutine(
             chunkObject.transform,
             chunkCoord,
             chunkSize,
             chunkSeed,
             globalSeed,
             saveManager,
-            placedBlockSaveManager
+            placedBlockSaveManager,
+            frameTimeBudgetMs
         );
 
-        return chunkObject;
+        onComplete?.Invoke(chunkObject);
     }
 
     private bool ValidateReferences()
@@ -68,14 +81,15 @@ public class SeedMapPresenter : MonoBehaviour
         return true;
     }
 
-    private void GenerateObjects(
+    private IEnumerator GenerateObjectsRoutine(
         Transform chunkTransform,
         Vector2Int chunkCoord,
         int chunkSize,
         int chunkSeed,
         int globalSeed,
         ChunkModificationSaveManager saveManager,
-        PlacedBlockSaveManager placedBlockSaveManager)
+        PlacedBlockSaveManager placedBlockSaveManager,
+        float frameTimeBudgetMs)
     {
         System.Random random = new System.Random(chunkSeed);
 
@@ -85,6 +99,9 @@ public class SeedMapPresenter : MonoBehaviour
                 chunkSize,
                 view.CanCreateTree
             );
+
+        double budgetMs = Mathf.Max(0.1f, frameTimeBudgetMs);
+        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         for (int x = 0; x < chunkSize; x++)
         {
@@ -102,6 +119,12 @@ public class SeedMapPresenter : MonoBehaviour
                     saveManager,
                     placedBlockSaveManager
                 );
+
+                if (stopwatch.Elapsed.TotalMilliseconds < budgetMs)
+                    continue;
+
+                yield return null;
+                stopwatch.Restart();
             }
         }
     }

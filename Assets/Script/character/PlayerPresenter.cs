@@ -85,6 +85,9 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     private Camera mainCamera;
 
     [Header("Save Position Safety")]
+    [Tooltip("청크 생성 상태를 확인하기 위한 참조. 비워두면 자동으로 찾음")]
+    [SerializeField] private ChunkManager chunkManager;
+
     [Tooltip("저장 위치의 X/Z에서 바닥을 찾기 위해 위쪽에서 시작할 높이")]
     [SerializeField] private float loadGroundProbeHeight = 50f;
 
@@ -94,9 +97,10 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     [Tooltip("바닥과 플레이어 발 사이에 둘 여유 높이")]
     [SerializeField] private float loadGroundPadding = 0.05f;
 
-    [Tooltip("저장 위치 X/Z로 이동한 뒤 청크가 갱신될 때까지 기다릴 프레임 수")]
+    [Tooltip("ChunkManager 참조를 찾지 못했을 때만 쓰는 예비용 대기 프레임 수. " +
+        "평소에는 ChunkManager.EnsureChunkLoaded를 직접 호출해 즉시 청크를 만들기 때문에 사용되지 않음")]
     [Min(1)]
-    [SerializeField] private int loadGroundWaitFrames = 2;
+    [SerializeField] private int loadGroundWaitFrames = 30;
 
     private Vector3 initialSpawnPosition;
     private Coroutine restorePositionCoroutine;
@@ -919,7 +923,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     private IEnumerator RestorePlayerPositionSafely(Vector3 savedPosition)
     {
         // 우선 저장된 X/Z 위의 높은 위치로 옮긴다.
-        // 이 위치 변경을 감지한 ChunkPresenter가 필요한 청크를 생성할 수 있다.
+        // 아래에서 ChunkManager.EnsureChunkLoaded를 직접 호출해 그 자리의 청크를 즉시 생성한다.
         float temporaryY = Mathf.Max(
             initialSpawnPosition.y,
             savedPosition.y,
@@ -940,11 +944,22 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         SetPhysicsPosition(temporaryPosition);
 
-        int waitFrames = Mathf.Max(1, loadGroundWaitFrames);
+        // ChunkPresenter의 매 프레임 감지(Update)를 기다리는 대신, 청크 생성을
+        // 여기서 직접(동기적으로) 요청해서 프레임 타이밍에 의존하지 않게 함.
+        if (chunkManager == null)
+            chunkManager = FindFirstObjectByType<ChunkManager>();
 
-        for (int i = 0; i < waitFrames; i++)
+        if (chunkManager != null)
         {
-            yield return null;
+            chunkManager.EnsureChunkLoaded(temporaryPosition);
+        }
+        else
+        {
+            // 참조를 못 찾은 경우에만 예전처럼 프레임 수 기반으로 최대한 기다림.
+            int fallbackWaitFrames = Mathf.Max(1, loadGroundWaitFrames);
+
+            for (int i = 0; i < fallbackWaitFrames; i++)
+                yield return null;
         }
 
         Physics.SyncTransforms();
