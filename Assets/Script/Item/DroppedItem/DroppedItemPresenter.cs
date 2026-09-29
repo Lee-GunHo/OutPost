@@ -14,6 +14,17 @@ public class DroppedItemPresenter : MonoBehaviour
 
     protected DroppedItemModel Model => model;
 
+    /// <summary>
+    /// 런타임에 임의의 아이템으로 드롭 오브젝트를 구성할 때 사용 (예: 인벤토리에서 버리기)
+    /// </summary>
+    public void Configure(ItemData item, int amount)
+    {
+        ResolveComponents();
+
+        model.Configure(item, amount);
+        view.SetIcon(item != null ? item.icon : null);
+    }
+
     protected virtual void Awake()
     {
         ResolveComponents();

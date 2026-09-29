@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 public class InventoryPresenter : MonoBehaviour
 {
     [Header("Model")]
@@ -38,6 +41,11 @@ public class InventoryPresenter : MonoBehaviour
     [SerializeField] private ItemData stone;
     [SerializeField] private ItemData smileArmor;
 
+    [Header("World Drop")]
+    [Tooltip("인벤토리/핫바 밖으로 드래그해서 놓았을 때 월드에 생성할 드롭 아이템 프리팹")]
+    [SerializeField] private DroppedItemPresenter droppedItemPrefab;
+    [SerializeField] private float worldDropDistance = 1.5f;
+
     private ItemStack draggingItem;
     private SlotReference dragSource;
     private bool isSplitDrag;
@@ -73,7 +81,47 @@ public class InventoryPresenter : MonoBehaviour
         if (rightClickPressed)
         {
             CancelDrag();
+            return;
         }
+
+        bool leftClickPressed =
+            Mouse.current != null &&
+            Mouse.current.leftButton.wasPressedThisFrame;
+
+        // 슬롯이나 버튼처럼 실제로 놓을 수 있는 대상에 맞지 않았다면
+        // (인벤토리 창의 반투명 배경만 맞은 경우 포함) 인벤토리 밖에 놓은 것으로 보고 월드에 드롭한다.
+        if (leftClickPressed && !ClickHitsInteractiveTarget())
+        {
+            DropDraggingItemInWorld();
+        }
+    }
+
+    private bool ClickHitsInteractiveTarget()
+    {
+        if (EventSystem.current == null || Mouse.current == null)
+            return true;
+
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = Mouse.current.position.ReadValue()
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            if (result.gameObject.GetComponentInParent<ItemSlotView>() != null)
+                return true;
+
+            if (result.gameObject.GetComponentInParent<EquipmentSlotView>() != null)
+                return true;
+
+            if (result.gameObject.GetComponentInParent<Selectable>() != null)
+                return true;
+        }
+
+        return false;
     }
 
     private void AddTestItems()
@@ -585,20 +633,22 @@ public class InventoryPresenter : MonoBehaviour
                 break;
         }
     }
+    // 일반 드래그는 원래 슬롯에 아이템이 그대로 있으므로 원래 슬롯을 비워 전체 스택을 없앤다.
+    // 분리 드래그는 집은 수량이 이미 원래 스택에서 빠져 있으므로 원래 슬롯을 건드리지 않는다.
+    private void ConsumeDraggingItem()
+    {
+        if (!isSplitDrag)
+        {
+            SetSlotItem(dragSource, null);
+        }
+    }
+
     public void OnTrashButtonClicked()
     {
         if (draggingItem == null || dragSource == null)
             return;
 
-        if (!isSplitDrag)
-        {
-            // 일반 드래그는 원래 슬롯에 아이템이 그대로 있으므로
-            // 원래 슬롯을 비워 전체 스택을 삭제한다.
-            SetSlotItem(dragSource, null);
-        }
-
-        // 분리 드래그는 집은 수량이 이미 원래 스택에서 빠져 있으므로
-        // 원래 슬롯을 건드리지 않고 드래그 중인 수량만 삭제한다.
+        ConsumeDraggingItem();
 
         StopDrag();
         inventoryView.HideTooltip();
@@ -606,6 +656,34 @@ public class InventoryPresenter : MonoBehaviour
 
         Debug.Log("아이템을 버렸습니다.");
     }
+
+    private void DropDraggingItemInWorld()
+    {
+        if (draggingItem == null || draggingItem.item == null || dragSource == null)
+            return;
+
+        if (droppedItemPrefab != null && playerPresenter != null)
+        {
+            Vector3 dropDirection = playerPresenter.GetDashDirection();
+            Vector3 spawnPosition =
+                playerPresenter.transform.position +
+                dropDirection * worldDropDistance;
+
+            DroppedItemPresenter spawned =
+                Instantiate(droppedItemPrefab, spawnPosition, Quaternion.identity);
+
+            spawned.Configure(draggingItem.item, draggingItem.amount);
+        }
+
+        ConsumeDraggingItem();
+
+        StopDrag();
+        inventoryView.HideTooltip();
+        RefreshView();
+
+        Debug.Log("아이템을 바닥에 버렸습니다.");
+    }
+
     public void OnSortButtonClicked()
     {
         // 아이템을 들고 있는 동안에는 정렬하지 않는다.

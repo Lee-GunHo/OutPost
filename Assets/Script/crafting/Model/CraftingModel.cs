@@ -11,10 +11,23 @@ public enum CraftingResult
 public class CraftingModel
 {
     private readonly InventoryModel inventoryModel;
+    private readonly HotbarModel hotbarModel;
 
-    public CraftingModel(InventoryModel inventoryModel)
+    public CraftingModel(InventoryModel inventoryModel, HotbarModel hotbarModel = null)
     {
         this.inventoryModel = inventoryModel;
+        this.hotbarModel = hotbarModel;
+    }
+
+    // 인벤토리 + 핫바에 들고 있는 재료를 합산해서 계산한다.
+    public int GetOwnedAmount(ItemData item)
+    {
+        int amount = inventoryModel.GetItemCount(item);
+
+        if (hotbarModel != null)
+            amount += hotbarModel.GetItemCount(item);
+
+        return amount;
     }
 
     /// <summary>
@@ -31,9 +44,7 @@ public class CraftingModel
 
         foreach (CraftingIngredient ingredient in recipe.Ingredients)
         {
-            if (!inventoryModel.HasItem(
-                    ingredient.Item,
-                    ingredient.Amount))
+            if (GetOwnedAmount(ingredient.Item) < ingredient.Amount)
             {
                 return false;
             }
@@ -59,9 +70,7 @@ public class CraftingModel
         // 재료가 충분한지 검사
         foreach (CraftingIngredient ingredient in recipe.Ingredients)
         {
-            if (!inventoryModel.HasItem(
-                    ingredient.Item,
-                    ingredient.Amount))
+            if (GetOwnedAmount(ingredient.Item) < ingredient.Amount)
             {
                 return CraftingResult.NotEnoughIngredients;
             }
@@ -75,12 +84,14 @@ public class CraftingModel
             return CraftingResult.InventoryFull;
         }
 
-        // 모든 검사가 끝난 뒤 재료 차감
+        // 모든 검사가 끝난 뒤 재료 차감 (인벤토리 우선, 부족분은 핫바에서 차감)
         foreach (CraftingIngredient ingredient in recipe.Ingredients)
         {
-            inventoryModel.RemoveItem(
-                ingredient.Item,
-                ingredient.Amount);
+            int remaining = ingredient.Amount;
+            remaining -= inventoryModel.RemoveUpTo(ingredient.Item, remaining);
+
+            if (remaining > 0 && hotbarModel != null)
+                hotbarModel.RemoveUpTo(ingredient.Item, remaining);
         }
 
         // 제작 결과 지급

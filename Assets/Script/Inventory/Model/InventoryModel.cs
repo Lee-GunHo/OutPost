@@ -231,6 +231,37 @@ public class InventoryModel : MonoBehaviour
 
         return false;
     }
+
+    // 제작 시 핫바와 합산해서 재료로 쓸 수 있도록 최대 amount만큼 차감하고 실제 차감량을 반환
+    public int RemoveUpTo(ItemData item, int amount)
+    {
+        if (item == null || amount <= 0)
+            return 0;
+
+        int removed = 0;
+
+        for (int i = 0; i < Items.Count && removed < amount; i++)
+        {
+            ItemStack stack = Items[i];
+
+            if (stack == null || stack.item != item)
+                continue;
+
+            int removeAmount = Mathf.Min(stack.amount, amount - removed);
+
+            stack.amount -= removeAmount;
+            removed += removeAmount;
+
+            if (stack.amount <= 0)
+                Items[i] = null;
+        }
+
+        if (removed > 0)
+            OnInventoryChanged?.Invoke();
+
+        return removed;
+    }
+
     public void ClearAllItems()
     {
         for (int i = 0; i < Items.Count; i++)

@@ -391,6 +391,8 @@ MonoBehaviour:
   wood: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
   stone: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
   smileArmor: {fileID: 11400000, guid: dc3de38e89f5e57439f73ab04601ea1a, type: 2}
+  droppedItemPrefab: {fileID: 1542218634, guid: 158ac2cba533995895385e12c2cac2b2, type: 3}
+  worldDropDistance: 1.5
 --- !u!114 &8665865438965783495
 MonoBehaviour:
   m_ObjectHideFlags: 0

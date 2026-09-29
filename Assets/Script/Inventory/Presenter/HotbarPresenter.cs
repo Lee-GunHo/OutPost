@@ -3,12 +3,19 @@ using UnityEngine;
 
 public class HotbarPresenter : MonoBehaviour
 {
+    public static HotbarPresenter Instance { get; private set; }
+
     [SerializeField] private HotbarModel hotbarModel;
     [SerializeField] private HotbarView hotbarView;
     [SerializeField] private InventoryPresenter inventoryPresenter;
 
+    public HotbarModel Model => hotbarModel;
+
     private void Awake()
     {
+        if (Instance == null)
+            Instance = this;
+
         hotbarModel.Initialize(hotbarView.SlotCount);
 
         hotbarView.CreateSlots();
@@ -39,6 +46,9 @@ public class HotbarPresenter : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (Instance == this)
+            Instance = null;
+
         if (hotbarView != null)
         {
             hotbarView.OnNumberKeyPressed -= SelectSlot;

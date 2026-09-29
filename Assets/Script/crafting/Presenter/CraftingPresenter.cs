@@ -56,12 +56,15 @@ public class CraftingPresenter : MonoBehaviour
             return;
         }
 
-        craftingModel = new CraftingModel(inventoryModel);
+        craftingModel = new CraftingModel(inventoryModel, HotbarPresenter.Instance?.Model);
 
         craftingView.OnRecipeClicked += HandleRecipeClicked;
         craftingView.OnRecipePointerEntered += HandleRecipePointerEntered;
         craftingView.OnRecipePointerExited += HandleRecipePointerExited;
         inventoryModel.OnInventoryChanged += RefreshCraftableState;
+
+        if (HotbarPresenter.Instance != null)
+            HotbarPresenter.Instance.Model.OnHotbarChanged += RefreshCraftableState;
 
         craftingView.SetVisible(false);
     }
@@ -79,6 +82,9 @@ public class CraftingPresenter : MonoBehaviour
         {
             inventoryModel.OnInventoryChanged -= RefreshCraftableState;
         }
+
+        if (HotbarPresenter.Instance != null)
+            HotbarPresenter.Instance.Model.OnHotbarChanged -= RefreshCraftableState;
 
         if (Instance == this)
         {
@@ -217,7 +223,7 @@ public class CraftingPresenter : MonoBehaviour
         foreach (CraftingIngredient ingredient in recipe.Ingredients)
         {
             int ownedAmount =
-                inventoryModel.GetItemCount(ingredient.Item);
+                craftingModel.GetOwnedAmount(ingredient.Item);
 
             ownedAmounts.Add(ownedAmount);
         }
