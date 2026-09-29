@@ -140,6 +140,9 @@ public class MainSceneManager : MonoBehaviour
             return;
         }
 
+        int newSeed = GlobalSeedManager.GenerateNewSeed();
+        Debug.Log("[TITLE] 새로운 맵 시드 생성: " + newSeed);
+
         GameSaveManager.ResetProgressCaches();
         Debug.Log("[TITLE] 새 게임 시작");
 
