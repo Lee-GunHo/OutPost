@@ -22,15 +22,11 @@ public class MonsterAttackState : IMonsterState
             combat.Tick(Time.deltaTime);
             return;
         }
-        if (!monsterPresenter.HasTarget)
-        {
-            stateManager.ChangeState(stateManager.IdleState);
-            return;
-        }
+        if (!stateManager.UpdateCombatDecision()) return;
         if (!combat.TryStartSelectedAttack())
             stateManager.ChangeState(stateManager.ChaseState);
     }
 
-    public void FixedUpdate() { monsterPresenter.StopMove(); }
+    public void FixedUpdate() { monsterPresenter.Combat.FixedTick(Time.fixedDeltaTime); }
     public void Exit() { monsterPresenter.Combat.Cancel(); }
 }

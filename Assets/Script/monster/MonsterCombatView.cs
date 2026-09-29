@@ -25,7 +25,9 @@ public sealed class MonsterCombatView : MonoBehaviour
         line.useWorldSpace = true;
         line.widthMultiplier = 0.07f;
         line.startColor = line.endColor = kind == MonsterAttackKind.Circle
-            ? new Color(1f, 0.15f, 0.05f, 0.9f) : new Color(1f, 0.65f, 0.05f, 0.9f);
+            ? new Color(1f, 0.15f, 0.05f, 0.9f)
+            : kind == MonsterAttackKind.Charge ? new Color(1f, 0.3f, 0.65f, 0.9f)
+            : new Color(1f, 0.65f, 0.05f, 0.9f);
         if (kind == MonsterAttackKind.Circle)
         {
             line.loop = true;
@@ -36,6 +38,18 @@ public sealed class MonsterCombatView : MonoBehaviour
                 float angle = i * Mathf.PI * 2f / 64f;
                 line.SetPosition(i, origin + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius);
             }
+        }
+        else if (kind == MonsterAttackKind.Charge)
+        {
+            origin.y = 0.12f;
+            Vector3 tip = origin + direction * radius;
+            Vector3 side = Vector3.Cross(Vector3.up, direction) * 0.35f;
+            line.positionCount = 5;
+            line.SetPosition(0, origin);
+            line.SetPosition(1, tip);
+            line.SetPosition(2, tip - direction * 0.5f + side);
+            line.SetPosition(3, tip);
+            line.SetPosition(4, tip - direction * 0.5f - side);
         }
         else
         {

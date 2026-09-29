@@ -18,13 +18,8 @@ public class MonsterIdleState : IMonsterState
 
     public void Update()
     {
-        monsterPresenter.UpdateTarget();
-
-        if (monsterPresenter.HasTarget)
-        {
-            stateManager.ChangeState(stateManager.ChaseState);
-            return;
-        }
+        monsterPresenter.Behavior.FaceTarget();
+        stateManager.UpdateCombatDecision();
     }
 
     public void FixedUpdate()

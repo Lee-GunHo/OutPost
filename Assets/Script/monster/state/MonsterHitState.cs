@@ -36,19 +36,7 @@ public class MonsterHitState : IMonsterState
             return;
         }
 
-        if (monsterPresenter.CanStartAttack())
-        {
-            stateManager.ChangeState(stateManager.AttackState);
-            return;
-        }
-
-        if (monsterPresenter.IsPlayerInChaseRange())
-        {
-            stateManager.ChangeState(stateManager.ChaseState);
-            return;
-        }
-
-        stateManager.ChangeState(stateManager.IdleState);
+        stateManager.UpdateCombatDecision();
     }
 
     public void FixedUpdate()

@@ -4,6 +4,10 @@ public class MonsterModel : MonoBehaviour
 {
     [Header("Move Data")]
     [SerializeField] private float moveSpeed = 3f;
+    [SerializeField, Min(0f)] private float bodySpacing = 0.08f;
+    [SerializeField, Min(0.1f)] private float separationSpeed = 2f;
+    public float BodySpacing => Mathf.Max(0f, bodySpacing);
+    public float SeparationSpeed => Mathf.Max(0.1f, separationSpeed);
 
     [Header("AI Range Data")]
     [SerializeField] private float chaseRange = 8f;

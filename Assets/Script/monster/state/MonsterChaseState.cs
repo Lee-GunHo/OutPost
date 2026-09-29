@@ -15,19 +15,7 @@ public class MonsterChaseState : IMonsterState
 
     public void Update()
     {
-        monsterPresenter.UpdateTarget();
-
-        if (!monsterPresenter.HasTarget)
-        {
-            stateManager.ChangeState(stateManager.IdleState);
-            return;
-        }
-
-        if (monsterPresenter.CanStartAttack())
-        {
-            stateManager.ChangeState(stateManager.AttackState);
-            return;
-        }
+        stateManager.UpdateCombatDecision();
     }
 
     public void FixedUpdate()

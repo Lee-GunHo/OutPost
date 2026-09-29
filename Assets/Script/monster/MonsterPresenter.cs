@@ -12,9 +12,11 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     private MonsterModel monsterModel;
     private MonsterStateManager stateManager;
     private Rigidbody rigid;
+    private CapsuleCollider bodyCollider;
     private Transform playerTransform;
     private MonsterView monsterView;
     public MonsterCombatPresenter Combat { get; private set; }
+    public MonsterBehaviorPresenter Behavior { get; private set; }
 
     public float MoveSpeed => monsterModel.MoveSpeed;
     public float ChaseRange => monsterModel.ChaseRange;
@@ -65,6 +67,8 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     private bool defaultAutoBraking;
 
     private bool CanNavigate => agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh;
+    private float BodyRadius => bodyCollider != null
+        ? bodyCollider.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z)) : 0.5f;
 
     private void Awake()
     {
@@ -72,11 +76,15 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         monsterModel = GetComponent<MonsterModel>();
         stateManager = GetComponent<MonsterStateManager>();
         rigid = GetComponent<Rigidbody>();
+        bodyCollider = GetComponent<CapsuleCollider>();
         agent = GetComponent<NavMeshAgent>();
         monsterView = GetComponent<MonsterView>();
         Combat = GetComponent<MonsterCombatPresenter>();
         if (Combat == null)
             Combat = gameObject.AddComponent<MonsterCombatPresenter>();
+        Behavior = GetComponent<MonsterBehaviorPresenter>();
+        if (Behavior == null)
+            Behavior = gameObject.AddComponent<MonsterBehaviorPresenter>();
 
         // NavMesh owns movement, including knockback. Physics must not move the same body.
         if (agent != null && rigid != null)
@@ -95,6 +103,10 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
             agent.speed = monsterModel.MoveSpeed;
             agent.stoppingDistance = 1f;
             agent.updateRotation = true;
+            agent.radius = BodyRadius + monsterModel.BodySpacing;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+            // Different priorities help agents decide which one yields in a narrow passage.
+            agent.avoidancePriority = 30 + (int)((uint)GetInstanceID() % 40);
         }
     }
 
@@ -181,7 +193,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         }
 
         agent.isStopped = false;
-        agent.speed = monsterModel.MoveSpeed;
+        agent.speed = monsterModel.MoveSpeed * (Behavior != null ? Behavior.AdvanceSpeedMultiplier : 1f);
 
         if (behaviorMode == MonsterBehaviorMode.NexusAssault && currentTarget == nexusTransform)
         {
@@ -344,8 +356,56 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         float step = Mathf.Min(deltaTime, knockbackTimeRemaining);
         // Average speed over this step gives a short push that decelerates to zero.
         float speedFactor = (knockbackTimeRemaining - step * 0.5f) / activeKnockbackDuration;
-        agent.Move(knockbackVelocity * speedFactor * step);
+        MoveBodySafely(knockbackVelocity * speedFactor * step, false);
         knockbackTimeRemaining -= step;
+    }
+
+    // NavMesh avoidance handles normal travel; this resolves spawn/manual-movement overlaps too.
+    public void SeparateFrom(MonsterPresenter other, float deltaTime)
+    {
+        if (other == null || other == this || IsDead || other.IsDead || !CanNavigate || !other.CanNavigate) return;
+        Vector3 away = agent.nextPosition - other.agent.nextPosition;
+        if (Mathf.Abs(away.y) > 1f) return;
+        away.y = 0f;
+        float desired = BodyRadius + other.BodyRadius + Mathf.Max(monsterModel.BodySpacing, other.monsterModel.BodySpacing);
+        float distance = away.magnitude;
+        if (distance >= desired) return;
+        bool pinned = Combat != null && Combat.IsExecuting;
+        bool otherPinned = other.Combat != null && other.Combat.IsExecuting;
+        if (pinned && otherPinned) return;
+        // Exact same spawn position still needs a deterministic separating direction.
+        if (distance < 0.001f) away = GetInstanceID() < other.GetInstanceID() ? Vector3.right : Vector3.left;
+        else away /= distance;
+        float correction = Mathf.Min(desired - distance,
+            Mathf.Min(monsterModel.SeparationSpeed, other.monsterModel.SeparationSpeed) * Mathf.Max(0f, deltaTime));
+        if (!pinned) MoveBodySafely(away * correction * (otherPinned ? 1f : 0.5f), true);
+        if (!otherPinned) other.MoveBodySafely(-away * correction * (pinned ? 1f : 0.5f), true);
+    }
+
+    private void MoveBodySafely(Vector3 displacement, bool separating)
+    {
+        if (!CanNavigate) return;
+        displacement.y = 0f;
+        float distance = displacement.magnitude;
+        if (distance < 0.0001f) return;
+        Vector3 direction = displacement / distance;
+        if (agent.Raycast(agent.nextPosition + displacement, out NavMeshHit edge))
+        {
+            Vector3 toEdge = edge.position - agent.nextPosition;
+            toEdge.y = 0f;
+            distance = Mathf.Min(distance, Mathf.Max(0f, Vector3.Dot(toEdge, direction) - 0.02f));
+        }
+        Vector3 center = bodyCollider != null ? bodyCollider.bounds.center : transform.position;
+        center += agent.nextPosition - transform.position;
+        foreach (RaycastHit hit in Physics.SphereCastAll(center, Mathf.Max(0.01f, BodyRadius - 0.02f),
+            direction, distance + 0.02f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.collider.transform.IsChildOf(transform)) continue;
+            // Separation must be allowed to leave an overlap with another monster.
+            if (separating && hit.collider.GetComponentInParent<MonsterPresenter>() != null) continue;
+            distance = Mathf.Min(distance, Mathf.Max(0f, hit.distance - 0.02f));
+        }
+        if (distance > 0f) agent.Move(direction * distance);
     }
 
     // 실제 공격 처리는 MonsterAttackState에서 한다.
@@ -366,7 +426,9 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         // A hit outside the release range must still provoke a pursuit after hit recovery.
         playerHitAggroUntil = Time.time + Mathf.Max(playerHitAggroDuration, HitDuration);
 
+        int previousHp = monsterModel.CurrentHp;
         monsterModel.TakeDamage(damage);
+        if (monsterModel.CurrentHp < previousHp) Behavior.RecordHit();
 
         if (monsterView != null)
         {
