@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+
+# 실행 결과물(모델/그림/표/ONNX) - 용량이 크고 재생성 가능하므로 커밋하지 않음
+artifacts/
+
+# 가짜 데이터도 재생성 가능하니 커밋하지 않음
+data/synthetic/*.csv
+
+# 실제 플레이 로그(개인정보/용량 이슈) - 절대 커밋하지 않음
+data/real/*.csv
+
+!data/synthetic/.gitkeep
+!data/real/.gitkeep
