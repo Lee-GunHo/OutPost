@@ -1,0 +1,194 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 622ad00877229e647b2fb89584bf301e, type: 3}
+  m_Name: NPCTipDialogueSet
+  m_EditorClassIdentifier: Assembly-CSharp::NPCTipDialogueSet
+  difficultyEntries:
+  - difficultyType: 0
+    entries:
+    - entryId: equip_1
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "\uADF8 {toolGrade} \uB4F1\uAE09 \uC7A5\uBE44\uB85C \uC5EC\uAE30\uAE4C\uC9C0
+          \uC628 \uAC83\uB3C4 \uB300\uB2E8\uD558\uB124. \uC880 \uB354 \uB098\uC740
+          \uC7A5\uBE44\uAC00 \uD544\uC694\uD574 \uBCF4\uC774\uB294\uB370?"
+        choices:
+        - choiceText: "\uC7A5\uBE44\uB294 \uC5B4\uB514\uC11C \uAD6C\uD574?"
+          nextNodeId: shop_hint
+        - choiceText: "\uAD1C\uCC2E\uC544, \uC54C\uC544\uC11C \uD560\uAC8C"
+          nextNodeId: 
+      - nodeId: shop_hint
+        textTemplate: "\uB300\uC7A5\uAC04\uC774\uB098 \uC0C1\uC810\uC744 \uB4E4\uB7EC\uBD10.
+          \uC9C0\uAE08 \uC7A5\uBE44\uB85C\uB294 \uC55E\uC73C\uB85C \uB354 \uD798\uB4E4\uC5B4\uC9C8
+          \uAC70\uC57C."
+        choices: []
+    - entryId: equip_2
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "\uC0AC\uB9DD\uC744 {deathCount}\uBC88\uC774\uB098 \uD588\uB2E4\uACE0?
+          \uC7A5\uBE44\uBD80\uD130 \uC810\uAC80\uD574\uBCF4\uB294 \uAC8C \uC5B4\uB54C."
+        choices:
+        - choiceText: "\uC5B4\uB5A4 \uC7A5\uBE44\uAC00 \uC88B\uC544?"
+          nextNodeId: advice
+        - choiceText: "\uBAAC\uC2A4\uD130\uAC00 \uB108\uBB34 \uAC15\uD574\uC11C \uADF8\uB798"
+          nextNodeId: denial
+      - nodeId: advice
+        textTemplate: "\uB4F1\uAE09\uC774 \uB192\uC740 \uBB34\uAE30/\uBC29\uC5B4\uAD6C\uC77C\uC218\uB85D
+          \uC0DD\uC874\uC5D0 \uD070 \uB3C4\uC6C0\uC774 \uB3FC. \uC870\uAE08\uB9CC
+          \uB354 \uBAA8\uC544\uBD10."
+        choices: []
+      - nodeId: denial
+        textTemplate: "\uADF8\uB7F4 \uC218\uB3C4 \uC788\uC9C0\uB9CC, \uC7A5\uBE44
+          \uB4F1\uAE09\uB3C4 \uD55C \uBC88 \uD655\uC778\uD574\uBCF4\uBA74 \uC88B\uC744
+          \uAC70\uC57C."
+        choices: []
+  - difficultyType: 1
+    entries:
+    - entryId: combat_1
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "\uCD5C\uADFC\uC5D0 \uC790\uC8FC \uC4F0\uB7EC\uC9C0\uB358\uB370,
+          \uC804\uD22C \uBC29\uC2DD\uC744 \uC880 \uBC14\uAFD4\uBCF4\uB294 \uAC74
+          \uC5B4\uB54C?"
+        choices:
+        - choiceText: "\uC5B4\uB5BB\uAC8C \uC2F8\uC6CC\uC57C \uD574?"
+          nextNodeId: tips
+        - choiceText: "\uADF8\uB0E5 \uC6B4\uC774 \uB098\uBE74\uC5B4"
+          nextNodeId: 
+      - nodeId: tips
+        textTemplate: "\uBB34\uC791\uC815 \uB364\uBE44\uC9C0 \uB9D0\uACE0, \uBAAC\uC2A4\uD130
+          \uD328\uD134\uC744 \uBCF4\uACE0 \uD53C\uD558\uB294 \uD0C0\uC774\uBC0D\uC744
+          \uC7A1\uC544\uBD10."
+        choices: []
+    - entryId: combat_2
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "{deathCount}\uBC88\uC774\uB098 \uC4F0\uB7EC\uC84C\uB2E4\uB2C8...
+          \uBB34\uB9AC\uD558\uC9C0 \uB9D0\uACE0 \uD55C \uB9C8\uB9AC\uC529 \uC0C1\uB300\uD574\uBD10."
+        choices:
+        - choiceText: "\uC54C\uACA0\uC5B4, \uC870\uC2EC\uD560\uAC8C"
+          nextNodeId: 
+        - choiceText: "\uBB34\uAE30\uB97C \uBC14\uAFD4\uC57C \uD560\uAE4C?"
+          nextNodeId: weapon
+      - nodeId: weapon
+        textTemplate: "\uBB34\uAE30\uBCF4\uB2E4 \uBA3C\uC800 \uAC70\uB9AC \uC870\uC808\uACFC
+          \uD68C\uD53C \uD0C0\uC774\uBC0D\uBD80\uD130 \uC5F0\uC2B5\uD574\uBCF4\uB294
+          \uAC8C \uB098\uC744 \uAC70\uC57C."
+        choices: []
+  - difficultyType: 2
+    entries:
+    - entryId: lost_1
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "\uD55C \uC790\uB9AC\uC5D0 \uACC4\uC18D \uBA38\uBB3C\uB7EC
+          \uC788\uB358\uB370, \uAE38\uC744 \uC783\uC740 \uAC70\uC57C?"
+        choices:
+        - choiceText: "{questName} \uD018\uC2A4\uD2B8\uB97C \uC5B4\uB514\uC11C \uD574\uC57C
+            \uD560\uC9C0 \uBAA8\uB974\uACA0\uC5B4"
+          nextNodeId: quest_hint
+        - choiceText: "\uADF8\uB0E5 \uB458\uB7EC\uBCF4\uACE0 \uC788\uC5C8\uC5B4"
+          nextNodeId: 
+      - nodeId: quest_hint
+        textTemplate: "\uD018\uC2A4\uD2B8 \uBAA9\uD45C\uB294 \uBCF4\uD1B5 \uD45C\uC2DC\uB41C
+          \uBC29\uD5A5\uC744 \uB530\uB77C\uAC00\uBA74 \uB098\uC640. \uB108\uBB34
+          \uC624\uB798 \uD5E4\uB9E4\uC9C0\uB294 \uB9C8."
+        choices: []
+    - entryId: lost_2
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "\uAC19\uC740 \uAD6C\uC5ED\uB9CC \uB9F4\uB3C4\uB294 \uAC83
+          \uAC19\uC740\uB370, \uC9C0\uB3C4\uB97C \uD55C \uBC88 \uD655\uC778\uD574\uBD10."
+        choices:
+        - choiceText: "\uC9C0\uB3C4\uB294 \uC5B4\uB5BB\uAC8C \uBD10?"
+          nextNodeId: map_hint
+        - choiceText: "\uC54C\uC544\uC11C \uCC3E\uC544\uBCFC\uAC8C"
+          nextNodeId: 
+      - nodeId: map_hint
+        textTemplate: "\uC778\uBCA4\uD1A0\uB9AC\uB098 \uBA54\uB274\uC5D0\uC11C \uC9C0\uB3C4\uB97C
+          \uC5F4 \uC218 \uC788\uC744 \uAC70\uC57C. \uB9C9\uD788\uBA74 \uB098\uD55C\uD14C
+          \uB2E4\uC2DC \uBB3C\uC5B4\uBD10."
+        choices: []
+  - difficultyType: 3
+    entries:
+    - entryId: resource_1
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "\uD55C\uCC38 \uD50C\uB808\uC774\uD588\uB294\uB370 \uBAAC\uC2A4\uD130\uB97C
+          \uBCC4\uB85C \uBABB \uC7A1\uC558\uB124. \uC790\uC6D0\uC774 \uBD80\uC871\uD55C
+          \uAC70 \uC544\uB2C8\uC57C?"
+        choices:
+        - choiceText: "\uC5B4\uB514\uC11C \uC790\uC6D0\uC744 \uBAA8\uC544?"
+          nextNodeId: gather_hint
+        - choiceText: "\uCC9C\uCC9C\uD788 \uD558\uACE0 \uC788\uC5B4\uC11C \uADF8\uB798"
+          nextNodeId: 
+      - nodeId: gather_hint
+        textTemplate: "\uC548\uC804 \uAD6C\uC5ED \uADFC\uCC98\uC5D0\uC11C \uB098\uBB34\uB098
+          \uB3CC\uBD80\uD130 \uBAA8\uC544\uBD10. \uAE30\uBCF8 \uC790\uC6D0\uC774
+          \uC788\uC5B4\uC57C \uC7A5\uBE44\uB3C4 \uB9CC\uB4E4 \uC218 \uC788\uC5B4."
+        choices: []
+    - entryId: resource_2
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "{toolGrade} \uB4F1\uAE09 \uC7A5\uBE44 \uADF8\uB300\uB85C\uBA74
+          \uC790\uC6D0 \uBAA8\uC73C\uAE30\uB3C4 \uC624\uB798 \uAC78\uB9B4 \uD150\uB370."
+        choices:
+        - choiceText: "\uB354 \uC88B\uC740 \uB3C4\uAD6C\uB294 \uC5B4\uB5BB\uAC8C
+            \uB9CC\uB4E4\uC5B4?"
+          nextNodeId: craft_hint
+        - choiceText: "\uAD1C\uCC2E\uC544, \uCC9C\uCC9C\uD788 \uD560\uAC8C"
+          nextNodeId: 
+      - nodeId: craft_hint
+        textTemplate: "\uAE30\uBCF8 \uC790\uC6D0\uC744 \uC5B4\uB290 \uC815\uB3C4
+          \uBAA8\uC73C\uBA74 \uC81C\uC791\uB300\uC5D0\uC11C \uB354 \uB098\uC740 \uB3C4\uAD6C\uB97C
+          \uB9CC\uB4E4 \uC218 \uC788\uC5B4."
+        choices: []
+  - difficultyType: 4
+    entries:
+    - entryId: smooth_1
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "\uC624, \uC798 \uD558\uACE0 \uC788\uB124! \uC774\uB300\uB85C\uB9CC
+          \uD558\uBA74 \uAE08\uBC29 \uC131\uC7A5\uD558\uACA0\uC5B4."
+        choices:
+        - choiceText: "\uACE0\uB9C8\uC6CC!"
+          nextNodeId: 
+        - choiceText: "\uB354 \uC870\uC5B8\uD574\uC904 \uAC70 \uC788\uC5B4?"
+          nextNodeId: encourage
+      - nodeId: encourage
+        textTemplate: "\uC9C0\uAE08 \uD398\uC774\uC2A4 \uADF8\uB300\uB85C \uC720\uC9C0\uD558\uBA74
+          \uB3FC. \uBB34\uB9AC\uD558\uC9C0 \uB9D0\uACE0 \uC990\uACA8."
+        choices: []
+    - entryId: smooth_2
+      weight: 1
+      nodes:
+      - nodeId: start
+        textTemplate: "\uC0AC\uB9DD\uB3C4 \uAC70\uC758 \uC5C6\uACE0 \uC21C\uC870\uB86D\uAC8C
+          \uC9C4\uD589 \uC911\uC774\uB124. \uB300\uB2E8\uD55C\uB370?"
+        choices:
+        - choiceText: "\uB2E4\uC74C\uC5D4 \uBB58 \uD574\uC57C \uD560\uAE4C?"
+          nextNodeId: next
+        - choiceText: "\uACE0\uB9C8\uC6CC"
+          nextNodeId: 
+      - nodeId: next
+        textTemplate: "\uB2E4\uC74C \uAD6C\uC5ED\uC73C\uB85C \uB118\uC5B4\uAC00\uC11C
+          \uB354 \uC88B\uC740 \uC790\uC6D0\uC744 \uB178\uB824\uBD10\uB3C4 \uC88B\uC744
+          \uAC83 \uAC19\uC544."
+        choices: []

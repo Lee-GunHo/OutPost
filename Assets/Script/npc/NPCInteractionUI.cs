@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -24,6 +26,17 @@ public class NPCInteractionUI : MonoBehaviour
     [SerializeField] private Button questButton;
     [SerializeField] private TMP_Text questButtonText;
     [SerializeField] private Button closeButton;
+
+    [Header("난관 진단 팁 대화 (2단계)")]
+    [Tooltip("2~3개. 선택지 수보다 적게 쓰이면 나머지는 자동으로 숨겨짐")]
+    [SerializeField] private Button[] tipChoiceButtons;
+    [Tooltip("대화/상점/퀘스트/닫기 버튼 자리 위에 겹쳐 놓은 '대화 종료하기' 버튼. " +
+        "팁 대화 중에는 이 버튼만 보이고, 누르면 기존 4개 버튼으로 돌아감")]
+    [SerializeField] private Button endTipDialogueButton;
+    [Tooltip("타이핑 효과 한 글자당 대기 시간(초)")]
+    [SerializeField] private float typingCharDelay = 0.03f;
+
+    private Coroutine typingCoroutine;
 
     private NPCPresenter currentNPC;
     private PlayerPresenter currentPlayer;
@@ -73,6 +86,11 @@ public class NPCInteractionUI : MonoBehaviour
         {
             closeButton.onClick.AddListener(Close);
         }
+
+        if (endTipDialogueButton != null)
+        {
+            endTipDialogueButton.onClick.AddListener(OnEndTipDialogueClicked);
+        }
     }
 
     /// <summary>
@@ -108,17 +126,15 @@ public class NPCInteractionUI : MonoBehaviour
         }
 
         ShowDefaultDialogue();
+        HideTipChoices();
 
-        if (shopButton != null && currentNPC != null)
+        if (endTipDialogueButton != null)
         {
-            shopButton.gameObject.SetActive(currentNPC.CanTrade());
+            endTipDialogueButton.gameObject.SetActive(false);
         }
 
-        if (questButton != null && currentNPC != null)
-        {
-            questButton.gameObject.SetActive(currentNPC.CanGiveQuest());
-            RefreshQuestButtonText();
-        }
+        ShowNormalMenuButtons();
+        RefreshQuestButtonText();
     }
 
     /// <summary>
@@ -134,7 +150,7 @@ public class NPCInteractionUI : MonoBehaviour
 
     /// <summary>
     /// 대화 버튼을 눌렀을 때 실행되는 함수
-    /// ChatGPT로 인사말을 생성해서 보여주고, 실패하면 기존 고정 대사로 대체함
+    /// 난관 진단 기반 팁 대화를 시작하고, 진단기/대사 데이터가 없으면 기존 고정 대사로 대체함
     /// </summary>
     private void OnDialogueButtonClicked()
     {
@@ -143,35 +159,201 @@ public class NPCInteractionUI : MonoBehaviour
             return;
         }
 
-        if (dialogueText != null)
+        if (NPCTipDialoguePresenter.Instance == null)
         {
-            dialogueText.text = "...";
+            ShowFallbackDialogue();
+            return;
         }
 
-        OpenAIChatService.GetOrCreate().RequestGreeting(
-            currentNPC.GetNPCName(),
-            OnGreetingReceived,
-            OnGreetingFailed
-        );
+        HideNormalMenuButtons();
+
+        if (endTipDialogueButton != null)
+        {
+            endTipDialogueButton.gameObject.SetActive(true);
+        }
+
+        NPCTipDialoguePresenter.Instance.StartTipDialogue(currentNPC, currentPlayer);
     }
 
-    private void OnGreetingReceived(string greeting)
+    /// <summary>
+    /// 팁 대화 중 "대화 종료하기"(TipChoice4 자리) 버튼을 눌렀을 때. 팁 대화만 끝내고
+    /// NPC 상호작용 창 자체는 유지한 채 기존 대화/상점/퀘스트/닫기 버튼으로 돌아감.
+    /// </summary>
+    private void OnEndTipDialogueClicked()
     {
-        if (dialogueText != null)
+        NPCTipDialoguePresenter.Instance?.EndConversation();
+
+        HideTipChoices();
+
+        if (endTipDialogueButton != null)
         {
-            dialogueText.text = greeting;
+            endTipDialogueButton.gameObject.SetActive(false);
+        }
+
+        ShowNormalMenuButtons();
+        ShowDefaultDialogue();
+    }
+
+    private void HideNormalMenuButtons()
+    {
+        if (dialogueButton != null)
+        {
+            dialogueButton.gameObject.SetActive(false);
+        }
+
+        if (shopButton != null)
+        {
+            shopButton.gameObject.SetActive(false);
+        }
+
+        if (questButton != null)
+        {
+            questButton.gameObject.SetActive(false);
+        }
+
+        if (closeButton != null)
+        {
+            closeButton.gameObject.SetActive(false);
         }
     }
 
-    private void OnGreetingFailed(string error)
+    private void ShowNormalMenuButtons()
     {
-        Debug.LogWarning("ChatGPT 인사말 생성 실패, 기존 대사로 대체함: " + error);
+        if (dialogueButton != null)
+        {
+            dialogueButton.gameObject.SetActive(true);
+        }
 
+        if (shopButton != null)
+        {
+            shopButton.gameObject.SetActive(currentNPC != null && currentNPC.CanTrade());
+        }
+
+        if (questButton != null)
+        {
+            questButton.gameObject.SetActive(currentNPC != null && currentNPC.CanGiveQuest());
+        }
+
+        if (closeButton != null)
+        {
+            closeButton.gameObject.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// 팁 대화 진단/대사 데이터가 준비되지 않았을 때 쓰는 기존 방식(고정 대사 중 랜덤 출력)
+    /// </summary>
+    public void ShowFallbackDialogue()
+    {
         ShowRandomStaticDialogue();
     }
 
     /// <summary>
-    /// ChatGPT 호출이 실패했을 때 쓰던 기존 방식(고정 대사 중 랜덤 출력)
+    /// NPC 팁 대화 한 줄을 타이핑 효과로 표시. 타이핑이 끝나면 onComplete 호출.
+    /// </summary>
+    public void ShowTipLine(string npcName, string text, Action onComplete)
+    {
+        if (npcNameText != null)
+        {
+            npcNameText.text = npcName;
+        }
+
+        HideTipChoices();
+
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+        }
+
+        typingCoroutine = StartCoroutine(TypeLineRoutine(text, onComplete));
+    }
+
+    private IEnumerator TypeLineRoutine(string text, Action onComplete)
+    {
+        if (dialogueText != null)
+        {
+            dialogueText.text = string.Empty;
+        }
+
+        if (!string.IsNullOrEmpty(text))
+        {
+            StringBuilder builder = new StringBuilder();
+
+            foreach (char character in text)
+            {
+                builder.Append(character);
+
+                if (dialogueText != null)
+                {
+                    dialogueText.text = builder.ToString();
+                }
+
+                yield return new WaitForSecondsRealtime(typingCharDelay);
+            }
+        }
+
+        typingCoroutine = null;
+        onComplete?.Invoke();
+    }
+
+    /// <summary>
+    /// 팁 대화 선택지(2~4개)를 버튼으로 표시. 남는 버튼은 숨김.
+    /// </summary>
+    public void ShowTipChoices(string[] labels, Action<int> onChosen)
+    {
+        if (tipChoiceButtons == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < tipChoiceButtons.Length; i++)
+        {
+            Button button = tipChoiceButtons[i];
+
+            if (button == null)
+            {
+                continue;
+            }
+
+            bool active = labels != null && i < labels.Length;
+            button.gameObject.SetActive(active);
+
+            if (!active)
+            {
+                continue;
+            }
+
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+
+            if (label != null)
+            {
+                label.text = labels[i];
+            }
+
+            int choiceIndex = i;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => onChosen?.Invoke(choiceIndex));
+        }
+    }
+
+    public void HideTipChoices()
+    {
+        if (tipChoiceButtons == null)
+        {
+            return;
+        }
+
+        foreach (Button button in tipChoiceButtons)
+        {
+            if (button != null)
+            {
+                button.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// NPCData.dialogueLines 중 직전과 다른 것을 랜덤으로 골라 표시
     /// </summary>
     private void ShowRandomStaticDialogue()
     {
@@ -202,7 +384,7 @@ public class NPCInteractionUI : MonoBehaviour
         {
             do
             {
-                randomIndex = Random.Range(0, lines.Length);
+                randomIndex = UnityEngine.Random.Range(0, lines.Length);
             }
             while (randomIndex == lastDialogueIndex);
         }
@@ -481,6 +663,20 @@ public class NPCInteractionUI : MonoBehaviour
         if (panel != null)
         {
             panel.SetActive(false);
+        }
+
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+        }
+
+        NPCTipDialoguePresenter.Instance?.EndConversation();
+        HideTipChoices();
+
+        if (endTipDialogueButton != null)
+        {
+            endTipDialogueButton.gameObject.SetActive(false);
         }
 
         UIState.SetNPCInteractionOpen(false);

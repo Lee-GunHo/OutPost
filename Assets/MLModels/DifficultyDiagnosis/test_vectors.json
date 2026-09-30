@@ -1,0 +1,411 @@
+{
+  "featureOrder": [
+    "toolGradeOrdinal",
+    "cumulativeDeathCount",
+    "recentDeathCount5min",
+    "deathRatePerMin5",
+    "monsterKillCount",
+    "bossKillCount",
+    "killDeathRatio",
+    "questAcceptedCount",
+    "questCompletedCount",
+    "questCompletionRatio",
+    "zoneDwellTimeSec",
+    "elapsedSessionSec",
+    "zone_Safe",
+    "zone_Dirt",
+    "zone_Stone_Copper",
+    "zone_Silver_Gold",
+    "zone_Gold",
+    "zone_Unknown"
+  ],
+  "classOrder": [
+    "EquipmentLack",
+    "CombatStruggle",
+    "Lost",
+    "ResourceLack",
+    "Smooth"
+  ],
+  "samples": [
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 8,
+      "recentDeathCount5min": 5,
+      "monsterKillCount": 2,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 1,
+      "currentZone": "Stone_Copper",
+      "zoneDwellTimeSec": 270.0,
+      "elapsedSessionSec": 630.0,
+      "expectedProbabilities": [
+        0.05871821194887161,
+        0.9406591057777405,
+        0.0006227244739420712,
+        4.778554279001953e-23,
+        2.5173621867602414e-12
+      ]
+    },
+    {
+      "toolGrade": "Rare",
+      "cumulativeDeathCount": 2,
+      "recentDeathCount5min": 2,
+      "monsterKillCount": 21,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 1,
+      "currentZone": "Silver_Gold",
+      "zoneDwellTimeSec": 30.0,
+      "elapsedSessionSec": 720.0,
+      "expectedProbabilities": [
+        2.4247681267297594e-06,
+        1.8478779721257986e-15,
+        3.088265912949173e-17,
+        7.018675759225888e-32,
+        0.999997615814209
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 0,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 16,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 1,
+      "currentZone": "Gold",
+      "zoneDwellTimeSec": 60.0,
+      "elapsedSessionSec": 540.0,
+      "expectedProbabilities": [
+        0.0016662221169099212,
+        2.4214357444472074e-15,
+        5.2518152686563485e-20,
+        1.5824038279512358e-31,
+        0.998333752155304
+      ]
+    },
+    {
+      "toolGrade": "Epic",
+      "cumulativeDeathCount": 0,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 0,
+      "bossKillCount": 0,
+      "questAcceptedCount": 0,
+      "questCompletedCount": 0,
+      "currentZone": "Safe",
+      "zoneDwellTimeSec": 690.0,
+      "elapsedSessionSec": 690.0,
+      "expectedProbabilities": [
+        0.00013767917698714882,
+        5.6706635405134875e-06,
+        0.9998565912246704,
+        1.279947814403215e-09,
+        1.055913756431437e-08
+      ]
+    },
+    {
+      "toolGrade": "Rare",
+      "cumulativeDeathCount": 1,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 29,
+      "bossKillCount": 0,
+      "questAcceptedCount": 0,
+      "questCompletedCount": 0,
+      "currentZone": "Silver_Gold",
+      "zoneDwellTimeSec": 90.0,
+      "elapsedSessionSec": 930.0,
+      "expectedProbabilities": [
+        3.18639530722236e-14,
+        3.006328967393592e-22,
+        6.089960928952518e-28,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "toolGrade": "Epic",
+      "cumulativeDeathCount": 2,
+      "recentDeathCount5min": 2,
+      "monsterKillCount": 2,
+      "bossKillCount": 0,
+      "questAcceptedCount": 0,
+      "questCompletedCount": 0,
+      "currentZone": "Safe",
+      "zoneDwellTimeSec": 30.0,
+      "elapsedSessionSec": 150.0,
+      "expectedProbabilities": [
+        0.0002971471403725445,
+        0.9980120658874512,
+        0.001360726892016828,
+        5.208445403215214e-15,
+        0.00033006322337314487
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 0,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 6,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 0,
+      "currentZone": "Dirt",
+      "zoneDwellTimeSec": 300.0,
+      "elapsedSessionSec": 390.0,
+      "expectedProbabilities": [
+        0.31937888264656067,
+        7.179959084169241e-06,
+        0.017446886748075485,
+        0.6597583293914795,
+        0.0034087083768099546
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 0,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 0,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 0,
+      "currentZone": "Safe",
+      "zoneDwellTimeSec": 90.0,
+      "elapsedSessionSec": 120.0,
+      "expectedProbabilities": [
+        0.28890472650527954,
+        0.031084515154361725,
+        0.019062895327806473,
+        0.6394621729850769,
+        0.021485647186636925
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 2,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 3,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 1,
+      "currentZone": "Dirt",
+      "zoneDwellTimeSec": 180.0,
+      "elapsedSessionSec": 930.0,
+      "expectedProbabilities": [
+        0.4611954987049103,
+        1.2806393101527647e-07,
+        2.4064313492999645e-06,
+        0.5384145975112915,
+        0.000387436302844435
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 0,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 4,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 0,
+      "currentZone": "Gold",
+      "zoneDwellTimeSec": 180.0,
+      "elapsedSessionSec": 180.0,
+      "expectedProbabilities": [
+        0.44545936584472656,
+        4.549348397997477e-11,
+        0.018368883058428764,
+        4.019718152087348e-12,
+        0.5361717343330383
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 11,
+      "recentDeathCount5min": 3,
+      "monsterKillCount": 7,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 1,
+      "currentZone": "Safe",
+      "zoneDwellTimeSec": 120.0,
+      "elapsedSessionSec": 930.0,
+      "expectedProbabilities": [
+        1.81448722287314e-05,
+        0.9925333261489868,
+        0.007448597811162472,
+        1.1246438882633142e-24,
+        4.329768543698265e-08
+      ]
+    },
+    {
+      "toolGrade": "Epic",
+      "cumulativeDeathCount": 5,
+      "recentDeathCount5min": 3,
+      "monsterKillCount": 1,
+      "bossKillCount": 0,
+      "questAcceptedCount": 0,
+      "questCompletedCount": 0,
+      "currentZone": "Stone_Copper",
+      "zoneDwellTimeSec": 60.0,
+      "elapsedSessionSec": 510.0,
+      "expectedProbabilities": [
+        0.13256463408470154,
+        0.8673912882804871,
+        4.3736290535889566e-05,
+        2.0627219076145738e-14,
+        3.114577680207731e-07
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 1,
+      "recentDeathCount5min": 1,
+      "monsterKillCount": 0,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 0,
+      "currentZone": "Dirt",
+      "zoneDwellTimeSec": 210.0,
+      "elapsedSessionSec": 240.0,
+      "expectedProbabilities": [
+        0.23420216143131256,
+        0.016771774739027023,
+        0.020486431196331978,
+        0.7266048192977905,
+        0.0019348678179085255
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 5,
+      "recentDeathCount5min": 5,
+      "monsterKillCount": 2,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 1,
+      "currentZone": "Stone_Copper",
+      "zoneDwellTimeSec": 30.0,
+      "elapsedSessionSec": 390.0,
+      "expectedProbabilities": [
+        0.37450408935546875,
+        0.6253854036331177,
+        0.00011047127190977335,
+        1.0895285952448865e-18,
+        9.0352638565383e-12
+      ]
+    },
+    {
+      "toolGrade": "Rare",
+      "cumulativeDeathCount": 5,
+      "recentDeathCount5min": 4,
+      "monsterKillCount": 6,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 1,
+      "currentZone": "Safe",
+      "zoneDwellTimeSec": 480.0,
+      "elapsedSessionSec": 570.0,
+      "expectedProbabilities": [
+        0.0009570388356223702,
+        0.9990274906158447,
+        1.5307845387724228e-05,
+        1.176055531178378e-23,
+        6.961393239635072e-08
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 0,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 0,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 0,
+      "currentZone": "Gold",
+      "zoneDwellTimeSec": 30.0,
+      "elapsedSessionSec": 30.0,
+      "expectedProbabilities": [
+        0.05811562389135361,
+        7.354194586639551e-09,
+        0.3436468243598938,
+        5.744815290142924e-09,
+        0.5982375741004944
+      ]
+    },
+    {
+      "toolGrade": "Rare",
+      "cumulativeDeathCount": 0,
+      "recentDeathCount5min": 0,
+      "monsterKillCount": 32,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 0,
+      "currentZone": "Gold",
+      "zoneDwellTimeSec": 90.0,
+      "elapsedSessionSec": 990.0,
+      "expectedProbabilities": [
+        4.3815538219860173e-07,
+        7.676963098702349e-20,
+        1.8224704924075226e-29,
+        0.0,
+        0.9999995231628418
+      ]
+    },
+    {
+      "toolGrade": "Rare",
+      "cumulativeDeathCount": 11,
+      "recentDeathCount5min": 3,
+      "monsterKillCount": 6,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 0,
+      "currentZone": "Safe",
+      "zoneDwellTimeSec": 30.0,
+      "elapsedSessionSec": 840.0,
+      "expectedProbabilities": [
+        1.739110189191706e-06,
+        0.9995561242103577,
+        0.00044200714910402894,
+        5.583792912830723e-26,
+        1.2826910733565455e-07
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 15,
+      "recentDeathCount5min": 5,
+      "monsterKillCount": 9,
+      "bossKillCount": 0,
+      "questAcceptedCount": 1,
+      "questCompletedCount": 1,
+      "currentZone": "Safe",
+      "zoneDwellTimeSec": 300.0,
+      "elapsedSessionSec": 1110.0,
+      "expectedProbabilities": [
+        1.4513065025312244e-06,
+        0.999985933303833,
+        1.2596471606229898e-05,
+        1.0734927145653126e-40,
+        6.335326013795495e-11
+      ]
+    },
+    {
+      "toolGrade": "Normal",
+      "cumulativeDeathCount": 2,
+      "recentDeathCount5min": 2,
+      "monsterKillCount": 0,
+      "bossKillCount": 0,
+      "questAcceptedCount": 0,
+      "questCompletedCount": 0,
+      "currentZone": "Safe",
+      "zoneDwellTimeSec": 120.0,
+      "elapsedSessionSec": 300.0,
+      "expectedProbabilities": [
+        0.6295447945594788,
+        0.35883647203445435,
+        0.000138384522870183,
+        0.011385094374418259,
+        9.533840784570202e-05
+      ]
+    }
+  ]
+}
