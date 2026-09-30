@@ -42,6 +42,9 @@ Transform:
   - {fileID: 360267931492050767}
   - {fileID: 6364544046904536973}
   - {fileID: 2772301802141033186}
+  - {fileID: 4495320463799357517}
+  - {fileID: 8603495738993323468}
+  - {fileID: 8479885651475544349}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1444708050729278303
@@ -105,7 +108,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.033333335
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
@@ -258,7 +261,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbe38ff31dda7d049a908f21400fd9ad, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveManager
   player: {fileID: 0}
   saveFileName: SaveFile.json
@@ -391,7 +394,7 @@ MonoBehaviour:
   wood: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
   stone: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
   smileArmor: {fileID: 11400000, guid: dc3de38e89f5e57439f73ab04601ea1a, type: 2}
-  droppedItemPrefab: {fileID: 1542218634, guid: 158ac2cba533995895385e12c2cac2b2, type: 3}
+  droppedItemPrefab: {fileID: 0}
   worldDropDistance: 1.5
 --- !u!114 &8665865438965783495
 MonoBehaviour:
@@ -450,6 +453,69 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee37eaa5d4d7c5499fc5b8148ce247c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarModel
+--- !u!1 &3807155487375326829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8603495738993323468}
+  - component: {fileID: 4343567927692241039}
+  - component: {fileID: 8335437713654330480}
+  m_Layer: 0
+  m_Name: NPCTipDialoguePresenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8603495738993323468
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3807155487375326829}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2346226157108010335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4343567927692241039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3807155487375326829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d040c48c20d542a43a11b06a490740d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDialogueStateManager
+--- !u!114 &8335437713654330480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3807155487375326829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc52450e45f2c9142bd07d0c2703cd1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCTipDialoguePresenter
+  ruleConfig: {fileID: 11400000, guid: f8c65727190bd8f44b77f7be779df298, type: 2}
+  dialogueSet: {fileID: 11400000, guid: 9d4601558829ed647bef34cbb161a994, type: 2}
+  diagnosisMode: 0
+  mlModelAsset: {fileID: 5022602860645237092, guid: 2bf61900ae276f342ab1cf34211faede, type: 3}
+  mlMetadataJson: {fileID: 4900000, guid: bf44dadaa6e35614e8baa9ad4f872d2b, type: 3}
+  mlMinConfidence: 0.5
 --- !u!1 &4930478553000661126
 GameObject:
   m_ObjectHideFlags: 0
@@ -593,8 +659,56 @@ MonoBehaviour:
   model: {fileID: 7910421769988821486}
   view: {fileID: 2969428886985262584}
   mapPresenter: {fileID: 3862820166605921218}
+  frameTimeBudgetMs: 4
   nexusPrefab: {fileID: 6865026967297497089, guid: e4e22d747de324c45aa0eb54a8e62dfa, type: 3}
   nexusSpawnPosition: {x: 0, y: 1, z: 0}
+--- !u!1 &5547456718988667379
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8479885651475544349}
+  - component: {fileID: 3551370457103071657}
+  m_Layer: 0
+  m_Name: TipFollowUpManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8479885651475544349
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5547456718988667379}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2346226157108010335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3551370457103071657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5547456718988667379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c413410397fa6e44d94fc02522b27659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TipFollowUpManager
+  feedbackDelaySec: 180
+  resolutionCheckIntervalSec: 30
+  resolutionCheckMaxWaitSec: 600
 --- !u!1 &6252360756361882342
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,6 +818,50 @@ MonoBehaviour:
   progressLevel: 0
   normalMonsterKillRequiredForProgress: 10
   isMonsterWaveInProgress: 0
+--- !u!1 &7038198409124034070
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4495320463799357517}
+  - component: {fileID: 1082531116843028979}
+  m_Layer: 0
+  m_Name: PlayLogManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4495320463799357517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7038198409124034070}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2346226157108010335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1082531116843028979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7038198409124034070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a372d5a708b60b54a82fac5d251342c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayLogManager
 --- !u!1 &7579109593351765646
 GameObject:
   m_ObjectHideFlags: 0
@@ -810,6 +968,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6304360298293544800}
   - component: {fileID: 1963133426766121305}
+  - component: {fileID: 7842090205646957535}
   m_Layer: 0
   m_Name: UIInputManager
   m_TagString: Untagged
@@ -844,6 +1003,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2202724a92ecf2745bd7209054617520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIInputManager
+--- !u!114 &7842090205646957535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327011349679937219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ee0ca99c04a76458109f0294fa46a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPresenter
 --- !u!1001 &9161965706671797301
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb4f6b1f664ae454e935e8d72207c686, type: 3}
+  m_Name: TEMP_QuestData03
+  m_EditorClassIdentifier: Assembly-CSharp::QuestData
+  questId: 3
+  questTitle: "\uBC8C\uC368 \uC5EC\uAE30\uAE4C\uC9C0 \uC654\uC5B4??"
+  questDescription: "\uAE08 \uBE14\uB7ED \uAE4C\uC9C0 \uB3C4\uB2EC\uD588\uAD6C\uB098!!
+    \uAE08 \uBE14\uB7ED 50\uAC1C\uB97C \uAC00\uC838\uC624\uBA74 \uC88B\uC740 \uC120\uBB3C\uC744
+    \uC904 \uC9C0\uB3C4 \uBAB0\uB77C!!"
+  requiredItem: {fileID: 11400000, guid: 14236db1d278ee24397813533d9b2853, type: 2}
+  requiredAmount: 50
+  rewardItem: {fileID: 11400000, guid: 2a0dd938da50409aba822cbcc1aae116, type: 2}
+  rewardAmount: 1
+  rewardGold: 0

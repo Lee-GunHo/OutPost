@@ -299,9 +299,21 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2451574876655435359, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_Name
+      value: Button_TipChoice2
+      objectReference: {fileID: 0}
     - target: {fileID: 2494070855597884513, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691705987088216728, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3656569463389410219, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_Name
+      value: Button_TipChoice1
       objectReference: {fileID: 0}
     - target: {fileID: 4599042063534044290, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
       propertyPath: m_IsActive
@@ -319,6 +331,38 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5379969753474116228, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_Name
+      value: Button_TipChoice4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5993224626421245771, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: endTipDialogueButton
+      value: 
+      objectReference: {fileID: 273095478}
+    - target: {fileID: 5993224626421245771, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: tipChoiceButtons.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5993224626421245771, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: 'tipChoiceButtons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 273095481}
+    - target: {fileID: 5993224626421245771, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: 'tipChoiceButtons.Array.data[1]'
+      value: 
+      objectReference: {fileID: 273095480}
+    - target: {fileID: 5993224626421245771, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: 'tipChoiceButtons.Array.data[2]'
+      value: 
+      objectReference: {fileID: 273095479}
+    - target: {fileID: 5993224626421245771, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: 'tipChoiceButtons.Array.data[3]'
+      value: 
+      objectReference: {fileID: 273095478}
+    - target: {fileID: 6405758532681523985, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_text
+      value: "\uB300 \uD654 \uD558 \uAE30"
+      objectReference: {fileID: 0}
     - target: {fileID: 6793462597500878999, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -327,9 +371,25 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6793462597500878999, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966761233607323694, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_Size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6966761233607323694, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
       propertyPath: m_Value
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7314447889917835073, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_text
+      value: "\uB300 \uD654 \uC885 \uB8CC \uD558 \uAE30"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7840316386135438458, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8060267526975189301, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
       propertyPath: m_LocalPosition.x
@@ -411,6 +471,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8902558001509568640, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043934847897814404, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_Name
+      value: Button_TipChoice3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070656401893806035, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+      propertyPath: m_Size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9070656401893806035, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
       propertyPath: m_Value
       value: 1
@@ -420,6 +492,50 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+--- !u!114 &273095478 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5502433165354191728, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+  m_PrefabInstance: {fileID: 273095477}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &273095479 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1533918750053717782, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+  m_PrefabInstance: {fileID: 273095477}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &273095480 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8181467402038201048, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+  m_PrefabInstance: {fileID: 273095477}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &273095481 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3860419523678093366, guid: cb3e9afd14af3f94d99bea17197cfc92, type: 3}
+  m_PrefabInstance: {fileID: 273095477}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &313618206
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1143,6 +1259,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PauseMenuManager, Assembly-CSharp
       objectReference: {fileID: 0}
+    - target: {fileID: 4392888393743089089, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4469644755748729406, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -1150,6 +1270,10 @@ PrefabInstance:
     - target: {fileID: 5307168866772204599, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
       propertyPath: m_Name
       value: Text_Main
+      objectReference: {fileID: 0}
+    - target: {fileID: 5676004199737228631, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6148647277282369711, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1485,6 +1609,14 @@ PrefabInstance:
     - target: {fileID: 2346226157108010335, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3551370457103071657, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: feedbackDelaySec
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 3551370457103071657, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: resolutionCheckIntervalSec
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: placeableBlockItems.Array.size
@@ -2102,6 +2234,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: StatusCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7647948488240877450, guid: 3451567fb7cd6574bb1475d6a472c095, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8465223075025968533, guid: 3451567fb7cd6574bb1475d6a472c095, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -2321,6 +2457,10 @@ PrefabInstance:
     - target: {fileID: 1642490396178773992, guid: 5b12bdbdef78fcc41be2d42f8f43fa09, type: 3}
       propertyPath: m_Name
       value: Chest
+      objectReference: {fileID: 0}
+    - target: {fileID: 1642490396178773992, guid: 5b12bdbdef78fcc41be2d42f8f43fa09, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5696219624486052052, guid: 5b12bdbdef78fcc41be2d42f8f43fa09, type: 3}
       propertyPath: m_LocalPosition.x
