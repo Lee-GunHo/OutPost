@@ -11,5 +11,8 @@ data/synthetic/*.csv
 # 실제 플레이 로그(개인정보/용량 이슈) - 절대 커밋하지 않음
 data/real/*.csv
 
+# 테스터별 플레이테스트 원본 로그(개인정보/용량 이슈) - 절대 커밋하지 않음
+data/playtest/
+
 !data/synthetic/.gitkeep
 !data/real/.gitkeep
