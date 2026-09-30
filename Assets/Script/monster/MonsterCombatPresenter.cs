@@ -350,6 +350,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         if (target is PlayerPresenter player)
         {
             if (player.IsDead) return;
+            player.SetPendingDamageSource(payload.SourceName);
             player.TakeDamage(payload.Damage);
             if (!player.IsDead && payload.EffectType != StatusEffectType.None &&
                 UnityEngine.Random.value < payload.Chance)

@@ -29,6 +29,10 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public bool IsStatusDamageInvincible => isReviveInvincible;
 
     public event Action OnPlayerStatusChanged;
+    public event Action<string, Vector3> OnPlayerDied;
+    public event Action<string> OnPlayerUpgraded;
+
+    private string pendingDamageSource = "Unknown";
 
     private Vector3 lastMoveDirection = Vector3.forward;
     private int actionFacingFrame = -1;
@@ -189,6 +193,12 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public void NotifyStatusChanged()
     {
         OnPlayerStatusChanged?.Invoke();
+    }
+
+    // 몬스터/보스 공격 코드가 TakeDamage 직전에 호출해 사망 원인을 남길 수 있게 함.
+    public void SetPendingDamageSource(string sourceName)
+    {
+        pendingDamageSource = string.IsNullOrEmpty(sourceName) ? "Unknown" : sourceName;
     }
 
     private void RotateToDirection(Vector3 direction)
@@ -374,6 +384,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         if (playerModel.IsDead)
         {
             Debug.Log("플레이어 사망");
+            OnPlayerDied?.Invoke(pendingDamageSource, transform.position);
+            pendingDamageSource = "Unknown";
             stateManager.ChangeState(stateManager.DeadState);
             return;
         }
@@ -859,6 +871,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         if (playerModel.IsDead)
         {
             Debug.Log("플레이어 사망");
+            OnPlayerDied?.Invoke("StatusEffect", transform.position);
             stateManager.ChangeState(stateManager.DeadState);
         }
     }
@@ -1135,6 +1148,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         playerModel.UpgradeHp();
         NotifyStatusChanged();
+        OnPlayerUpgraded?.Invoke("Hp");
 
         return true;
     }
@@ -1154,6 +1168,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         playerModel.UpgradeMp();
         NotifyStatusChanged();
+        OnPlayerUpgraded?.Invoke("Mp");
 
         return true;
     }
@@ -1173,6 +1188,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         playerModel.UpgradeAttack();
         NotifyStatusChanged();
+        OnPlayerUpgraded?.Invoke("Attack");
 
         return true;
     }
@@ -1192,6 +1208,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         playerModel.UpgradeDefense();
         NotifyStatusChanged();
+        OnPlayerUpgraded?.Invoke("Defense");
 
         return true;
     }
@@ -1211,6 +1228,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         playerModel.UpgradeMoveSpeed();
         NotifyStatusChanged();
+        OnPlayerUpgraded?.Invoke("MoveSpeed");
 
         return true;
     }

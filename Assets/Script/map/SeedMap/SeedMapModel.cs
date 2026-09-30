@@ -82,6 +82,9 @@ public class SeedMapModel : MonoBehaviour
 
     public float CellSize => cellSize;
     public int SafeRange => safeRange;
+    public int DirtRange => dirtRange;
+    public int StoneCopperRange => stoneCopperRange;
+    public int SilverGoldRange => silverGoldRange;
 
     public int GetChunkSeed(int globalSeed, Vector2Int chunkCoord)
     {

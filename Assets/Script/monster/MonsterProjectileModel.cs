@@ -7,10 +7,12 @@ public sealed class MonsterAttackPayload
     public readonly StatusEffectType EffectType;
     public readonly float Chance, Duration, Value, TickInterval;
     public readonly int AttackModifier, DefenseModifier;
+    public readonly string SourceName;
 
     public MonsterAttackPayload(MonsterModel source, float multiplier)
     {
         Damage = Mathf.Max(0, Mathf.RoundToInt(source.AttackPower * multiplier));
+        SourceName = source.gameObject.name;
         EffectType = source.AttackStatusEffectType;
         Chance = source.StatusEffectChance;
         Duration = source.StatusEffectDuration;

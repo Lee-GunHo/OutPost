@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -6,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public class NPCModel : MonoBehaviour
 {
+    public event Action<string> OnQuestAccepted;
+    public event Action<string> OnQuestCompleted;
+
     [Header("NPC 데이터")]
     [SerializeField] private NPCData npcData;
 
@@ -49,6 +53,7 @@ public class NPCModel : MonoBehaviour
         isQuestAccepted = true;
 
         SaveQuestState();
+        OnQuestAccepted?.Invoke(npcData != null && npcData.QuestData != null ? npcData.QuestData.QuestId : null);
     }
 
     public void CompleteQuest()
@@ -61,6 +66,7 @@ public class NPCModel : MonoBehaviour
         isQuestCompleted = true;
 
         SaveQuestState();
+        OnQuestCompleted?.Invoke(npcData != null && npcData.QuestData != null ? npcData.QuestData.QuestId : null);
     }
 
     /// <summary>

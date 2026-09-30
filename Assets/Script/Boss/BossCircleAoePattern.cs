@@ -258,6 +258,11 @@ public class BossCircleAoePattern : BossPatternBase
 
             if (damageable != null && !damagedTargets.Contains(damageable))
             {
+                if (damageable is PlayerPresenter player)
+                {
+                    player.SetPendingDamageSource(boss.name);
+                }
+
                 damageable.TakeDamage(damage);
                 damagedTargets.Add(damageable);
 
@@ -375,7 +380,7 @@ public class BossCircleAoePattern : BossPatternBase
 
         if (applyDamage)
         {
-            ApplyDamage(collider, damagedTargets);
+            ApplyDamage(collider, damagedTargets, boss.name);
         }
 
         if (applyStatusEffect)
@@ -384,7 +389,7 @@ public class BossCircleAoePattern : BossPatternBase
         }
     }
 
-    private void ApplyDamage(Collider collider, HashSet<IDamageable> damagedTargets)
+    private void ApplyDamage(Collider collider, HashSet<IDamageable> damagedTargets, string bossName)
     {
         IDamageable damageable = collider.GetComponentInParent<IDamageable>();
 
@@ -401,6 +406,11 @@ public class BossCircleAoePattern : BossPatternBase
         if (damagedTargets.Contains(damageable))
         {
             return;
+        }
+
+        if (damageable is PlayerPresenter player)
+        {
+            player.SetPendingDamageSource(bossName);
         }
 
         damageable.TakeDamage(damage);
