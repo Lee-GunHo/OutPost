@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36263da38709a004987432213c5137e1, type: 3}
+  m_Name: CopperHatRecipe
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
+  recipeName: "\uad6c\ub9ac \ubaa8\uc790"
+  description: "\uad6c\ub9ac \uc81c\uc791\ub300\uc5d0\uc11c \uc81c\uc791"
+  tableType: 2
+  resultItem: {fileID: 11400000, guid: dcd08bfc77984764b822d050970593b3, type: 2}
+  resultAmount: 1
+  ingredients:
+  - item: {fileID: 11400000, guid: adbd05296adccdd4db958419ac4c2622, type: 2}
+    amount: 1

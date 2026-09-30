@@ -23,6 +23,6 @@ MonoBehaviour:
   moveSpeedBonus: 0
   toolType: 6
   description: "\uC81C\uC791\uB300"
-  placeablePrefab: {fileID: 0}
+  placeablePrefab: {fileID: 1642490396178773992, guid: 574867e8f9c04424aea1b2e3cc69651d, type: 3}
   placeableYOffset: 1
   maxStack: 1

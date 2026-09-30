@@ -23,6 +23,9 @@ public class CraftingRecipe : ScriptableObject
     [TextArea]
     [SerializeField] private string description;
 
+    [Header("제작 가능한 제작대")]
+    [SerializeField] private CraftingTableType tableType = CraftingTableType.Hand;
+
     [Header("결과 아이템")]
     [SerializeField] private ItemData resultItem;
 
@@ -35,6 +38,7 @@ public class CraftingRecipe : ScriptableObject
 
     public string RecipeName => recipeName;
     public string Description => description;
+    public CraftingTableType TableType => tableType;
     public ItemData ResultItem => resultItem;
     public int ResultAmount => resultAmount;
     public IReadOnlyList<CraftingIngredient> Ingredients => ingredients;

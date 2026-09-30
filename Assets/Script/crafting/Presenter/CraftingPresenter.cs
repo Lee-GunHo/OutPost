@@ -17,8 +17,12 @@ public class CraftingPresenter : MonoBehaviour
     [Tooltip("손 제작일 때 craftingView가 들어가는 부모 — 인벤토리 창 안쪽")]
     [SerializeField] private Transform tabParent;
 
+    [Header("Recipe Database")]
+    [Tooltip("제작대 종류별로 분류된 전체 레시피")]
+    [SerializeField] private CraftingRecipeDatabase recipeDatabase;
+
     [Header("Hand Crafting Recipes")]
-    [Tooltip("제작대 없이도 항상 제작 가능한 레시피")]
+    [Tooltip("레시피 DB 외에 손 제작에 추가로 보여줄 레시피")]
     [SerializeField]
     private List<CraftingRecipe> handRecipes
         = new List<CraftingRecipe>();
@@ -165,13 +169,24 @@ public class CraftingPresenter : MonoBehaviour
     {
         displayedRecipes.Clear();
 
-        if (currentTable != null)
+        CraftingTableType tableType = currentTable != null
+            ? currentTable.TableType
+            : CraftingTableType.Hand;
+
+        if (recipeDatabase != null)
+            AddUniqueRecipes(recipeDatabase.GetRecipes(tableType));
+
+        AddUniqueRecipes(currentTable != null
+            ? currentTable.TableRecipes
+            : handRecipes);
+    }
+
+    private void AddUniqueRecipes(IEnumerable<CraftingRecipe> recipes)
+    {
+        foreach (CraftingRecipe recipe in recipes)
         {
-            displayedRecipes.AddRange(currentTable.TableRecipes);
-        }
-        else
-        {
-            displayedRecipes.AddRange(handRecipes);
+            if (recipe != null && !displayedRecipes.Contains(recipe))
+                displayedRecipes.Add(recipe);
         }
     }
 

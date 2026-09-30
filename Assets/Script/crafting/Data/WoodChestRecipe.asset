@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
   recipeName: "나무 상자 제작"
   description: "나무로 보관용 상자를 만든다"
+  tableType: 0
   resultItem: {fileID: 11400000, guid: 22167560dcce17d4d9659c9def41ba29, type: 2}
   resultAmount: 1
   ingredients:
   - item: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
-    amount: 10
+    amount: 1

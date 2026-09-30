@@ -1792,10 +1792,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ada0c07fb0ebf3644b7ac127a945823c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CraftingTableModel
-  tableName: "\uC81C\uC791\uB300"
-  tableRecipes:
-  - {fileID: 11400000, guid: e0a4e8065b84a244cb48ad8554ce5901, type: 2}
-  - {fileID: 11400000, guid: 0a9cda7504ef42a68537bd9a1dfcb5b9, type: 2}
+  tableName: "\uB098\uBB34 \uC81C\uC791\uB300"
+  tableType: 1
+  tableRecipes: []
 --- !u!65 &1683140700
 BoxCollider:
   m_ObjectHideFlags: 0

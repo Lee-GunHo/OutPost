@@ -25,6 +25,6 @@ MonoBehaviour:
   attackRecoveryDuration: 0
   toolType: 6
   description: 음식대
-  placeablePrefab: {fileID: 0}
+  placeablePrefab: {fileID: 1642490396178773992, guid: 2cdcd03b0afd4849b596d5fed5845efa, type: 3}
   placeableYOffset: 1
   maxStack: 1

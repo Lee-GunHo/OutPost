@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36263da38709a004987432213c5137e1, type: 3}
+  m_Name: GoldBowRecipe
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
+  recipeName: "\uae08 \ud65c"
+  description: "\uae08 \uc81c\uc791\ub300\uc5d0\uc11c \uc81c\uc791"
+  tableType: 4
+  resultItem: {fileID: 11400000, guid: a89e1fbe387843e0bb6a31adef523414, type: 2}
+  resultAmount: 1
+  ingredients:
+  - item: {fileID: 11400000, guid: 14236db1d278ee24397813533d9b2853, type: 2}
+    amount: 1

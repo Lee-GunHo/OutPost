@@ -25,6 +25,6 @@ MonoBehaviour:
   attackRecoveryDuration: 0
   toolType: 6
   description: 구리 제작대
-  placeablePrefab: {fileID: 0}
+  placeablePrefab: {fileID: 1642490396178773992, guid: 3c9521e68fa049e692ad237639eb8c15, type: 3}
   placeableYOffset: 1
   maxStack: 1

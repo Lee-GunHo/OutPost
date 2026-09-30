@@ -25,6 +25,6 @@ MonoBehaviour:
   attackRecoveryDuration: 0
   toolType: 6
   description: 은 제작대
-  placeablePrefab: {fileID: 0}
+  placeablePrefab: {fileID: 1642490396178773992, guid: f1b9445a50694306acdcd619fe72813c, type: 3}
   placeableYOffset: 1
   maxStack: 1

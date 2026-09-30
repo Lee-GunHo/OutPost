@@ -1381,6 +1381,7 @@ MonoBehaviour:
   inventoryModel: {fileID: 0}
   craftingView: {fileID: 3596761529654377557}
   craftingTooltipView: {fileID: 0}
+  recipeDatabase: {fileID: 11400000, guid: 6c22c5d088264015b49fabe561794ff3, type: 2}
   handRecipes:
   - {fileID: 11400000, guid: e0a4e8065b84a244cb48ad8554ce5901, type: 2}
 --- !u!1 &9300000000000001
