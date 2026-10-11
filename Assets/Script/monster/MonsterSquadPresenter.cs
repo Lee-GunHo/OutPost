@@ -7,6 +7,7 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
 {
     private sealed class Encounter
     {
+        public readonly string Id = System.Guid.NewGuid().ToString("N");
         public readonly MonsterSquadModel Model = new MonsterSquadModel();
         public readonly List<MonsterBehaviorPresenter> Members = new List<MonsterBehaviorPresenter>();
         public readonly List<MonsterSquadMember> Snapshot = new List<MonsterSquadMember>();
@@ -43,6 +44,7 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
 
     private void Update()
     {
+        MonsterLearningPresenter.Instance?.Telemetry.Sample(registered);
         membership.Clear();
         foreach (var encounter in encounters.Values)
         {
@@ -52,7 +54,7 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
         foreach (var member in registered)
         {
             if (member == null) continue;
-            if (!member.TryGetSquadTarget(out Transform target))
+            if (!MonsterLearningPresenter.CooperationEnabled || !member.TryGetSquadTarget(out Transform target))
             {
                 member.SetSquadAssignment(new MonsterSquadAssignment { Role = MonsterSquadRole.Solo, Count = 1 });
                 continue;
@@ -71,10 +73,14 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
         {
             Encounter encounter = pair.Value;
             if (encounter.Members.Count == 0) { emptyEncounters.Add(pair.Key); continue; }
-            encounter.Model.Synchronize(encounter.Snapshot);
+            bool changed = encounter.Model.Synchronize(encounter.Snapshot, Time.time);
             encounter.Model.AdvanceFlank(Time.time);
             foreach (var member in encounter.Members)
-                member.SetSquadAssignment(encounter.Model.GetAssignment(member.GetInstanceID()));
+            {
+                var assignment = encounter.Model.GetAssignment(member.GetInstanceID());
+                member.SetSquadAssignment(assignment);
+                if (changed) MonsterLearningPresenter.Instance?.RecordFormation(encounter.Id, member.Owner, assignment, encounter.Model.ChangeReason);
+            }
         }
         foreach (Transform target in emptyEncounters) encounters.Remove(target);
     }
@@ -93,7 +99,7 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
 
     public static bool CanAttack(MonsterBehaviorPresenter member, bool commit)
     {
-        if (instance == null || !instance.membership.TryGetValue(member, out Encounter encounter)) return true;
+        if (!MonsterLearningPresenter.CooperationEnabled || instance == null || !instance.membership.TryGetValue(member, out Encounter encounter)) return true;
         int active = 0;
         foreach (var other in encounter.Members)
             if (other != null && other.isActiveAndEnabled && other.IsAttacking) active++;

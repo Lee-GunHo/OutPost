@@ -132,6 +132,7 @@ public class MonsterSpawner : MonoBehaviour
                 monsterParent
             );
 
+            monster.GetComponent<MonsterPresenter>()?.MarkNaturalSpawn(monsterPrefab.name);
             spawnedMonsters.Add(monster);
 
             Debug.Log("몬스터 스폰: " + monster.name);

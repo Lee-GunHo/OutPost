@@ -18,6 +18,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     public MonsterCombatPresenter Combat { get; private set; }
     public MonsterBehaviorPresenter Behavior { get; private set; }
 
+    public float CombatBodyRadius => BodyRadius;
     public float MoveSpeed => monsterModel.MoveSpeed;
     public float ChaseRange => monsterModel.ChaseRange;
     public float AttackRange => monsterModel.AttackRange;
@@ -30,6 +31,15 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     public Transform CurrentTarget => currentTarget;
     public bool HasTarget => currentTarget != null;
     public bool IsCurrentTargetPlayer => currentTarget == playerTransform;
+
+    public string CombatIdentity { get; } = System.Guid.NewGuid().ToString("N");
+    public bool IsNaturalSpawn { get; private set; }
+    public string LearningType { get; private set; }
+    public void MarkNaturalSpawn(string prefabName)
+    {
+        IsNaturalSpawn = true;
+        LearningType = prefabName;
+    }
 
     private bool isDeathProcessed;
 
@@ -72,6 +82,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     private void Awake()
     {
+        LearningType = gameObject.name.Replace("(Clone)", "");
         nexusPath = new NavMeshPath();
         monsterModel = GetComponent<MonsterModel>();
         stateManager = GetComponent<MonsterStateManager>();
@@ -429,6 +440,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         int previousHp = monsterModel.CurrentHp;
         monsterModel.TakeDamage(damage);
         if (monsterModel.CurrentHp < previousHp) Behavior.RecordHit();
+        MonsterLearningPresenter.Instance?.Telemetry.DamageTaken(this, Mathf.Max(0, previousHp - monsterModel.CurrentHp));
 
         if (monsterView != null)
         {
@@ -455,6 +467,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         }
 
         isDeathProcessed = true;
+        MonsterLearningPresenter.Instance?.Telemetry.Exit(CombatIdentity, "Killed");
 
         SpawnItemDrops();
 

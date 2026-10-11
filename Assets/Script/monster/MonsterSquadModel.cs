@@ -9,6 +9,8 @@ public struct MonsterSquadMember
     public float Distance;
     public float Angle;
     public bool NeedsCover;
+    public float HpRatio, MaxHp, MoveSpeed;
+    public bool CanProjectile, CanCharge;
 }
 
 public struct MonsterSquadAssignment
@@ -27,49 +29,74 @@ public sealed class MonsterSquadModel
     private float nextAttackTime = float.NegativeInfinity;
     private float nextFlankTime = float.PositiveInfinity;
     public int Count => members.Count;
+    public string ChangeReason { get; private set; } = "Initial";
+    private float nextReassessment;
 
-    public void Synchronize(List<MonsterSquadMember> incoming)
+    public bool Synchronize(List<MonsterSquadMember> incoming, float now = 0f)
     {
         incoming.Sort((a, b) => a.Id.CompareTo(b.Id));
-        bool changed = incoming.Count != members.Count;
-        for (int i = 0; !changed && i < incoming.Count; i++)
-            changed = incoming[i].Id != members[i].Id || incoming[i].NeedsCover != members[i].NeedsCover;
-        if (!changed) return;
-
-        int pressure = -1;
-        // Preserve the front monster while it can still fight; wounded/retreating members get cover.
-        for (int i = 0; i < incoming.Count; i++)
-            if (!incoming[i].NeedsCover && assignments.TryGetValue(incoming[i].Id, out var old) &&
-                old.Role == MonsterSquadRole.Pressure) { pressure = i; break; }
-        if (pressure < 0)
+        bool rosterChanged = incoming.Count != members.Count;
+        bool healthChanged = false;
+        for (int i = 0; !rosterChanged && i < incoming.Count; i++)
         {
-            for (int i = 0; i < incoming.Count; i++)
-            {
-                if (pressure < 0 || (incoming[pressure].NeedsCover && !incoming[i].NeedsCover) ||
-                    (incoming[pressure].NeedsCover == incoming[i].NeedsCover && incoming[i].Distance < incoming[pressure].Distance))
-                    pressure = i;
-            }
+            rosterChanged = incoming[i].Id != members[i].Id;
+            healthChanged |= incoming[i].NeedsCover != members[i].NeedsCover;
+        }
+        if (!rosterChanged && !healthChanged && now < nextReassessment) return false;
+        nextReassessment = now + 2f;
+        int pressure = -1;
+        float best = float.NegativeInfinity;
+        for (int i = 0; i < incoming.Count; i++)
+        {
+            var member = incoming[i];
+            float score = FrontScore(member);
+            // Hysteresis prevents tiny health/distance changes from constantly swapping roles.
+            if (!member.NeedsCover && assignments.TryGetValue(member.Id, out var old) && old.Role == MonsterSquadRole.Pressure)
+                score += 1f;
+            if (score > best) { best = score; pressure = i; }
         }
         if (members.Count < 2 && incoming.Count >= 2) formationAngle = incoming[pressure].Angle;
+        var previous = new Dictionary<int, MonsterSquadAssignment>(assignments);
         members.Clear();
         members.AddRange(incoming);
         assignments.Clear();
-        if (members.Count == 0) return;
-
-        Assign(members[pressure], 0);
-        int slot = 1;
-        foreach (var member in members)
-            if (member.Id != members[pressure].Id) Assign(member, slot++);
+        if (members.Count > 0)
+        {
+            Assign(members[pressure], 0, MonsterSquadRole.Pressure);
+            var remaining = new List<MonsterSquadMember>(members);
+            remaining.RemoveAt(pressure);
+            // A ranged-capable or wounded monster gets the support slot first.
+            remaining.Sort((a, b) =>
+            {
+                int compare = SupportScore(b).CompareTo(SupportScore(a));
+                return compare != 0 ? compare : a.Id.CompareTo(b.Id);
+            });
+            int slot = 1;
+            foreach (var member in remaining)
+            {
+                bool support = member.NeedsCover || (slot % 2 == 1 && member.CanProjectile);
+                Assign(member, slot++, support ? MonsterSquadRole.Support : MonsterSquadRole.Flanker);
+            }
+        }
+        bool changed = rosterChanged;
+        foreach (var pair in assignments)
+            changed |= !previous.TryGetValue(pair.Key, out var old) || old.Role != pair.Value.Role || old.Angle != pair.Value.Angle;
+        ChangeReason = rosterChanged ? "JoinedOrLeft" : healthChanged ? "NeedsCoverChanged" : "CapabilityHealthReassessment";
+        return changed;
     }
 
-    private void Assign(MonsterSquadMember member, int slot)
+    private static float FrontScore(MonsterSquadMember m) =>
+        (m.NeedsCover ? -5f : 0f) + m.HpRatio * 2f + Math.Min(2f, m.MaxHp / 50f) +
+        Math.Min(1f, m.MoveSpeed / 4f) - Math.Min(2f, m.Distance * 0.15f);
+
+    private static float SupportScore(MonsterSquadMember m) =>
+        (m.NeedsCover ? 5f : 0f) + (m.CanProjectile ? 3f : 0f) - (m.CanCharge ? 1f : 0f) - m.MoveSpeed * 0.1f;
+
+    private void Assign(MonsterSquadMember member, int slot, MonsterSquadRole role)
     {
-        MonsterSquadRole role = Count <= 1 ? MonsterSquadRole.Solo
-            : slot == 0 ? MonsterSquadRole.Pressure
-            : slot % 2 == 0 && !member.NeedsCover ? MonsterSquadRole.Flanker : MonsterSquadRole.Support;
         assignments[member.Id] = new MonsterSquadAssignment
         {
-            Role = role, Count = Count,
+            Role = Count <= 1 ? MonsterSquadRole.Solo : role, Count = Count,
             Angle = formationAngle + slot * (float)(Math.PI * 2) / Count
         };
     }

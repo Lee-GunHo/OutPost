@@ -51,8 +51,23 @@ public sealed class MonsterProjectilePresenter : MonoBehaviour
         model.Resolve();
         Component target = MonsterCombatPresenter.FindDamageTarget(collider);
         if (target != null) MonsterCombatPresenter.ApplyHit(target, model.Payload);
+        model.Payload.Observation?.Complete(target == null ? "Blocked" : "OtherTarget");
         view.Remove();
     }
 
-    private void Finish() { model.Resolve(); view.Remove(); }
+    private void Finish()
+    {
+        model.Resolve();
+        model.Payload.Observation?.Complete("Miss");
+        view.Remove();
+    }
+
+    private void OnDisable()
+    {
+        if (model != null && !model.Resolved)
+        {
+            model.Resolve();
+            model.Payload.Observation?.Complete("Interrupted");
+        }
+    }
 }

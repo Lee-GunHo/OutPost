@@ -20,6 +20,55 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
     private Vector3 origin, direction;
     private float phaseRemaining;
     private bool released;
+    private MonsterLearningPresenter learning;
+    private MonsterLearningModel policy;
+    private MonsterCombatTelemetryModel observation;
+    private string learningContext;
+    private int policyGeneration;
+    private MonsterLearningMode policyMode;
+
+    private void Start()
+    {
+        learning = MonsterLearningPresenter.Ensure(this);
+        RefreshPolicy();
+    }
+
+    public bool SupportsAttack(MonsterAttackKind kind) => model != null && model.IsEnabled(kind) && model.GetWeight(kind) > 0f;
+
+    private void RefreshPolicy()
+    {
+        policy = learning.Snapshot();
+        policyGeneration = learning.Generation;
+        policyMode = learning.Settings.learningMode;
+    }
+
+    private PlayerPresenter TargetPlayer => owner.CurrentTarget != null
+        ? owner.CurrentTarget.GetComponentInParent<PlayerPresenter>() : null;
+
+    private bool UsesLearnedPolicy => learning != null && learning.Settings.learningMode != MonsterLearningMode.Baseline &&
+        (owner.IsNaturalSpawn || learning.Settings.wavesUseLearnedPolicy);
+
+    private float PrepareWeights()
+    {
+        if (learning != null && (policy == null || policyGeneration != learning.Generation || policyMode != learning.Settings.learningMode))
+            RefreshPolicy();
+        var player = TargetPlayer;
+        var state = player != null ? player.GetComponent<PlayerStateManager>() : null;
+        float hp = monster.CurrentHp / (float)Mathf.Max(1, monster.MaxHp);
+        learningContext = MonsterLearningModel.Context(TargetDistance, hp, state != null && state.IsAttacking, state != null && state.IsDashing);
+        float total = 0f;
+        System.Array.Clear(selectionWeights, 0, selectionWeights.Length);
+        foreach (var kind in available)
+        {
+            float weight = owner.Behavior != null
+                ? owner.Behavior.GetAttackWeight(kind, model.GetWeight(kind)) : model.GetWeight(kind);
+            if (player != null && UsesLearnedPolicy && policy != null)
+                weight *= policy.Weight(owner.LearningType, learningContext, (int)kind);
+            selectionWeights[(int)kind] = weight;
+            total += weight;
+        }
+        return total;
+    }
     public bool IsExecuting { get; private set; }
     public float TargetDistance
     {
@@ -100,14 +149,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         if (SelectionPolicy != null)
             return TryStartAttack(SelectionPolicy(available));
 
-        float total = 0f;
-        foreach (var kind in available)
-        {
-            float weight = owner.Behavior != null
-                ? owner.Behavior.GetAttackWeight(kind, model.GetWeight(kind)) : model.GetWeight(kind);
-            selectionWeights[(int)kind] = weight;
-            total += weight;
-        }
+        float total = PrepareWeights();
         if (total <= 0f) return false;
         float roll = UnityEngine.Random.value * total;
         MonsterAttackKind selected = available[0];
@@ -117,14 +159,33 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
             roll -= selectionWeights[(int)kind];
             if (roll <= 0f) break;
         }
-        return TryStartAttack(selected);
+        return TryStartAttack(selected, true);
     }
 
-    public bool TryStartAttack(MonsterAttackKind kind)
+    public bool TryStartAttack(MonsterAttackKind kind) => TryStartAttack(kind, false);
+
+    private bool TryStartAttack(MonsterAttackKind kind, bool weightedSelection)
     {
         if (IsExecuting || owner == null || owner.IsDead || !owner.HasTarget || !CanUse(kind))
             return false;
         if (owner.Behavior != null && !owner.Behavior.TryClaimSquadAttack()) return false;
+        GetAvailableAttacks(available);
+        float totalWeight = PrepareWeights();
+        var player = TargetPlayer;
+        observation = null;
+        if (player != null && learning != null)
+        {
+            string eligible = string.Join(";", available);
+            var probabilities = new string[4];
+            for (int i = 0; i < 4; i++) probabilities[i] =
+                (totalWeight > 0f ? selectionWeights[i] / totalWeight : 0f).ToString("R", System.Globalization.CultureInfo.InvariantCulture);
+            observation = learning.Begin(owner, kind, learningContext, TargetDistance,
+                monster.CurrentHp / (float)Mathf.Max(1, monster.MaxHp), player,
+                UsesLearnedPolicy && policy != null ? policy.version : 0, eligible,
+                string.Join(";", probabilities), weightedSelection && totalWeight > 0f ? selectionWeights[(int)kind] / totalWeight : -1f);
+            // An external/custom policy is not an observation of our weighted-selection learner.
+            if (!weightedSelection) observation.train = false;
+        }
         activeKind = kind;
         lockedTarget = owner.CurrentTarget;
         origin = owner.transform.position + Vector3.up * 0.3f;
@@ -157,6 +218,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         if (!released)
         {
             released = true;
+            if (observation != null) observation.released = true;
             view.ClearWarning();
             Execute();
             phaseRemaining = model.GetRecovery(activeKind);
@@ -184,7 +246,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
 
     private void Execute()
     {
-        var payload = new MonsterAttackPayload(monster, model.GetDamageMultiplier(activeKind));
+        var payload = new MonsterAttackPayload(monster, model.GetDamageMultiplier(activeKind), observation);
         if (activeKind == MonsterAttackKind.Charge)
         {
             chargePayload = payload;
@@ -213,8 +275,19 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         else
         {
             Component target = ResolveTarget(lockedTarget);
-            if (target != null && lockedTarget == owner.CurrentTarget && owner.IsCurrentTargetInAttackRange()
-                && HasLineOfSight(target, origin)) ApplyHit(target, payload);
+            if (target == null || lockedTarget != owner.CurrentTarget) observation?.Complete("TargetLost");
+            else if (!HasLineOfSight(target, origin)) observation?.Complete("Blocked");
+            else if (owner.IsCurrentTargetInAttackRange()) ApplyHit(target, payload);
+        }
+        if (activeKind == MonsterAttackKind.Melee || activeKind == MonsterAttackKind.Circle)
+        {
+            if (activeKind == MonsterAttackKind.Circle && observation != null && !observation.playerContact)
+            {
+                Component intended = ResolveTarget(lockedTarget);
+                if (intended == null) observation.Complete("TargetLost");
+                else if (!HasLineOfSight(intended, origin)) observation.Complete("Blocked");
+            }
+            observation?.Complete("Miss");
         }
     }
 
@@ -228,7 +301,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
             return;
         }
         if (owner.IsDead) { Cancel(); return; }
-        if (!CanCharge) { EndCharge(); return; }
+        if (!CanCharge) { EndCharge(); observation?.Complete("Interrupted"); return; }
 
         const float skin = 0.03f;
         Vector3 start = owner.transform.position;
@@ -267,6 +340,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         {
             EndCharge();
             if (contact != null) ApplyHit(contact, chargePayload);
+            observation?.Complete(contact == null ? "Blocked" : "OtherTarget");
             return;
         }
 
@@ -290,6 +364,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
             // Resolve once, then enter recovery; multiple colliders cannot cause repeated damage.
             EndCharge();
             if (contact != null) ApplyHit(contact, chargePayload);
+            observation?.Complete(stopped ? "Blocked" : "Miss");
         }
     }
 
@@ -351,7 +426,9 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         {
             if (player.IsDead) return;
             player.SetPendingDamageSource(payload.SourceName);
+            int hpBefore = player.CurrentHp;
             player.TakeDamage(payload.Damage);
+            payload.Observation?.Contact(Mathf.Max(0, hpBefore - player.CurrentHp));
             if (!player.IsDead && payload.EffectType != StatusEffectType.None &&
                 UnityEngine.Random.value < payload.Chance)
                 player.AddStatusEffect(new StatusEffectData(payload.EffectType, payload.Duration, payload.Value,
@@ -363,7 +440,13 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
     public void Cancel()
     {
         view?.ClearWarning();
-        if (IsExecuting) Finish();
+        if (IsExecuting)
+        {
+            // Released projectiles own their result, even if their caster dies now.
+            if (!released || activeKind != MonsterAttackKind.Projectile)
+                observation?.Complete(released ? "Interrupted" : "Cancelled");
+            Finish();
+        }
     }
 
     private void Finish()

@@ -143,6 +143,8 @@ public class GameSaveManager : MonoBehaviour
             return false;
         }
 
+        if (MonsterLearningPresenter.Instance != null && !MonsterLearningPresenter.Instance.SaveNow())
+            return false;
         if (QuestSaveManager.Instance != null)
             QuestSaveManager.Instance.SaveNow();
         if (ChestSaveManager.Instance != null)
@@ -190,6 +192,8 @@ public class GameSaveManager : MonoBehaviour
         if (SaveManager.Instance != null && !SaveManager.Instance.TryLoadGame(saveData == null))
             return;
 
+        MonsterLearningPresenter.Instance?.Reload();
+
         if (saveData == null)
         {
             isReady = true;
@@ -221,6 +225,7 @@ public class GameSaveManager : MonoBehaviour
 
     public static void ResetProgressCaches()
     {
+        MonsterLearningPresenter.ClearRuntimeMemory();
         if (QuestSaveManager.Instance != null)
             QuestSaveManager.Instance.ResetCache();
         if (ChestSaveManager.Instance != null)

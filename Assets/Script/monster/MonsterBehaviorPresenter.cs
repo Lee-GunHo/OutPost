@@ -40,8 +40,9 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
 
     private void OnEnable() { MonsterSquadPresenter.Register(this); }
     public MonsterPresenter Owner => owner;
+    public Transform FleeTargetForTelemetry => model != null && model.IsFleeing ? fleeTarget : null;
     public bool IsAttacking => owner != null && !owner.IsDead && owner.Combat.IsExecuting;
-    private bool IsCooperating => model.SquadRole != MonsterSquadRole.Solo && owner.HasTarget && owner.IsCurrentTargetPlayer;
+    private bool IsCooperating => MonsterLearningPresenter.CooperationEnabled && model.SquadRole != MonsterSquadRole.Solo && owner.HasTarget && owner.IsCurrentTargetPlayer;
     public float AdvanceSpeedMultiplier => IsCooperating ? model.AdvanceSpeedMultiplier : 1f;
     public bool TryClaimSquadAttack() => !model.IsFleeing && (!IsCooperating || MonsterSquadPresenter.CanAttack(this, true));
 
@@ -65,7 +66,10 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         {
             Id = GetInstanceID(), Distance = delta.magnitude,
             Angle = Mathf.Atan2(delta.z, delta.x),
-            NeedsCover = model.IsLowHealth(HealthRatio) || model.IsRetreating
+            NeedsCover = model.IsLowHealth(HealthRatio) || model.IsRetreating,
+            HpRatio = HealthRatio, MaxHp = monster.MaxHp, MoveSpeed = owner.MoveSpeed,
+            CanProjectile = owner.Combat.SupportsAttack(MonsterAttackKind.Projectile),
+            CanCharge = owner.Combat.SupportsAttack(MonsterAttackKind.Charge)
         };
     }
 
@@ -284,6 +288,7 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         {
             // Escape is not a kill: skip Dead(), drops, experience and kill/quest progress.
             PauseFleeMovement();
+            MonsterLearningPresenter.Instance?.Telemetry.Exit(owner.CombatIdentity, "Escaped");
             gameObject.SetActive(false);
             Destroy(gameObject);
             return true;

@@ -13,6 +13,9 @@ public class PlayerStateManager : MonoBehaviour
     public IPlayerState HitState { get; private set; }
     public IPlayerState DeadState { get; private set; }
 
+    public bool IsAttacking => currentState != null && currentState == AttackState;
+    public bool IsDashing => currentState != null && currentState == DashState;
+
     public bool IsMoving => currentState != null && currentState == MoveState;
 
     private PlayerPresenter playerPresenter;
