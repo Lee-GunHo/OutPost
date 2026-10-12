@@ -27,6 +27,13 @@ public class NPCPresenter : MonoBehaviour, IInteractable
             Debug.LogWarning(gameObject.name + "에 NPCView가 없습니다.");
         }
 
+        // 전투 NPC는 동료 FSM이 있어야 따라다니므로, 씬에서 붙이는 걸 잊어도 여기서 붙여줌
+        if (npcModel != null && npcModel.Role == NPCRole.Combat &&
+            GetComponent<CompanionPresenter>() == null)
+        {
+            gameObject.AddComponent<CompanionPresenter>();
+        }
+
         HideInteractionMark();
     }
 
@@ -39,6 +46,12 @@ public class NPCPresenter : MonoBehaviour, IInteractable
 
         currentPlayer = player;
         isPlayerInRange = true;
+
+        // 상호작용 범위에 처음 들어온 순간을 "발견"으로 기록 (전투/상점 NPC 발견 여부 추적용)
+        if (npcModel != null)
+        {
+            ProgressTracker.GetOrCreate().MarkNpcDiscovered(npcModel.Role.ToString());
+        }
 
         ShowInteractionMarkIfPossible();
 
@@ -119,6 +132,11 @@ public class NPCPresenter : MonoBehaviour, IInteractable
     public string GetNPCName()
     {
         return npcModel.NPCName;
+    }
+
+    public NPCRole GetRole()
+    {
+        return npcModel != null ? npcModel.Role : NPCRole.General;
     }
 
     public string[] GetDialogueLines()

@@ -15,6 +15,12 @@ public class NPCTipDialoguePresenter : MonoBehaviour
     [SerializeField] private DifficultyRuleConfig ruleConfig;
     [SerializeField] private NPCTipDialogueSet dialogueSet;
 
+    [Header("조건 기반 조언 팁 (조언 NPC 전용)")]
+    [Tooltip("비워두면 Resources/NpcTip/AdviceTipSet을 찾고, 그것도 없으면 코드 기본값으로 동작")]
+    [SerializeField] private AdviceTipSet adviceTipSet;
+    [Tooltip("조건을 만족하는 조언 팁이 없을 때, 기본 대사 대신 기존 난관 진단 대사(dialogueSet)를 보여줌")]
+    [SerializeField] private bool useDiagnosisDialogueAsDefault = true;
+
     [Header("진단 방식 (4단계)")]
     [SerializeField] private DiagnosisMode diagnosisMode = DiagnosisMode.Rule;
     [Tooltip("3단계 산출물(difficulty_mlp.onnx)을 Assets에 넣으면 자동으로 임포트되는 모델 자산")]
@@ -40,6 +46,7 @@ public class NPCTipDialoguePresenter : MonoBehaviour
     private DifficultyDiagnosis currentDiagnosis;
     private NPCTipEntry currentEntry;
     private NPCTipNode currentNode;
+    private string currentCombatNpcHint;
 
     private void Awake()
     {
@@ -86,6 +93,12 @@ public class NPCTipDialoguePresenter : MonoBehaviour
             return;
         }
 
+        // 조언 NPC는 진행도 조건에 맞는 팁을 먼저 시도. 맞는 팁이 없으면 아래 기존 진단 대사로 이어짐.
+        if (npc != null && npc.GetRole() == NPCRole.Advice && TryStartAdviceTip())
+        {
+            return;
+        }
+
         if (PlayLogManager.Instance == null || dialogueSet == null)
         {
             NPCInteractionUI.Instance.ShowFallbackDialogue();
@@ -118,6 +131,115 @@ public class NPCTipDialoguePresenter : MonoBehaviour
 
         TipFollowUpManager.Instance?.OnTipGiven(
             currentDiagnosis.Type, currentEntry.entryId, currentSnapshot);
+    }
+
+    /// <summary>
+    /// 진행도 스냅샷으로 조언 팁을 골라 한 줄 대사로 보여줌.
+    /// 기본 대사가 선택됐고 기존 진단 대사로 넘기도록 설정돼 있으면 false를 반환.
+    /// </summary>
+    private bool TryStartAdviceTip()
+    {
+        AdviceTipSet tipSet = ResolveAdviceTipSet();
+        ProgressTracker tracker = ProgressTracker.GetOrCreate();
+
+        ProgressSnapshot progress = tracker.BuildSnapshot(tipSet.ToolTierItemIds);
+        progress.CombatNpcHint = TryBuildCombatNpcHint(tipSet.CombatNpcHint);
+
+        TipSelectionResult result = AdviceTipSelector.Select(progress, tipSet.Tips, tipSet.DefaultText);
+
+#if UNITY_EDITOR
+        Debug.Log($"[AdviceTip] 선택된 팁: {result.TipId} / priority: {result.Priority} / 이유: {result.Reason}");
+#endif
+
+        bool canUseDiagnosisDialogue = PlayLogManager.Instance != null && dialogueSet != null;
+
+        if (result.IsDefault && useDiagnosisDialogueAsDefault && canUseDiagnosisDialogue)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(result.Text))
+        {
+            return false;
+        }
+
+        currentSnapshot = PlayLogManager.Instance != null
+            ? PlayLogManager.Instance.BuildCurrentSnapshot("TipDialogue")
+            : null;
+        currentCombatNpcHint = progress.CombatNpcHint;
+
+        // 기존 대화 FSM/UI를 그대로 쓰기 위해 선택지 없는 한 줄짜리 대화로 감쌈
+        currentEntry = new NPCTipEntry
+        {
+            entryId = result.TipId,
+            nodes = new[] { new NPCTipNode { nodeId = "advice", textTemplate = result.Text } }
+        };
+
+        ShowNode(currentEntry.GetStartNode());
+
+        PlayLogManager.Instance?.RecordTipDialogue("AdviceTip", 1f, currentEntry.entryId, currentNode.nodeId, null);
+
+        if (AdviceTipSelector.ShouldResetRecentDeath(result, tipSet.ResetRecentDeathOnAnyAdviceTalk))
+        {
+            tracker.ResetRecentDeath();
+        }
+
+        return true;
+    }
+
+    private AdviceTipSet ResolveAdviceTipSet()
+    {
+        if (adviceTipSet == null)
+        {
+            adviceTipSet = Resources.Load<AdviceTipSet>(AdviceTipSet.ResourcesPath);
+        }
+
+        if (adviceTipSet == null)
+        {
+            adviceTipSet = ScriptableObject.CreateInstance<AdviceTipSet>();
+        }
+
+        return adviceTipSet;
+    }
+
+    /// <summary>
+    /// 전투 NPC의 위치를 안전구역 기준 "방향 + 거리 단계" 문구로 변환. 구할 수 없으면 오류 없이 null.
+    /// </summary>
+    private static string TryBuildCombatNpcHint(CombatNpcHintSettings settings)
+    {
+        try
+        {
+            SeedMapModel seedMapModel = FindFirstObjectByType<SeedMapModel>();
+
+            if (seedMapModel == null || seedMapModel.CellSize <= 0f)
+            {
+                return null;
+            }
+
+            foreach (NPCPresenter npc in FindObjectsByType<NPCPresenter>(FindObjectsSortMode.None))
+            {
+                if (npc.GetRole() != NPCRole.Combat)
+                {
+                    continue;
+                }
+
+                float cellSize = seedMapModel.CellSize;
+
+                return CombatNpcHintBuilder.TryBuild(
+                    seedMapModel.PlayerStartPosition / cellSize,
+                    npc.transform.position / cellSize,
+                    settings,
+                    out string hint)
+                    ? hint
+                    : null;
+            }
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogWarning("전투 NPC 위치 힌트 계산 실패, 힌트 없이 진행: " + exception.Message);
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -268,7 +390,8 @@ public class NPCTipDialoguePresenter : MonoBehaviour
         {
             { "toolGrade", currentSnapshot != null ? currentSnapshot.ToolGrade : "Normal" },
             { "deathCount", currentSnapshot != null ? currentSnapshot.CumulativeDeathCount.ToString() : "0" },
-            { "questName", questData != null ? questData.QuestTitle : "퀘스트" }
+            { "questName", questData != null ? questData.QuestTitle : "퀘스트" },
+            { "combatNpcHint", currentCombatNpcHint ?? string.Empty }
         };
     }
 

@@ -134,6 +134,31 @@
    JSON 기준으로 알아서 맞춰 돌아감 — 단, 피처 "이름"이 바뀌었다면(`Dictionary` 키가 안 맞으면)
    `DifficultyFeatureBuilder.Build()`에 해당 파생 변수 계산을 추가해야 함.
 
+### 6단계 — 조건 기반 조언 팁 + 진행도 추적 + 전투 동료 (`Assets/Script/NpcTip/Advice/`, `Assets/Script/Progress/`, `Assets/Script/companion/`)
+
+플레이테스트 데이터를 모을 수 없어 추가한 순수 규칙 기반 경로. 수치는 전부 인스펙터 값.
+
+- **`ProgressTracker`**(싱글톤, 씬 배치 불필요 — `RuntimeInitializeOnLoadMethod`로 자동 생성): 사망 횟수
+  (누적/RecentDeath), NPC 발견 여부(`NPCRole` 이름), 상점 아이템별 수령 개수를 세고 `progress_save.json`에
+  즉시 저장. 퀘스트 상태(QuestSaveManager + 인벤토리 보유량), 처치 수(GameProgressManager), 도구 등급은
+  읽어오기만 함. `BuildSnapshot()` → `ProgressSnapshot`(순수 데이터).
+- **`AdviceTipSelector.Select(snapshot, tips, defaultText)`**: UI/MonoBehaviour와 분리된 순수 함수.
+  조건(`TipCondition` = kind + op + targetId + value, 클래스 계층 없음)을 모두 만족하는 팁 중 priority 최대,
+  동률이면 목록 앞, 없으면 기본 대사. `{combatNpcHint}` 토큰이 든 팁은 전투 NPC 발견 후/힌트 계산 실패 시
+  코드에서 강제로 제외.
+- **`AdviceTipSet`**(ScriptableObject): 팁 목록·기본 대사·도구 등급 itemID 목록·힌트 거리 단계.
+  프리젠터 인스펙터 → `Resources/NpcTip/AdviceTipSet` → 코드 기본값(`AdviceTipDefaults`) 순으로 찾음.
+  에셋 생성은 `Tools > NpcTip > Create Advice Tip Set Asset`.
+- **연결**: `NPCTipDialoguePresenter.StartTipDialogue()`가 `NPCData.Role == Advice`인 NPC면 조언 팁을 먼저
+  시도하고, 기본 대사가 나온 경우에만 기존 난관 진단 대사(2~5단계)로 넘어감(`useDiagnosisDialogueAsDefault`).
+  기본 팁 목록은 퀘스트 1~3의 모든 상태를 덮기 때문에 조언 NPC에서는 진단 대사가 사실상 나오지 않음.
+- **퀘스트 연결**: `NPCData.questChain` 순서대로 한 NPC가 퀘스트를 줌. `NPCModel`은 상태를 캐시하지 않고
+  `QuestSaveManager`를 그대로 읽음.
+- **전투 동료 FSM**: Player FSM과 같은 모양(`ICompanionState`, `CompanionStateManager`). 상태 분류는
+  `CompanionDecision.Decide()`(순수 함수) 한 곳에서만 결정. Idle/Follow/Chase/Attack만 구현
+  (몬스터가 플레이어/넥서스만 공격해 동료는 피해를 받지 않으므로 Retreat/Down은 없음).
+- **검증**: `Assets/Tests/Editor/AdviceTipSelectorTests.cs`(EditMode), 디버그 창 `Tools > NpcTip > Advice Tip Debugger`.
+
 ### 에디터 설정 참고
 
 - **Inference Engine 패키지 설치가 항상 최우선**: 이게 없으면 `Unity.InferenceEngine`을 쓰는

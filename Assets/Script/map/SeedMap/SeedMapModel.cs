@@ -81,6 +81,7 @@ public class SeedMapModel : MonoBehaviour
         new List<ItemData>();
 
     public float CellSize => cellSize;
+    public Vector3 PlayerStartPosition => playerStartPosition;
     public int SafeRange => safeRange;
     public int DirtRange => dirtRange;
     public int StoneCopperRange => stoneCopperRange;

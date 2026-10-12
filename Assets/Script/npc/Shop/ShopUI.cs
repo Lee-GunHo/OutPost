@@ -150,11 +150,29 @@ public class ShopUI : MonoBehaviour
             }
             else
             {
-                slotView.SetItem(shopItem.ItemData, 1);
+                // 한도가 있는 아이템은 남은 수령 가능 개수를 수량으로 표시
+                int remaining = GetRemainingGiveAmount(shopItem);
+                slotView.SetItem(shopItem.ItemData, remaining == ShopGiveLimit.Unlimited ? 1 : remaining);
             }
 
             shopSlotViews.Add(slotView);
         }
+    }
+
+    /// <summary>
+    /// 이 상점 아이템을 앞으로 더 받을 수 있는 개수. 한도가 없으면 ShopGiveLimit.Unlimited.
+    /// </summary>
+    private int GetRemainingGiveAmount(ShopItemData shopItem)
+    {
+        if (shopItem == null || shopItem.ItemData == null)
+            return 0;
+
+        if (shopItem.MaxTotalGive <= 0)
+            return ShopGiveLimit.Unlimited;
+
+        return ShopGiveLimit.GetRemaining(
+            shopItem.MaxTotalGive,
+            ProgressTracker.GetOrCreate().GetShopReceivedAmount(shopItem.ItemData.itemID));
     }
 
     private void RefreshPlayerItems()
@@ -339,7 +357,16 @@ public class ShopUI : MonoBehaviour
         confirmBuyPopup?.Close();
 
         ItemData item = shopItem.ItemData;
-        int limit = Mathf.Max(1, maxBuyAmount);
+        int remaining = GetRemainingGiveAmount(shopItem);
+
+        if (remaining <= 0)
+        {
+            Debug.Log("구매 실패 : " + item.itemName + "은(는) 더 받을 수 없습니다. (총 수령 한도 도달)");
+            confirmBuyPopup?.Open(item.itemName + "은(는) 더 이상 받을 수 없습니다.", null);
+            return;
+        }
+
+        int limit = Mathf.Min(Mathf.Max(1, maxBuyAmount), remaining);
 
         quantityBuyPopup.Open(
             item.itemName + " 몇 개를 구매하시겠습니까?",
@@ -394,6 +421,12 @@ public class ShopUI : MonoBehaviour
 
         ItemData item = shopItem.ItemData;
 
+        if (amount > GetRemainingGiveAmount(shopItem))
+        {
+            Debug.Log("구매 실패 : 총 수령 한도를 넘는 수량입니다.");
+            return;
+        }
+
         if(!currentInventory.CanAddItem(item, amount))
         {
             Debug.Log("구매 실패 : 인벤토리 공간이 부족합니다.");
@@ -410,6 +443,12 @@ public class ShopUI : MonoBehaviour
 
         int totalPrice = shopItem.BuyPrice * amount;
         Debug.Log(item.itemName + " " + amount + "개를 구매했습니다. 가격 : " + totalPrice);
+
+        if (shopItem.MaxTotalGive > 0)
+        {
+            ProgressTracker.GetOrCreate().AddShopReceivedAmount(item.itemID, amount);
+            RefreshShopItems();
+        }
 
         RefreshPlayerItems();
     }

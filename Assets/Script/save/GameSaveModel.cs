@@ -59,6 +59,7 @@ public sealed class GameSaveModel
         return fileName == inventoryFileName || fileName == PlayerFileName ||
             fileName == "monster_learning.json" ||
             fileName == "quest_save.json" || fileName == "chest_save.json" ||
+            fileName == ProgressTracker.SaveFileName ||
             IsWorldFile(fileName, "chunk_modifications_") ||
             IsWorldFile(fileName, "placed_blocks_");
     }

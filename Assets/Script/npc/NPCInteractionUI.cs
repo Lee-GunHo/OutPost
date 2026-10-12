@@ -609,7 +609,7 @@ public class NPCInteractionUI : MonoBehaviour
 
         if(rewardItem != null && rewardAmount > 0)
         {
-            if(!inventory.CanAddItem(rewardItem, requiredAmount))
+            if(!inventory.CanAddItem(rewardItem, rewardAmount))
             {
                 Debug.Log("인벤토리에 보상 아이템을 받을 공간이 부족합니다.");
                 return;

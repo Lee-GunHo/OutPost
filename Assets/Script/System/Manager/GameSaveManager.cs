@@ -147,6 +147,8 @@ public class GameSaveManager : MonoBehaviour
             return false;
         if (QuestSaveManager.Instance != null)
             QuestSaveManager.Instance.SaveNow();
+        if (ProgressTracker.Instance != null)
+            ProgressTracker.Instance.SaveNow();
         if (ChestSaveManager.Instance != null)
             ChestSaveManager.Instance.SaveNow();
         if (ChunkModificationSaveManager.Instance != null)
@@ -228,6 +230,8 @@ public class GameSaveManager : MonoBehaviour
         MonsterLearningPresenter.ClearRuntimeMemory();
         if (QuestSaveManager.Instance != null)
             QuestSaveManager.Instance.ResetCache();
+        if (ProgressTracker.Instance != null)
+            ProgressTracker.Instance.ResetCache();
         if (ChestSaveManager.Instance != null)
             ChestSaveManager.Instance.ResetCache();
         if (ChunkModificationSaveManager.Instance != null)

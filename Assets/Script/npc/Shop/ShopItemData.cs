@@ -15,7 +15,13 @@ public class ShopItemData
     // 플레이어가 이 아이템을 판매할 때 받는 가격
     [SerializeField] private int sellPrice;
 
+    [Header("지급 한도")]
+    [Tooltip("이 아이템을 상점에서 받을 수 있는 총 개수(저장됨). 0이면 무제한")]
+    [Min(0)]
+    [SerializeField] private int maxTotalGive;
+
     public ItemData ItemData => itemData;
+    public int MaxTotalGive => maxTotalGive;
     public int BuyPrice => buyPrice;
     public int SellPrice => sellPrice;
 }
