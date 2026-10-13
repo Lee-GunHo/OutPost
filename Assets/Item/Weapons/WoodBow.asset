@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WoodBow
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 25
-  itemName: WoodBow
+  itemName: Wood Bow
   itemType: 0
   itemGrade: 0
   icon: {fileID: 21300000, guid: 4fa8568eb6ba4f69bd8972e543ee034d, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 나무 활
+  description: "\uB098\uBB34 \uD65C"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

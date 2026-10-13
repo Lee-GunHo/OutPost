@@ -13,16 +13,18 @@ MonoBehaviour:
   m_Name: CraftingBox
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 10
-  itemName: CraftingBox
+  itemName: Wood Crafting Box
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d8a6fddd93e24b2b9d8442c9d88ec79a, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0
   moveSpeedBonus: 0
+  pickPower: 0
+  attackRecoveryDuration: 0
   toolType: 6
   description: "\uC81C\uC791\uB300"
-  placeablePrefab: {fileID: 0}
-  placeableYOffset: 1
+  placeablePrefab: {fileID: 7551875745955651666, guid: 4b2bdd7fca5985c45ae3fdd70260059e, type: 3}
+  placeableYOffset: 0.5
   maxStack: 1

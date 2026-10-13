@@ -125,6 +125,9 @@ public class HotbarView : MonoBehaviour
         Mouse mouse = Mouse.current;
         if (mouse == null) return;
 
+        // 제작대/상자/인벤토리 등 UI가 열려 있으면 휠은 그 UI의 스크롤에만 쓰고 핫바 선택은 바꾸지 않음
+        if (UIState.IsAnyUIOpen) return;
+
         float scrollValue = mouse.scroll.ReadValue().y;
 
         if (scrollValue > 0)

@@ -9,7 +9,8 @@ public enum ItemType
     Ring,
     Necklace,
     Consumable,
-    Material
+    Material,
+    Food // 씨앗, 작물, 요리 (엑셀의 "food")
 }
 public enum ToolType
 {

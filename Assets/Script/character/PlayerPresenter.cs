@@ -551,6 +551,13 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
         FaceActionTarget(mouseWorldPosition);
 
+        // 마우스 칸에 작물이 있으면 수확, 괭이를 들었으면 밭 갈기/되돌리기 (처리했으면 공격하지 않음)
+        if (FarmManager.Instance != null &&
+            FarmManager.Instance.TryHandlePrimaryAction(item, transform.position, BreakRange))
+        {
+            return Mathf.Max(0f, WallBreakDuration);
+        }
+
         float attackReach = AttackBoxDistance + Mathf.Max(AttackBoxHalfSize.x, AttackBoxHalfSize.z);
         float actionRange = Mathf.Max(attackReach, BreakRange);
 

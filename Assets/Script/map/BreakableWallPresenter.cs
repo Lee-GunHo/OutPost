@@ -9,9 +9,18 @@ using UnityEngine;
 public class BreakableWallPresenter : MonoBehaviour
 {
     public static event System.Action GeometryChanged;
+
+    /// <summary>
+    /// 완전히 파괴되어 오브젝트가 제거되기 직전에 호출 (상자 내용물 드롭 등)
+    /// </summary>
+    public event System.Action<BreakableWallPresenter> Broken;
+
     [Header("MVP")]
     [SerializeField] private BreakableWallModel model;
     [SerializeField] private BreakableWallView view;
+
+    [Tooltip("켜면 플레이어가 직접 설치한 것만 부술 수 있음. 씬에 미리 놓인 오브젝트는 파괴 상태를 저장할 수 없어 다시 생기므로 상자처럼 내용물이 있는 경우 켤 것")]
+    [SerializeField] private bool onlyBreakIfPlayerPlaced;
 
     protected BreakableWallModel Model => model;
 
@@ -170,6 +179,9 @@ public class BreakableWallPresenter : MonoBehaviour
         if (model.IsBroken)
             return;
 
+        if (onlyBreakIfPlayerPlaced && !model.IsPlayerPlaced)
+            return;
+
         bool isFullyBroken = model.AdvanceStage(out int clearedStage);
 
         view.DestroyStageParts(GetVisualRoot(), clearedStage);
@@ -196,6 +208,8 @@ public class BreakableWallPresenter : MonoBehaviour
         {
             SaveGeneratedObjectDestruction();
         }
+
+        Broken?.Invoke(this);
 
         view.SpawnDrops(
             model.DropItemPrefab,

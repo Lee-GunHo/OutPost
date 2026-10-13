@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: GoldCraftingBox
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 50
-  itemName: GoldCraftingBox
+  itemID: 48
+  itemName: Gold Crafting Box
   itemType: 7
   itemGrade: 0
   icon: {fileID: 21300000, guid: ccc651558bf74939b986cc5ecffeab8d, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 6
-  description: 금 제작대
-  placeablePrefab: {fileID: 0}
-  placeableYOffset: 1
+  description: "\uAE08 \uC81C\uC791\uB300"
+  placeablePrefab: {fileID: 8915017095497041467, guid: 28f4f9ed366ea5c4da615f142828fb95, type: 3}
+  placeableYOffset: 0.5
   maxStack: 1

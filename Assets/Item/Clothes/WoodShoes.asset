@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WoodShoes
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 22
-  itemName: WoodShoes
+  itemName: Wood Shoes
   itemType: 3
   itemGrade: 0
   icon: {fileID: 21300000, guid: 838590a7ec464a248f0000d365ef3ee2, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 나무 신발
+  description: "\uB098\uBB34 \uC2E0\uBC1C"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

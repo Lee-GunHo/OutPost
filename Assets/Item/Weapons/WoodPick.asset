@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WoodPick
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 26
-  itemName: WoodPick
+  itemName: Wood Pick
   itemType: 0
   itemGrade: 0
   icon: {fileID: 21300000, guid: 5281b9fc6b674d6281d3dd5d13eae1d3, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 5
   attackRecoveryDuration: 0
   toolType: 1
-  description: 나무 곡괭이
+  description: "\uB098\uBB34 \uACE1\uAD2D\uC774"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: CopperShoes
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 33
-  itemName: CopperShoes
+  itemID: 32
+  itemName: Copper Shoes
   itemType: 3
   itemGrade: 0
   icon: {fileID: 21300000, guid: f20e834848f54939846ecb7c553dc531, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 구리 신발
+  description: "\uAD6C\uB9AC \uC2E0\uBC1C"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

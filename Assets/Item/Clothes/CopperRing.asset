@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: CopperRing
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 34
-  itemName: CopperRing
+  itemID: 33
+  itemName: Copper Ring
   itemType: 4
   itemGrade: 0
   icon: {fileID: 21300000, guid: 62b64a15fc834d8a8f973b8a4d3f78c6, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 구리 반지
+  description: "\uAD6C\uB9AC \uBC18\uC9C0"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

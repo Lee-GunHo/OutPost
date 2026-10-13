@@ -29,7 +29,7 @@ public static class AdviceTipDefaults
     // WoodPick, CopperPick, SilverPick, GoldPick의 itemID
     public static int[] CreateDefaultToolTierItemIds()
     {
-        return new[] { 26, 38, 48, 58 };
+        return new[] { 26, 37, 47, 57 };
     }
 
     public static List<AdviceTip> CreateDefaultTips()

@@ -291,10 +291,9 @@ public class ProgressTracker : MonoBehaviour
             out bool isAccepted,
             out bool isCompleted);
 
-        // 퀘스트 완료 판정(NPCInteractionUI.TryCompleteQuest)과 똑같이 인벤토리 보유량만 봄
-        int ownedAmount = inventory != null && quest.RequiredItem != null
-            ? inventory.GetItemCount(quest.RequiredItem)
-            : 0;
+        // 퀘스트 완료 판정(NPCInteractionUI.TryCompleteQuest)과 똑같이 인벤토리 + 핫바 보유량을 봄
+        int ownedAmount = PlayerItemReceiver.GetOwnedAmount(
+            inventory, PlayerItemReceiver.CurrentHotbar, quest.RequiredItem);
 
         return QuestProgressRules.Resolve(isAccepted, isCompleted, ownedAmount, quest.RequiredAmount);
     }

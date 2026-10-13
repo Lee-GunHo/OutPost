@@ -1949,7 +1949,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: placeableBlockItems.Array.size
-      value: 2
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: 'placeableBlockItems.Array.data[1]'
@@ -1958,19 +1958,27 @@ PrefabInstance:
     - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: 'placeableBlockItems.Array.data[2]'
       value: 
-      objectReference: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
+      objectReference: {fileID: 11400000, guid: 6a911b571a54b6b4db432ccb6a1d7c3a, type: 2}
     - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: 'placeableBlockItems.Array.data[3]'
       value: 
-      objectReference: {fileID: 11400000, guid: adbd05296adccdd4db958419ac4c2622, type: 2}
+      objectReference: {fileID: 11400000, guid: 7cbd1e5902f94e939b9d2e0d5f3ba133, type: 2}
     - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: 'placeableBlockItems.Array.data[4]'
       value: 
-      objectReference: {fileID: 11400000, guid: f40aaf9ac9b8b3d4e85365032928dd50, type: 2}
+      objectReference: {fileID: 11400000, guid: ca0896013dca45c39234db906f800cfe, type: 2}
     - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: 'placeableBlockItems.Array.data[5]'
       value: 
-      objectReference: {fileID: 11400000, guid: 14236db1d278ee24397813533d9b2853, type: 2}
+      objectReference: {fileID: 11400000, guid: 5ab0107910de47b5a5284d604922dcc8, type: 2}
+    - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: 'placeableBlockItems.Array.data[6]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 8c71d363d4a34f7b92c708517fea829e, type: 2}
+    - target: {fileID: 3957481929276320370, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
+      propertyPath: 'placeableBlockItems.Array.data[7]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 22167560dcce17d4d9659c9def41ba29, type: 2}
     - target: {fileID: 4674959809733426903, guid: 7f6d2e8c7f49fe143b17fbd077c7a26d, type: 3}
       propertyPath: player
       value: 
@@ -2255,8 +2263,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CraftingTableModel
   tableName: "\uC81C\uC791\uB300"
   tableRecipes:
-  - {fileID: 11400000, guid: e0a4e8065b84a244cb48ad8554ce5901, type: 2}
-  - {fileID: 11400000, guid: 0a9cda7504ef42a68537bd9a1dfcb5b9, type: 2}
+  - {fileID: 11400000, guid: 1b58f05a6d888634da040f06e8adbe40, type: 2}
+  - {fileID: 11400000, guid: 98a2cf835cde0f648b2281505b0e3021, type: 2}
+  - {fileID: 11400000, guid: 72411a01275abac4f83db90212582e53, type: 2}
+  - {fileID: 11400000, guid: e1780068f1dc95f49adf1c4149573096, type: 2}
+  - {fileID: 11400000, guid: 65027421d074cd548a180def6bcec915, type: 2}
+  - {fileID: 11400000, guid: 78d16be7ca1831c42aaf4da44ccf279c, type: 2}
+  - {fileID: 11400000, guid: f6173355b442f154394b2b6b07c5a950, type: 2}
+  - {fileID: 11400000, guid: 03df7c3455d53ba46891bd1aad5042ca, type: 2}
+  - {fileID: 11400000, guid: ded2f406926a25f4e8d2f052f53b0d40, type: 2}
+  lowerTierTable: {fileID: 0}
 --- !u!65 &1683140700
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2344,7 +2360,7 @@ Transform:
   m_GameObject: {fileID: 1683140698}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 1, z: 5}
+  m_LocalPosition: {x: 5, y: 0.5, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3499,7 +3515,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2642659949904781940, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: slotCount
-      value: 32
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 2749201697003215092, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -3803,19 +3819,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7295073531391716186, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_Spacing.x
-      value: 14
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7295073531391716186, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_Spacing.y
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7295073531391716186, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_CellSize.x
-      value: 100
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 7295073531391716186, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_CellSize.y
-      value: 100
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 7295073531391716186, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_Padding.m_Top
@@ -3831,7 +3847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7295073531391716186, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_ConstraintCount
-      value: 8
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7295073531391716186, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: m_Padding.m_Right
@@ -4059,16 +4075,20 @@ PrefabInstance:
       objectReference: {fileID: 325629083}
     - target: {fileID: 8668416120926367348, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: handRecipes.Array.size
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8668416120926367348, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
+      propertyPath: 'handRecipes.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 9ab4191579217a44483743e80100f18a, type: 2}
     - target: {fileID: 8668416120926367348, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: 'handRecipes.Array.data[1]'
       value: 
-      objectReference: {fileID: 11400000, guid: e0a4e8065b84a244cb48ad8554ce5901, type: 2}
+      objectReference: {fileID: 11400000, guid: 25771fe7e6720d549af1174d086cc897, type: 2}
     - target: {fileID: 8668416120926367348, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: 'handRecipes.Array.data[2]'
       value: 
-      objectReference: {fileID: 11400000, guid: e0a4e8065b84a244cb48ad8554ce5901, type: 2}
+      objectReference: {fileID: 11400000, guid: 43b1d29e0e06442439c15d193b0b9a50, type: 2}
     - target: {fileID: 8668416120926367348, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
       propertyPath: 'handRecipes.Array.data[3]'
       value: 

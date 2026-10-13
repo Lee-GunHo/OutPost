@@ -176,3 +176,37 @@
   `TipFollowUpManager`(빈 GameObject), `SessionEndSurveyUI`(팝업 패널 + DifficultyType
   5개 버튼 + 건너뛰기 버튼)를 배치. 플레이테스트 빌드에서는
   `NPCTipDialoguePresenter`의 `Diagnosis Mode`를 `AB`로 설정.
+
+### 아이템/제작 데이터 — 엑셀 임포터 (`Assets/Editor/Crafting/`)
+
+- **원본은 프로젝트 루트의 `아이템.xlsx`**. 수정 후 `Tools > Crafting > Import Items From Excel` 실행
+  (여러 번 실행해도 같은 에셋을 덮어씀). `XlsxSheetReader`가 xlsx(zip+XML)를 직접 읽어서 외부 라이브러리 없음.
+- 아이템: 이름으로 기존 ItemData 매칭(공백/기호 무시), 이름이 바뀐 행은 같은 itemID로 매칭, 없으면 생성.
+  ID/타입/스탯/설명/최대 스택만 덮어쓰고 아이콘·프리팹 연결은 유지. 엑셀 `food` → `ItemType.Food`.
+- Recipe 열 `Potato1,Wheat1` = 재료명+개수 → `Assets/Script/crafting/Data/Recipes/<결과>Recipe.asset`.
+- Craftingbox Type 열: `Normal`=손 제작(`CraftingPresenter.handRecipes`), `Wood/Copper/Silver/Gold`=해당 등급 제작대에만 넣고,
+  각 제작대 프리팹의 `CraftingTableModel.lowerTierTable`이 바로 아래 등급을 가리킴. 제작 UI 제목 옆 ◀▶로
+  금→은→구리→나무 화면을 오가며 하위 레시피 제작(코어키퍼 방식, 열었던 제작대보다 위로는 불가). `Pot`=항아리(요리대).
+- 제작 UI(`CraftingView`): 3열×2줄 보이는 세로 스크롤. 씬에서 크기가 덮어써져 있어 레이아웃은 Awake에서 코드로 잡음.
+- 제작대 4종 + 항아리 설치 프리팹을 `Assets/Prefab/Crafting/Stations/`에 생성(큐브 + 아이콘 텍스처 + Chest의
+  F키 표시 복사)하고 ItemData.placeablePrefab 연결, GameScene의 `SeedMapModel.placeableBlockItems`에 등록.
+- itemID는 세이브 파일에 저장되므로 엑셀에서 ID를 바꾸면 기존 세이브의 아이템이 다른 아이템으로 읽힘.
+
+### 농사 시스템 (`Assets/Script/Farming/`)
+
+- 흐름: 괭이(`ToolType.Hoe`)로 빈 땅 좌클릭 → 밭 / 씨앗 들고 빈 밭 우클릭 → 심기 / 플레이 시간(초) 기준 성장 /
+  작물 칸 좌클릭(공격) → 수확(다 자람: 작물 1~3 + 씨앗 1~2, 덜 자람: 씨앗 1) / 빈 밭을 괭이로 다시 치면 땅으로.
+- **`FarmManager`**: 씬 배치 불필요 — ChunkManager가 있는 씬이 열리면 자동 생성. 설정은
+  `Resources/Farming/FarmSettings.asset`(작물 목록, 드롭 프리팹, 밭 금지 레이어, 색, 자동 저장 주기).
+  저장 불러오기는 월드 시드 확정 후인 첫 Update에서.
+- 수확/갈기는 `PlayerPresenter.ExecuteMousePriorityAction`이 공격 전에 `FarmManager.TryHandlePrimaryAction`을
+  호출해 처리. **마우스가 가리키는 바닥(y=0) 칸만** 대상(몬스터 공격 중 사이의 작물이 수확되지 않게).
+  우클릭 심기와 파란/빨간 미리보기는 `FarmInputController`(FarmManager가 자동으로 붙임).
+- **`CropData`**(작물별 SO): 씨앗/작물 아이템, growSeconds, stageCount, 수확량 범위, 색, 선택적 stagePrefabs
+  (비우면 `FarmPlotView`가 줄기+열매를 큐브로 만듦). 규칙(단계/수확량)은 순수 함수 `FarmRules` →
+  `Assets/Tests/Editor/FarmRulesTests.cs`.
+- 저장: `FarmSaveStore` → `farm_{seed}.json`(작물은 씨앗 itemID로 저장). `GameSaveModel.DeleteAllProgress`에 포함.
+- 밭 칸에는 블록 설치 불가(`BlockPlacementController`). 나무를 베면 `RandomItemDrop`(Prefab_Tree)으로 20% 확률 씨앗.
+- 괭이 4종(엑셀 Itemtype `Hoe`, ID 28/29/39/49, 나무/구리/은/금 제작대) → 임포터가 Weapon + `ToolType.Hoe`로 생성.
+  한 번에 가는 범위는 `FarmSettings.hoeAreas`(나무 1x1, 구리 1x3 일자, 은 3x3, 금 5x5, 목표 칸 중심·바라보는 방향 기준,
+  `FarmRules.GetAreaCells`). 수확/빈 밭 되돌리기는 항상 가리킨 한 칸.
