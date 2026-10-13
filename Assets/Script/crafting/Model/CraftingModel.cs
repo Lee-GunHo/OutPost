@@ -50,7 +50,9 @@ public class CraftingModel
             }
         }
 
-        return inventoryModel.CanAddItem(
+        return PlayerItemReceiver.CanReceive(
+            inventoryModel,
+            hotbarModel,
             recipe.ResultItem,
             recipe.ResultAmount);
     }
@@ -77,7 +79,9 @@ public class CraftingModel
         }
 
         // 결과 아이템이 들어갈 공간 검사
-        if (!inventoryModel.CanAddItem(
+        if (!PlayerItemReceiver.CanReceive(
+                inventoryModel,
+                hotbarModel,
                 recipe.ResultItem,
                 recipe.ResultAmount))
         {
@@ -94,8 +98,10 @@ public class CraftingModel
                 hotbarModel.RemoveUpTo(ingredient.Item, remaining);
         }
 
-        // 제작 결과 지급
-        inventoryModel.AddItem(
+        // 제작 결과 지급 (핫바 먼저, 남으면 인벤토리)
+        PlayerItemReceiver.Give(
+            inventoryModel,
+            hotbarModel,
             recipe.ResultItem,
             recipe.ResultAmount);
 

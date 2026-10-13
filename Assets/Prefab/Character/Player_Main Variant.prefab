@@ -135,7 +135,7 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   gridPreview: {fileID: 7351192978347297687}
   gridPreviewRenderer: {fileID: 5057774601743416870}
-  validColor: {r: 0, g: 1, b: 0, a: 0.45}
+  validColor: {r: 0.2, g: 0.55, b: 1, a: 0.45}
   invalidColor: {r: 1, g: 0, b: 0, a: 0.45}
   previewYOffset: 0.03
   autoScalePreview: 1

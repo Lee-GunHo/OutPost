@@ -61,7 +61,8 @@ public sealed class GameSaveModel
             fileName == "quest_save.json" || fileName == "chest_save.json" ||
             fileName == ProgressTracker.SaveFileName ||
             IsWorldFile(fileName, "chunk_modifications_") ||
-            IsWorldFile(fileName, "placed_blocks_");
+            IsWorldFile(fileName, "placed_blocks_") ||
+            IsWorldFile(fileName, FarmSaveStore.FilePrefix);
     }
 
     private static bool IsWorldFile(string fileName, string prefix)

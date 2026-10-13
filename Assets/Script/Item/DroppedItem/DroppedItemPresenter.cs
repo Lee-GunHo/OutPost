@@ -97,9 +97,10 @@ public class DroppedItemPresenter : MonoBehaviour
             return;
         }
 
-        bool success = inventory.AddItem(model.ItemData, model.Amount);
+        // 핫바를 먼저 채우고 남은 개수만 인벤토리로. 전부 들어갈 자리가 있을 때만 줍는다
+        HotbarModel hotbar = HotbarPresenter.Instance != null ? HotbarPresenter.Instance.Model : null;
 
-        if (!success)
+        if (!PlayerItemReceiver.CanReceive(inventory, hotbar, model.ItemData, model.Amount))
         {
             Debug.Log("인벤토리가 가득 차서 아이템을 획득하지 못했습니다.");
             return;
@@ -108,6 +109,7 @@ public class DroppedItemPresenter : MonoBehaviour
         if (!model.TryMarkPickedUp())
             return;
 
+        PlayerItemReceiver.Give(inventory, hotbar, model.ItemData, model.Amount);
         view.DestroyItem();
     }
 }

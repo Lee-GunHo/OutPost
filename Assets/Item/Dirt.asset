@@ -16,11 +16,13 @@ MonoBehaviour:
   itemName: Dirt
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 21300000, guid: 3b7bec7a01eac954dbf8087501044c8a, type: 3}
+  icon: {fileID: 21300000, guid: f2caf4bf4c774c34a755ea937e8eb4c1, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0
   moveSpeedBonus: 0
+  pickPower: 0
+  attackRecoveryDuration: 0
   toolType: 6
   description: "\uD759"
   placeablePrefab: {fileID: 3827295107513856267, guid: 94a51bccdaa0878419233b3af0199a82, type: 3}

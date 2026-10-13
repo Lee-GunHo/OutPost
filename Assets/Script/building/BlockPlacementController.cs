@@ -16,7 +16,7 @@ public class BlockPlacementController : MonoBehaviour
     [Header("Grid Preview")]
     [SerializeField] private GameObject gridPreview;
     [SerializeField] private Renderer gridPreviewRenderer;
-    [SerializeField] private Color validColor = new Color(0f, 1f, 0f, 0.45f);
+    [SerializeField] private Color validColor = new Color(0.2f, 0.55f, 1f, 0.45f);
     [SerializeField] private Color invalidColor = new Color(1f, 0f, 0f, 0.45f);
     [SerializeField] private float previewYOffset = 0.03f;
     [SerializeField] private bool autoScalePreview = true;
@@ -32,7 +32,16 @@ public class BlockPlacementController : MonoBehaviour
 
     [SerializeField] private float groundY = 0f;
 
+    [Header("Block Ghost Preview")]
+    [Tooltip("설치될 블록 모양의 반투명 미리보기. 비워두면 런타임에 반투명 재질을 만들어 사용")]
+    [SerializeField] private Material ghostMaterial;
+    [SerializeField] private Color ghostValidColor = new Color(0.2f, 0.55f, 1f, 0.4f);
+    [SerializeField] private Color ghostInvalidColor = new Color(1f, 0.25f, 0.25f, 0.4f);
+    [Tooltip("블록과 겹쳐 깜빡이지 않도록 살짝 크게")]
+    [SerializeField] private float ghostPadding = 0.02f;
+
     private PlacedBlockSaveManager placedBlockSaveManager;
+    private BlockGhostPreview blockGhost;
     private Material previewMaterial;
     private Collider[] playerColliders;
 
@@ -54,6 +63,8 @@ public class BlockPlacementController : MonoBehaviour
 
         if (gridPreviewRenderer != null)
             previewMaterial = gridPreviewRenderer.material;
+
+        blockGhost = new BlockGhostPreview(ghostMaterial, ghostPadding);
 
         HidePreview();
     }
@@ -110,6 +121,11 @@ public class BlockPlacementController : MonoBehaviour
 
         canPlaceCurrentCell = IsCellPlaceable(globalCell);
         ShowPreview(currentGridWorldPosition, canPlaceCurrentCell);
+
+        blockGhost.Show(
+            placeableItem.placeablePrefab,
+            chunkManager.GlobalCellToWorldPosition(globalCell, placeableItem.placeableYOffset),
+            canPlaceCurrentCell ? ghostValidColor : ghostInvalidColor);
 
         if (!canPlaceCurrentCell)
             return;
@@ -217,6 +233,10 @@ public class BlockPlacementController : MonoBehaviour
         {
             return false;
         }
+
+        // 밭 위에는 블록을 설치하지 않음 (괭이로 먼저 되돌려야 함)
+        if (FarmManager.Instance != null && FarmManager.Instance.HasPlot(globalCell))
+            return false;
 
         // 플레이어가 현재 서 있는 셀 또는 실제 몸체와 겹치는 셀에는 설치하지 않음
         if(IsPlayerOccupyingCell(globalCell)) 
@@ -399,5 +419,12 @@ public class BlockPlacementController : MonoBehaviour
 
         if (gridPreview != null)
             gridPreview.SetActive(false);
+
+        blockGhost?.Hide();
+    }
+
+    private void OnDestroy()
+    {
+        blockGhost?.Dispose();
     }
 }

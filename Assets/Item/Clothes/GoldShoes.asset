@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: GoldShoes
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 53
-  itemName: GoldShoes
+  itemID: 52
+  itemName: Gold Shoes
   itemType: 3
   itemGrade: 0
   icon: {fileID: 21300000, guid: d0e268a8af6f4f25b509437e29e2eba8, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 금 신발
+  description: "\uAE08 \uC2E0\uBC1C"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

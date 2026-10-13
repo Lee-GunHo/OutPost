@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: SilverCraftingBox
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 40
-  itemName: SilverCraftingBox
+  itemID: 38
+  itemName: Silver Crafting Box
   itemType: 7
   itemGrade: 0
   icon: {fileID: 21300000, guid: 6982f6f8efd94f57b9bb2e8f3067762f, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 6
-  description: 은 제작대
-  placeablePrefab: {fileID: 0}
-  placeableYOffset: 1
+  description: "\uC740 \uC81C\uC791\uB300"
+  placeablePrefab: {fileID: 9221098904442643976, guid: 56c34aca239a12b468a0505e92d838d7, type: 3}
+  placeableYOffset: 0.5
   maxStack: 1

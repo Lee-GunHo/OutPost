@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PotatoBread
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 160
-  itemName: PotatoBread
-  itemType: 7
+  itemName: Potato Bread
+  itemType: 8
   itemGrade: 0
   icon: {fileID: 21300000, guid: 68898f2e43f24aab9e188330e626d9f5, type: 3}
   hpBonus: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 감자빵
+  description: "\uAC10\uC790\uBE75"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 99

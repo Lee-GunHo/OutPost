@@ -588,10 +588,12 @@ public class NPCInteractionUI : MonoBehaviour
             return;
         }
 
-        if(!inventory.HasItem(requiredItem, requiredAmount))
-        {
-            int currentAmount = inventory.GetItemCount(requiredItem);
+        // 아이템이 핫바부터 들어가므로 보유량/차감/보상 모두 인벤토리 + 핫바 기준
+        HotbarModel hotbar = PlayerItemReceiver.CurrentHotbar;
+        int currentAmount = PlayerItemReceiver.GetOwnedAmount(inventory, hotbar, requiredItem);
 
+        if(currentAmount < requiredAmount)
+        {
             Debug.Log(
                 "퀘스트 완료 조건 부족 : " +
                 requiredItem.itemName + " " +
@@ -609,14 +611,14 @@ public class NPCInteractionUI : MonoBehaviour
 
         if(rewardItem != null && rewardAmount > 0)
         {
-            if(!inventory.CanAddItem(rewardItem, rewardAmount))
+            if(!PlayerItemReceiver.CanReceive(inventory, hotbar, rewardItem, rewardAmount))
             {
                 Debug.Log("인벤토리에 보상 아이템을 받을 공간이 부족합니다.");
                 return;
             }
         }
 
-        bool removed = inventory.RemoveItem(requiredItem, requiredAmount);
+        bool removed = PlayerItemReceiver.RemoveOwned(inventory, hotbar, requiredItem, requiredAmount);
 
         if(!removed)
         {
@@ -626,7 +628,7 @@ public class NPCInteractionUI : MonoBehaviour
 
         if(rewardItem != null && rewardAmount > 0)
         {
-            inventory.AddItem(rewardItem, rewardAmount);
+            PlayerItemReceiver.Give(inventory, hotbar, rewardItem, rewardAmount);
         }
 
         currentNPC.CompleteQuest();

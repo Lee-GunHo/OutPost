@@ -29,6 +29,10 @@ public class CraftingPresenter : MonoBehaviour
         = new List<CraftingRecipe>();
 
     private CraftingTableModel currentTable;
+
+    // 열린 제작대부터 최하위까지 (예: 금, 은, 구리, 나무). currentTierIndex가 지금 보고 있는 등급
+    private List<CraftingTableModel> tierChain = new List<CraftingTableModel>();
+    private int currentTierIndex;
     private PlayerPresenter currentPlayer;
     private CraftingTableInteractable currentInteractable;
     private bool isOpen;
@@ -61,6 +65,8 @@ public class CraftingPresenter : MonoBehaviour
         craftingView.OnRecipeClicked += HandleRecipeClicked;
         craftingView.OnRecipePointerEntered += HandleRecipePointerEntered;
         craftingView.OnRecipePointerExited += HandleRecipePointerExited;
+        craftingView.OnLowerTierClicked += ShowLowerTier;
+        craftingView.OnHigherTierClicked += ShowHigherTier;
         inventoryModel.OnInventoryChanged += RefreshCraftableState;
 
         if (HotbarPresenter.Instance != null)
@@ -76,6 +82,8 @@ public class CraftingPresenter : MonoBehaviour
             craftingView.OnRecipeClicked -= HandleRecipeClicked;
             craftingView.OnRecipePointerEntered -= HandleRecipePointerEntered;
             craftingView.OnRecipePointerExited -= HandleRecipePointerExited;
+            craftingView.OnLowerTierClicked -= ShowLowerTier;
+            craftingView.OnHigherTierClicked -= ShowHigherTier;
         }
 
         if (inventoryModel != null)
@@ -126,11 +134,12 @@ public class CraftingPresenter : MonoBehaviour
         if (parent != null)
             craftingView.transform.SetParent(parent, false);
 
-        RebuildDisplayedRecipes();
-        craftingView.ShowRecipes(displayedRecipes);
+        tierChain = table != null ? table.GetTierChain() : new List<CraftingTableModel>();
+        currentTierIndex = 0;
+
         craftingView.SetCloseButtonVisible(currentTable != null);
         craftingView.SetVisible(true);
-        RefreshCraftableState();
+        ShowCurrentTier();
     }
 
     public void Close()
@@ -147,6 +156,7 @@ public class CraftingPresenter : MonoBehaviour
         UIState.SetCraftingOpen(false);
 
         currentTable = null;
+        tierChain.Clear();
         currentPlayer = null;
         currentInteractable = null;
 
@@ -167,12 +177,46 @@ public class CraftingPresenter : MonoBehaviour
 
         if (currentTable != null)
         {
-            displayedRecipes.AddRange(currentTable.TableRecipes);
+            displayedRecipes.AddRange(tierChain[currentTierIndex].TableRecipes);
         }
         else
         {
             displayedRecipes.AddRange(handRecipes);
         }
+    }
+
+    private void ShowCurrentTier()
+    {
+        CraftingTableModel shownTable = currentTable != null ? tierChain[currentTierIndex] : null;
+
+        RebuildDisplayedRecipes();
+        craftingTooltipView?.Hide();
+        craftingView.SetTitle(shownTable != null ? shownTable.TableName : "제작");
+        craftingView.SetTierArrows(
+            canGoLower: currentTierIndex < tierChain.Count - 1,
+            canGoHigher: currentTierIndex > 0);
+        craftingView.ShowRecipes(displayedRecipes);
+        RefreshCraftableState();
+    }
+
+    // ◀ : 한 등급 아래 제작대 (금 → 은 → 구리 → 나무)
+    private void ShowLowerTier()
+    {
+        if (!isOpen || currentTierIndex >= tierChain.Count - 1)
+            return;
+
+        currentTierIndex++;
+        ShowCurrentTier();
+    }
+
+    // ▶ : 한 등급 위로 돌아가기. 열었던 제작대보다 위로는 못 감
+    private void ShowHigherTier()
+    {
+        if (!isOpen || currentTierIndex <= 0)
+            return;
+
+        currentTierIndex--;
+        ShowCurrentTier();
     }
 
     private void HandleRecipeClicked(CraftingRecipe recipe)

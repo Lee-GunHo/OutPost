@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: CopperArmor
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 31
-  itemName: CopperArmor
+  itemID: 30
+  itemName: Copper Armor
   itemType: 2
   itemGrade: 0
   icon: {fileID: 21300000, guid: 868b3c4223624f0dadc5d76bc0832645, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 구리 갑옷
+  description: "\uAD6C\uB9AC \uAC11\uC637"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

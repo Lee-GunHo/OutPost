@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: SilverHat
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 42
-  itemName: SilverHat
+  itemID: 41
+  itemName: Silver Hat
   itemType: 1
   itemGrade: 0
   icon: {fileID: 21300000, guid: ae0cf30b27b4493186b026a1e8f17bdb, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 은 모자
+  description: "\uC740 \uBAA8\uC790"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

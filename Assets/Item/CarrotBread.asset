@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CarrotBread
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 161
-  itemName: CarrotBread
-  itemType: 7
+  itemName: Carrot Bread
+  itemType: 8
   itemGrade: 0
   icon: {fileID: 21300000, guid: 0e870f6b0e694e8e9a0584129f97c421, type: 3}
   hpBonus: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 당근빵
+  description: "\uB2F9\uADFC\uBE75"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 99

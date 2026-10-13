@@ -427,13 +427,16 @@ public class ShopUI : MonoBehaviour
             return;
         }
 
-        if(!currentInventory.CanAddItem(item, amount))
+        HotbarModel hotbar = PlayerItemReceiver.CurrentHotbar;
+
+        if(!PlayerItemReceiver.CanReceive(currentInventory, hotbar, item, amount))
         {
             Debug.Log("구매 실패 : 인벤토리 공간이 부족합니다.");
             return;
         }
 
-        bool success = currentInventory.AddItem(item, amount);
+        // 핫바 먼저, 남으면 인벤토리
+        bool success = PlayerItemReceiver.Give(currentInventory, hotbar, item, amount);
 
         if(!success)
         {

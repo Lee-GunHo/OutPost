@@ -65,6 +65,16 @@ public class CraftingTableInteractable :
         }
     }
 
+    // 제작대가 부서지는 등 열린 상태로 사라지면 제작 창도 닫는다
+    private void OnDestroy()
+    {
+        if (CraftingPresenter.Instance != null &&
+            CraftingPresenter.Instance.IsOpenedTable(craftingTableModel))
+        {
+            CraftingPresenter.Instance.Close();
+        }
+    }
+
     public void Interact(PlayerPresenter player)
     {
         if (!isPlayerInRange ||

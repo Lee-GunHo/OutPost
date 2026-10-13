@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: SilverRing
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 44
-  itemName: SilverRing
+  itemID: 43
+  itemName: Silver Ring
   itemType: 4
   itemGrade: 0
   icon: {fileID: 21300000, guid: b6ae0752cb3b46e58ccb8fc51e75c715, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 은 반지
+  description: "\uC740 \uBC18\uC9C0"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 1

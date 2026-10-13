@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c61c9bf6817c44980e0e73f5126673, type: 3}
   m_Name: CopperCraftingBox
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 30
-  itemName: CopperCraftingBox
+  itemID: 27
+  itemName: Copper Crafting Box
   itemType: 7
   itemGrade: 0
   icon: {fileID: 21300000, guid: acfbcccce3244c40a546f651e2f484e5, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 6
-  description: 구리 제작대
-  placeablePrefab: {fileID: 0}
-  placeableYOffset: 1
+  description: "\uAD6C\uB9AC \uC81C\uC791\uB300"
+  placeablePrefab: {fileID: 4560931922421750925, guid: 380c3969102af40468f4393b95cc75a5, type: 3}
+  placeableYOffset: 0.5
   maxStack: 1

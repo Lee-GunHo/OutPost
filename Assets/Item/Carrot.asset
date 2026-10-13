@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 150
   itemName: Carrot
-  itemType: 7
+  itemType: 8
   itemGrade: 0
   icon: {fileID: 21300000, guid: b29905c961f443a9a0d59a1b5ea63400, type: 3}
   hpBonus: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 당근
+  description: "\uB2F9\uADFC"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 99

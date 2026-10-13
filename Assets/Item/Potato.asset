@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 152
   itemName: Potato
-  itemType: 7
+  itemType: 8
   itemGrade: 0
   icon: {fileID: 21300000, guid: 1a77de943ef64e5485370e78db23b0da, type: 3}
   hpBonus: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 감자
+  description: "\uAC10\uC790"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 99

@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Chest
   itemType: 7
   itemGrade: 0
-  icon: {fileID: 21300000, guid: 3b7bec7a01eac954dbf8087501044c8a, type: 3}
+  icon: {fileID: 21300000, guid: 6d8262a81e8e427097a2dff847ea1d4b, type: 3}
   hpBonus: 0
   attackBonus: 0
   defenseBonus: 0
@@ -26,5 +26,5 @@ MonoBehaviour:
   toolType: 6
   description: "\uC0C1\uC790"
   placeablePrefab: {fileID: 1642490396178773992, guid: 5b12bdbdef78fcc41be2d42f8f43fa09, type: 3}
-  placeableYOffset: 0.5
+  placeableYOffset: 0
   maxStack: 1

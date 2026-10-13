@@ -100,6 +100,69 @@ public class HotbarModel : MonoBehaviour
         SetItem(emptyIndex, itemStack);
         return true;
     }
+    /// <summary>
+    /// 같은 아이템 칸의 남은 공간 + 빈 칸 수용량. 이만큼은 AddItemUpTo로 넣을 수 있음
+    /// </summary>
+    public int GetAddableAmount(ItemData item)
+    {
+        if (item == null)
+            return 0;
+
+        int maxStack = Mathf.Max(1, item.maxStack);
+        int addable = 0;
+
+        foreach (ItemStack stack in Items)
+        {
+            if (stack == null || stack.item == null)
+                addable += maxStack;
+            else if (stack.item == item)
+                addable += Mathf.Max(0, maxStack - stack.amount);
+        }
+
+        return addable;
+    }
+
+    /// <summary>
+    /// 같은 아이템 칸에 먼저 쌓고, 남으면 앞쪽 빈 칸부터 채움. 실제로 넣은 개수를 반환
+    /// </summary>
+    public int AddItemUpTo(ItemData item, int amount)
+    {
+        if (item == null || amount <= 0)
+            return 0;
+
+        int maxStack = Mathf.Max(1, item.maxStack);
+        int remaining = amount;
+
+        for (int i = 0; i < Items.Count && remaining > 0; i++)
+        {
+            ItemStack stack = Items[i];
+
+            if (stack == null || stack.item != item || stack.amount >= maxStack)
+                continue;
+
+            int add = Mathf.Min(maxStack - stack.amount, remaining);
+            stack.amount += add;
+            remaining -= add;
+        }
+
+        for (int i = 0; i < Items.Count && remaining > 0; i++)
+        {
+            if (Items[i] != null && Items[i].item != null)
+                continue;
+
+            int add = Mathf.Min(maxStack, remaining);
+            Items[i] = new ItemStack(item, add);
+            remaining -= add;
+        }
+
+        int added = amount - remaining;
+
+        if (added > 0)
+            OnHotbarChanged?.Invoke();
+
+        return added;
+    }
+
     public int GetItemCount(ItemData item)
     {
         if (item == null)

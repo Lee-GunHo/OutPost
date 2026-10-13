@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CPSoup
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemID: 162
-  itemName: CPSoup
-  itemType: 7
+  itemName: C.P Soup
+  itemType: 8
   itemGrade: 0
   icon: {fileID: 21300000, guid: 6ef0668f17a5417480b45155e8d0975d, type: 3}
   hpBonus: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
   pickPower: 0
   attackRecoveryDuration: 0
   toolType: 0
-  description: 당근감자 스프
+  description: "\uB2F9\uADFC\uAC10\uC790 \uC2A4\uD504"
   placeablePrefab: {fileID: 0}
   placeableYOffset: 1
   maxStack: 99
