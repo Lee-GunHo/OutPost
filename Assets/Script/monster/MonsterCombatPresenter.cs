@@ -33,6 +33,8 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         RefreshPolicy();
     }
 
+    public bool IsAttackReady(MonsterAttackKind kind) => SupportsAttack(kind) && model.IsReady(kind, Time.time);
+
     public bool SupportsAttack(MonsterAttackKind kind) => model != null && model.IsEnabled(kind) && model.GetWeight(kind) > 0f;
 
     private void RefreshPolicy()
@@ -99,7 +101,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
 
     public float GetFormationDistance(MonsterSquadRole role)
     {
-        if (role == MonsterSquadRole.Pressure) return Mathf.Max(0.5f, owner.AttackRange * 0.8f);
+        if (role == MonsterSquadRole.Pressure && SupportsAttack(MonsterAttackKind.Melee)) return Mathf.Max(0.5f, owner.AttackRange * 0.8f);
         if (role == MonsterSquadRole.Flanker && model.IsEnabled(MonsterAttackKind.Charge) && model.GetWeight(MonsterAttackKind.Charge) > 0f)
             return Mathf.Lerp(model.ChargeMinRange, model.ChargeDistance, 0.6f);
         if (model.IsEnabled(MonsterAttackKind.Projectile) && model.GetWeight(MonsterAttackKind.Projectile) > 0f)
@@ -196,7 +198,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         direction.Normalize();
         owner.StopMove();
         owner.transform.rotation = Quaternion.LookRotation(direction);
-        model.Commit(kind, Time.time, owner.AttackCooldown);
+        model.Commit(kind, Time.time, owner.AttackCooldown, owner.Behavior != null ? owner.Behavior.GetCooldownScale(kind) : 1f);
         owner.Behavior?.RecordAttack(kind);
         phaseRemaining = model.GetWindup(kind);
         released = false;
@@ -428,7 +430,9 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
             player.SetPendingDamageSource(payload.SourceName);
             int hpBefore = player.CurrentHp;
             player.TakeDamage(payload.Damage);
-            payload.Observation?.Contact(Mathf.Max(0, hpBefore - player.CurrentHp));
+            int actualDamage = Mathf.Max(0, hpBefore - player.CurrentHp);
+            payload.Observation?.Contact(actualDamage);
+            MonsterSquadPresenter.RecordDamage(payload.Attacker, actualDamage, 0f);
             if (!player.IsDead && payload.EffectType != StatusEffectType.None &&
                 UnityEngine.Random.value < payload.Chance)
                 player.AddStatusEffect(new StatusEffectData(payload.EffectType, payload.Duration, payload.Value,

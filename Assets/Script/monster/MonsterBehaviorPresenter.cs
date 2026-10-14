@@ -44,6 +44,16 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
     public bool IsAttacking => owner != null && !owner.IsDead && owner.Combat.IsExecuting;
     private bool IsCooperating => MonsterLearningPresenter.CooperationEnabled && model.SquadRole != MonsterSquadRole.Solo && owner.HasTarget && owner.IsCurrentTargetPlayer;
     public float AdvanceSpeedMultiplier => IsCooperating ? model.AdvanceSpeedMultiplier : 1f;
+    public float GetCooldownScale(MonsterAttackKind kind) => IsCooperating && model.SquadRole == MonsterSquadRole.Support &&
+        kind == MonsterAttackKind.Projectile ? model.SupportProjectileCooldownScale : 1f;
+
+    public void SetRallyPosition(Vector3 position)
+    {
+        if ((model.RallyPosition - position).sqrMagnitude > 0.01f && model.SquadRole == MonsterSquadRole.Regroup)
+        { nextFormationPlan = 0f; formationPathValid = false; }
+        model.SetRallyPosition(position);
+    }
+
     public bool TryClaimSquadAttack() => !model.IsFleeing && (!IsCooperating || MonsterSquadPresenter.CanAttack(this, true));
 
     public bool TryGetSquadTarget(out Transform target)
@@ -69,13 +79,20 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
             NeedsCover = model.IsLowHealth(HealthRatio) || model.IsRetreating,
             HpRatio = HealthRatio, MaxHp = monster.MaxHp, MoveSpeed = owner.MoveSpeed,
             CanProjectile = owner.Combat.SupportsAttack(MonsterAttackKind.Projectile),
-            CanCharge = owner.Combat.SupportsAttack(MonsterAttackKind.Charge)
+            CanCharge = owner.Combat.SupportsAttack(MonsterAttackKind.Charge),
+            CanMelee = owner.Combat.SupportsAttack(MonsterAttackKind.Melee),
+            CanCircle = owner.Combat.SupportsAttack(MonsterAttackKind.Circle),
+            MeleeReady = owner.Combat.IsAttackReady(MonsterAttackKind.Melee),
+            CircleReady = owner.Combat.IsAttackReady(MonsterAttackKind.Circle),
+            ProjectileReady = owner.Combat.IsAttackReady(MonsterAttackKind.Projectile),
+            ChargeReady = owner.Combat.IsAttackReady(MonsterAttackKind.Charge),
+            IsWave = owner.IsWaveMonster
         };
     }
 
     public void SetSquadAssignment(MonsterSquadAssignment assignment)
     {
-        if (assignment.Role != model.SquadRole || assignment.Count != model.EngagedMonsterCount ||
+        if (assignment.Formation != model.SquadFormation || assignment.Role != model.SquadRole || assignment.Count != model.EngagedMonsterCount ||
             !Mathf.Approximately(assignment.Angle, model.AssignedFormationAngle))
         {
             nextFormationPlan = 0f;
@@ -100,7 +117,18 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         }
         owner.UpdateTarget();
         bool fightingPlayer = owner.HasTarget && owner.IsCurrentTargetPlayer && !owner.IsDead;
-        if (model.TryBeginFlee(fightingPlayer, Time.time, Random.value))
+        if (fightingPlayer && IsCooperating && model.SquadRole == MonsterSquadRole.Withdraw)
+        {
+            model.BeginSquadWithdrawal();
+            fleeTarget = owner.CurrentTarget;
+            MonsterLearningPresenter.Instance?.Write("behavior_events.csv", "time,monsterId,event,reason",
+                Time.time, owner.CombatIdentity, "FleeStarted", "SquadWithdrawal");
+            return MonsterBehaviorAction.Flee;
+        }
+        if (fightingPlayer && IsCooperating && model.SquadRole == MonsterSquadRole.Regroup)
+            return TryRegroupDecision();
+        bool allowWaveWithdrawal = MonsterLearningPresenter.Instance != null && MonsterLearningPresenter.Instance.Settings.waveSquadWithdrawal;
+        if (model.TryBeginFlee(fightingPlayer && (!owner.IsWaveMonster || allowWaveWithdrawal), Time.time, Random.value))
         {
             fleeTarget = owner.CurrentTarget;
             SetSquadAssignment(new MonsterSquadAssignment { Role = MonsterSquadRole.Solo, Count = 1 });
@@ -121,6 +149,42 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
             owner.Combat.HasAttackInRange())
             return MonsterBehaviorAction.HoldDistance;
         return MonsterBehaviorAction.Chase;
+    }
+
+    private MonsterBehaviorAction TryRegroupDecision()
+    {
+        if (!CanNavigate) return MonsterBehaviorAction.HoldDistance;
+        Vector3 delta = model.RallyPosition - transform.position;
+        delta.y = 0f;
+        if (delta.sqrMagnitude <= 0.25f) return MonsterBehaviorAction.HoldDistance;
+        if (Time.time >= nextFormationPlan)
+        {
+            nextFormationPlan = Time.time + 0.5f;
+            var filter = new NavMeshQueryFilter { agentTypeID = agent.agentTypeID, areaMask = agent.areaMask };
+            formationPathValid = NavMesh.SamplePosition(model.RallyPosition, out NavMeshHit hit, 1f, filter) &&
+                agent.CalculatePath(hit.position, formationPath) && formationPath.status == NavMeshPathStatus.PathComplete &&
+                IsSafeRallyPath(formationPath);
+            if (!formationPathValid) formationPathValid = TryPlanAwayFrom(owner.CurrentTarget, 3f, formationPath);
+            formationPathNeedsApply = formationPathValid;
+        }
+        return formationPathValid ? MonsterBehaviorAction.Formation : MonsterBehaviorAction.HoldDistance;
+    }
+
+    private bool IsSafeRallyPath(NavMeshPath path)
+    {
+        Vector3 previous = agent.nextPosition;
+        Vector3 initial = previous - owner.CurrentTarget.position;
+        initial.y = 0f;
+        float safeRadius = Mathf.Min(initial.magnitude, 1.5f);
+        foreach (Vector3 corner in path.corners)
+        {
+            Vector3 leg = corner - previous; leg.y = 0f;
+            Vector3 toPlayer = owner.CurrentTarget.position - previous; toPlayer.y = 0f;
+            float t = leg.sqrMagnitude > 0.0001f ? Mathf.Clamp01(Vector3.Dot(toPlayer, leg) / leg.sqrMagnitude) : 0f;
+            if ((toPlayer - leg * t).magnitude < safeRadius - 0.1f) return false;
+            previous = corner;
+        }
+        return true;
     }
 
     private bool TryFormationDecision(out MonsterBehaviorAction action)

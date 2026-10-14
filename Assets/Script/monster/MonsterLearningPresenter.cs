@@ -96,10 +96,13 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
 
     public void RecordFormation(string group, MonsterPresenter owner, MonsterSquadAssignment assignment, string reason)
     {
-        Write("formations.csv", "time,mode,cooperation,groupId,monsterId,count,formation,role,angle,reason",
+        var stats = owner.GetComponent<MonsterModel>();
+        Write("formations.csv", "time,mode,cooperation,groupId,monsterId,count,formation,role,angle,reason,exploitOpening,squadPolicyVersion,hpRatio,moveSpeed,projectileReady,chargeReady,frontAttackReady,isWave",
             Time.time, Settings.learningMode, Settings.cooperationEnabled, group, owner.CombatIdentity,
-            assignment.Count, assignment.Count <= 1 ? "Solo" : assignment.Count == 2 ? "Pair" :
-            assignment.Count == 3 ? "Triangle" : "Surround", assignment.Role, assignment.Angle, reason);
+            assignment.Count, assignment.Formation, assignment.Role, assignment.Angle, reason, assignment.ExploitOpening, 2,
+            stats.CurrentHp / (float)Mathf.Max(1, stats.MaxHp), owner.MoveSpeed,
+            owner.Combat.IsAttackReady(MonsterAttackKind.Projectile), owner.Combat.IsAttackReady(MonsterAttackKind.Charge),
+            owner.Combat.IsAttackReady(MonsterAttackKind.Melee) || owner.Combat.IsAttackReady(MonsterAttackKind.Circle), owner.IsWaveMonster);
     }
 
     private void Update()
@@ -108,7 +111,8 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         view.Render(Settings.showOverlay, "Monster AI | " + Settings.learningMode + " | Cooperation: " + Settings.cooperationEnabled +
             "\nPolicy version: " + Memory.version + " | Resolved actions: " + completed +
             "\nNew monsters use a policy snapshot. Natural spawns train; waves do not." +
-            "\nCSV / snapshots: persistentDataPath/MonsterAIResearch");
+            "\nCSV / snapshots: persistentDataPath/MonsterAIResearch" +
+            (Settings.showOverlay ? "\n" + MonsterSquadPresenter.GetDebugSummary() : ""));
         if (Time.unscaledTime < nextFlush) return;
         nextFlush = Time.unscaledTime + 10f;
         SaveNow();
@@ -159,6 +163,22 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         Instance.Memory = new MonsterLearningModel();
         Instance.dirty = false;
         Instance.storageBlocked = false;
+    }
+
+    [ContextMenu("Flush Logs and Export Current Policy")]
+    public void ExportResearchNow()
+    {
+        SaveNow();
+        ExportCurrentPolicy();
+        Debug.Log("Monster AI research: " + directory);
+    }
+
+    [ContextMenu("Open Research Folder")]
+    public void OpenResearchFolder()
+    {
+        ExportResearchNow();
+        Directory.CreateDirectory(directory);
+        Application.OpenURL(new Uri(directory + Path.DirectorySeparatorChar).AbsoluteUri);
     }
 
     [ContextMenu("Export Current Policy Snapshot")]

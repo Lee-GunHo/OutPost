@@ -100,13 +100,14 @@ public sealed class MonsterCombatModel : MonoBehaviour
     public float GetRecovery(MonsterAttackKind kind) => kind == MonsterAttackKind.Charge
         ? Mathf.Max(0f, chargeRecovery) : RecoveryDuration;
 
-    public void Commit(MonsterAttackKind kind, float now, float baseCooldown)
+    public void Commit(MonsterAttackKind kind, float now, float baseCooldown, float cooldownScale = 1f)
     {
         float cooldown = kind == MonsterAttackKind.Melee ? baseCooldown
             : kind == MonsterAttackKind.Projectile ? projectileCooldown
             : kind == MonsterAttackKind.Circle ? circleCooldown : chargeCooldown;
-        nextUse[(int)kind] = now + Mathf.Max(0f, cooldown);
+        cooldownScale = Mathf.Clamp(cooldownScale, 0.5f, 1f);
+        nextUse[(int)kind] = now + Mathf.Max(0f, cooldown) * cooldownScale;
         float activeDuration = kind == MonsterAttackKind.Charge ? ChargeDistance / ChargeSpeed : 0f;
-        nextAnyAttack = now + GetWindup(kind) + activeDuration + GetRecovery(kind) + Mathf.Max(0f, baseCooldown);
+        nextAnyAttack = now + GetWindup(kind) + activeDuration + GetRecovery(kind) + Mathf.Max(0f, baseCooldown) * cooldownScale;
     }
 }

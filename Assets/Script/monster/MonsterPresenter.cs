@@ -34,6 +34,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     public string CombatIdentity { get; } = System.Guid.NewGuid().ToString("N");
     public bool IsNaturalSpawn { get; private set; }
+    public bool IsWaveMonster => behaviorMode == MonsterBehaviorMode.NexusAssault;
     public string LearningType { get; private set; }
     public void MarkNaturalSpawn(string prefabName)
     {
@@ -439,6 +440,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
         int previousHp = monsterModel.CurrentHp;
         monsterModel.TakeDamage(damage);
+        MonsterSquadPresenter.RecordDamage(this, 0f, Mathf.Max(0, previousHp - monsterModel.CurrentHp));
         if (monsterModel.CurrentHp < previousHp) Behavior.RecordHit();
         MonsterLearningPresenter.Instance?.Telemetry.DamageTaken(this, Mathf.Max(0, previousHp - monsterModel.CurrentHp));
 

@@ -18,6 +18,14 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
     [SerializeField, Min(1f)] private float vanguardSpeedMultiplier = 1.25f;
     [SerializeField, Range(0f, 1f)] private float rearFlankChance = 0.7f;
     [SerializeField, Min(0.1f)] private float rearFlankInterval = 1.8f;
+    [SerializeField, Range(0.5f, 1f)] private float supportProjectileCooldownScale = 0.85f;
+    public float SupportProjectileCooldownScale => Mathf.Clamp(supportProjectileCooldownScale, 0.5f, 1f);
+    public MonsterSquadFormation SquadFormation { get; private set; }
+    public bool ExploitOpening { get; private set; }
+    public Vector3 RallyPosition { get; private set; }
+    public void SetRallyPosition(Vector3 position) { RallyPosition = position; }
+    public void BeginSquadWithdrawal() { IsFleeing = true; }
+
     private float nextRearFlankTime = float.NegativeInfinity;
     private float rearFlankOffset;
     public float AdvanceSpeedMultiplier => squadRole == MonsterSquadRole.Pressure
@@ -87,6 +95,8 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
             rearFlankOffset = 0f;
             nextRearFlankTime = float.NegativeInfinity;
         }
+        SquadFormation = assignment.Formation;
+        ExploitOpening = assignment.ExploitOpening;
         squadRole = assignment.Role;
         engagedMonsterCount = assignment.Count;
         AssignedFormationAngle = assignment.Angle;
@@ -158,6 +168,7 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
             preference *= kind == MonsterAttackKind.Projectile ? 4f : 0.2f;
         else if (squadRole == MonsterSquadRole.Flanker)
             preference *= kind == MonsterAttackKind.Charge ? 4f : 0.4f;
+        if (ExploitOpening && squadRole == MonsterSquadRole.Flanker && kind == MonsterAttackKind.Charge) preference *= 1.5f;
         return Mathf.Max(0f, baseWeight) * preference;
     }
 }

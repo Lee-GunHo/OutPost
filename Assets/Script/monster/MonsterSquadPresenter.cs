@@ -8,6 +8,7 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
     private sealed class Encounter
     {
         public readonly string Id = System.Guid.NewGuid().ToString("N");
+        public Vector3 RallyPoint;
         public readonly MonsterSquadModel Model = new MonsterSquadModel();
         public readonly List<MonsterBehaviorPresenter> Members = new List<MonsterBehaviorPresenter>();
         public readonly List<MonsterSquadMember> Snapshot = new List<MonsterSquadMember>();
@@ -73,10 +74,48 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
         {
             Encounter encounter = pair.Value;
             if (encounter.Members.Count == 0) { emptyEncounters.Add(pair.Key); continue; }
-            bool changed = encounter.Model.Synchronize(encounter.Snapshot, Time.time);
+            var player = pair.Key.GetComponentInParent<PlayerPresenter>();
+            if (player == null) continue;
+            var playerState = player.GetComponent<PlayerStateManager>();
+            int focusId = 0;
+            if (playerState != null && playerState.IsAttacking)
+            {
+                float bestDot = 0.5f;
+                foreach (var member in encounter.Members)
+                {
+                    if (encounter.Model.GetAssignment(member.GetInstanceID()).Role != MonsterSquadRole.Pressure) continue;
+                    Vector3 direction = member.transform.position - player.transform.position;
+                    direction.y = 0f;
+                    float dot = Vector3.Dot(player.transform.forward, direction.normalized);
+                    if (direction.sqrMagnitude <= 16f && dot > bestDot) { bestDot = dot; focusId = member.GetInstanceID(); }
+                }
+            }
+            var oldFormation = encounter.Model.Formation;
+            bool changed = encounter.Model.Synchronize(encounter.Snapshot, Time.time, new MonsterSquadSituation
+            {
+                PlayerHpRatio = player.CurrentHp / (float)Mathf.Max(1, player.MaxHp),
+                PlayerFocusedMember = focusId,
+                AllowWaveWithdrawal = MonsterLearningPresenter.Instance != null && MonsterLearningPresenter.Instance.Settings.waveSquadWithdrawal
+            });
+            if (oldFormation != MonsterSquadFormation.Regroup && encounter.Model.Formation == MonsterSquadFormation.Regroup)
+            {
+                float angle = encounter.Model.RallyAngle;
+                encounter.RallyPoint = player.transform.position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 6f;
+            }
+            if (changed) MonsterLearningPresenter.Instance?.Write("squad_decisions.csv",
+                "time,groupId,mode,cooperation,formation,formationChanged,reason,count,averageHp,playerHp,playerFocusedMember,waveWithdrawalAllowed,squadPolicyVersion",
+                Time.time, encounter.Id, MonsterLearningPresenter.Instance.Settings.learningMode, true, encounter.Model.Formation,
+                oldFormation != encounter.Model.Formation, encounter.Model.ChangeReason, encounter.Model.Count,
+                encounter.Model.AverageHp, encounter.Model.PlayerHp, focusId,
+                MonsterLearningPresenter.Instance.Settings.waveSquadWithdrawal, 2);
             encounter.Model.AdvanceFlank(Time.time);
+            encounter.Members.Sort((a, b) => a.GetInstanceID().CompareTo(b.GetInstanceID()));
+            int rallySlot = 0;
+            float rallyAngle = encounter.Model.RallyAngle;
+            Vector3 lateral = new Vector3(-Mathf.Sin(rallyAngle), 0f, Mathf.Cos(rallyAngle));
             foreach (var member in encounter.Members)
             {
+                member.SetRallyPosition(encounter.RallyPoint + lateral * (rallySlot++ - (encounter.Members.Count - 1) * 0.5f) * 1.4f);
                 var assignment = encounter.Model.GetAssignment(member.GetInstanceID());
                 member.SetSquadAssignment(assignment);
                 if (changed) MonsterLearningPresenter.Instance?.RecordFormation(encounter.Id, member.Owner, assignment, encounter.Model.ChangeReason);
@@ -95,6 +134,23 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
         // Each pair is corrected once, including monsters fleeing or assaulting the nexus.
         for (int i = 0; i < crowd.Count; i++)
             for (int j = i + 1; j < crowd.Count; j++) crowd[i].SeparateFrom(crowd[j], Time.deltaTime);
+    }
+
+    public static void RecordDamage(MonsterPresenter owner, float dealt, float taken)
+    {
+        if (!MonsterLearningPresenter.CooperationEnabled || instance == null || owner == null || owner.Behavior == null) return;
+        if (instance.membership.TryGetValue(owner.Behavior, out Encounter encounter)) encounter.Model.RecordDamage(dealt, taken);
+    }
+
+    public static string GetDebugSummary()
+    {
+        if (!MonsterLearningPresenter.CooperationEnabled) return "Formation: disabled";
+        if (instance == null || instance.encounters.Count == 0) return "Formation: no active group";
+        foreach (var encounter in instance.encounters.Values)
+            if (encounter.Model.Count > 0)
+                return "Formation: " + encounter.Model.Formation + " | Members: " + encounter.Model.Count +
+                    "\nReason: " + encounter.Model.FormationReason;
+        return "Formation: no active group";
     }
 
     public static bool CanAttack(MonsterBehaviorPresenter member, bool commit)
