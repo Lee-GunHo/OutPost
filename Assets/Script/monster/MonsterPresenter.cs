@@ -35,11 +35,15 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
     public string CombatIdentity { get; } = System.Guid.NewGuid().ToString("N");
     public bool IsNaturalSpawn { get; private set; }
     public bool IsWaveMonster => behaviorMode == MonsterBehaviorMode.NexusAssault;
-    public string LearningType { get; private set; }
+    public bool IsRegisteredLearningTest => !IsNaturalSpawn && !IsWaveMonster &&
+        monsterModel != null && monsterModel.TestLearningEnabled;
+    public bool IsLearningEligible => MonsterLearningModel.IsEligible(IsNaturalSpawn, IsRegisteredLearningTest, IsWaveMonster);
+    private string learningType;
+    public string LearningType => IsRegisteredLearningTest ? monsterModel.TestLearningType : learningType;
     public void MarkNaturalSpawn(string prefabName)
     {
         IsNaturalSpawn = true;
-        LearningType = prefabName;
+        learningType = prefabName;
     }
 
     private bool isDeathProcessed;
@@ -83,7 +87,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        LearningType = gameObject.name.Replace("(Clone)", "");
+        learningType = gameObject.name.Replace("(Clone)", "");
         nexusPath = new NavMeshPath();
         monsterModel = GetComponent<MonsterModel>();
         stateManager = GetComponent<MonsterStateManager>();

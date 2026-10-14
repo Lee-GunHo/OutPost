@@ -1,0 +1,8 @@
+﻿time,groupId,mode,cooperation,formation,formationChanged,reason,count,averageHp,playerHp,playerFocusedMember,waveWithdrawalAllowed,squadPolicyVersion
+94.08562,e9cb3118539449e4a899a2e4f3d0161a,Baseline,True,Pair,True,JoinedOrLeft,2,1,1,0,False,2
+94.35116,e9cb3118539449e4a899a2e4f3d0161a,Baseline,True,Triangle,True,JoinedOrLeft,3,1,1,0,False,2
+94.52789,e9cb3118539449e4a899a2e4f3d0161a,Baseline,True,Surround,True,JoinedOrLeft,4,1,1,0,False,2
+118.7804,e9cb3118539449e4a899a2e4f3d0161a,Baseline,True,Regroup,True,LowAverageHealth,4,0.25,0.78,-3012398,False,2
+121.7883,e9cb3118539449e4a899a2e4f3d0161a,Baseline,True,Triangle,True,RegroupFinished,3,0.2666667,0.78,0,False,2
+122.0059,e9cb3118539449e4a899a2e4f3d0161a,Baseline,True,Pair,True,JoinedOrLeft,2,0.3,0.78,-3012398,False,2
+124.1998,e9cb3118539449e4a899a2e4f3d0161a,Baseline,True,Solo,True,JoinedOrLeft,1,0.4,0.78,-3012398,False,2

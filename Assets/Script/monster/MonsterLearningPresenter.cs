@@ -65,7 +65,9 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
             playerHpRatio = player.CurrentHp / (float)Mathf.Max(1, player.MaxHp),
             role = behavior != null ? behavior.SquadRole.ToString() : "Solo",
             mode = Settings.learningMode.ToString(), cooperation = Settings.cooperationEnabled,
-            naturalSpawn = owner.IsNaturalSpawn, train = owner.IsNaturalSpawn && Settings.learningMode == MonsterLearningMode.Training,
+            naturalSpawn = owner.IsNaturalSpawn, registeredLearningTest = owner.IsRegisteredLearningTest,
+            learningEligible = owner.IsLearningEligible,
+            train = owner.IsLearningEligible && Settings.learningMode == MonsterLearningMode.Training,
             learnedWeightVersion = policyVersion, eligibleActions = eligible,
             selectionProbabilities = probabilities, selectedProbability = probability
         };
@@ -86,12 +88,12 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
                 entry.attempts, entry.hits, record.damageDealt > 0 ? 1f : -0.25f, oldWeight,
                 Memory.Weight(record.monsterType, record.context, record.action), Memory.version);
         }
-        Write("actions.csv", "actionId,battleId,monsterId,monsterType,startTime,endTime,mode,cooperation,naturalSpawn,role,context,selfHpRatio,playerHpRatio,distance,action,eligibleActions,probabilities,selectedProbability,policyVersion,released,outcome,damageDealt",
+        Write("actions.csv", "actionId,battleId,monsterId,monsterType,startTime,endTime,mode,cooperation,naturalSpawn,role,context,selfHpRatio,playerHpRatio,distance,action,eligibleActions,probabilities,selectedProbability,policyVersion,released,outcome,damageDealt,registeredLearningTest,learningEligible",
             record.actionId, record.battleId, record.monsterId, record.monsterType, record.startedAt, Time.time, record.mode,
             record.cooperation, record.naturalSpawn, record.role, record.context, record.selfHpRatio,
             record.playerHpRatio, record.distance, (MonsterAttackKind)record.action, record.eligibleActions,
             record.selectionProbabilities, record.selectedProbability, record.learnedWeightVersion,
-            record.released, record.outcome, record.damageDealt);
+            record.released, record.outcome, record.damageDealt, record.registeredLearningTest, record.learningEligible);
     }
 
     public void RecordFormation(string group, MonsterPresenter owner, MonsterSquadAssignment assignment, string reason)

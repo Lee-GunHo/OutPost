@@ -42,10 +42,11 @@ public sealed class MonsterCombatTelemetryPresenter : MonoBehaviour
             };
             battle.Members[member.Id] = member;
             var stats = owner.GetComponent<MonsterModel>();
-            recorder.Write("participant_configs.csv", "battleId,monsterId,monsterType,naturalSpawn,joinedAt,maxHp,attackPower,moveSpeed,canProjectile,canCircle,canCharge",
+            recorder.Write("participant_configs.csv", "battleId,monsterId,monsterType,naturalSpawn,joinedAt,maxHp,attackPower,moveSpeed,canProjectile,canCircle,canCharge,registeredLearningTest,learningEligible",
                 battle.Id, owner.CombatIdentity, owner.LearningType, owner.IsNaturalSpawn, Time.time,
                 stats.MaxHp, owner.AttackPower, owner.MoveSpeed, owner.Combat.SupportsAttack(MonsterAttackKind.Projectile),
-                owner.Combat.SupportsAttack(MonsterAttackKind.Circle), owner.Combat.SupportsAttack(MonsterAttackKind.Charge));
+                owner.Combat.SupportsAttack(MonsterAttackKind.Circle), owner.Combat.SupportsAttack(MonsterAttackKind.Charge),
+                owner.IsRegisteredLearningTest, owner.IsLearningEligible);
         }
         member.LastSeenAt = Time.time;
         return battle.Id;

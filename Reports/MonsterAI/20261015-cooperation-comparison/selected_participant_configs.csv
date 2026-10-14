@@ -1,0 +1,9 @@
+﻿battleId,monsterId,monsterType,naturalSpawn,joinedAt,maxHp,attackPower,moveSpeed,canProjectile,canCircle,canCharge,registeredLearningTest,learningEligible
+25bc08255e2946c3a0eef84ca1ad3fa6,1eb597630be541b78b372d073a843443,TestMonster,False,32.32754,50,10,3,True,True,True,True,True
+25bc08255e2946c3a0eef84ca1ad3fa6,e7d1a79923264626a1878c9ddf86f150,TestMonster,False,32.32754,50,10,3,True,True,True,True,True
+25bc08255e2946c3a0eef84ca1ad3fa6,2b1f5fa1fd044378b7bee18f661caecd,TestMonster,False,32.53338,50,10,3,True,True,True,True,True
+25bc08255e2946c3a0eef84ca1ad3fa6,d7e5e05725fe4ceaaad35c95a56ba538,TestMonster,False,32.73588,50,10,3,True,True,True,True,True
+1b6b719113af4576af4c7b27f9358a35,7564405a90dc4082a4b414db30724fbd,TestMonster,False,188.9867,50,10,3,True,True,True,True,True
+1b6b719113af4576af4c7b27f9358a35,881bb91bed7b4050a1b2927464165476,TestMonster,False,189.1985,50,10,3,True,True,True,True,True
+1b6b719113af4576af4c7b27f9358a35,06f3c0d8fc6542f9b6ffd6a0448fc1c5,TestMonster,False,189.4102,50,10,3,True,True,True,True,True
+1b6b719113af4576af4c7b27f9358a35,d978daaa3241488799bf84de6f7d0f13,TestMonster,False,189.4102,50,10,3,True,True,True,True,True

@@ -9,6 +9,7 @@ public sealed class MonsterCombatTelemetryModel
     public int action, learnedWeightVersion, damageDealt;
     public float startedAt, distance, selfHpRatio, playerHpRatio, selectedProbability;
     public bool cooperation, naturalSpawn, train, released, playerContact, resolved;
+    public bool registeredLearningTest, learningEligible;
     public string outcome;
     [NonSerialized] public int generation;
     [NonSerialized] public MonsterLearningPresenter recorder;

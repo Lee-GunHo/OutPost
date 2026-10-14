@@ -1,0 +1,4 @@
+﻿battleId,included,playerStartHp,cooperation,reason
+25bc08255e2946c3a0eef84ca1ad3fa6,True,100,False,"Baseline, four monsters, starting HP 100"
+dbcb7d18075b45d2b28ed63e3ac66931,False,78,True,Starting HP 78; kept as separate pilot
+1b6b719113af4576af4c7b27f9358a35,True,100,True,"Baseline, four monsters, starting HP 100"

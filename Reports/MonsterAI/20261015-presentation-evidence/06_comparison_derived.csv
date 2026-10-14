@@ -1,0 +1,4 @@
+﻿battleId,cooperation,playerStartHp,directDamageToPlayer,battleSeconds,meanEngagedSeconds,surroundCount,roleSwitchCount
+abe240952c4d471b842e14ebe40867e5,False,100,24,26.60336,22.63451,0,0
+7db3bba04a7742bc9bfb485841a649ae,True,100,22,32.40488,28.918957499999998,0,57
+a63ad6f892784b3093b2d77bb7c9e94c,True,100,53,36.75307,29.7535675,0,34

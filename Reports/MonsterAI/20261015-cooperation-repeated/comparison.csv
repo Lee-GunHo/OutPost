@@ -1,0 +1,3 @@
+﻿mode,cooperation,squadPolicyVersion,completedBattles,meanBattleSeconds,meanDirectDamageToPlayer,meanEngagedSeconds,meanTimeToDeathAmongKilled,killedCount,escapedCount,meanOverlapSeconds,meanSurroundSeconds,meanSurroundCount,meanRoleSwitchCount
+Baseline,False,2,1,26.60336,24,22.63451,22.63451,4,0,0.0,0.0,0,0
+Baseline,True,2,2,34.578975,37.5,29.3362625,29.3362625,8,0,0.0,0.0,0,45.5

@@ -2,6 +2,14 @@ using UnityEngine;
 
 public class MonsterModel : MonoBehaviour
 {
+    [Header("Learning Test Registration")]
+    [Tooltip("직접 배치한 일반 몬스터를 학습 대상으로 등록합니다. 웨이브 몬스터에는 적용되지 않습니다.")]
+    [SerializeField] private bool testLearningEnabled;
+    [Tooltip("테스트 개체들이 공유할 학습 이름입니다. 같은 값이면 배치/복제한 개체끼리 경험을 공유합니다. 자연 몬스터와 공유하려면 해당 프리팹 이름을 입력하세요.")]
+    [SerializeField] private string testLearningType = "TestMonster";
+    public bool TestLearningEnabled => testLearningEnabled;
+    public string TestLearningType => string.IsNullOrWhiteSpace(testLearningType) ? "TestMonster" : testLearningType.Trim();
+
     [Header("Move Data")]
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField, Min(0f)] private float bodySpacing = 0.08f;

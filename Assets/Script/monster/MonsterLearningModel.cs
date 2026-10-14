@@ -10,6 +10,9 @@ public sealed class MonsterLearningModel
     public int version;
     public List<MonsterActionExperience> entries = new List<MonsterActionExperience>();
 
+    public static bool IsEligible(bool naturalSpawn, bool registeredTest, bool waveMonster)
+        => !waveMonster && (naturalSpawn || registeredTest);
+
     public static string Context(float distance, float selfHp, bool playerAttacking, bool playerDashing)
     {
         int range = distance <= 1.8f ? 0 : distance <= 3.75f ? 1 : 2;

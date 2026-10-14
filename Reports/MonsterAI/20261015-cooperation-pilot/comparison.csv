@@ -1,0 +1,3 @@
+﻿mode,cooperation,squadPolicyVersion,completedBattles,meanBattleSeconds,meanDirectDamageToPlayer,meanEngagedSeconds,meanTimeToDeathAmongKilled,killedCount,escapedCount,meanOverlapSeconds,meanSurroundSeconds,meanSurroundCount,meanRoleSwitchCount
+Training,False,2,1,27.47962,12,21.225347499999998,21.225347499999998,4,0,0.0,0.0,0,0
+Training,True,2,1,30.90106,8,27.7648875,27.7648875,4,0,0.0,0.0,0,68

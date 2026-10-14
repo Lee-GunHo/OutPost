@@ -1,0 +1,6 @@
+﻿mode,cooperation,squadPolicyVersion,formation,decisionCount,formationEntries
+Training,True,2,Pair,3,2
+Training,True,2,Regroup,1,1
+Training,True,2,Solo,2,1
+Training,True,2,Surround,21,3
+Training,True,2,Triangle,7,3

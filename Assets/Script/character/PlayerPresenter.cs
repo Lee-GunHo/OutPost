@@ -121,6 +121,18 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
 
 
+    [ContextMenu("Test Recover Full HP")]
+    private void TestRecoverFullHp()
+    {
+        if (!Application.isPlaying || playerModel == null || playerModel.IsDead)
+        {
+            return;
+        }
+
+        playerModel.Heal(playerModel.MaxHp - playerModel.CurrentHp);
+        NotifyStatusChanged();
+    }
+
     [ContextMenu("Test Use MP")]
     private void TestUseMp()
     {

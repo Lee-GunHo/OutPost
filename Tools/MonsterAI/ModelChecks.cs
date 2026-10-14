@@ -21,6 +21,11 @@ public static class ModelChecks
     public static string Run()
     {
         checks = 0;
+        Check(!MonsterLearningModel.IsEligible(false, false, false), "Unregistered placed monster must not learn");
+        Check(MonsterLearningModel.IsEligible(false, true, false), "Registered test monster must learn");
+        Check(MonsterLearningModel.IsEligible(true, false, false), "Natural monster must still learn");
+        Check(!MonsterLearningModel.IsEligible(false, true, true), "Test flag must never enable wave training");
+        Check(!MonsterLearningModel.IsEligible(true, true, true), "Wave status must override all learning registrations");
         var memory = new MonsterLearningModel();
         string context = MonsterLearningModel.Context(2f, 1f, false, false);
         Check(memory.Weight("normal", context, 0) == 1f, "Cold start must use baseline");

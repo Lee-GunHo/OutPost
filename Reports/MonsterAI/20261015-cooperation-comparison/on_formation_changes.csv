@@ -1,0 +1,8 @@
+﻿elapsedSeconds,time,groupId,mode,cooperation,formation,formationChanged,reason,count,averageHp,playerHp,playerFocusedMember,waveWithdrawalAllowed,squadPolicyVersion
+0.011799999999993815,188.9985,71aab60cf3874ddea9bb5838ca1f5bc9,Baseline,True,Pair,True,JoinedOrLeft,2,1,1,0,False,2
+0.24329999999997654,189.23,71aab60cf3874ddea9bb5838ca1f5bc9,Baseline,True,Triangle,True,JoinedOrLeft,3,1,1,0,False,2
+0.4116999999999962,189.3984,71aab60cf3874ddea9bb5838ca1f5bc9,Baseline,True,Surround,True,JoinedOrLeft,4,1,1,0,False,2
+6.490099999999984,195.4768,71aab60cf3874ddea9bb5838ca1f5bc9,Baseline,True,Regroup,True,UnfavorableDamageTrade,4,0.75,1,0,False,2
+9.500699999999995,198.4874,71aab60cf3874ddea9bb5838ca1f5bc9,Baseline,True,Triangle,True,RegroupFinished,3,0.8,1,0,False,2
+12.1995,201.1862,71aab60cf3874ddea9bb5838ca1f5bc9,Baseline,True,Pair,True,JoinedOrLeft,2,0.9,1,-2711946,False,2
+22.82079999999999,211.8075,71aab60cf3874ddea9bb5838ca1f5bc9,Baseline,True,Regroup,True,FrontLeft,1,0.2,0.54,0,False,2

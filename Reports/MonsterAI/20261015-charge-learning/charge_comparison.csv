@@ -1,0 +1,4 @@
+﻿mode,battles,actions,chargeSelected,chargeShare,chargeEligible,chargeWhenEligible,chargeHits,chargeResolved,chargeHitRate,contextMultiChoiceCount,contextMultiChoiceCharge
+Baseline,1,45,9,0.2,23,0.391304347826087,8,9,0.8888888888888888,17,5
+Training,6,243,62,0.2551440329218107,101,0.6138613861386139,55,60,0.9166666666666666,68,41
+Frozen,2,40,12,0.3,16,0.75,10,12,0.8333333333333334,12,8

@@ -1,0 +1,5 @@
+﻿time,mode,cooperation,groupId,monsterId,count,formation,role,angle,reason,exploitOpening,squadPolicyVersion,hpRatio,moveSpeed,projectileReady,chargeReady,frontAttackReady,isWave
+94.52789,Baseline,True,e9cb3118539449e4a899a2e4f3d0161a,35e16176b57142e7be2f8a9863000151,4,Surround,Pressure,3.168447,JoinedOrLeft,False,2,1,3,True,True,True,False
+94.52789,Baseline,True,e9cb3118539449e4a899a2e4f3d0161a,7543c89b561848c6a431f8d393163721,4,Surround,Support,1.59765,JoinedOrLeft,False,2,1,3,False,False,False,False
+94.52789,Baseline,True,e9cb3118539449e4a899a2e4f3d0161a,081729b9729e407296f3cd6067dd25ba,4,Surround,Support,4.739243,JoinedOrLeft,False,2,1,3,True,True,True,False
+94.52789,Baseline,True,e9cb3118539449e4a899a2e4f3d0161a,96a395393f454a7fb837d9ad3b2eefbc,4,Surround,Flanker,0.02685404,JoinedOrLeft,False,2,1,3,True,True,True,False

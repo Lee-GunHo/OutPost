@@ -1,0 +1,3 @@
+﻿battleId,mode,cooperation,startTime,duration,playerStartHp,playerEndHp,uniqueMonsterCount,damageToMonsters,result,overlapSeconds,surroundSeconds,surroundCount,roleSwitchCount,directDamageToPlayer,squadPolicyVersion
+25bc08255e2946c3a0eef84ca1ad3fa6,Baseline,False,32.32754,35.63367,100,78,4,200,Disengaged,0,0,0,0,22,2
+dbcb7d18075b45d2b28ed63e3ac66931,Baseline,True,107.9544,36.46533,78,42,4,200,Disengaged,0,0,0,48,36,2

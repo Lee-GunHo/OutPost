@@ -1,0 +1,75 @@
+[
+  {
+    "output": "01_learning_updates.csv",
+    "source": "C:\\Users\\minsa\\AppData\\LocalLow\\DefaultCompany\\OutPost\\MonsterAIResearch\\20261014_221126_27d75bac5fd446cc813ca11be625b26b\\learning_updates.csv",
+    "sourceSha256": "e273f789b9392aedb5ba7f03b43bd3a22c22b5ef80ba6571d49c144d241f33d3",
+    "dataRowNumbers": [
+      2,
+      4,
+      6,
+      219
+    ],
+    "kind": "exact rows, all original columns"
+  },
+  {
+    "output": "02_actions.csv",
+    "source": "C:\\Users\\minsa\\AppData\\LocalLow\\DefaultCompany\\OutPost\\MonsterAIResearch\\20261014_221126_27d75bac5fd446cc813ca11be625b26b\\actions.csv",
+    "sourceSha256": "71e3678efa64b252129fbd7dc105b2953f2a5d5a16bbb452860665cb8014090e",
+    "dataRowNumbers": [
+      47,
+      50,
+      53,
+      287,
+      289,
+      292
+    ],
+    "kind": "exact rows, all original columns"
+  },
+  {
+    "output": "03_squad_decisions.csv",
+    "source": "C:\\Users\\minsa\\AppData\\LocalLow\\DefaultCompany\\OutPost\\MonsterAIResearch\\20261014_232641_79ed80cc96fc47049761bf7b042f4e39\\squad_decisions.csv",
+    "sourceSha256": "df1b87de6e9cae95e57af6426eefc512ea136e7a481ffd9209348e497fbbdd0f",
+    "dataRowNumbers": [
+      2,
+      3,
+      4,
+      27,
+      29,
+      30,
+      31
+    ],
+    "kind": "exact rows, all original columns"
+  },
+  {
+    "output": "04_role_assignments.csv",
+    "source": "C:\\Users\\minsa\\AppData\\LocalLow\\DefaultCompany\\OutPost\\MonsterAIResearch\\20261014_232641_79ed80cc96fc47049761bf7b042f4e39\\formations.csv",
+    "sourceSha256": "1a9b54f44dbccdce9b459a78644e622bfde41e9103595ed4323dbe7e5e5dc9b8",
+    "dataRowNumbers": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "kind": "exact rows, all original columns"
+  },
+  {
+    "output": "05_battles.csv",
+    "source": "C:\\Users\\minsa\\AppData\\LocalLow\\DefaultCompany\\OutPost\\MonsterAIResearch\\20261014_232641_79ed80cc96fc47049761bf7b042f4e39\\battles.csv",
+    "sourceSha256": "4a4ac9044445b2e57c72e583f0224a83ba66d92477466e2e344a367ac0de2331",
+    "dataRowNumbers": [
+      1,
+      2,
+      3
+    ],
+    "kind": "exact rows, all original columns"
+  },
+  {
+    "output": "06_comparison_derived.csv",
+    "kind": "derived by battleId join; damage=sum(actions.damageDealt), meanEngaged=mean(participants.engagedSeconds)",
+    "sources": [
+      "C:\\Users\\minsa\\AppData\\LocalLow\\DefaultCompany\\OutPost\\MonsterAIResearch\\20261014_232641_79ed80cc96fc47049761bf7b042f4e39\\actions.csv",
+      "C:\\Users\\minsa\\AppData\\LocalLow\\DefaultCompany\\OutPost\\MonsterAIResearch\\20261014_232641_79ed80cc96fc47049761bf7b042f4e39\\battles.csv",
+      "C:\\Users\\minsa\\AppData\\LocalLow\\DefaultCompany\\OutPost\\MonsterAIResearch\\20261014_232641_79ed80cc96fc47049761bf7b042f4e39\\participants.csv"
+    ]
+  }
+]

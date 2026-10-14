@@ -48,7 +48,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         ? owner.CurrentTarget.GetComponentInParent<PlayerPresenter>() : null;
 
     private bool UsesLearnedPolicy => learning != null && learning.Settings.learningMode != MonsterLearningMode.Baseline &&
-        (owner.IsNaturalSpawn || learning.Settings.wavesUseLearnedPolicy);
+        (owner.IsLearningEligible || (owner.IsWaveMonster && learning.Settings.wavesUseLearnedPolicy));
 
     private float PrepareWeights()
     {

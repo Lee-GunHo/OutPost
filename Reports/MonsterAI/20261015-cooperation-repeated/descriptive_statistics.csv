@@ -1,0 +1,15 @@
+﻿cooperation,metric,n,mean,sampleSD,minimum,maximum
+OFF,directDamage,1,24,,24,24
+OFF,battleSeconds,1,26.60336,,26.60336,26.60336
+OFF,meanEngagedSeconds,1,22.63451,,22.63451,22.63451
+OFF,roleChanges,1,0,,0,0
+OFF,surroundCount,1,0,,0,0
+OFF,surroundSeconds,1,0.0,,0.0,0.0
+OFF,overlapSeconds,1,0.0,,0.0,0.0
+ON,directDamage,2,37.5,21.920310216782973,22,53
+ON,battleSeconds,2,34.578975,3.074634634887536,32.40488,36.75307
+ON,meanEngagedSeconds,2,29.336262499999997,0.5901583906461054,28.918957499999998,29.7535675
+ON,roleChanges,2,45.5,16.263455967290593,34,57
+ON,surroundCount,2,0,0.0,0,0
+ON,surroundSeconds,2,0.0,0.0,0.0,0.0
+ON,overlapSeconds,2,0.0,0.0,0.0,0.0

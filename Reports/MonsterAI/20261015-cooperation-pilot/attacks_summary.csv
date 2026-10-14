@@ -1,0 +1,9 @@
+﻿mode,cooperation,naturalSpawn,squadPolicyVersion,learningSource,action,selected,eligibleDecisions,selectionRate,selectionWhenEligible,releasedResolved,damageHits,damageHitRate,damage,cancelled,blocked
+Training,False,False,2,RegisteredTest,Melee,0,0,0.0,,0,0,,0,0,0
+Training,False,False,2,RegisteredTest,Projectile,19,23,0.48717948717948717,0.8260869565217391,16,0,0.0,0,3,0
+Training,False,False,2,RegisteredTest,Circle,12,17,0.3076923076923077,0.7058823529411765,10,1,0.1,12,2,0
+Training,False,False,2,RegisteredTest,Charge,8,15,0.20512820512820512,0.5333333333333333,7,0,0.0,0,1,0
+Training,True,False,2,RegisteredTest,Melee,0,0,0.0,,0,0,,0,0,0
+Training,True,False,2,RegisteredTest,Projectile,16,22,0.47058823529411764,0.7272727272727273,14,1,0.07142857142857142,8,2,0
+Training,True,False,2,RegisteredTest,Circle,15,19,0.4411764705882353,0.7894736842105263,10,0,0.0,0,5,0
+Training,True,False,2,RegisteredTest,Charge,3,13,0.08823529411764706,0.23076923076923078,3,0,0.0,0,0,0

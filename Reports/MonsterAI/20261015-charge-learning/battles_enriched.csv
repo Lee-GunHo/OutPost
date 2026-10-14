@@ -1,0 +1,10 @@
+﻿battleId,mode,cooperation,startTime,duration,playerStartHp,playerEndHp,uniqueMonsterCount,damageToMonsters,result,overlapSeconds,surroundSeconds,surroundCount,roleSwitchCount,directDamageToPlayer,squadPolicyVersion
+6fd6ee7a94a1403f96bd7938c30db813,Baseline,False,20.53163,113.375,230,196,5,250,Disengaged,0,0,0,0,34,2
+a5dd334e55c54d1ba03012967b2766a4,Training,False,163.1609,239.5077,196,127,11,550,Disengaged,0,0,0,0,69,2
+ff8ed2a66cda40888a651082f50e193d,Training,False,409.6869,111.7987,127,75,5,250,Disengaged,0,0,0,0,52,2
+f378c6d0d2144918abe9f46e013a8d2f,Training,False,527.0221,92.53827,75,44,5,250,Disengaged,0,0,0,0,31,2
+3952b11e0a05443781ef6156de61bb42,Training,False,630.421,63.87714,44,17,2,100,Disengaged,0,0,0,0,27,2
+5274f0a132834511a487efb713a02a66,Training,False,700.2893,50.69366,17,0,3,130,PlayerDied,0,0,0,0,17,2
+0e889c585a9547f0a31c17b6471c238c,Training,False,752.0175,1.889526,115,115,1,20,Disengaged,0,0,0,0,0,2
+5c7fbac35dca40d0b59c5a1448d358a5,Frozen,False,774.1644,21.61365,115,109,1,50,Disengaged,0,0,0,0,6,2
+5684b687d556414b8439bb09bc4646fb,Frozen,False,804.5325,69.64166,109,85,4,200,Disengaged,0,0,0,0,24,2

@@ -56,7 +56,8 @@ def analyze(directories, output):
     contextual = defaultdict(list)
     damage_by_battle = defaultdict(int)
     for row in actions:
-        key = (row["mode"], row["cooperation"], row["naturalSpawn"], configs.get(row["battleId"], {}).get("squadPolicyVersion", "1"))
+        source = "RegisteredTest" if row.get("registeredLearningTest") == "True" else "Natural" if row["naturalSpawn"] == "True" else "Other"
+        key = (row["mode"], row["cooperation"], row["naturalSpawn"], configs.get(row["battleId"], {}).get("squadPolicyVersion", "1"), source)
         grouped[key].append(row)
         contextual[key + (row["monsterType"], row["context"])].append(row)
         damage_by_battle[row["battleId"]] += int(row["damageDealt"])
@@ -68,8 +69,8 @@ def analyze(directories, output):
                 chosen = [r for r in rows if r["action"] == action]
                 resolved = [r for r in chosen if r["released"] == "True" and r["outcome"] in RESOLVED]
                 eligible = [r for r in rows if action in r["eligibleActions"].split(";")]
-                result.append(dict(mode=key[0], cooperation=key[1], naturalSpawn=key[2], squadPolicyVersion=key[3],
-                    **({"monsterType": key[4], "context": key[5]} if context else {}),
+                result.append(dict(mode=key[0], cooperation=key[1], naturalSpawn=key[2], squadPolicyVersion=key[3], learningSource=key[4],
+                    **({"monsterType": key[5], "context": key[6]} if context else {}),
                     action=action, selected=len(chosen), eligibleDecisions=len(eligible),
                     selectionRate=ratio(len(chosen), len(rows)),
                     selectionWhenEligible=ratio(len(chosen), len(eligible)),
@@ -133,7 +134,7 @@ def analyze(directories, output):
             lines.append("| " + " | ".join(display(row[c]) for c in columns) + " |")
         lines.append("")
     table("Completed battles", comparison, ["mode", "cooperation", "squadPolicyVersion", "completedBattles", "meanDirectDamageToPlayer", "meanBattleSeconds", "meanOverlapSeconds", "meanSurroundSeconds"])
-    table("Attack observations (rates are 0..1)", summaries, ["mode", "cooperation", "naturalSpawn", "squadPolicyVersion", "action", "selected", "releasedResolved", "damageHitRate"])
+    table("Attack observations (rates are 0..1)", summaries, ["mode", "cooperation", "learningSource", "squadPolicyVersion", "action", "selected", "releasedResolved", "damageHitRate"])
     table("Formation decisions", formation_summary, ["mode", "cooperation", "squadPolicyVersion", "formation", "decisionCount", "formationEntries"])
     (output / "report.md").write_text("\n".join(lines), encoding="utf-8")
     for filename in ("attacks.png", "learning_weights.png"):
@@ -150,8 +151,8 @@ def analyze(directories, output):
     if summaries:
         fig, axes = plt.subplots(1, 2, figsize=(12, 4))
         for key in sorted(grouped):
-            subset = [r for r in summaries if (r["mode"], r["cooperation"], r["naturalSpawn"], r["squadPolicyVersion"]) == key]
-            label = f"{key[0]} coop={key[1]} natural={key[2]} squadV={key[3]}"
+            subset = [r for r in summaries if (r["mode"], r["cooperation"], r["naturalSpawn"], r["squadPolicyVersion"], r["learningSource"]) == key]
+            label = f"{key[0]} coop={key[1]} {key[4]} squadV={key[3]}"
             axes[0].plot(ACTIONS, [float(r["selectionRate"]) for r in subset], marker="o", label=label)
             axes[1].plot(ACTIONS, [float(r["damageHitRate"]) if r["damageHitRate"] != "" else float("nan") for r in subset], marker="o", label=label)
         axes[0].set_title("Attack selection share")

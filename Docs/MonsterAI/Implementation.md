@@ -1,6 +1,6 @@
 # OutPost 몬스터 AI — 구현 상태와 비교 실험 안내
 
-2026-10-14 기준. 협동 정책 2차 구현을 반영했다. 이 문서는 코드 구현과 향후 검증을 구분한다. 이 PC의 프로젝트 저장 경로에는 실제 몬스터 AI 로그가 아직 없으며 시연 영상도 만들지 않았다.
+2026-10-15 기준. 협동 정책 2차 구현 및 직접 배치한 테스트 몬스터의 명시적 학습 등록을 반영했다. 10월 15일 확인한 첫 실험 로그는 미등록 배치 개체라 학습 버전이 0이었다. 학습 효과는 아직 검증되지 않았다.
 
 ## 교수님 요청 대응
 
@@ -17,18 +17,30 @@
 
 - 기존 몬스터 프리팹 수정 없이 `MonsterCombatPresenter.Start()`에서 씬에 `Monster AI research` 오브젝트를 만든다.
 - 이 오브젝트의 `MonsterAIExperimentModel`에서 설정한다.
-  - `Learning Mode = Training`: 자연 생성 개체의 경험 수집 및 학습.
+  - `Learning Mode = Training`: 자연 생성 개체 및 명시적으로 등록한 테스트 개체의 경험 수집 및 학습.
   - `Baseline`: 학습 배율 1, 학습 데이터 변경 없음.
   - `Frozen`: 저장된 학습값 사용, 추가 학습 없음. 비교 실험용.
   - `Cooperation Enabled`: 진형·역할·공동 공격 시작 제한을 함께 켜거나 끈다. 충돌 회피/겹침 완화는 양쪽 모두 유지한다.
   - `Wave Squad Withdrawal`: 기본 false, 사용자 선택도 false. 습격 몬스터는 집단 명령과 개인 확률 양쪽에서 완전 퇴각을 하지 않고 재집결 후 공격한다. 자연 몬스터는 조건에 따라 퇴각한다.
-  - `Waves Use Learned Policy`: 기본 false. true면 웨이브 등 자연 생성으로 표시되지 않은 일반 몬스터도 학습값을 사용할 수 있다. 이들은 경험을 갱신하지 않는다.
+  - `Waves Use Learned Policy`: 기본 false. true면 웨이브 몬스터도 학습값을 사용할 수 있다. 웨이브는 테스트 체크 여부와 관계없이 경험을 갱신하지 않는다. 미등록 배치 개체에는 이 옵션을 적용하지 않는다.
   - `Write Csv`: 기본 true. CSV와 정책 스냅샷 기록.
   - `Show Overlay`: 기본 false. 버전·모드·기록 수를 개발용 화면에 표시.
 - 다른 기본 설정으로 시작하려면 게임씬의 빈 오브젝트에 `MonsterLearningPresenter`를 미리 붙이고 자동 추가된 Model에서 설정한다. 같은 씬에 하나만 둔다.
 - `MonsterSpawner`가 생성 개체를 `MarkNaturalSpawn(prefab.name)`으로 표시한다. 다른 자연 스포너를 추가한다면 동일 호출을 연결해야 한다.
 - 보스는 적용 대상이 아니다.
 - 개체는 생성 후 Start 시점의 학습 스냅샷을 사용한다. 경험은 계속 공유 기억에 쌓이지만 살아 있는 모든 몬스터의 행동이 매번 즉시 바뀌지는 않는다. 새 개체가 새 기억을 사용한다. 모드 변경/로드 시 기존 개체도 다음 선택 전에 스냅샷을 갱신한다.
+
+## 직접 배치한 테스트 몬스터 등록 / 돌진 실험
+
+1. Play 모드를 종료하고, 배치한 일반 몬스터의 `MonsterModel`에서 `Learning Test Registration > Test Learning Enabled`를 체크한다. 기본값은 OFF다. 테스트할 모든 배치 개체에 적용한다. 전체 게임 프리팹에 적용할 필요는 없다.
+2. `Test Learning Type`을 모든 테스트 개체에서 동일하게 설정한다. 기본 `TestMonster`는 테스트 경험을 별도로 공유한다. 자연 생성 개체와 공유하려면 해당 프리팹 이름(예: `Monster_Main`)을 입력한다. 빈 값은 `TestMonster`로 처리된다. 복제 오브젝트 이름의 `(1)` 등은 학습 그룹을 나누지 않는다. 이 값은 실험 중 변경하지 않는다.
+3. `Monster AI research`에서 Training / Cooperation OFF / Write CSV ON / Show Overlay ON으로 설정한다. 테스트 개체도 Baseline에서는 학습값 미적용, Training에서는 학습 및 적용, Frozen에서는 적용만 수행한다.
+4. 공격 몇 번의 결과가 확정된 뒤 내보내서 `learning_updates.csv` 및 `policy_vN.json`의 entries/version 증가를 확인한다. actions.csv와 participant_configs.csv에는 `naturalSpawn=False`, `registeredLearningTest=True`, `learningEligible=True`로 기록된다. 테스트 개체를 자연 생성으로 위장하지 않는다. 기존 CSV도 분석할 수 있으며 공격 요약은 Natural / RegisteredTest / Other를 분리한다.
+5. 돌진 성공도 다른 패턴처럼 실제 HP 피해 기준으로 학습한다. 기본 사거리 기준 약 2.5~3 거리에서 돌진은 맞고 다른 패턴은 가능한 한 피한 뒤 다시 거리를 맞춘다. 돌진 외의 공격을 비활성화하면 선택지가 줄어 비교 의미가 약해진다. 벽에 막힌 돌진/공격 중단은 성공·실패 학습에서 제외된다.
+6. Baseline과 Frozen 측정에서도 같은 플레이 방식을 유지한다. Training 이후 교전이 끝난 상태에서 Frozen으로 바꾸면 기존 개체도 다음 공격 선택 시 현재 학습 기억을 가져온다. 새로 배치한 개체를 사용하는 경우 같은 Test Learning Type과 체크 상태를 유지한다.
+7. 같은 장비·시작 체력·몬스터 종류·장소를 유지하고 각 반복 전투 사이에 교전 종료 후 약 5초 기다린다. 처음 몇 건으로 학습 작동을 확인한 뒤 본 측정을 진행한다. 돌진 선택 비율 증가나 성능 향상을 사전에 보장하지 않는다.
+
+테스트 경험도 기존 학습 JSON에 저장되므로 이어하기 유지/새로하기 초기화 규칙은 같다. 웨이브로 초기화된 개체는 테스트 설정과 자연 생성 등록 여부에 관계없이 학습 대상에서 제외된다. 새 CSV 열이 추가되므로 변경 후에는 새 Play 세션에서 수집한다. 기존 원본 로그는 그대로 보관한다.
 
 ## A. 개별 몬스터 학습 AI
 

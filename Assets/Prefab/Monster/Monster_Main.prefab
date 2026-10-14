@@ -160,7 +160,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 640e9a8b71a18ec40a382996cc109372, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterModel
+  testLearningEnabled: 1
+  testLearningType: TestMonster
   moveSpeed: 3
+  bodySpacing: 0.08
+  separationSpeed: 2
   chaseRange: 8
   attackRange: 1.5
   attackPower: 10
@@ -195,6 +199,7 @@ MonoBehaviour:
   behaviorMode: 0
   nexusTransform: {fileID: 0}
   playerAggroReleaseRange: 12
+  playerHitAggroDuration: 3
   attackCooldown: 1
   nexusAttackRange: 1
   nexusStoppingDistance: 0.1

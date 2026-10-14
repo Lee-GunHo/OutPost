@@ -1,0 +1,13 @@
+﻿mode,cooperation,naturalSpawn,squadPolicyVersion,learningSource,action,selected,eligibleDecisions,selectionRate,selectionWhenEligible,releasedResolved,damageHits,damageHitRate,damage,cancelled,blocked
+Baseline,False,False,2,RegisteredTest,Melee,1,1,0.022222222222222223,1.0,1,1,1.0,2,0,0
+Baseline,False,False,2,RegisteredTest,Projectile,20,27,0.4444444444444444,0.7407407407407407,18,0,0.0,0,2,0
+Baseline,False,False,2,RegisteredTest,Circle,15,20,0.3333333333333333,0.75,11,2,0.18181818181818182,8,4,0
+Baseline,False,False,2,RegisteredTest,Charge,9,23,0.2,0.391304347826087,9,8,0.8888888888888888,24,0,0
+Frozen,False,False,2,RegisteredTest,Melee,0,0,0.0,,0,0,,0,0,0
+Frozen,False,False,2,RegisteredTest,Projectile,16,24,0.4,0.6666666666666666,16,0,0.0,0,0,1
+Frozen,False,False,2,RegisteredTest,Circle,12,20,0.3,0.6,12,0,0.0,0,0,0
+Frozen,False,False,2,RegisteredTest,Charge,12,16,0.3,0.75,12,10,0.8333333333333334,30,0,0
+Training,False,False,2,RegisteredTest,Melee,9,10,0.037037037037037035,0.9,9,9,1.0,18,0,0
+Training,False,False,2,RegisteredTest,Projectile,102,141,0.41975308641975306,0.723404255319149,95,2,0.021052631578947368,2,7,7
+Training,False,False,2,RegisteredTest,Circle,70,121,0.2880658436213992,0.5785123966942148,62,3,0.04838709677419355,12,8,0
+Training,False,False,2,RegisteredTest,Charge,62,101,0.2551440329218107,0.6138613861386139,60,55,0.9166666666666666,164,2,0

@@ -1,0 +1,5 @@
+﻿actionId,monsterType,context,action,attempts,hits,reward,oldWeight,newWeight,version
+cc7b9d07a04044b3b18ae3035b8803b4,TestMonster,1:0:0,Charge,1,1,1,1,1.006154,2
+08f62cac96874d01bb2ba39aa38f5b15,TestMonster,1:0:0,Charge,2,2,1,1.006154,1.021943,4
+1d7faaa27add49cfb43b7831421eb6bf,TestMonster,1:0:0,Charge,3,2,-0.25,1.021943,1.024262,6
+8c5fc04393cd44aa81b8f442b8c3438c,TestMonster,1:0:0,Charge,53,48,1,1.746561,1.754506,219

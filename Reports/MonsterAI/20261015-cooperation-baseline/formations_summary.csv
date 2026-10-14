@@ -1,0 +1,5 @@
+﻿mode,cooperation,squadPolicyVersion,formation,decisionCount,formationEntries
+Baseline,True,2,Pair,2,2
+Baseline,True,2,Solo,2,1
+Baseline,True,2,Surround,22,2
+Baseline,True,2,Triangle,6,3
