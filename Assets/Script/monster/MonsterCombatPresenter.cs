@@ -33,7 +33,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         RefreshPolicy();
     }
 
-    public bool IsAttackReady(MonsterAttackKind kind) => SupportsAttack(kind) && model.IsReady(kind, Time.time);
+    public bool IsAttackReady(MonsterAttackKind kind) => SupportsAttack(kind) && (owner.Behavior == null || owner.Behavior.AllowsAttack(kind)) && model.IsReady(kind, Time.time);
 
     public bool SupportsAttack(MonsterAttackKind kind) => model != null && model.IsEnabled(kind) && model.GetWeight(kind) > 0f;
 
@@ -72,6 +72,9 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         return total;
     }
     public bool IsExecuting { get; private set; }
+    // Charge windup and travel resist hit stun/knockback; recovery is vulnerable again.
+    public bool ResistsHitReaction => IsExecuting && activeKind == MonsterAttackKind.Charge &&
+        (!released || model.IsCharging);
     public float TargetDistance
     {
         get
@@ -99,15 +102,19 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         return false;
     }
 
+    public float EffectiveProjectileRange => model.ProjectileRange * (owner.Behavior != null ? owner.Behavior.ProjectileRangeMultiplier : 1f);
+
     public float GetFormationDistance(MonsterSquadRole role)
     {
-        if (role == MonsterSquadRole.Pressure && SupportsAttack(MonsterAttackKind.Melee)) return Mathf.Max(0.5f, owner.AttackRange * 0.8f);
-        if (role == MonsterSquadRole.Flanker && model.IsEnabled(MonsterAttackKind.Charge) && model.GetWeight(MonsterAttackKind.Charge) > 0f)
-            return Mathf.Lerp(model.ChargeMinRange, model.ChargeDistance, 0.6f);
-        if (model.IsEnabled(MonsterAttackKind.Projectile) && model.GetWeight(MonsterAttackKind.Projectile) > 0f)
-            return Mathf.Lerp(model.ProjectileMinRange, model.ProjectileRange, 0.65f);
-        if (model.IsEnabled(MonsterAttackKind.Circle) && model.GetWeight(MonsterAttackKind.Circle) > 0f)
-            return model.CircleRadius * 0.8f;
+        if (role == MonsterSquadRole.Support && SupportsAttack(MonsterAttackKind.Projectile))
+            return Mathf.Lerp(model.ProjectileMinRange, EffectiveProjectileRange, 0.4f);
+        if (role == MonsterSquadRole.Flanker)
+        {
+            // Close the ring without changing assigned angles or entering the charge dead zone.
+            if (SupportsAttack(MonsterAttackKind.Charge)) return Mathf.Lerp(model.ChargeMinRange, model.ChargeDistance, 0.35f);
+            if (SupportsAttack(MonsterAttackKind.Circle)) return model.CircleRadius * 0.7f;
+            if (SupportsAttack(MonsterAttackKind.Projectile)) return Mathf.Lerp(model.ProjectileMinRange, model.ProjectileRange, 0.45f);
+        }
         return Mathf.Max(0.5f, owner.AttackRange * 0.8f);
     }
 
@@ -198,14 +205,14 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         direction.Normalize();
         owner.StopMove();
         owner.transform.rotation = Quaternion.LookRotation(direction);
-        model.Commit(kind, Time.time, owner.AttackCooldown, owner.Behavior != null ? owner.Behavior.GetCooldownScale(kind) : 1f);
+        model.Commit(kind, Time.time, owner.AttackCooldown);
         owner.Behavior?.RecordAttack(kind);
         phaseRemaining = model.GetWindup(kind);
         released = false;
         IsExecuting = true;
         view.ShowWarning(kind, origin, direction,
             kind == MonsterAttackKind.Circle ? model.CircleRadius
-            : kind == MonsterAttackKind.Charge ? model.ChargeDistance : model.ProjectileRange);
+            : kind == MonsterAttackKind.Charge ? model.ChargeDistance : EffectiveProjectileRange);
         AttackStarted?.Invoke(kind);
         return true;
     }
@@ -213,7 +220,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
     public void Tick(float deltaTime)
     {
         if (!IsExecuting) return;
-        if (owner.IsDead) { Cancel(); return; }
+        if (owner.IsDead || (owner.Behavior != null && !owner.Behavior.AllowsAttack(activeKind))) { Cancel(); return; }
         if (model.IsCharging) return; // FixedUpdate owns the active movement phase.
         phaseRemaining -= deltaTime;
         if (phaseRemaining > 0f) return;
@@ -230,7 +237,12 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
 
     private bool CanUse(MonsterAttackKind kind, bool requireReady = true)
     {
-        if (!model.IsEnabled(kind) || model.GetWeight(kind) <= 0f ||
+        // Close-range formation defense selects the basic attack, including waiting for
+        // its cooldown. This filters new choices only, so a running charge is not cancelled.
+        if (kind != MonsterAttackKind.Melee && owner.Behavior != null && owner.Behavior.PrioritizesCloseMelee)
+            return false;
+        if ((owner.Behavior != null && !owner.Behavior.AllowsAttack(kind)) ||
+            !model.IsEnabled(kind) || model.GetWeight(kind) <= 0f ||
             (requireReady && !model.IsReady(kind, Time.time))) return false;
         Component target = ResolveTarget(owner.CurrentTarget);
         if (target == null) return false;
@@ -242,7 +254,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
             : kind == MonsterAttackKind.Circle ? distance <= model.CircleRadius
             : kind == MonsterAttackKind.Charge ? CanCharge &&
                 distance >= model.ChargeMinRange && distance <= model.ChargeDistance
-            : distance >= model.ProjectileMinRange && distance <= model.ProjectileRange;
+            : distance >= model.ProjectileMinRange && distance <= EffectiveProjectileRange;
         return inRange && HasLineOfSight(target, owner.transform.position + Vector3.up * 0.3f);
     }
 
@@ -257,7 +269,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         else if (activeKind == MonsterAttackKind.Projectile)
         {
             // Aim is fixed at windup start, so moving sideways can dodge the shot.
-            MonsterProjectilePresenter.Spawn(origin, direction, model, payload, owner.transform, view.AttackMaterial);
+            MonsterProjectilePresenter.Spawn(origin, direction, model, payload, owner.transform, view.AttackMaterial, EffectiveProjectileRange);
         }
         else if (activeKind == MonsterAttackKind.Circle)
         {
@@ -302,7 +314,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
             owner.StopMove();
             return;
         }
-        if (owner.IsDead) { Cancel(); return; }
+        if (owner.IsDead || (owner.Behavior != null && !owner.Behavior.AllowsAttack(activeKind))) { Cancel(); return; }
         if (!CanCharge) { EndCharge(); observation?.Complete("Interrupted"); return; }
 
         const float skin = 0.03f;

@@ -5,6 +5,13 @@ public enum MonsterBehaviorAction { Idle, Chase, Attack, Retreat, HoldDistance, 
 // Decision tuning and memory. Navigation and FSM transitions belong to presenters.
 public sealed class MonsterBehaviorModel : MonoBehaviour
 {
+    public const float FlankAttackAngleTolerance = 35f;
+    public const float FlankAttackDistanceAllowance = 1f;
+    public const float SupportHoldDistanceScale = 0.7f;
+    public const float SupportHoldAngleTolerance = 40f;
+    public const float SupportHoldOuterAllowance = 0.75f;
+    public const float FormationCatchUpAllowance = 1.5f;
+
     [SerializeField, Range(0f, 1f)] private float lowHealthRatio = 0.35f;
     [SerializeField, Min(0f)] private float recentHitDuration = 2f;
     [SerializeField, Min(0.1f)] private float retreatTriggerDistance = 2.5f;
@@ -14,35 +21,13 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
     [SerializeField, Min(0f)] private float retreatCooldown = 5f;
     [SerializeField, Min(0.1f)] private float retreatSpeedMultiplier = 1.2f;
 
-    [Header("Formation roles")]
-    [SerializeField, Min(1f)] private float vanguardSpeedMultiplier = 1.25f;
-    [SerializeField, Range(0f, 1f)] private float rearFlankChance = 0.7f;
-    [SerializeField, Min(0.1f)] private float rearFlankInterval = 1.8f;
-    [SerializeField, Range(0.5f, 1f)] private float supportProjectileCooldownScale = 0.85f;
-    public float SupportProjectileCooldownScale => Mathf.Clamp(supportProjectileCooldownScale, 0.5f, 1f);
     public MonsterSquadFormation SquadFormation { get; private set; }
     public bool ExploitOpening { get; private set; }
     public Vector3 RallyPosition { get; private set; }
     public void SetRallyPosition(Vector3 position) { RallyPosition = position; }
     public void BeginSquadWithdrawal() { IsFleeing = true; }
 
-    private float nextRearFlankTime = float.NegativeInfinity;
-    private float rearFlankOffset;
-    public float AdvanceSpeedMultiplier => squadRole == MonsterSquadRole.Pressure
-        ? Mathf.Max(1f, vanguardSpeedMultiplier) : 1f;
-
-    public bool TryRearFlank(float now, float roll)
-    {
-        if (engagedMonsterCount < 2 ||
-            (squadRole != MonsterSquadRole.Support && squadRole != MonsterSquadRole.Flanker) ||
-            now < nextRearFlankTime) return false;
-        nextRearFlankTime = now + Mathf.Max(0.1f, rearFlankInterval);
-        if (roll >= rearFlankChance) return false;
-        // Stay inside our own angular slot; rear members must not cross each other's positions.
-        float limit = Mathf.Min(20f, 90f / engagedMonsterCount) * Mathf.Deg2Rad;
-        rearFlankOffset = rearFlankOffset <= 0f ? limit : -limit;
-        return true;
-    }
+    public float AdvanceSpeedMultiplier => MonsterSquadModel.SpeedMultiplier(squadRole);
 
     [Header("Disengage and despawn")]
     [SerializeField, Range(0f, 1f)] private float fleeChance = 0.05f;
@@ -86,15 +71,10 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
     public MonsterSquadRole SquadRole => squadRole;
     public int EngagedMonsterCount => engagedMonsterCount;
     public float AssignedFormationAngle { get; private set; }
-    public float FormationAngle => AssignedFormationAngle + rearFlankOffset;
+    public float FormationAngle => AssignedFormationAngle;
 
     public void SetSquadAssignment(MonsterSquadAssignment assignment)
     {
-        if (squadRole != assignment.Role || engagedMonsterCount != assignment.Count)
-        {
-            rearFlankOffset = 0f;
-            nextRearFlankTime = float.NegativeInfinity;
-        }
         SquadFormation = assignment.Formation;
         ExploitOpening = assignment.ExploitOpening;
         squadRole = assignment.Role;
@@ -133,8 +113,12 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
     public void EndRetreat() { IsRetreating = false; }
     public void DelayFailedRetreat(float now) { nextRetreatTime = now + 0.75f; }
 
+    public static bool AllowsAttack(MonsterSquadRole role, MonsterAttackKind kind) =>
+        !(role == MonsterSquadRole.Pressure && kind == MonsterAttackKind.Projectile) &&
+        !(role == MonsterSquadRole.Support && kind == MonsterAttackKind.Charge);
+
     public float AttackWeight(MonsterAttackKind kind, float baseWeight, float healthRatio,
-        float distance, float meleeRange, float now)
+        float distance, float meleeRange, float now, bool cooperating = true)
     {
         bool low = IsLowHealth(healthRatio);
         bool hit = WasRecentlyHit(now);
@@ -162,13 +146,16 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
         }
         // Prefer variety, while still allowing the only legal attack to be used.
         if (lastAttack == kind) preference *= 0.3f;
-        if (squadRole == MonsterSquadRole.Pressure)
-            preference *= kind == MonsterAttackKind.Melee || kind == MonsterAttackKind.Circle ? 3f : 0.25f;
-        else if (squadRole == MonsterSquadRole.Support)
-            preference *= kind == MonsterAttackKind.Projectile ? 4f : 0.2f;
-        else if (squadRole == MonsterSquadRole.Flanker)
-            preference *= kind == MonsterAttackKind.Charge ? 4f : 0.4f;
-        if (ExploitOpening && squadRole == MonsterSquadRole.Flanker && kind == MonsterAttackKind.Charge) preference *= 1.5f;
+        if (cooperating)
+        {
+            if (!AllowsAttack(squadRole, kind)) return 0f;
+            if (squadRole == MonsterSquadRole.Pressure)
+                preference *= kind == MonsterAttackKind.Charge ? 6f : 1f;
+            else if (squadRole == MonsterSquadRole.Support)
+                preference *= kind == MonsterAttackKind.Projectile ? 12f : 0.15f;
+            if (ExploitOpening && squadRole == MonsterSquadRole.Flanker && kind == MonsterAttackKind.Charge)
+                preference *= 1.5f;
+        }
         return Mathf.Max(0f, baseWeight) * preference;
     }
 }

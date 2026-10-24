@@ -31,7 +31,7 @@ public sealed class MonsterCombatTelemetryPresenter : MonoBehaviour
             recorder.Write("battle_configs.csv", "battleId,storedWorldSeed,playerLevel,playerMaxHp,playerAttack,playerDefense,playerX,playerY,playerZ,policyVersion,wavesUseLearnedPolicy,squadPolicyVersion,waveSquadWithdrawal",
                 battle.Id, GlobalSeedManager.StoredSeed, player.Level, player.MaxHp, player.AttackPower, player.DefensePower,
                 player.transform.position.x, player.transform.position.y, player.transform.position.z,
-                recorder.Memory.version, recorder.Settings.wavesUseLearnedPolicy, 2, recorder.Settings.waveSquadWithdrawal);
+                recorder.Memory.version, recorder.Settings.wavesUseLearnedPolicy, MonsterSquadModel.PolicyVersion, recorder.Settings.waveSquadWithdrawal);
         }
         battle.LastEngagedAt = Time.time;
         if (!battle.Members.TryGetValue(owner.CombatIdentity, out var member) || member.Exited)

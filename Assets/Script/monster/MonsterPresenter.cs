@@ -341,6 +341,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
 
     public void KnockbackFromPlayer()
     {
+        if (Combat != null && Combat.ResistsHitReaction) return;
         if (!TryResolvePlayer() || !CanNavigate)
         {
             return;
@@ -443,7 +444,9 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         playerHitAggroUntil = Time.time + Mathf.Max(playerHitAggroDuration, HitDuration);
 
         int previousHp = monsterModel.CurrentHp;
-        monsterModel.TakeDamage(damage);
+        // Derive from the current role rather than mutating base stats on each reassignment.
+        float damageScale = Behavior != null ? Behavior.DamageTakenMultiplier : 1f;
+        monsterModel.TakeDamage(Mathf.CeilToInt(Mathf.Max(0, damage) * damageScale));
         MonsterSquadPresenter.RecordDamage(this, 0f, Mathf.Max(0, previousHp - monsterModel.CurrentHp));
         if (monsterModel.CurrentHp < previousHp) Behavior.RecordHit();
         MonsterLearningPresenter.Instance?.Telemetry.DamageTaken(this, Mathf.Max(0, previousHp - monsterModel.CurrentHp));
@@ -459,7 +462,7 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
         {
             stateManager.ChangeState(stateManager.DeadState);
         }
-        else
+        else if (Combat == null || !Combat.ResistsHitReaction)
         {
             stateManager.ChangeState(stateManager.HitState);
         }

@@ -9,14 +9,14 @@ public sealed class MonsterProjectilePresenter : MonoBehaviour
     private Transform owner;
 
     public static void Spawn(Vector3 origin, Vector3 direction, MonsterCombatModel settings,
-        MonsterAttackPayload payload, Transform owner, Material material)
+        MonsterAttackPayload payload, Transform owner, Material material, float range)
     {
         GameObject projectile = new GameObject("Monster projectile");
         projectile.transform.position = origin;
         var presenter = projectile.AddComponent<MonsterProjectilePresenter>();
         presenter.owner = owner;
         presenter.model = new MonsterProjectileModel(origin, direction, settings.ProjectileSpeed,
-            settings.ProjectileRadius, settings.ProjectileRange, payload);
+            settings.ProjectileRadius, range, payload);
         presenter.view = projectile.GetComponent<MonsterProjectileView>();
         presenter.view.Initialize(settings.ProjectileRadius, material);
     }

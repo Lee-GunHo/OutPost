@@ -99,12 +99,14 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
     public void RecordFormation(string group, MonsterPresenter owner, MonsterSquadAssignment assignment, string reason)
     {
         var stats = owner.GetComponent<MonsterModel>();
-        Write("formations.csv", "time,mode,cooperation,groupId,monsterId,count,formation,role,angle,reason,exploitOpening,squadPolicyVersion,hpRatio,moveSpeed,projectileReady,chargeReady,frontAttackReady,isWave",
+        Write("formations.csv", "time,mode,cooperation,groupId,monsterId,count,formation,role,angle,reason,exploitOpening,squadPolicyVersion,hpRatio,moveSpeed,projectileReady,chargeReady,frontAttackReady,isWave,currentHp,effectiveMoveSpeed,effectiveProjectileRange,damageTakenMultiplier",
             Time.time, Settings.learningMode, Settings.cooperationEnabled, group, owner.CombatIdentity,
-            assignment.Count, assignment.Formation, assignment.Role, assignment.Angle, reason, assignment.ExploitOpening, 2,
+            assignment.Count, assignment.Formation, assignment.Role, assignment.Angle, reason, assignment.ExploitOpening, MonsterSquadModel.PolicyVersion,
             stats.CurrentHp / (float)Mathf.Max(1, stats.MaxHp), owner.MoveSpeed,
             owner.Combat.IsAttackReady(MonsterAttackKind.Projectile), owner.Combat.IsAttackReady(MonsterAttackKind.Charge),
-            owner.Combat.IsAttackReady(MonsterAttackKind.Melee) || owner.Combat.IsAttackReady(MonsterAttackKind.Circle), owner.IsWaveMonster);
+            owner.Combat.IsAttackReady(MonsterAttackKind.Melee) || owner.Combat.IsAttackReady(MonsterAttackKind.Circle), owner.IsWaveMonster,
+            stats.CurrentHp, owner.MoveSpeed * owner.Behavior.AdvanceSpeedMultiplier,
+            owner.Combat.EffectiveProjectileRange, owner.Behavior.DamageTakenMultiplier);
     }
 
     private void Update()

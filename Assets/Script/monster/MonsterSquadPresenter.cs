@@ -107,8 +107,7 @@ public sealed class MonsterSquadPresenter : MonoBehaviour
                 Time.time, encounter.Id, MonsterLearningPresenter.Instance.Settings.learningMode, true, encounter.Model.Formation,
                 oldFormation != encounter.Model.Formation, encounter.Model.ChangeReason, encounter.Model.Count,
                 encounter.Model.AverageHp, encounter.Model.PlayerHp, focusId,
-                MonsterLearningPresenter.Instance.Settings.waveSquadWithdrawal, 2);
-            encounter.Model.AdvanceFlank(Time.time);
+                MonsterLearningPresenter.Instance.Settings.waveSquadWithdrawal, MonsterSquadModel.PolicyVersion);
             encounter.Members.Sort((a, b) => a.GetInstanceID().CompareTo(b.GetInstanceID()));
             int rallySlot = 0;
             float rallyAngle = encounter.Model.RallyAngle;

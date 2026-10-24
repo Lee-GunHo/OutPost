@@ -32,11 +32,24 @@ public struct MonsterSquadAssignment
 // Rule-based group policy. No learned weights or player-pattern memory are read here.
 public sealed class MonsterSquadModel
 {
+    public const int PolicyVersion = 3;
+    public const float ReassessmentInterval = 2f;
+    public static float SpeedMultiplier(MonsterSquadRole role) => role == MonsterSquadRole.Flanker ? 1.25f : 1f;
+    public static float DamageTakenMultiplier(MonsterSquadRole role) => role == MonsterSquadRole.Pressure ? 0.5f : 1f;
+    public static float ProjectileRangeMultiplier(MonsterSquadRole role) => role == MonsterSquadRole.Support ? 1.5f : 1f;
+
+    // Round to whole members, keeping a front and a ranged support in groups of two or more.
+    public static void RoleCounts(int count, out int pressure, out int support, out int flank)
+    {
+        if (count <= 1) { pressure = support = flank = 0; return; }
+        pressure = Math.Max(1, (int)Math.Round(count / 6f, MidpointRounding.AwayFromZero));
+        flank = Math.Min(count - pressure - 1, (int)Math.Round(count / 3f, MidpointRounding.AwayFromZero));
+        support = count - pressure - flank;
+    }
     private readonly List<MonsterSquadMember> members = new List<MonsterSquadMember>();
     private readonly Dictionary<int, MonsterSquadAssignment> assignments = new Dictionary<int, MonsterSquadAssignment>();
     private float formationAngle;
     private float nextAttackTime = float.NegativeInfinity;
-    private float nextFlankTime = float.PositiveInfinity;
     private float nextReassessment, phaseUntil, nextCollapseAllowed;
     private float tradeWindowStart, damageDealt, damageTaken;
     private int pressureId;
@@ -63,18 +76,16 @@ public sealed class MonsterSquadModel
         var previousFormation = Formation;
         int oldCount = Count;
         bool rosterChanged = incoming.Count != oldCount;
-        bool coverChanged = false;
         for (int i = 0; !rosterChanged && i < incoming.Count; i++)
         {
             rosterChanged = incoming[i].Id != members[i].Id;
-            coverChanged |= incoming[i].NeedsCover != members[i].NeedsCover;
         }
         PlayerHp = Math.Max(0f, Math.Min(1f, situation.PlayerHpRatio));
         bool timedPhase = Formation == MonsterSquadFormation.Regroup || Formation == MonsterSquadFormation.Withdrawal;
-        if (!rosterChanged && !coverChanged && now < nextReassessment &&
+        if (!rosterChanged && now < nextReassessment &&
             !(timedPhase && now >= phaseUntil)) return false;
         var previous = new Dictionary<int, MonsterSquadAssignment>(assignments);
-        nextReassessment = now + 0.75f;
+        nextReassessment = now + ReassessmentInterval;
 
         if (oldCount == 0 && incoming.Count > 0) formationAngle = incoming[0].Angle;
         bool frontLost = pressureId != 0 && !incoming.Exists(m => m.Id == pressureId);
@@ -90,7 +101,7 @@ public sealed class MonsterSquadModel
         }
         bool critical = AverageHp <= 0.25f && PlayerHp >= 0.6f;
         bool lostFormation = oldCount >= 3 && incoming.Count > 0 && incoming.Count <= oldCount / 2;
-        string reason = rosterChanged ? "JoinedOrLeft" : coverChanged ? "NeedsCoverChanged" : "ReadinessHealthReassessment";
+        string reason = rosterChanged ? "JoinedOrLeft" : "HealthRoleReassessment";
 
         if (incoming.Count == 0)
         {
@@ -153,31 +164,21 @@ public sealed class MonsterSquadModel
             }
             else
             {
-                int pressure = 0;
-                float best = float.NegativeInfinity;
-                for (int i = 0; i < Count; i++)
+                var ranked = new List<MonsterSquadMember>(members);
+                ranked.Sort((a, b) =>
                 {
-                    float score = FrontScore(members[i], PlayerHp);
-                    if (!members[i].NeedsCover && members[i].Id == pressureId) score += 0.8f;
-                    if (score > best) { best = score; pressure = i; }
-                }
-                if (oldCount < 2 && Count >= 2) formationAngle = members[pressure].Angle;
-                pressureId = members[pressure].Id;
-                Assign(members[pressure], 0, MonsterSquadRole.Pressure, false);
-                var remaining = new List<MonsterSquadMember>(members);
-                remaining.RemoveAt(pressure);
-                remaining.Sort((a, b) =>
-                {
-                    int compare = SupportScore(b).CompareTo(SupportScore(a));
+                    int compare = (b.HpRatio * b.MaxHp).CompareTo(a.HpRatio * a.MaxHp);
                     return compare != 0 ? compare : a.Id.CompareTo(b.Id);
                 });
-                int slot = 1;
-                foreach (var member in remaining)
+                if (oldCount < 2 && Count >= 2) formationAngle = ranked[0].Angle;
+                pressureId = ranked[0].Id;
+                if (Count == 1) Assign(ranked[0], 0, MonsterSquadRole.Solo, false);
+                else
                 {
-                    bool support = member.NeedsCover || (slot % 2 == 1 && member.CanProjectile);
-                    bool opening = !support && member.CanCharge && member.ChargeReady &&
-                        (situation.PlayerFocusedMember == pressureId || PlayerHp <= 0.25f);
-                    Assign(member, slot++, support ? MonsterSquadRole.Support : MonsterSquadRole.Flanker, opening);
+                    RoleCounts(Count, out int pressure, out int support, out int flank);
+                    AssignRoleSlots(ranked.GetRange(0, pressure), MonsterSquadRole.Pressure, previous, situation);
+                    AssignRoleSlots(ranked.GetRange(pressure, flank), MonsterSquadRole.Flanker, previous, situation);
+                    AssignRoleSlots(ranked.GetRange(pressure + flank, support), MonsterSquadRole.Support, previous, situation);
                 }
             }
         }
@@ -193,15 +194,43 @@ public sealed class MonsterSquadModel
     private static MonsterSquadFormation NormalFormation(int count) => count <= 1 ? MonsterSquadFormation.Solo
         : count == 2 ? MonsterSquadFormation.Pair : count == 3 ? MonsterSquadFormation.Triangle : MonsterSquadFormation.Surround;
 
-    private static float FrontScore(MonsterSquadMember m, float playerHp) =>
-        (m.NeedsCover ? -5f : 0f) + m.HpRatio * 2f + Math.Min(2f, m.MaxHp / 50f) +
-        Math.Min(1f, m.MoveSpeed / 4f) - Math.Min(2f, m.Distance * 0.15f) +
-        (m.CanMelee || m.CanCircle ? 1f : -1f) + (m.MeleeReady || m.CircleReady ? 1.25f : 0f) +
-        (playerHp <= 0.25f && m.ChargeReady ? 0.5f : 0f);
-
-    private static float SupportScore(MonsterSquadMember m) =>
-        (m.NeedsCover ? 5f : 0f) + (m.CanProjectile ? 3f : 0f) + (m.ProjectileReady ? 1.5f : 0f) -
-        (m.CanCharge ? 1f : 0f) - (m.ChargeReady ? 0.5f : 0f) - m.MoveSpeed * 0.1f;
+    private void AssignRoleSlots(List<MonsterSquadMember> roleMembers, MonsterSquadRole role,
+        Dictionary<int, MonsterSquadAssignment> previous, MonsterSquadSituation situation)
+    {
+        var slots = new List<float>();
+        for (int i = 0; i < roleMembers.Count; i++)
+        {
+            // Support stays behind our front, not on the opposite side of the player.
+            // Flankers fill the remaining circle (two flankers: +120 and -120 degrees).
+            float offset = role == MonsterSquadRole.Flanker
+                ? (i + 1) * (float)(Math.PI * 2) / (roleMembers.Count + 1)
+                : roleMembers.Count == 1 ? 0f
+                : (i / (float)(roleMembers.Count - 1) - 0.5f) * (float)Math.PI *
+                    (role == MonsterSquadRole.Support ? 0.4f : 0.22f);
+            slots.Add(Normalize(formationAngle + offset));
+        }
+        // Keep existing members in their slot when HP order changes within the same role.
+        roleMembers.Sort((a, b) =>
+        {
+            bool oldA = previous.TryGetValue(a.Id, out var pa) && pa.Role == role;
+            bool oldB = previous.TryGetValue(b.Id, out var pb) && pb.Role == role;
+            return oldA != oldB ? (oldA ? -1 : 1) : a.Id.CompareTo(b.Id);
+        });
+        foreach (var member in roleMembers)
+        {
+            float desired = previous.TryGetValue(member.Id, out var old) && old.Role == role ? old.Angle : member.Angle;
+            int best = 0;
+            for (int i = 1; i < slots.Count; i++)
+                if (AngleDistance(desired, slots[i]) < AngleDistance(desired, slots[best])) best = i;
+            assignments[member.Id] = new MonsterSquadAssignment
+            {
+                Role = role, Formation = Formation, Count = Count, Angle = slots[best],
+                ExploitOpening = role == MonsterSquadRole.Flanker && member.CanCharge && member.ChargeReady &&
+                    (situation.PlayerFocusedMember == pressureId || PlayerHp <= 0.25f)
+            };
+            slots.RemoveAt(best);
+        }
+    }
 
     private void Assign(MonsterSquadMember member, int slot, MonsterSquadRole role, bool opening)
     {
@@ -226,23 +255,6 @@ public sealed class MonsterSquadModel
 
     public MonsterSquadAssignment GetAssignment(int id) => assignments.TryGetValue(id, out var value)
         ? value : new MonsterSquadAssignment { Role = MonsterSquadRole.Solo, Count = 1 };
-
-    public void AdvanceFlank(float now)
-    {
-        if (Count <= 1 || Formation == MonsterSquadFormation.Regroup || Formation == MonsterSquadFormation.Withdrawal)
-        { nextFlankTime = float.PositiveInfinity; return; }
-        if (float.IsPositiveInfinity(nextFlankTime)) { nextFlankTime = now + 2.2f; return; }
-        if (now < nextFlankTime) return;
-        nextFlankTime = now + 2.2f;
-        float step = (float)Math.PI / 6f;
-        formationAngle = Normalize(formationAngle + step);
-        foreach (var member in members)
-        {
-            var assignment = assignments[member.Id];
-            assignment.Angle = Normalize(assignment.Angle + step);
-            assignments[member.Id] = assignment;
-        }
-    }
 
     public bool CanStartAttack(float now, int activeAttacks) =>
         Formation != MonsterSquadFormation.Regroup && Formation != MonsterSquadFormation.Withdrawal &&

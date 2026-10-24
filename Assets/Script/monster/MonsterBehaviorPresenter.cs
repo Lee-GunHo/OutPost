@@ -15,13 +15,13 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
     private float nextFleePlan, lastFleeProgressTime;
     private Vector3 lastFleePosition;
     private bool fleeMovementActive, fleeSavedRotation, fleeSavedBraking;
-    private float fleeSavedSpeed, fleeSavedStoppingDistance;
+    private float fleeSavedStoppingDistance;
     private float nextFormationPlan;
     private bool formationPathValid, formationPathNeedsApply, formationUsesWaypoint;
     private Vector3 plannedFormationPoint;
     private Transform retreatTarget;
     private bool savedRotation, savedBraking;
-    private float savedSpeed, savedStoppingDistance;
+    private float savedStoppingDistance;
     private static readonly float[] retreatAngles = { 0f, 45f, -45f, 90f, -90f };
 
     private float HealthRatio => monster.CurrentHp / (float)Mathf.Max(1, monster.MaxHp);
@@ -44,8 +44,13 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
     public bool IsAttacking => owner != null && !owner.IsDead && owner.Combat.IsExecuting;
     private bool IsCooperating => MonsterLearningPresenter.CooperationEnabled && model.SquadRole != MonsterSquadRole.Solo && owner.HasTarget && owner.IsCurrentTargetPlayer;
     public float AdvanceSpeedMultiplier => IsCooperating ? model.AdvanceSpeedMultiplier : 1f;
-    public float GetCooldownScale(MonsterAttackKind kind) => IsCooperating && model.SquadRole == MonsterSquadRole.Support &&
-        kind == MonsterAttackKind.Projectile ? model.SupportProjectileCooldownScale : 1f;
+    public float DamageTakenMultiplier => MonsterSquadModel.DamageTakenMultiplier(EffectiveRole);
+    public float ProjectileRangeMultiplier => MonsterSquadModel.ProjectileRangeMultiplier(EffectiveRole);
+    public MonsterSquadRole EffectiveRole => IsCooperating ? model.SquadRole : MonsterSquadRole.Solo;
+    public bool AllowsAttack(MonsterAttackKind kind) => MonsterBehaviorModel.AllowsAttack(EffectiveRole, kind);
+    public bool PrioritizesCloseMelee => IsCooperating &&
+        (model.SquadRole == MonsterSquadRole.Pressure || model.SquadRole == MonsterSquadRole.Flanker) &&
+        owner.Combat.SupportsAttack(MonsterAttackKind.Melee) && owner.IsCurrentTargetInAttackRange();
 
     public void SetRallyPosition(Vector3 position)
     {
@@ -105,7 +110,7 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
     public void RecordAttack(MonsterAttackKind kind) { model.RecordAttack(kind); }
 
     public float GetAttackWeight(MonsterAttackKind kind, float baseWeight) =>
-        model.AttackWeight(kind, baseWeight, HealthRatio, owner.Combat.TargetDistance, owner.AttackRange, Time.time);
+        model.AttackWeight(kind, baseWeight, HealthRatio, owner.Combat.TargetDistance, owner.AttackRange, Time.time, IsCooperating);
 
     public MonsterBehaviorAction Decide()
     {
@@ -135,13 +140,13 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
             return MonsterBehaviorAction.Flee;
         }
         if (owner.IsDead || !owner.HasTarget) return MonsterBehaviorAction.Idle;
+        if (IsCooperating && TryFormationDecision(out MonsterBehaviorAction formationAction)) return formationAction;
         float distance = owner.Combat.TargetDistance;
         if (model.WantsRetreat(HealthRatio, distance, owner.IsCurrentTargetPlayer, Time.time))
         {
             if (TryPlanRetreat()) return MonsterBehaviorAction.Retreat;
             model.DelayFailedRetreat(Time.time);
         }
-        if (IsCooperating && TryFormationDecision(out MonsterBehaviorAction formationAction)) return formationAction;
         if (owner.Combat.HasAvailableAttack() && (!IsCooperating || MonsterSquadPresenter.CanAttack(this, false)))
             return MonsterBehaviorAction.Attack;
         // Wait for an attack cooldown at a useful distance. Do not hold behind an obstruction.
@@ -161,7 +166,7 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         {
             nextFormationPlan = Time.time + 0.5f;
             var filter = new NavMeshQueryFilter { agentTypeID = agent.agentTypeID, areaMask = agent.areaMask };
-            formationPathValid = NavMesh.SamplePosition(model.RallyPosition, out NavMeshHit hit, 1f, filter) &&
+            formationPathValid = NavMesh.SamplePosition(OnNavigationPlane(model.RallyPosition), out NavMeshHit hit, 1f, filter) &&
                 agent.CalculatePath(hit.position, formationPath) && formationPath.status == NavMeshPathStatus.PathComplete &&
                 IsSafeRallyPath(formationPath);
             if (!formationPathValid) formationPathValid = TryPlanAwayFrom(owner.CurrentTarget, 3f, formationPath);
@@ -170,12 +175,12 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         return formationPathValid ? MonsterBehaviorAction.Formation : MonsterBehaviorAction.HoldDistance;
     }
 
-    private bool IsSafeRallyPath(NavMeshPath path)
+    private bool IsSafeRallyPath(NavMeshPath path, float minimumRadius = 1.5f)
     {
         Vector3 previous = agent.nextPosition;
         Vector3 initial = previous - owner.CurrentTarget.position;
         initial.y = 0f;
-        float safeRadius = Mathf.Min(initial.magnitude, 1.5f);
+        float safeRadius = Mathf.Min(initial.magnitude, minimumRadius);
         foreach (Vector3 corner in path.corners)
         {
             Vector3 leg = corner - previous; leg.y = 0f;
@@ -190,68 +195,124 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
     private bool TryFormationDecision(out MonsterBehaviorAction action)
     {
         action = MonsterBehaviorAction.Formation;
-        if (!CanNavigate) return false;
-        float radius = owner.Combat.GetFormationDistance(model.SquadRole);
-        Vector3 desired = owner.CurrentTarget.position +
-            new Vector3(Mathf.Cos(model.FormationAngle), 0f, Mathf.Sin(model.FormationAngle)) * radius;
-        Vector3 offset = desired - transform.position;
-        offset.y = 0f;
-        float tolerance = model.SquadRole == MonsterSquadRole.Pressure ? 0.2f
-            : model.SquadRole == MonsterSquadRole.Flanker ? 0.3f : 0.35f;
-        bool atPosition = offset.sqrMagnitude <= tolerance * tolerance;
-        if (atPosition && model.TryRearFlank(Time.time, Random.value))
+        // Punish entry into melee reach rather than backing out to recover a formation slot.
+        // Wait in place through cooldown/shared attack gating; do not cancel an ongoing attack.
+        if (PrioritizesCloseMelee && owner.Combat.HasTargetLineOfSight)
         {
-            desired = owner.CurrentTarget.position +
-                new Vector3(Mathf.Cos(model.FormationAngle), 0f, Mathf.Sin(model.FormationAngle)) * radius;
             nextFormationPlan = 0f;
             formationPathValid = false;
-            atPosition = false;
-        }
-        if (atPosition && owner.Combat.HasTargetLineOfSight)
-        {
-            if (!owner.Combat.HasAttackInRange()) return false;
             action = owner.Combat.HasAvailableAttack() && MonsterSquadPresenter.CanAttack(this, false)
                 ? MonsterBehaviorAction.Attack : MonsterBehaviorAction.HoldDistance;
             return true;
         }
+        if (!CanNavigate) return false;
+        float radius = owner.Combat.GetFormationDistance(model.SquadRole);
+        Vector3 radial = transform.position - owner.CurrentTarget.position;
+        radial.y = 0f;
+        // Regain contact before taking a wide arc or stopping to shoot at maximum range.
+        // The 4m floor lets the front resume charge selection before entering melee range.
+        float catchUpDistance = Mathf.Max(4f, radius + MonsterBehaviorModel.FormationCatchUpAllowance);
+        if (radial.sqrMagnitude > catchUpDistance * catchUpDistance)
+        {
+            nextFormationPlan = 0f;
+            formationPathValid = false;
+            action = MonsterBehaviorAction.Chase;
+            return true;
+        }
+        float currentAngle = Mathf.Atan2(radial.z, radial.x) * Mathf.Rad2Deg;
+        float angleDelta = Mathf.DeltaAngle(currentAngle, model.FormationAngle * Mathf.Rad2Deg);
+        Vector3 desired = FormationPoint(model.FormationAngle, radius);
+        Vector3 offset = desired - transform.position;
+        offset.y = 0f;
+        bool atPosition = offset.sqrMagnitude <= 0.45f * 0.45f;
+
+        // Front members can charge on approach. Flankers may attack once they reach
+        // their side sector, without needing to land on the exact formation point.
+        bool frontOpening = model.SquadRole == MonsterSquadRole.Pressure && Mathf.Abs(angleDelta) <= 35f;
+        bool flankOpening = model.SquadRole == MonsterSquadRole.Flanker &&
+            Mathf.Abs(angleDelta) <= MonsterBehaviorModel.FlankAttackAngleTolerance &&
+            radial.magnitude <= radius + MonsterBehaviorModel.FlankAttackDistanceAllowance;
+        // Ranged members can fire from a useful rear position without chasing an exact point.
+        bool rearPosition = model.SquadRole == MonsterSquadRole.Support &&
+            Mathf.Abs(angleDelta) <= MonsterBehaviorModel.SupportHoldAngleTolerance &&
+            radial.magnitude >= radius * MonsterBehaviorModel.SupportHoldDistanceScale &&
+            radial.magnitude <= Mathf.Min(owner.Combat.EffectiveProjectileRange * 0.9f,
+                radius + MonsterBehaviorModel.SupportHoldOuterAllowance);
+        if ((atPosition || frontOpening || flankOpening || rearPosition) && owner.Combat.HasTargetLineOfSight)
+        {
+            if (owner.Combat.HasAvailableAttack() && MonsterSquadPresenter.CanAttack(this, false))
+            { action = MonsterBehaviorAction.Attack; return true; }
+            if ((atPosition || rearPosition) && owner.Combat.HasAttackInRange())
+            { action = MonsterBehaviorAction.HoldDistance; return true; }
+        }
+
         if (Time.time >= nextFormationPlan)
         {
             nextFormationPlan = Time.time + 0.25f;
-            // Approach the opposite side around the player, instead of walking through them.
-            Vector3 radial = transform.position - owner.CurrentTarget.position;
-            float currentAngle = Mathf.Atan2(radial.z, radial.x) * Mathf.Rad2Deg;
-            float angleDelta = Mathf.DeltaAngle(currentAngle, model.FormationAngle * Mathf.Rad2Deg);
-            formationUsesWaypoint = Mathf.Abs(angleDelta) > 50f;
+            formationUsesWaypoint = Mathf.Abs(angleDelta) > 30f;
+            // Short arc segments and a radial clearance check prevent a NavMesh path
+            // from taking a shortcut through the player's position.
+            float arcRadius = Mathf.Max(radius, Mathf.Min(radial.magnitude, radius + 2f));
+            float safeRadius = Mathf.Min(radius * 0.8f, radial.magnitude);
             if (formationUsesWaypoint)
+                desired = FormationPoint((currentAngle + Mathf.Clamp(angleDelta, -30f, 30f)) * Mathf.Deg2Rad, arcRadius);
+            formationPathValid = TryFormationPath(desired, safeRadius);
+            if (!formationPathValid)
             {
-                float stepAngle = (currentAngle + Mathf.Clamp(angleDelta, -45f, 45f)) * Mathf.Deg2Rad;
-                desired = owner.CurrentTarget.position +
-                    new Vector3(Mathf.Cos(stepAngle), 0f, Mathf.Sin(stepAngle)) * radius;
+                // Try smaller turns, the opposite side and a wider arc when a wall blocks a side.
+                float sign = angleDelta < 0f ? -1f : 1f;
+                for (int attempt = 0; attempt < 4 && !formationPathValid; attempt++)
+                {
+                    float turn = (attempt % 2 == 0 ? sign : -sign) * (attempt < 2 ? 20f : 35f);
+                    float alternateRadius = arcRadius + (attempt >= 2 ? 1f : 0f);
+                    formationPathValid = TryFormationPath(FormationPoint((currentAngle + turn) * Mathf.Deg2Rad, alternateRadius), safeRadius);
+                }
+                formationUsesWaypoint = true;
             }
-            var filter = new NavMeshQueryFilter { agentTypeID = agent.agentTypeID, areaMask = agent.areaMask };
-            formationPathValid = NavMesh.SamplePosition(desired, out NavMeshHit hit, 0.75f, filter) &&
-                agent.CalculatePath(hit.position, formationPath) && formationPath.status == NavMeshPathStatus.PathComplete;
-            if (formationPathValid)
-            {
-                plannedFormationPoint = hit.position;
-                formationPathNeedsApply = true;
-                // A reachable but occluded slot must not make the monster wait forever behind a wall.
-                Vector3 gap = plannedFormationPoint - transform.position;
-                gap.y = 0f;
-                if (gap.sqrMagnitude <= 0.3f * 0.3f && !owner.Combat.HasTargetLineOfSight)
-                    formationPathValid = false;
-            }
+            formationPathNeedsApply = formationPathValid;
         }
-        if (!formationPathValid) return false; // Fall back to individual chase/attack in tight spaces.
-        // Sampling can shift the slot slightly; consider the reachable point too.
+        if (!formationPathValid)
+        {
+            // All formation alternatives failed (e.g. a narrow corridor). Keep engaging
+            // instead of parking the entire squad, and retry the formation next interval.
+            // Role restrictions and the shared attack gate still apply.
+            action = owner.Combat.HasAvailableAttack() && MonsterSquadPresenter.CanAttack(this, false)
+                ? MonsterBehaviorAction.Attack : MonsterBehaviorAction.Chase;
+            return true;
+        }
         Vector3 remaining = plannedFormationPoint - transform.position;
         remaining.y = 0f;
-        if (!formationUsesWaypoint && remaining.sqrMagnitude <= 0.3f * 0.3f && owner.Combat.HasTargetLineOfSight)
+        if (!formationUsesWaypoint && Mathf.Abs(angleDelta) <= 20f &&
+            remaining.sqrMagnitude <= 0.3f * 0.3f && owner.Combat.HasTargetLineOfSight &&
+            owner.Combat.HasAttackInRange())
         {
-            if (!owner.Combat.HasAttackInRange()) return false;
             action = owner.Combat.HasAvailableAttack() && MonsterSquadPresenter.CanAttack(this, false)
                 ? MonsterBehaviorAction.Attack : MonsterBehaviorAction.HoldDistance;
         }
+        return true;
+    }
+
+    private Vector3 FormationPoint(float angle, float radius) => owner.CurrentTarget.position +
+        new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius;
+
+    private Vector3 OnNavigationPlane(Vector3 point)
+    {
+        // Character pivots spawn at y=1. A 0.75m query around that pivot can miss
+        // the floor entirely; use the agent's navigation surface, as nexus paths do.
+        point.y = agent.nextPosition.y - agent.baseOffset;
+        return point;
+    }
+
+    private bool TryFormationPath(Vector3 desired, float safeRadius)
+    {
+        var filter = new NavMeshQueryFilter { agentTypeID = agent.agentTypeID, areaMask = agent.areaMask };
+        if (!NavMesh.SamplePosition(OnNavigationPlane(desired), out NavMeshHit hit, 0.75f, filter) ||
+            !agent.CalculatePath(hit.position, formationPath) || formationPath.status != NavMeshPathStatus.PathComplete ||
+            !IsSafeRallyPath(formationPath, safeRadius)) return false;
+        Vector3 gap = hit.position - transform.position;
+        gap.y = 0f;
+        if (gap.sqrMagnitude <= 0.1f * 0.1f) return false;
+        plannedFormationPoint = hit.position;
         return true;
     }
 
@@ -297,7 +358,7 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         foreach (float angle in retreatAngles)
         {
             Vector3 candidate = agent.nextPosition + Quaternion.Euler(0f, angle, 0f) * away * stepDistance;
-            if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, 0.6f, filter) ||
+            if (!NavMesh.SamplePosition(OnNavigationPlane(candidate), out NavMeshHit hit, 0.6f, filter) ||
                 !agent.CalculatePath(hit.position, path) || path.status != NavMeshPathStatus.PathComplete)
                 continue;
             Vector3 separation = hit.position - target;
@@ -330,7 +391,6 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         {
             fleeSavedRotation = agent.updateRotation;
             fleeSavedBraking = agent.autoBraking;
-            fleeSavedSpeed = agent.speed;
             fleeSavedStoppingDistance = agent.stoppingDistance;
             fleeMovementActive = true;
             agent.updateRotation = true;
@@ -392,7 +452,7 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         {
             agent.updateRotation = fleeSavedRotation;
             agent.autoBraking = fleeSavedBraking;
-            agent.speed = fleeSavedSpeed;
+            agent.speed = owner.MoveSpeed * AdvanceSpeedMultiplier;
             agent.stoppingDistance = fleeSavedStoppingDistance;
         }
         owner.StopMove();
@@ -411,7 +471,6 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         if (!CanNavigate) { model.DelayFailedRetreat(Time.time); return; }
         savedRotation = agent.updateRotation;
         savedBraking = agent.autoBraking;
-        savedSpeed = agent.speed;
         savedStoppingDistance = agent.stoppingDistance;
         retreatTarget = owner.CurrentTarget;
         model.BeginRetreat(Time.time);
@@ -451,7 +510,7 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
         {
             agent.updateRotation = savedRotation;
             agent.autoBraking = savedBraking;
-            agent.speed = savedSpeed;
+            agent.speed = owner.MoveSpeed * AdvanceSpeedMultiplier;
             agent.stoppingDistance = savedStoppingDistance;
         }
         retreatTarget = null;
