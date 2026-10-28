@@ -2211,18 +2211,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BattleNPC_Main
       objectReference: {fileID: 0}
-    - target: {fileID: 6668347115640977634, guid: f7a848f40d37fd145a5c6d03daba1da6, type: 3}
-      propertyPath: questButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6668347115640977634, guid: f7a848f40d37fd145a5c6d03daba1da6, type: 3}
-      propertyPath: questButtonText
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6668347115640977634, guid: f7a848f40d37fd145a5c6d03daba1da6, type: 3}
-      propertyPath: 'tipChoiceButtons.Array.data[1]'
-      value: 
-      objectReference: {fileID: 3534960290652743274}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7611081529918058645, guid: f7a848f40d37fd145a5c6d03daba1da6, type: 3}
@@ -2286,17 +2274,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e38794a4a5b38f4ebd482f450ebed33, type: 3}
---- !u!114 &3534960290652743274 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9117122724171240960, guid: f7a848f40d37fd145a5c6d03daba1da6, type: 3}
-  m_PrefabInstance: {fileID: 2417952050089173619}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &5634466883184171926
 PrefabInstance:
   m_ObjectHideFlags: 0

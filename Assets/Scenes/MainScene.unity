@@ -304,7 +304,8 @@ PrefabInstance:
       value: ContinueButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8164954903863870588, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 435d76dee61497041aab9f0137b77d61, type: 3}
