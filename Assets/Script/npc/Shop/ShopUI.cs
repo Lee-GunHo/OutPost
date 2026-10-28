@@ -3,6 +3,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 물물교환 상점 UI. 돈 대신 몬스터 드랍 재료(Small Mushroom, Poison Mushroom, Spore 등)를 내고 아이템을 받음.
+/// 왼쪽 = 교환 목록(받는 아이템 + 필요한 재료), 오른쪽 = 이 상점에서 쓰는 재료의 보유량(인벤토리 + 핫바)
+/// </summary>
 public class ShopUI : MonoBehaviour
 {
     public static ShopUI Instance { get; private set; }
@@ -16,7 +20,7 @@ public class ShopUI : MonoBehaviour
     [Header("상점 아이템 스크롤 Content")]
     [SerializeField] private Transform shopContent;
 
-    [Header("플레이어 인벤토리 스크롤 Content")]
+    [Header("플레이어 교환 재료 스크롤 Content (예전 인벤토리 칸)")]
     [SerializeField] private Transform playerContent;
 
     [Header("슬롯 프리팹")]
@@ -26,15 +30,12 @@ public class ShopUI : MonoBehaviour
     [SerializeField] private int ShopSlotCount;
     [SerializeField] private int playerSlotCount;
 
-    [Header("판매 팝업")]
-    [SerializeField] private ShopQuantityPopup quantitySellPopup;
-    [SerializeField] private ShopConfirmPopup confirmSellPopup;
-
-    [Header("구매 팝업")]
+    [Header("교환 팝업")]
     [SerializeField] private ShopQuantityPopup quantityBuyPopup;
     [SerializeField] private ShopConfirmPopup confirmBuyPopup;
 
-    [Header("구매 설정")]
+    [Header("교환 설정")]
+    [Tooltip("한 번에 교환할 수 있는 최대 횟수")]
     [Min(1)]
     [SerializeField] private int maxBuyAmount = 99;
 
@@ -48,6 +49,8 @@ public class ShopUI : MonoBehaviour
 
     private readonly List<ShopSlotView> shopSlotViews = new List<ShopSlotView>();
     private readonly List<ShopSlotView> playerSlotViews = new List<ShopSlotView>();
+    // 오른쪽 칸에 보여줄 재료(이 상점 교환 목록에 나오는 재료, 처음 나온 순서)
+    private readonly List<ItemData> materialItems = new List<ItemData>();
 
     private ShopSlotMode selectedMode;
     private int selectedSlotIndex = -1;
@@ -90,6 +93,7 @@ public class ShopUI : MonoBehaviour
         currentPlayer = player;
         currentNPC = npc;
         currentInventory = currentPlayer != null ? currentPlayer.PlayerInventory : null;
+        CollectMaterialItems();
 
         UIState.SetShopOpen(true);
 
@@ -119,30 +123,30 @@ public class ShopUI : MonoBehaviour
             return;
         }
 
-        if (currentShopData.SellItems == null)
+        if (currentShopData.TradeItems == null)
         {
-            Debug.LogWarning("ShopUI 오류: ShopData.SellItems가 없습니다.");
+            Debug.LogWarning("ShopUI 오류: ShopData.TradeItems가 없습니다.");
             return;
         }
 
-        int createCount = Mathf.Max(ShopSlotCount, currentShopData.SellItems.Count);
+        int createCount = Mathf.Max(ShopSlotCount, currentShopData.TradeItems.Count);
 
         List<ShopSlotView> createdSlots = CreateSlot(shopContent, createCount);
-        
+
         for (int i = 0; i < createdSlots.Count; i++)
         {
             ShopSlotView slotView = createdSlots[i];
 
             slotView.Initialize(this, ShopSlotMode.Buy, i);
 
-            if(i >= currentShopData.SellItems.Count)
+            if(i >= currentShopData.TradeItems.Count)
             {
                 slotView.Clear();
                 shopSlotViews.Add(slotView);
                 continue;
             }
 
-            ShopItemData shopItem = currentShopData.SellItems[i];
+            ShopItemData shopItem = currentShopData.TradeItems[i];
 
             if(shopItem == null || shopItem.ItemData == null)
             {
@@ -150,13 +154,26 @@ public class ShopUI : MonoBehaviour
             }
             else
             {
-                // 한도가 있는 아이템은 남은 수령 가능 개수를 수량으로 표시
-                int remaining = GetRemainingGiveAmount(shopItem);
-                slotView.SetItem(shopItem.ItemData, remaining == ShopGiveLimit.Unlimited ? 1 : remaining);
+                // 수량 칸 = 교환 1회에 받는 개수, 아래 줄 = 필요한 재료
+                slotView.SetItem(shopItem.ItemData, shopItem.GiveAmount);
+                slotView.SetTradeInfo(BuildCostLine(shopItem), GetMaxTradeCount(shopItem) > 0);
             }
 
             shopSlotViews.Add(slotView);
         }
+    }
+
+    private string BuildCostLine(ShopItemData shopItem)
+    {
+        string line = ShopTradeRules.FormatCosts(shopItem.Costs);
+        int remaining = GetRemainingGiveAmount(shopItem);
+
+        if (remaining != ShopGiveLimit.Unlimited)
+        {
+            line += remaining >= shopItem.GiveAmount ? "  (남은 " + remaining + ")" : "  (품절)";
+        }
+
+        return line;
     }
 
     /// <summary>
@@ -175,6 +192,53 @@ public class ShopUI : MonoBehaviour
             ProgressTracker.GetOrCreate().GetShopReceivedAmount(shopItem.ItemData.itemID));
     }
 
+    /// <summary>
+    /// 재료 보유량(인벤토리 + 핫바)과 지급 한도로 지금 몇 번 교환할 수 있는지
+    /// </summary>
+    private int GetMaxTradeCount(ShopItemData shopItem)
+    {
+        if (shopItem == null || shopItem.ItemData == null)
+            return 0;
+
+        return ShopTradeRules.GetMaxTradeCount(
+            shopItem.Costs,
+            GetOwnedAmount,
+            shopItem.GiveAmount,
+            GetRemainingGiveAmount(shopItem),
+            maxBuyAmount);
+    }
+
+    private int GetOwnedAmount(ItemData item)
+    {
+        // 주운 아이템은 핫바부터 들어가므로 인벤토리와 핫바를 합쳐서 셈
+        return PlayerItemReceiver.GetOwnedAmount(currentInventory, PlayerItemReceiver.CurrentHotbar, item);
+    }
+
+    private void CollectMaterialItems()
+    {
+        materialItems.Clear();
+
+        if (currentShopData == null || currentShopData.TradeItems == null)
+            return;
+
+        foreach (ShopItemData shopItem in currentShopData.TradeItems)
+        {
+            if (shopItem == null)
+                continue;
+
+            foreach (ShopCost cost in ShopTradeRules.MergeCosts(shopItem.Costs))
+            {
+                if (!materialItems.Contains(cost.Item))
+                {
+                    materialItems.Add(cost.Item);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 오른쪽 칸: 이 상점에서 쓰는 교환 재료와 현재 보유량(인벤토리 + 핫바 합계)
+    /// </summary>
     private void RefreshPlayerItems()
     {
         ClearSlotViews(playerSlotViews, playerContent);
@@ -191,13 +255,9 @@ public class ShopUI : MonoBehaviour
             return;
         }
 
-        if (currentInventory.Items == null)
-        {
-            Debug.LogWarning("ShopUI 오류: InventoryModel.Items가 없습니다.");
-            return;
-        }
+        int createCount = Mathf.Max(playerSlotCount, materialItems.Count);
 
-        List<ShopSlotView> createdSlots = CreateSlot(playerContent, currentInventory.Items.Count);
+        List<ShopSlotView> createdSlots = CreateSlot(playerContent, createCount);
 
         for(int i = 0; i < createdSlots.Count; i++)
         {
@@ -205,23 +265,19 @@ public class ShopUI : MonoBehaviour
 
             slotView.Initialize(this, ShopSlotMode.Sell, i);
 
-            if(i >= currentInventory.Items.Count)
+            if(i >= materialItems.Count)
             {
                 slotView.Clear();
                 playerSlotViews.Add(slotView);
                 continue;
             }
 
-            ItemStack itemStack = currentInventory.Items[i];
+            ItemData material = materialItems[i];
+            int owned = GetOwnedAmount(material);
 
-            if(itemStack == null || itemStack.item == null)
-            {
-                slotView.Clear();
-            }
-            else
-            {
-                slotView.SetItem(itemStack.item, itemStack.amount);
-            }
+            // 0개인 재료도 보여줘야 무엇을 모아야 하는지 알 수 있음
+            slotView.SetItem(material, owned);
+            slotView.SetTradeInfo("보유 " + owned + "개", owned > 0);
 
             playerSlotViews.Add(slotView);
         }
@@ -240,13 +296,13 @@ public class ShopUI : MonoBehaviour
         if (slotPrefab == null)
         {
             Debug.LogError("ShopUI 오류 : SlotPrefab이 연결되지 않았습니다. Inspector에서 Slot Prefab에 ShopSlotView 프리팹을 넣어주세요.");
-            return null;
+            return createdSlots;
         }
 
         if(parent == null)
         {
             Debug.LogError("ShopUI 오류: Content Transform이 연결되지 않았습니다. shopContent 또는 playerContent를 연결해주세요.");
-            return null;
+            return createdSlots;
         }
 
         for(int i = 0; i < count; i++)
@@ -308,36 +364,22 @@ public class ShopUI : MonoBehaviour
 
     private void SelectShopSlot(int slotIndex)
     {
-        if (currentShopData == null || currentShopData.SellItems == null)
-            return;
-
-        if (slotIndex < 0 || slotIndex >= currentShopData.SellItems.Count)
-            return;
-
-        ShopItemData shopItem = currentShopData.SellItems[slotIndex];
+        ShopItemData shopItem = GetShopItem(slotIndex);
 
         if (shopItem == null || shopItem.ItemData == null)
             return;
 
         selectedItem = shopItem.ItemData;
-        selectedAmount = 1;
+        selectedAmount = shopItem.GiveAmount;
     }
 
     private void SelectPlayerSlot(int slotIndex)
     {
-        if (currentInventory == null || currentInventory.Items == null)
+        if (slotIndex < 0 || slotIndex >= materialItems.Count)
             return;
 
-        if (slotIndex < 0 || slotIndex >= currentInventory.Items.Count)
-            return;
-
-        ItemStack itemStack = currentInventory.Items[slotIndex];
-
-        if (itemStack == null || itemStack.item == null)
-            return;
-
-        selectedItem = itemStack.item;
-        selectedAmount = itemStack.amount;
+        selectedItem = materialItems[slotIndex];
+        selectedAmount = GetOwnedAmount(selectedItem);
     }
 
     public void OnShopItemDoubleClicked(int slotIndex)
@@ -349,33 +391,49 @@ public class ShopUI : MonoBehaviour
 
         if(quantityBuyPopup == null)
         {
-            Debug.LogWarning("구매 수량 팝업이 ShopUI에 연결되지 않았습니다.");
+            Debug.LogWarning("교환 수량 팝업이 ShopUI에 연결되지 않았습니다.");
             return;
         }
 
-        CloseSellPopups();
-        confirmBuyPopup?.Close();
+        CloseAllPopups();
 
         ItemData item = shopItem.ItemData;
-        int remaining = GetRemainingGiveAmount(shopItem);
 
-        if (remaining <= 0)
+        if (GetRemainingGiveAmount(shopItem) < shopItem.GiveAmount)
         {
-            Debug.Log("구매 실패 : " + item.itemName + "은(는) 더 받을 수 없습니다. (총 수령 한도 도달)");
+            Debug.Log("교환 실패 : " + item.itemName + "은(는) 더 받을 수 없습니다. (총 수령 한도 도달)");
             confirmBuyPopup?.Open(item.itemName + "은(는) 더 이상 받을 수 없습니다.", null);
             return;
         }
 
-        int limit = Mathf.Min(Mathf.Max(1, maxBuyAmount), remaining);
+        if (GetMaxTradeCount(shopItem) <= 0)
+        {
+            confirmBuyPopup?.Open(
+                "재료가 부족합니다.\n필요 : " + ShopTradeRules.FormatCosts(shopItem.Costs) + "\n" + BuildOwnedLine(shopItem),
+                null);
+            return;
+        }
 
         quantityBuyPopup.Open(
-            item.itemName + " 몇 개를 구매하시겠습니까?",
-            limit,
-            selectedBuyAmount => OpenBuyConfirmPopup(slotIndex, selectedBuyAmount)
+            item.itemName + " 몇 번 교환하시겠습니까?\n(1회 : " + ShopTradeRules.FormatCosts(shopItem.Costs) + ")",
+            GetMaxTradeCount(shopItem),
+            tradeCount => OpenBuyConfirmPopup(slotIndex, tradeCount)
         );
     }
 
-    private void OpenBuyConfirmPopup(int slotIndex, int amount)
+    private string BuildOwnedLine(ShopItemData shopItem)
+    {
+        List<string> parts = new List<string>();
+
+        foreach (ShopCost cost in ShopTradeRules.MergeCosts(shopItem.Costs))
+        {
+            parts.Add(cost.Item.itemName + " " + GetOwnedAmount(cost.Item));
+        }
+
+        return "보유 : " + string.Join(" + ", parts);
+    }
+
+    private void OpenBuyConfirmPopup(int slotIndex, int tradeCount)
     {
         ShopItemData shopItem = GetShopItem(slotIndex);
 
@@ -384,26 +442,21 @@ public class ShopUI : MonoBehaviour
 
         if(confirmBuyPopup == null)
         {
-            Debug.LogWarning("구매 확인 팝업이 ShopUI에 연결되지 않았습니다.");
+            Debug.LogWarning("교환 확인 팝업이 ShopUI에 연결되지 않았습니다.");
             return;
         }
 
-        ItemData item = shopItem.ItemData;
-        int totalPrice = shopItem.BuyPrice * amount;
-        string message = item.itemName + " " + amount + "개를 구매하시겠습니까?";
-
-        if(shopItem.BuyPrice > 0)
-        {
-            message += "\n가격 : " + totalPrice;
-        }
+        int receiveAmount = shopItem.GiveAmount * tradeCount;
+        string message = shopItem.ItemData.itemName + " " + receiveAmount + "개로 교환하시겠습니까?"
+            + "\n내는 재료 : " + ShopTradeRules.FormatCosts(shopItem.Costs, tradeCount);
 
         confirmBuyPopup.Open(
             message,
-            () => BuyShopItem(slotIndex, amount)
+            () => TradeShopItem(slotIndex, tradeCount)
         );
     }
 
-    private void BuyShopItem(int slotIndex, int amount)
+    private void TradeShopItem(int slotIndex, int tradeCount)
     {
         ShopItemData shopItem = GetShopItem(slotIndex);
 
@@ -412,156 +465,70 @@ public class ShopUI : MonoBehaviour
 
         if(currentInventory == null)
         {
-            Debug.LogWarning("구매 실패 : 플레이어 InventoryModel이 없습니다.");
+            Debug.LogWarning("교환 실패 : 플레이어 InventoryModel이 없습니다.");
             return;
         }
 
-        if (amount <= 0)
+        if (tradeCount <= 0)
             return;
+
+        // 팝업이 열려 있는 사이 재료/한도가 바뀌었을 수 있으니 다시 확인
+        if (tradeCount > GetMaxTradeCount(shopItem))
+        {
+            Debug.Log("교환 실패 : 재료가 부족하거나 총 수령 한도를 넘는 수량입니다.");
+            confirmBuyPopup?.Open("재료가 부족합니다.\n" + BuildOwnedLine(shopItem), null);
+            return;
+        }
 
         ItemData item = shopItem.ItemData;
+        int receiveAmount = shopItem.GiveAmount * tradeCount;
+        HotbarModel hotbar = PlayerItemReceiver.CurrentHotbar;
 
-        if (amount > GetRemainingGiveAmount(shopItem))
+        // 재료를 빼기 전에 확인 (재료가 빠지며 생기는 빈 칸은 계산에 넣지 않음 - 보수적으로 판정)
+        if(!PlayerItemReceiver.CanReceive(currentInventory, hotbar, item, receiveAmount))
         {
-            Debug.Log("구매 실패 : 총 수령 한도를 넘는 수량입니다.");
+            Debug.Log("교환 실패 : 인벤토리 공간이 부족합니다.");
+            confirmBuyPopup?.Open("인벤토리 공간이 부족합니다.", null);
             return;
         }
 
-        HotbarModel hotbar = PlayerItemReceiver.CurrentHotbar;
-
-        if(!PlayerItemReceiver.CanReceive(currentInventory, hotbar, item, amount))
+        // GetMaxTradeCount로 모든 재료가 충분한지 확인했으므로 중간에 실패하지 않음
+        foreach (ShopCost cost in ShopTradeRules.MergeCosts(shopItem.Costs))
         {
-            Debug.Log("구매 실패 : 인벤토리 공간이 부족합니다.");
-            return;
+            PlayerItemReceiver.RemoveOwned(currentInventory, hotbar, cost.Item, cost.Amount * tradeCount);
         }
 
         // 핫바 먼저, 남으면 인벤토리
-        bool success = PlayerItemReceiver.Give(currentInventory, hotbar, item, amount);
+        bool success = PlayerItemReceiver.Give(currentInventory, hotbar, item, receiveAmount);
 
         if(!success)
         {
-            Debug.LogWarning("아이템 구매에 실패했습니다.");
+            Debug.LogWarning("교환 아이템 지급에 실패했습니다.");
             return;
         }
 
-        int totalPrice = shopItem.BuyPrice * amount;
-        Debug.Log(item.itemName + " " + amount + "개를 구매했습니다. 가격 : " + totalPrice);
+        Debug.Log(item.itemName + " " + receiveAmount + "개를 교환했습니다. 낸 재료 : "
+            + ShopTradeRules.FormatCosts(shopItem.Costs, tradeCount));
 
         if (shopItem.MaxTotalGive > 0)
         {
-            ProgressTracker.GetOrCreate().AddShopReceivedAmount(item.itemID, amount);
-            RefreshShopItems();
+            ProgressTracker.GetOrCreate().AddShopReceivedAmount(item.itemID, receiveAmount);
         }
 
+        RefreshShopItems();
         RefreshPlayerItems();
-    }
-
-    public void OnPlayerItemDoubleClicked(int slotIndex)
-    {
-        ItemStack itemStack = GetPlayerItem(slotIndex);
-
-        if (itemStack == null || itemStack.item == null)
-            return;
-
-        CloseBuyPopups();
-        confirmSellPopup?.Close();
-
-        ItemData item = itemStack.item;
-        int amount = itemStack.amount;
-
-        if(amount <= 1)
-        {
-            OpenSellConfirmPopup(slotIndex, 1);
-            return;
-        }
-
-        if(quantitySellPopup == null)
-        {
-            Debug.LogWarning("판매 수량 팝업이 ShopUI에 연결되지 않았습니다.");
-            return;
-        }
-
-        quantitySellPopup.Open(
-            item.itemName + " 몇 개를 판매하시겠습니까?",
-            amount,
-            selectedSellAmount => OpenSellConfirmPopup(slotIndex, selectedSellAmount)
-        );
-    }
-
-    private void OpenSellConfirmPopup(int slotIndex, int amount)
-    {
-        ItemStack itemStack = GetPlayerItem(slotIndex);
-
-        if(itemStack == null || itemStack.item == null)
-            return;
-
-        if(confirmSellPopup == null)
-        {
-            Debug.LogWarning("판매 확인 팝업이 ShopUI에 연결되지 않았습니다.");
-            return;
-        }
-
-        ItemData item = itemStack.item;
-        string message = item.itemName + " " + amount + "개를 판매하시겠습니까?";
-
-        confirmSellPopup.Open(
-            message,
-            () => SellPlayerItem(slotIndex, amount)
-        );
-    }
-
-    private void SellPlayerItem(int slotIndex, int amount)
-    {
-        ItemStack itemStack = GetPlayerItem(slotIndex);
-
-        if (itemStack == null || itemStack.item == null)
-            return;
-
-        if (amount <= 0)
-            return;
-
-        ItemData item = itemStack.item;
-        int currentAmount = itemStack.amount;
-
-        if(amount > currentAmount)
-        {
-            Debug.Log("판매할 아이템 수량이 부족합니다.");
-            return;
-        }
-
-        bool success = currentInventory.RemoveItem(item, amount);
-
-        if(!success)
-        {
-            Debug.LogWarning("아이템 판매에 실패했습니다.");
-            return;
-        }
-
-        Debug.Log(item.itemName + " " + amount + "개를 판매했습니다.");
-
-        RefreshPlayerItems();
+        RefreshSelectedMarks();
     }
 
     private ShopItemData GetShopItem(int slotIndex)
     {
-        if(currentShopData == null || currentShopData.SellItems == null)
+        if(currentShopData == null || currentShopData.TradeItems == null)
             return null;
 
-        if(slotIndex < 0 || slotIndex >= currentShopData.SellItems.Count)
+        if(slotIndex < 0 || slotIndex >= currentShopData.TradeItems.Count)
             return null;
 
-        return currentShopData.SellItems[slotIndex];
-    }
-
-    private ItemStack GetPlayerItem(int slotIndex)
-    {
-        if(currentInventory == null || currentInventory.Items == null)
-            return null;
-
-        if(slotIndex < 0 || slotIndex >= currentInventory.Items.Count)
-            return null;
-
-        return currentInventory.Items[slotIndex];
+        return currentShopData.TradeItems[slotIndex];
     }
 
     private void RefreshSelectedMarks()
@@ -592,22 +559,10 @@ public class ShopUI : MonoBehaviour
         RefreshSelectedMarks();
     }
 
-    private void CloseBuyPopups()
+    private void CloseAllPopups()
     {
         quantityBuyPopup?.Close();
         confirmBuyPopup?.Close();
-    }
-
-    private void CloseSellPopups()
-    {
-        quantitySellPopup?.Close();
-        confirmSellPopup?.Close();
-    }
-
-    private void CloseAllPopups()
-    {
-        CloseBuyPopups();
-        CloseSellPopups();
     }
 
     public void Close()
@@ -625,6 +580,7 @@ public class ShopUI : MonoBehaviour
         currentPlayer = null;
         currentNPC = null;
         currentInventory = null;
+        materialItems.Clear();
 
         CloseAllPopups();
         ClearSelectedItem();
