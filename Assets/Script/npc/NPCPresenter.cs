@@ -9,6 +9,9 @@ public class NPCPresenter : MonoBehaviour, IInteractable, IInteractionPromptSour
 
     private NPCView npcView;
 
+    // 이 NPC 프리팹 안에 있는 상호작용 UI (역할별로 버튼 구성이 다름). 없으면 씬의 공용 UI 사용
+    private NPCInteractionUI interactionUI;
+
     private PlayerPresenter currentPlayer;
     private bool isPlayerInRange;
 
@@ -20,6 +23,7 @@ public class NPCPresenter : MonoBehaviour, IInteractable, IInteractionPromptSour
     {
         npcModel = GetComponent<NPCModel>();
         npcView = GetComponent<NPCView>();
+        interactionUI = GetComponentInChildren<NPCInteractionUI>(true);
 
         if (npcModel == null)
         {
@@ -102,13 +106,15 @@ public class NPCPresenter : MonoBehaviour, IInteractable, IInteractionPromptSour
         npcView.LookAtPlayer(player.transform);
         //npcView.PlayTalk();
 
-        if (NPCInteractionUI.Instance == null)
+        NPCInteractionUI ui = interactionUI != null ? interactionUI : NPCInteractionUI.Instance;
+
+        if (ui == null)
         {
             Debug.LogWarning("NPCInteractionUI가 씬에 없습니다.");
             return;
         }
 
-        NPCInteractionUI.Instance.Open(this, player);
+        ui.Open(this, player);
     }
 
     public void ShowInteractionMarkIfPossible()

@@ -52,6 +52,9 @@
 **UI 연동** — 기존 `NPCInteractionUI`의 "대화" 버튼을 재활용(기존 OpenAI 인사말 기능은 대체됨).
 `npcNameText`/`dialogueText`를 그대로 쓰고, 타이핑 효과 코루틴과 선택지 버튼(2~4개,
 `tipChoiceButtons`)만 추가. 진단/대사 데이터가 없으면 기존 고정 대사 랜덤 출력으로 폴백.
+`NPCInteractionUI`는 싱글톤이 아님 — 역할별 NPC 프리팹(Dialogue/Shop/BattleNPC_Main)마다 버튼 구성이 다른 UI를
+하나씩 갖고, `NPCPresenter`가 자기 자식 UI를 엶(없으면 `Instance`). `Instance`는 "지금(마지막으로) 열린 UI"라서
+`NPCTipDialoguePresenter`/`UIPresenter`는 그대로 `Instance`를 씀.
 
 **로깅 연동** — `PlayLogManager.RecordTipDialogue(type, confidence, entryId, nodeId, choiceText)`가
 `tip_dialogue_log.csv`에 진단 결과/확신도/보여준 대사 ID/선택지를 기록 (`sessionId`로

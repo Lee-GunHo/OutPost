@@ -1393,12 +1393,12 @@ MonoBehaviour:
   dialogueText: {fileID: 1933808225436684148}
   dialogueButton: {fileID: 6374210634979756806}
   shopButton: {fileID: 0}
-  questButton: {fileID: 5005251308230325991}
-  questButtonText: {fileID: 6710218716214346335}
+  questButton: {fileID: 0}
+  questButtonText: {fileID: 0}
   closeButton: {fileID: 2744312162757506034}
   tipChoiceButtons:
   - {fileID: 1381226616053866034}
-  - {fileID: 0}
+  - {fileID: 9117122724171240960}
   - {fileID: 5894013640598887440}
   endTipDialogueButton: {fileID: 9083609995760729355}
   typingCharDelay: 0.03

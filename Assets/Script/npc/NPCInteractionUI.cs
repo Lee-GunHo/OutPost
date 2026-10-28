@@ -11,6 +11,9 @@ using UnityEngine.UI;
 /// </summary>
 public class NPCInteractionUI : MonoBehaviour
 {
+    // NPC 프리팹(대화/퀘스트, 상점, 전투)마다 버튼 구성이 다른 UI를 하나씩 갖고 있으므로 싱글톤이 아님.
+    // Instance = 지금 열려 있는(또는 마지막으로 열린) UI. 아무것도 안 열렸으면 처음 생성된 UI.
+    // NPCTipDialoguePresenter/UIPresenter는 열린 UI에 대사를 띄우거나 닫으므로 이 값을 그대로 씀.
     public static NPCInteractionUI Instance { get; private set; }
 
     [Header("전체 UI 패널")]
@@ -45,14 +48,11 @@ public class NPCInteractionUI : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance == null)
         {
-            Destroy(gameObject);
-            return;
+            Instance = this;
         }
 
-        Instance = this;
-        
         if(questButtonText == null && questButton != null)
         {
             questButtonText = questButton.GetComponentInChildren<TMP_Text>(true);
@@ -102,6 +102,8 @@ public class NPCInteractionUI : MonoBehaviour
     {
         if (!UIState.CanOpenWindow || panel == null)
             return;
+
+        Instance = this;
 
         currentNPC = npc;
         currentPlayer = player;
@@ -653,6 +655,14 @@ public class NPCInteractionUI : MonoBehaviour
             return null;
 
         return currentPlayer.PlayerInventory;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     /// <summary>
