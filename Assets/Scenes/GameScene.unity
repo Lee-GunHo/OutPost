@@ -760,6 +760,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7455673844006750618, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
   m_PrefabInstance: {fileID: 7953957928210945419}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &882886864 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2604862028197363104, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
+  m_PrefabInstance: {fileID: 7676802239677216506}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6636d1c910ac17246a93c203ed00ad49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopConfirmPopup
 --- !u!1001 &927199058
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1235,6 +1246,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215763946}
   m_CullTransparentMesh: 1
+--- !u!114 &1282141126 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3830107819337757370, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
+  m_PrefabInstance: {fileID: 7676802239677216506}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9530323dfb859d4e8740856db02cfcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopQuantityPopup
 --- !u!224 &1360208497 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 293899760475147861, guid: d6e1c9f688114fa439f7a907444c6f26, type: 3}
@@ -2411,6 +2433,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3451206160546969229, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
+      propertyPath: slotPrefab
+      value: 
+      objectReference: {fileID: 6114506557995815281, guid: 9a2b898efea5a684689d1ed53703e48d, type: 3}
+    - target: {fileID: 3451206160546969229, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
+      propertyPath: confirmBuyPopup
+      value: 
+      objectReference: {fileID: 882886864}
+    - target: {fileID: 3451206160546969229, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
+      propertyPath: quantityBuyPopup
+      value: 
+      objectReference: {fileID: 1282141126}
     - target: {fileID: 3982747844841453755, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
@@ -2436,7 +2470,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2500950713994658125, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
+    - {fileID: 470613506714304226, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f29e5a7a3943624397ec972859b58d1, type: 3}
