@@ -1,5 +1,5 @@
 """
-[테스트용] 5단계 분석 스크립트 동작 확인용 가짜 후속 로그(A/B 배정, 만족도, 해결 여부,
+[테스트용] 5단계 분석 스크립트 동작 확인용 가짜 후속 로그(팁 대화, 해결 여부,
 Rule/ML 비교) 생성. 3단계 synthetic_session_labels.csv가 먼저 있어야 함
 (없으면 scripts/generate_synthetic_data.py를 먼저 실행).
 

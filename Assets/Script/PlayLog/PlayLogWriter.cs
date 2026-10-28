@@ -14,18 +14,14 @@ public static class PlayLogWriter
     private const string LabelFileName = "session_labels.csv";
     private const string TipDialogueFileName = "tip_dialogue_log.csv";
     private const string DiagnosisComparisonFileName = "diagnosis_comparison_log.csv";
-    private const string TipFeedbackFileName = "tip_feedback_log.csv";
     private const string TipResolutionFileName = "tip_resolution_log.csv";
-    private const string AbTestAssignmentFileName = "ab_test_assignment.csv";
 
     public static string FolderPath => Path.Combine(Application.persistentDataPath, FolderName);
     public static string SnapshotFilePath => Path.Combine(FolderPath, SnapshotFileName);
     public static string LabelFilePath => Path.Combine(FolderPath, LabelFileName);
     public static string TipDialogueFilePath => Path.Combine(FolderPath, TipDialogueFileName);
     public static string DiagnosisComparisonFilePath => Path.Combine(FolderPath, DiagnosisComparisonFileName);
-    public static string TipFeedbackFilePath => Path.Combine(FolderPath, TipFeedbackFileName);
     public static string TipResolutionFilePath => Path.Combine(FolderPath, TipResolutionFileName);
-    public static string AbTestAssignmentFilePath => Path.Combine(FolderPath, AbTestAssignmentFileName);
 
     public static void AppendSnapshot(PlayLogEntry entry)
     {
@@ -139,38 +135,6 @@ public static class PlayLogWriter
         }
     }
 
-    public static void AppendTipFeedback(
-        string sessionId,
-        string timestamp,
-        string difficultyType,
-        string entryId,
-        int? rating)
-    {
-        try
-        {
-            EnsureFolderExists();
-            const string header = "sessionId,timestamp,difficultyType,entryId,rating,skipped";
-            EnsureHeader(TipFeedbackFilePath, header);
-
-            bool skipped = !rating.HasValue;
-            string ratingText = rating.HasValue ? rating.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
-
-            string row = string.Join(",",
-                sessionId,
-                timestamp,
-                difficultyType,
-                EscapeCsvField(entryId),
-                ratingText,
-                skipped ? "true" : "false");
-
-            File.AppendAllText(TipFeedbackFilePath, row + Environment.NewLine);
-        }
-        catch (Exception exception)
-        {
-            Debug.LogWarning("PlayLog 팁 만족도 로그 기록 실패: " + exception.Message);
-        }
-    }
-
     public static void AppendTipResolution(
         string sessionId,
         string tipTimestamp,
@@ -205,27 +169,6 @@ public static class PlayLogWriter
         catch (Exception exception)
         {
             Debug.LogWarning("PlayLog 팁 해결 여부 로그 기록 실패: " + exception.Message);
-        }
-    }
-
-    public static void AppendAbTestAssignment(
-        string sessionId,
-        string timestamp,
-        string group)
-    {
-        try
-        {
-            EnsureFolderExists();
-            const string header = "sessionId,timestamp,group";
-            EnsureHeader(AbTestAssignmentFilePath, header);
-
-            string row = string.Join(",", sessionId, timestamp, group);
-
-            File.AppendAllText(AbTestAssignmentFilePath, row + Environment.NewLine);
-        }
-        catch (Exception exception)
-        {
-            Debug.LogWarning("PlayLog A/B 배정 로그 기록 실패: " + exception.Message);
         }
     }
 

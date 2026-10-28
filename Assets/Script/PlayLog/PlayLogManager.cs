@@ -154,7 +154,8 @@ public class PlayLogManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 세션 종료 시("가장 어려웠던 점" 설문 등) 라벨을 지정. 실제 설문 UI는 이후 단계에서 연결.
+    /// 세션 종료 라벨(가장 어려웠던 점)을 지정. 게임 내 세션 종료 설문 UI는 제거됨 —
+    /// 팀원 자체 테스트 때 라벨이 필요하면 디버그 코드 등에서 직접 호출.
     /// </summary>
     public void SetSessionEndLabel(string label)
     {
@@ -277,20 +278,6 @@ public class PlayLogManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 팁을 받고 일정 시간 뒤의 만족도 설문 결과 기록 (5단계 연동). rating이 null이면 건너뛴 것.
-    /// </summary>
-    public void RecordTipFeedback(string difficultyType, string entryId, int? rating)
-    {
-        PlayLogWriter.AppendTipFeedback(
-            sessionId,
-            DateTime.UtcNow.ToString("o"),
-            difficultyType,
-            entryId,
-            rating
-        );
-    }
-
-    /// <summary>
     /// 팁을 받은 뒤 실제로 난관이 해결됐는지 자동 판정 결과 기록 (5단계 연동).
     /// </summary>
     public void RecordTipResolution(
@@ -308,18 +295,6 @@ public class PlayLogManager : MonoBehaviour
             entryId,
             resolved,
             minutesToResolve
-        );
-    }
-
-    /// <summary>
-    /// A/B 테스트 모드에서 이번 세션이 Rule/ML 중 어디에 배정됐는지 기록 (5단계 연동).
-    /// </summary>
-    public void RecordAbTestAssignment(string group)
-    {
-        PlayLogWriter.AppendAbTestAssignment(
-            sessionId,
-            DateTime.UtcNow.ToString("o"),
-            group
         );
     }
 

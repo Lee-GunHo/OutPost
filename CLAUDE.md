@@ -88,41 +88,36 @@
 - **`MLDiagnoser`**(`IDifficultyDiagnoser, IDisposable`): 생성자에서 `ModelAsset`+`Worker`를
   1회 로드(`BackendType.CPU`). `Diagnose()`는 추론 실패/모델 없음/확신도 미달(`mlMinConfidence`,
   인스펙터 조절) 시 생성자로 주입받은 `RuleBasedDiagnoser`로 자동 대체. `Dispose()`에서 Worker 해제.
-- **`DiagnosisMode`**(Rule/ML/Compare/AB) — `NPCTipDialoguePresenter` 인스펙터에서 선택.
+- **`DiagnosisMode`**(Rule/ML/Compare) — `NPCTipDialoguePresenter` 인스펙터에서 선택.
   Compare 모드는 두 진단기를 모두 돌려 `PlayLogManager.RecordDiagnosisComparison(...)`으로
-  `diagnosis_comparison_log.csv`에 기록하고, 실제 대사는 ML 결과로 표시. AB 모드는 5단계 참고.
+  `diagnosis_comparison_log.csv`에 기록하고, 실제 대사는 ML 결과로 표시.
 - **일치성 테스트**: `Assets/Tests/Editor/MLDiagnoserParityTests.cs` (Test Runner, EditMode).
   `Assets/MLModels/DifficultyDiagnosis/`의 `test_vectors.json`(Python이 계산한 기대 확률)을
   `DifficultyFeatureBuilder` + 실제 ONNX 추론으로 재현해서 오차 0.02 이내로 일치하는지 확인.
   asmdef 없이 `Assets/Tests/Editor/`(폴더명만으로 암시적 Editor 어셈블리) 방식 — 커스텀
   asmdef의 `"Assembly-CSharp"` 문자열 참조가 이 환경에서 안 먹혀서 이 방식으로 우회함.
 
-### 5단계 — 플레이테스트 평가 + 분석 (`Assets/Script/NpcTip/FollowUp/`, `Assets/Script/PlayLog/SessionEndSurveyUI.cs`, `ml/`)
+### 5단계 — 자체 테스트 평가 + 분석 (`Assets/Script/NpcTip/FollowUp/`, `ml/`)
+
+외부 플레이테스터를 모을 시간/인원이 없어 **게임 내 설문(팁 만족도 `TipFeedbackUI`, 세션 종료
+`SessionEndSurveyUI`)과 A/B 테스트(`DiagnosisMode.AB`)는 제거함**. 팀원 자체 테스트 로그만으로 평가.
 
 **게임 내 평가**
-- **`TipFollowUpManager`**(싱글톤): `NPCTipDialoguePresenter.StartTipDialogue()`가 팁을 준
-  직후 `OnTipGiven(type, entryId, baselineSnapshot)`을 호출해주면, 새 팁이 올 때까지(최신 팁
-  하나만 추적) 두 코루틴을 돌림:
-  - 만족도 설문: `feedbackDelaySec`(기본 180초) 뒤 `TipFeedbackUI` 팝업(1~5점+건너뛰기, 무응답
-    15초면 자동 건너뜀) → `tip_feedback_log.csv`
-  - 자동 해결 추적: `resolutionCheckIntervalSec`(기본 30초)마다 `DifficultyResolutionChecker`로
-    baseline과 새 스냅샷을 비교(장비 등급 상승/사망 빈도 감소/구역 이동/처치 수 증가 등 유형별
-    휴리스틱), 해결 시점 또는 `resolutionCheckMaxWaitSec`(기본 600초) 타임아웃 시
-    `tip_resolution_log.csv`에 기록.
-- **A/B 테스트**: `DiagnosisMode.AB`를 고르면 `NPCTipDialoguePresenter.Start()`에서 세션당 1회
-  Rule/ML을 50/50 무작위 고정 배정(`effectiveMode`)하고 `ab_test_assignment.csv`에 기록.
-- **세션 종료 설문**: `SessionEndSurveyUI`가 `Application.wantsToQuit`를 가로채서 종료 직전
-  DifficultyType 5지선다(자유서술 아님 — 3단계 라벨 검증 규칙과 맞추기 위함) 팝업을 띄우고,
-  답변을 기존 `PlayLogManager.SetSessionEndLabel()`에 넣은 뒤 실제 종료 진행. 1단계 파일은
-  수정 없음(이미 있던 훅을 그대로 사용).
+- **`TipFollowUpManager`**(싱글톤, `System_Manager` 프리팹): `NPCTipDialoguePresenter.StartTipDialogue()`가
+  팁을 준 직후 `OnTipGiven(type, entryId, baselineSnapshot)`을 호출해주면, 새 팁이 올 때까지(최신 팁
+  하나만 추적) 자동 해결 추적 코루틴을 돌림: `resolutionCheckIntervalSec`(기본 30초)마다
+  `DifficultyResolutionChecker`로 baseline과 새 스냅샷을 비교(장비 등급 상승/사망 빈도 감소/구역 이동/
+  처치 수 증가 등 유형별 휴리스틱), 해결 시점 또는 `resolutionCheckMaxWaitSec`(기본 600초) 타임아웃 시
+  `tip_resolution_log.csv`에 기록.
+- Rule/ML 비교가 필요하면 `Diagnosis Mode`를 `Compare`로 두고 플레이(4단계 `diagnosis_comparison_log.csv`).
+- `PlayLogManager.SetSessionEndLabel()`(1단계 훅)은 남아 있지만 이를 호출하던 설문 UI는 없음.
 
 **Python 분석** (`ml/ml_pipeline/playtest_analysis.py`, `ml/ml_pipeline/playtest_report.py`)
-- `data/playtest/<테스터명>/`에 모은 여러 테스터의 CSV를 재귀로 병합(`load_all_logs`) →
-  `ab_test_assignment.csv`로 세션→그룹 매핑 → Rule vs ML 그룹별 만족도(Mann-Whitney U),
-  해결률(Fisher's exact test), 해결 시간(Mann-Whitney U) 비교. 표본이 `MIN_RECOMMENDED_N`(30)
-  미만이면 보고서에 자동으로 경고 문구 삽입.
+- `data/playtest/<이름>/`에 모은 팀원들의 CSV를 재귀로 병합(`load_all_logs`) →
+  `tip_resolution_log.csv`를 **난관 유형별** 해결률/평균 해결 시간으로 집계(그룹 간 통계 검정 없음).
+  전체 표본이 `MIN_RECOMMENDED_N`(30) 미만이면 보고서에 자동으로 경고 문구 삽입.
 - `diagnosis_comparison_log.csv`에서 Rule≠ML 사례를 뽑아 발표용 표로 추출.
-- 산출물: `artifacts/<run>/playtest_report/summary.md` + PNG 3종(만족도/해결률/해결시간).
+- 산출물: `artifacts/<run>/playtest_report/summary.md` + PNG 2종(유형별 해결률/해결 시간) + `mismatched_cases.csv`.
 - `ml_pipeline/plot_style.py`: matplotlib 차트에 한글을 쓰면 기본 폰트(DejaVu Sans)에
   한글 글리프가 없어서 깨지므로, `configure_korean_font()`로 Malgun Gothic 등을 적용
   (3단계 차트 모듈들도 예방 차원에서 같이 적용해둠).
@@ -192,10 +187,7 @@
   (TextAsset)을 인스펙터에 연결.
 - `NPCInteractionUI`에 `tipChoiceButtons`(Button 3개, 자식에 TMP_Text)와
   `endTipDialogueButton`(대화 종료하기, TipChoice4 자리) 연결 필요.
-- **5단계**: 씬에 `TipFeedbackUI`(작은 팝업 패널 + 1~5점 버튼 5개 + 건너뛰기 버튼),
-  `TipFollowUpManager`(빈 GameObject), `SessionEndSurveyUI`(팝업 패널 + DifficultyType
-  5개 버튼 + 건너뛰기 버튼)를 배치. 플레이테스트 빌드에서는
-  `NPCTipDialoguePresenter`의 `Diagnosis Mode`를 `AB`로 설정.
+- **5단계**: `TipFollowUpManager`(System_Manager 프리팹에 포함)만 있으면 됨. 설문 팝업은 제거됨.
 
 ### 아이템/제작 데이터 — 엑셀 임포터 (`Assets/Editor/Crafting/`)
 

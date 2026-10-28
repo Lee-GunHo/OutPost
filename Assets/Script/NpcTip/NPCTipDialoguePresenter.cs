@@ -34,9 +34,6 @@ public class NPCTipDialoguePresenter : MonoBehaviour
     private RuleBasedDiagnoser ruleDiagnoser;
     private MLDiagnoser mlDiagnoser;
 
-    // AB 모드일 때 세션 시작 시 한 번 뽑아서 고정하는 실제 적용 모드(Rule 또는 ML).
-    private DiagnosisMode effectiveMode;
-
     private readonly Dictionary<NPCPresenter, Dictionary<DifficultyType, string>> lastEntryIdByNpc =
         new Dictionary<NPCPresenter, Dictionary<DifficultyType, string>>();
 
@@ -62,17 +59,6 @@ public class NPCTipDialoguePresenter : MonoBehaviour
         stateManager = GetComponent<NPCDialogueStateManager>();
         ruleDiagnoser = new RuleBasedDiagnoser(ruleConfig);
         mlDiagnoser = new MLDiagnoser(mlModelAsset, mlMetadataJson, ruleDiagnoser, mlMinConfidence);
-    }
-
-    private void Start()
-    {
-        effectiveMode = diagnosisMode;
-
-        if (diagnosisMode == DiagnosisMode.AB)
-        {
-            effectiveMode = UnityEngine.Random.value < 0.5f ? DiagnosisMode.Rule : DiagnosisMode.ML;
-            PlayLogManager.Instance?.RecordAbTestAssignment(effectiveMode.ToString());
-        }
     }
 
     private void OnDestroy()
@@ -287,8 +273,7 @@ public class NPCTipDialoguePresenter : MonoBehaviour
     /// </summary>
     private DifficultyDiagnosis RunDiagnosis(PlayLogEntry snapshot)
     {
-        // AB 모드는 Start()에서 이미 Rule/ML 중 하나로 고정됐으므로, 여기서는 effectiveMode만 봄.
-        switch (effectiveMode)
+        switch (diagnosisMode)
         {
             case DiagnosisMode.ML:
                 return mlDiagnoser.Diagnose(snapshot);
@@ -306,7 +291,6 @@ public class NPCTipDialoguePresenter : MonoBehaviour
             }
 
             case DiagnosisMode.Rule:
-            case DiagnosisMode.AB: // Start()에서 실패해 기본값이 그대로 남아있는 방어적 경우
             default:
                 return ruleDiagnoser.Diagnose(snapshot);
         }

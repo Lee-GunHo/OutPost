@@ -2,7 +2,8 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// 팁을 준 뒤의 후속 처리(만족도 설문 + 자동 해결 여부 추적)를 총괄.
+/// 팁을 준 뒤 실제로 난관이 해결됐는지 자동으로 추적해 기록.
+/// (플레이테스트 인원이 없어 게임 내 만족도 설문은 제거함 — 설문 없이 로그만으로 평가)
 /// NPCTipDialoguePresenter가 팁을 보여줄 때마다 OnTipGiven을 호출해주면 됨.
 /// 새 팁이 오면 이전 팁에 대한 대기 중인 후속 처리는 취소(최신 팁 하나만 추적).
 /// </summary>
@@ -10,17 +11,12 @@ public class TipFollowUpManager : MonoBehaviour
 {
     public static TipFollowUpManager Instance { get; private set; }
 
-    [Header("만족도 설문")]
-    [Tooltip("팁을 준 뒤 이 시간(초)이 지나면 만족도 설문을 띄움")]
-    [SerializeField] private float feedbackDelaySec = 180f;
-
     [Header("자동 해결 여부 추적")]
     [Tooltip("해결됐는지 확인하는 주기(초)")]
     [SerializeField] private float resolutionCheckIntervalSec = 30f;
     [Tooltip("이 시간(초)이 지나도 해결 조건을 못 채우면 '해결 안 됨'으로 기록하고 추적 종료")]
     [SerializeField] private float resolutionCheckMaxWaitSec = 600f;
 
-    private Coroutine feedbackCoroutine;
     private Coroutine resolutionCoroutine;
 
     private void Awake()
@@ -45,44 +41,12 @@ public class TipFollowUpManager : MonoBehaviour
             return;
         }
 
-        if (feedbackCoroutine != null)
-        {
-            StopCoroutine(feedbackCoroutine);
-        }
-
         if (resolutionCoroutine != null)
         {
             StopCoroutine(resolutionCoroutine);
         }
 
-        feedbackCoroutine = StartCoroutine(FeedbackSurveyRoutine(type, entryId));
         resolutionCoroutine = StartCoroutine(ResolutionCheckRoutine(type, entryId, baselineSnapshot));
-    }
-
-    private IEnumerator FeedbackSurveyRoutine(DifficultyType type, string entryId)
-    {
-        yield return new WaitForSeconds(feedbackDelaySec);
-
-        if (TipFeedbackUI.Instance == null)
-        {
-            feedbackCoroutine = null;
-            yield break;
-        }
-
-        int? answeredRating = null;
-        bool answered = false;
-
-        TipFeedbackUI.Instance.Show(rating =>
-        {
-            answeredRating = rating;
-            answered = true;
-        });
-
-        yield return new WaitUntil(() => answered);
-
-        PlayLogManager.Instance?.RecordTipFeedback(type.ToString(), entryId, answeredRating);
-
-        feedbackCoroutine = null;
     }
 
     private IEnumerator ResolutionCheckRoutine(DifficultyType type, string entryId, PlayLogEntry baseline)

@@ -1,6 +1,6 @@
 """
-여러 테스터의 PlayLog 폴더(각각 data/playtest/<테스터명>/ 아래 복사)를 모아서
-Rule 그룹 vs ML 그룹 비교 보고서를 생성.
+팀원들의 PlayLog 폴더(각각 data/playtest/<이름>/ 아래 복사)를 모아서
+팁 이후 난관 해결률(난관 유형별) + Rule/ML 판단 불일치 사례 보고서를 생성.
 
 사용 예:
     python scripts/analyze_playtest.py --run-name real_playtest_1
@@ -16,14 +16,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ml_pipeline.config import ARTIFACTS_DIR, DATA_DIR
 from ml_pipeline.logging_setup import setup_logging
 from ml_pipeline.playtest_analysis import (
-    analyze_feedback,
     analyze_resolution,
-    build_session_group_lookup,
     extract_mismatched_cases,
     load_all_logs,
 )
 from ml_pipeline.playtest_report import (
-    save_feedback_chart,
     save_resolution_rate_chart,
     save_time_to_resolve_chart,
     write_summary_markdown,
@@ -41,26 +38,22 @@ def main():
     setup_logging()
 
     logs = load_all_logs(args.playtest_root)
-    group_lookup = build_session_group_lookup(logs["ab_assignment"])
-
-    feedback_result = analyze_feedback(logs["feedback"], group_lookup)
-    resolution_result = analyze_resolution(logs["resolution"], group_lookup)
+    resolution_result = analyze_resolution(logs["resolution"])
     mismatched_df = extract_mismatched_cases(logs["comparison"])
 
     report_dir = ARTIFACTS_DIR / args.run_name / "playtest_report"
 
-    save_feedback_chart(feedback_result, report_dir / "feedback_by_group.png")
-    save_resolution_rate_chart(resolution_result, report_dir / "resolution_rate_by_group.png")
-    save_time_to_resolve_chart(logs["resolution"], group_lookup, report_dir / "time_to_resolve_by_group.png")
+    save_resolution_rate_chart(resolution_result, report_dir / "resolution_rate_by_type.png")
+    save_time_to_resolve_chart(logs["resolution"], report_dir / "time_to_resolve_by_type.png")
 
     chart_paths = {
-        "feedback": "feedback_by_group.png",
-        "resolution_rate": "resolution_rate_by_group.png",
-        "time_to_resolve": "time_to_resolve_by_group.png",
+        "resolution_rate": "resolution_rate_by_type.png",
+        "time_to_resolve": "time_to_resolve_by_type.png",
     }
 
+    report_dir.mkdir(parents=True, exist_ok=True)
     write_summary_markdown(
-        feedback_result, resolution_result, mismatched_df,
+        resolution_result, mismatched_df,
         report_dir / "summary.md", chart_paths)
 
     mismatched_df.to_csv(report_dir / "mismatched_cases.csv", index=False)

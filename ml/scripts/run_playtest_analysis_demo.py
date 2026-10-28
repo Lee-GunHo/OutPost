@@ -36,7 +36,7 @@ def main():
     if not labels_csv.exists():
         run_step("0/2 (선행) 3단계 가짜 기본 데이터 생성", ["generate_synthetic_data.py"])
 
-    run_step("1/2 가짜 플레이테스트 후속 로그 생성 (A/B, 만족도, 해결 여부)", [
+    run_step("1/2 가짜 후속 로그 생성 (팁 대화, 해결 여부, Rule/ML 비교)", [
         "generate_synthetic_playtest_data.py",
     ])
 

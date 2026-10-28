@@ -1,10 +1,11 @@
-# 난관 분류 모델 학습 + 플레이테스트 분석 파이프라인 (3·5단계)
+# 난관 분류 모델 학습 + 자체 테스트 분석 파이프라인 (3·5단계)
 
 Unity `Assets/Script/PlayLog/`가 수집한 CSV(1단계)를 읽어, 난관 유형(2단계
 `DifficultyType`: EquipmentLack/CombatStruggle/Lost/ResourceLack/Smooth)을 분류하는
 모델을 학습하고 Unity에 배포 가능한 ONNX로 내보내는 Python 파이프라인(3단계).
-여기에 더해 플레이테스트 결과(A/B 테스트, 만족도, 난관 해결률)를 분석하는
-스크립트도 포함(5단계).
+여기에 더해 팀원 자체 테스트 로그(팁 이후 난관 해결률, Rule/ML 판단 불일치)를
+분석하는 스크립트도 포함(5단계). 외부 플레이테스터를 모을 수 없어 게임 내 만족도 설문과
+A/B 테스트는 제거함.
 
 이 폴더는 Unity 프로젝트(`Assets/`) 바깥에 있으며, Unity는 이 폴더를 전혀 참조하지 않음.
 
@@ -67,8 +68,8 @@ python scripts/export_onnx.py --run-name real_v1
 | `export_onnx.py` | MLP를 ONNX로 내보내고, PyTorch 출력과 일치하는지 검증 + 연산자 검사 |
 | `check_onnx.py` | 임의의 ONNX 파일에 Unity 미지원 연산자가 있는지 단독 검사 |
 | `run_all_demo.py` | 위 전체를 가짜 데이터로 순서대로 실행 |
-| `generate_synthetic_playtest_data.py` | [테스트용] 가짜 A/B 배정·만족도·해결 여부·비교 로그 생성 |
-| `analyze_playtest.py` | 테스터 CSV 병합, 그룹별 비교 + 통계 검정, 보고서 생성 |
+| `generate_synthetic_playtest_data.py` | [테스트용] 가짜 팁 대화·해결 여부·Rule/ML 비교 로그 생성 |
+| `analyze_playtest.py` | 팀원 CSV 병합, 난관 유형별 해결률/해결 시간 + 불일치 사례 보고서 생성 |
 | `run_playtest_analysis_demo.py` | 위 5단계 전체를 가짜 데이터로 순서대로 실행 |
 
 ## 결과물 구조 (`artifacts/<run-name>/`)
@@ -106,7 +107,7 @@ artifacts/<run-name>/
   (`KNOWN_SUPPORTED_OPS`)은 보수적인 추정치일 뿐이므로 최종적으로는 Unity 에디터에
   ONNX를 넣어보고 Sentis가 실제로 로드/추론하는지 확인해야 함.
 
-## 플레이테스트 분석 (5단계)
+## 자체 테스트 분석 (5단계)
 
 ### 0. 가짜 데이터로 먼저 확인
 
@@ -115,37 +116,35 @@ python scripts/run_playtest_analysis_demo.py
 ```
 
 **⚠️ 역시 가짜 데이터입니다.** `artifacts/synthetic_playtest_demo/playtest_report/`에
-결과가 저장되며, 실제 플레이테스트 결과와 섞이지 않습니다.
+결과가 저장되며, 실제 테스트 결과와 섞이지 않습니다.
 
-### 1. 실제 플레이테스트 준비
+### 1. 팀원 자체 테스트 준비
 
-**빌드 설정**
-- 테스터에게 빌드를 줄 때, 로그가 `Application.persistentDataPath/PlayLog/`에 쌓인다고
-  안내해주세요. Windows 기준 기본 경로:
-  `%userprofile%\AppData\LocalLow\<회사명>\<제품명>\PlayLog\`
-  (현재 프로젝트 설정 기준: `%userprofile%\AppData\LocalLow\DefaultCompany\OutPost\PlayLog\`
-  — `DefaultCompany`는 Project Settings > Player에서 실제 회사명으로 바꾼 뒤 빌드하는 걸 권장)
-- `NPCTipDialoguePresenter`의 `Diagnosis Mode`를 **`AB`**로 설정해서 빌드하면, 테스터별로
-  세션 시작 시 Rule/ML 그룹이 자동 배정되고 `ab_test_assignment.csv`에 기록됩니다.
-- 씬에 `TipFeedbackUI`, `TipFollowUpManager`, `SessionEndSurveyUI`가 배치되어 있어야
-  만족도 설문/자동 해결 추적/종료 설문이 동작합니다 (Unity 쪽 설정 안내 참고).
+**빌드/에디터 설정**
+- 로그는 `Application.persistentDataPath/PlayLog/`에 쌓입니다. Windows 기준:
+  `%userprofile%\AppData\LocalLow\DefaultCompany\OutPost\PlayLog\`
+- 씬에 `TipFollowUpManager`(System_Manager 프리팹에 포함)가 있어야 팁 이후 자동 해결 추적
+  (`tip_resolution_log.csv`)이 기록됩니다.
+- Rule/ML 판단을 비교하고 싶으면 `NPCTipDialoguePresenter`의 `Diagnosis Mode`를 `Compare`로
+  두고 플레이하면 `diagnosis_comparison_log.csv`에 두 진단 결과가 같이 남습니다.
+- 팀원이 일부러 난관 상황(계속 죽기, 길 잃기, 장비 안 바꾸기 등)을 만들어 보면 유형별 표본을
+  빠르게 모을 수 있습니다.
 
-**테스터 CSV 모으기**
-- 각 테스터의 `PlayLog` 폴더 전체를 복사해서 `ml/data/playtest/<테스터명>/`에 넣기
-  (예: `ml/data/playtest/tester_kim/`, `ml/data/playtest/tester_lee/`).
+**CSV 모으기**
+- 각자의 `PlayLog` 폴더 전체를 복사해서 `ml/data/playtest/<이름>/`에 넣기
+  (예: `ml/data/playtest/kim/`, `ml/data/playtest/lee/`).
 - 파일명은 그대로 두면 됨 — `analyze_playtest.py`가 `data/playtest/` 아래를 재귀로 훑어서
-  같은 이름의 CSV를 전부 합침 (세션 ID가 GUID라 테스터 간 충돌 없음).
+  같은 이름의 CSV를 전부 합침 (세션 ID가 GUID라 충돌 없음).
 
 **분석 실행**
 
 ```bash
-python scripts/analyze_playtest.py --run-name playtest_2026w1
+python scripts/analyze_playtest.py --run-name selftest_2026w1
 ```
 
-결과는 `artifacts/playtest_2026w1/playtest_report/`에:
-- `summary.md` — 그룹별 만족도/해결률/해결 시간 표 + 통계 검정(Mann-Whitney U, Fisher's
-  exact) + 표본 수 경고 + Rule/ML 불일치 사례 표
-- `feedback_by_group.png`, `resolution_rate_by_group.png`, `time_to_resolve_by_group.png`
+결과는 `artifacts/selftest_2026w1/playtest_report/`에:
+- `summary.md` — 난관 유형별 해결률/평균 해결 시간 표(n 포함) + 표본 수 경고 + Rule/ML 불일치 사례 표
+- `resolution_rate_by_type.png`, `time_to_resolve_by_type.png`
 - `mismatched_cases.csv`
 
 ## RuleBasedDiagnoser 비교 기준에 대해
