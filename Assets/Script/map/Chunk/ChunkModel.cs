@@ -23,6 +23,18 @@ public class ChunkModel : MonoBehaviour
     private Vector2Int currentChunkCoord;
     private Vector2Int lastChunkCoord;
     private bool isInitialized;
+    private readonly HashSet<Vector2Int> persistentChunks = new HashSet<Vector2Int>();
+    public IEnumerable<Vector2Int> PersistentChunks => persistentChunks;
+
+    // Include both sides of a chunk boundary so the character's feet stay supported.
+    public void KeepLoadedAround(Vector3 position, float cellSize, float padding)
+    {
+        Vector2Int min = WorldToChunkCoord(position - new Vector3(padding, 0f, padding), cellSize);
+        Vector2Int max = WorldToChunkCoord(position + new Vector3(padding, 0f, padding), cellSize);
+        for (int x = min.x; x <= max.x; x++)
+            for (int z = min.y; z <= max.y; z++)
+                persistentChunks.Add(new Vector2Int(x, z));
+    }
 
     public int ChunkSize => chunkSize;
     public int ViewDistance => viewDistance;
@@ -76,20 +88,24 @@ public class ChunkModel : MonoBehaviour
 
     public IEnumerable<Vector2Int> GetRequiredChunkCoordinates()
     {
+        foreach (Vector2Int coord in persistentChunks)
+            yield return coord;
         for (int x = -viewDistance; x <= viewDistance; x++)
         {
             for (int z = -viewDistance; z <= viewDistance; z++)
             {
-                yield return new Vector2Int(
+                Vector2Int coord = new Vector2Int(
                     currentChunkCoord.x + x,
                     currentChunkCoord.y + z
                 );
+                if (!persistentChunks.Contains(coord)) yield return coord;
             }
         }
     }
 
     public bool ShouldKeepChunk(Vector2Int chunkCoord)
     {
+        if (persistentChunks.Contains(chunkCoord)) return true;
         int distanceX = Mathf.Abs(chunkCoord.x - currentChunkCoord.x);
         int distanceZ = Mathf.Abs(chunkCoord.y - currentChunkCoord.y);
 

@@ -22,7 +22,7 @@ public class ChunkPresenter : MonoBehaviour
         "칸 개수가 아니라 실제 걸린 시간 기준이라 기기 성능과 무관하게 프레임당 부담이 일정함. " +
         "낮을수록 버벅임은 줄지만 청크가 채워지는 속도는 느려짐")]
     [Min(0.1f)]
-    [SerializeField] private float frameTimeBudgetMs = 4f;
+    [SerializeField] private float frameTimeBudgetMs = 2f;
 
     [Header("Nexus")]
     [Tooltip("게임 시작 시 청크 시스템과 연동되어 설치될 넥서스 프리팹")]
@@ -38,8 +38,7 @@ public class ChunkPresenter : MonoBehaviour
     private readonly Queue<Vector2Int> pendingChunkCoords = new Queue<Vector2Int>();
     private readonly HashSet<Vector2Int> queuedChunkCoords = new HashSet<Vector2Int>();
 
-    // 제거할 청크 좌표 대기열. 대각선 이동 등으로 여러 청크가 한 번에 범위를 벗어나면
-    // RemoveChunk를 그 프레임에 전부 몰아서 부르는 대신 한 프레임에 하나씩만 처리함.
+    // 제거도 오브젝트 단위로 시간/개수 예산에 맞춰 여러 프레임에 분산한다.
     private readonly Queue<Vector2Int> pendingRemovalCoords = new Queue<Vector2Int>();
     private readonly HashSet<Vector2Int> queuedRemovalCoords = new HashSet<Vector2Int>();
 
@@ -78,6 +77,15 @@ public class ChunkPresenter : MonoBehaviour
         Debug.Log("3. 저장 시스템 초기화 완료");
 
         model.Initialize(player.position, CellSize);
+
+        PlayerModel playerModel = player.GetComponent<PlayerModel>();
+        Vector3 spawnPosition = playerModel != null ? playerModel.SpawnPosition : new Vector3(0f, 1f, -5f);
+        model.KeepLoadedAround(spawnPosition, CellSize, CellSize * 2f);
+        model.KeepLoadedAround(nexusSpawnPosition, CellSize, CellSize * 2f);
+        // Generate the small permanent base area before physics resumes. Streaming
+        // elsewhere stays frame-budgeted and can never unload these coordinates.
+        foreach (Vector2Int coord in model.PersistentChunks)
+            if (!view.ContainsChunk(coord)) BuildChunkImmediately(coord);
 
         Debug.Log(
             $"4. ChunkModel 초기화 완료 / 현재 청크: {model.CurrentChunkCoord}"
@@ -203,7 +211,9 @@ public class ChunkPresenter : MonoBehaviour
         if (!view.ContainsChunk(currentChunkCoord))
             priorityChunkCoord = currentChunkCoord;
 
-        foreach (Vector2Int chunkCoord in model.GetRequiredChunkCoordinates())
+        var required = new List<Vector2Int>(model.GetRequiredChunkCoordinates());
+        required.Sort((a, b) => (a - currentChunkCoord).sqrMagnitude.CompareTo((b - currentChunkCoord).sqrMagnitude));
+        foreach (Vector2Int chunkCoord in required)
         {
             if (view.ContainsChunk(chunkCoord) || queuedChunkCoords.Contains(chunkCoord))
                 continue;
@@ -282,8 +292,8 @@ public class ChunkPresenter : MonoBehaviour
     }
 
     /// <summary>
-    /// 대기열에 쌓인 청크를 한 번에 하나씩 처리함: 제거는 프레임당 1개씩,
-    /// 생성은 frameTimeBudgetMs만큼 시간을 쓰면 한 프레임을 양보하며 진행함.
+    /// 대기열에 쌓인 청크를 한 번에 하나씩 처리함. 생성과 제거 모두
+    /// frameTimeBudgetMs 또는 오브젝트/셀 개수 제한에 도달하면 프레임을 양보함.
     /// 대각선 이동 등으로 여러 청크가 한 번에 범위를 벗어나거나 새로 필요해져도
     /// 한 프레임에 몰아서 처리하지 않도록 이 코루틴이 여러 프레임으로 펼쳐서 처리함.
     /// </summary>
@@ -291,14 +301,14 @@ public class ChunkPresenter : MonoBehaviour
     {
         while (true)
         {
-            if (pendingRemovalCoords.Count > 0)
+            if (!priorityChunkCoord.HasValue && pendingRemovalCoords.Count > 0)
             {
                 Vector2Int removeCoord = pendingRemovalCoords.Dequeue();
                 queuedRemovalCoords.Remove(removeCoord);
 
                 // 대기하는 동안 플레이어가 되돌아와서 다시 필요해진 청크는 지우지 않음
                 if (view.ContainsChunk(removeCoord) && !model.ShouldKeepChunk(removeCoord))
-                    view.RemoveChunk(removeCoord);
+                    yield return view.RemoveChunkRoutine(removeCoord, frameTimeBudgetMs);
 
                 yield return null;
                 continue;
@@ -327,8 +337,6 @@ public class ChunkPresenter : MonoBehaviour
             if (view.ContainsChunk(chunkCoord) || !model.ShouldKeepChunk(chunkCoord))
                 continue;
 
-            Debug.Log($"청크 생성 시작 : {chunkCoord}");
-
             GameObject chunkObject = null;
 
             yield return mapPresenter.GenerateChunkRoutine(
@@ -348,11 +356,13 @@ public class ChunkPresenter : MonoBehaviour
             if (!view.AddChunk(chunkCoord, chunkObject))
             {
                 Debug.LogWarning($"청크 등록 실패 또는 중복: {chunkCoord}", this);
-                ChunkView.ReleaseChunkObject(chunkObject);
+                yield return ChunkView.ReleaseChunkRoutine(chunkObject, frameTimeBudgetMs);
+                yield return null;
                 continue;
             }
 
-            Debug.Log($"청크 생성 완료 : {chunkCoord}");
+            // Do not start the next chunk with a fresh budget in the same frame.
+            yield return null;
         }
     }
 

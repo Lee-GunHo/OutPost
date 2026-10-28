@@ -7,9 +7,8 @@ using UnityEngine;
 /// 같은 프리팹이 다시 필요할 때 재사용됨.
 ///
 /// Despawn에서는 절대 Transform.SetParent를 호출하지 않음.
-/// 여러 오브젝트에 대해 SetParent를 반복 호출하는 것 자체가 비용이 커서
-/// (계층 변경 콜백 + 로컬 좌표 재계산), 호출부(ChunkView)가 청크 루트에서
-/// Transform.DetachChildren()로 한 번에 떼어낸 뒤 이미 부모 없는 오브젝트를 넘겨줌.
+/// 호출부(ChunkView)가 프레임 예산 안에서 부모를 분리한 뒤 넘겨줌.
+/// 계층 변경, 비활성화, 물리 정리 작업이 한 프레임에 몰리지 않도록 한다.
 /// </summary>
 public class GameObjectPool : MonoBehaviour
 {
@@ -58,9 +57,11 @@ public class GameObjectPool : MonoBehaviour
 
         int prefabId = prefab.GetInstanceID();
 
-        if (pools.TryGetValue(prefabId, out Stack<GameObject> pool) && pool.Count > 0)
+        while (pools.TryGetValue(prefabId, out Stack<GameObject> pool) && pool.Count > 0)
         {
             GameObject reused = pool.Pop();
+            // The persistent pool can retain handles to objects destroyed on scene exit.
+            if (reused == null) continue;
             Transform reusedTransform = reused.transform;
             reusedTransform.SetParent(parent, false);
             reusedTransform.SetPositionAndRotation(position, rotation);

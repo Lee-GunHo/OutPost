@@ -58,15 +58,12 @@ public class GameSaveManager : MonoBehaviour
             SaveGame();
         }
 
-        if (Keyboard.current.f9Key.wasPressedThisFrame)
-        {
-            LoadGame();
-        }
-
+#if UNITY_EDITOR
         if (Keyboard.current.f10Key.wasPressedThisFrame)
         {
             DeleteSave();
         }
+#endif
     }
 
     public void SaveGame()
@@ -162,6 +159,13 @@ public class GameSaveManager : MonoBehaviour
 
     public void LoadGame()
     {
+        // World stores persist changes immediately. Reloading only the inventory in
+        // this scene would duplicate transferred/placed items. Load once on scene entry.
+        if (isReady)
+        {
+            Debug.LogWarning("게임 중 부분 불러오기는 지원하지 않습니다. 저장 후 메인 메뉴의 이어하기를 이용해주세요.");
+            return;
+        }
         isReady = false;
         if (playerPresenter == null)
             playerPresenter = FindFirstObjectByType<PlayerPresenter>();
@@ -243,6 +247,13 @@ public class GameSaveManager : MonoBehaviour
     [ContextMenu("Delete All Save Files")]
     public void DeleteSave()
     {
+#if !UNITY_EDITOR
+        Debug.LogWarning("전체 저장 삭제 단축 기능은 에디터에서만 사용할 수 있습니다.");
+        return;
+#else
+        if (!UnityEditor.EditorUtility.DisplayDialog("전체 저장 삭제",
+            "현재 플레이의 저장 기록을 모두 삭제합니다. 계속할까요?", "삭제", "취소"))
+            return;
         const string mainSceneName = "MainScene";
         if (Application.isPlaying && !Application.CanStreamedLevelBeLoaded(mainSceneName))
         {
@@ -278,5 +289,6 @@ public class GameSaveManager : MonoBehaviour
             UIState.ResetAll();
             SceneManager.LoadScene(mainSceneName);
         }
+#endif
     }
 }

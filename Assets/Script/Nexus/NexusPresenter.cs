@@ -162,7 +162,15 @@ public class NexusPresenter : MonoBehaviour, IDamageable
         }
 
         Debug.Log("넥서스의 체력이 모두 소진되었습니다. 게임 오버 처리.");
-        SceneManager.LoadScene(GameOverSceneName);
+        if (Application.CanStreamedLevelBeLoaded(GameOverSceneName))
+        {
+            // Keep inventory/player progress aligned with the immediately saved world.
+            FindFirstObjectByType<GameSaveManager>()?.TrySaveGame();
+            UIState.ResetAll();
+            SceneManager.LoadScene(GameOverSceneName);
+            return;
+        }
+        Debug.LogError("GameOverScene이 빌드 설정에 없어 현재 씬의 게임 오버 패널을 사용합니다.");
 
         if (gameOverPanel != null)
         {

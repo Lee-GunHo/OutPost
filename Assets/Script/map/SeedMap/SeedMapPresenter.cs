@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Unity.Profiling;
 
 /// <summary>
 /// SeedMapModel의 생성 규칙과 SeedMapView의 오브젝트 생성을 연결함.
@@ -7,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class SeedMapPresenter : MonoBehaviour
 {
+    private static readonly ProfilerMarker GenerateCellMarker = new ProfilerMarker("OutPost.Chunk.GenerateCell");
     [Header("MVP")]
     [SerializeField] private SeedMapModel model;
     [SerializeField] private SeedMapView view;
@@ -102,11 +104,13 @@ public class SeedMapPresenter : MonoBehaviour
 
         double budgetMs = Mathf.Max(0.1f, frameTimeBudgetMs);
         System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        int cellsThisFrame = 0;
 
         for (int x = 0; x < chunkSize; x++)
         {
             for (int z = 0; z < chunkSize; z++)
             {
+                using (GenerateCellMarker.Auto())
                 GenerateCell(
                     chunkTransform,
                     chunkCoord,
@@ -120,11 +124,12 @@ public class SeedMapPresenter : MonoBehaviour
                     placedBlockSaveManager
                 );
 
-                if (stopwatch.Elapsed.TotalMilliseconds < budgetMs)
+                if (++cellsThisFrame < 32 && stopwatch.Elapsed.TotalMilliseconds < budgetMs)
                     continue;
 
                 yield return null;
                 stopwatch.Restart();
+                cellsThisFrame = 0;
             }
         }
     }

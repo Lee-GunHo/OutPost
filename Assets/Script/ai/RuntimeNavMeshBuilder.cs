@@ -1,4 +1,5 @@
 using Unity.AI.Navigation;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,14 +9,20 @@ public class RuntimeNavMeshBuilder : MonoBehaviour
     [SerializeField, Min(0f)] private float buildDelay = 2f;
 
     // Batch a burst of chunk loads/unloads into one update.
-    private const float UpdateDelay = 0.15f;
+    private const float UpdateDelay = 0.35f;
+    private const float MinimumBuildInterval = 0.75f;
+    private const float MaximumRequestDelay = 1f;
+    private static readonly ProfilerMarker BuildMarker = new ProfilerMarker("OutPost.NavMesh.CollectAndSchedule");
 
     private ChunkView chunkView;
     private bool buildRequested;
     private float nextBuildTime;
+    private float firstRequestTime;
+    private float lastBuildTime = float.NegativeInfinity;
     private AsyncOperation updateOperation;
     private NavMeshData runtimeData;
     private NavMeshData originalData;
+    private PlayerPresenter excludedPlayer;
 
     private void OnEnable()
     {
@@ -26,6 +33,7 @@ public class RuntimeNavMeshBuilder : MonoBehaviour
         BreakableWallPresenter.GeometryChanged += Build;
 
         nextBuildTime = Time.unscaledTime + Mathf.Max(0f, buildDelay);
+        firstRequestTime = Time.unscaledTime;
         buildRequested = true;
     }
 
@@ -46,9 +54,17 @@ public class RuntimeNavMeshBuilder : MonoBehaviour
                 return;
 
             updateOperation = null;
+            // Keep the previous registered mesh until the initial async build is ready.
+            if (runtimeData != null && navMeshSurface != null && navMeshSurface.navMeshData != runtimeData)
+            {
+                navMeshSurface.RemoveData();
+                navMeshSurface.navMeshData = runtimeData;
+                if (navMeshSurface.isActiveAndEnabled) navMeshSurface.AddData();
+            }
         }
 
-        if (!buildRequested || Time.unscaledTime < nextBuildTime)
+        if (!buildRequested || Time.unscaledTime < nextBuildTime ||
+            Time.unscaledTime < lastBuildTime + MinimumBuildInterval)
             return;
 
         buildRequested = false;
@@ -60,44 +76,46 @@ public class RuntimeNavMeshBuilder : MonoBehaviour
         }
 
         ExcludePlayersFromBuild();
-        Physics.SyncTransforms();
-
-        if (runtimeData == null)
+        using (BuildMarker.Auto())
         {
-            // Build once, then keep this data registered while updating its changed tiles.
-            // Do not update or destroy a shared, baked asset directly.
-            originalData = navMeshSurface.navMeshData;
-            navMeshSurface.BuildNavMesh();
-            if (navMeshSurface.navMeshData != originalData)
-                runtimeData = navMeshSurface.navMeshData;
-        }
-        else
-        {
+            Physics.SyncTransforms();
+            if (runtimeData == null)
+            {
+                originalData = navMeshSurface.navMeshData;
+                runtimeData = new NavMeshData(navMeshSurface.agentTypeID)
+                {
+                    name = "OutPost runtime navigation",
+                    position = navMeshSurface.transform.position,
+                    rotation = navMeshSurface.transform.rotation
+                };
+            }
+            // Source collection remains synchronous in Unity's API, but initial and
+            // subsequent baking both run asynchronously on our own data instance.
             updateOperation = navMeshSurface.UpdateNavMesh(runtimeData);
         }
+        lastBuildTime = Time.unscaledTime;
     }
 
     [ContextMenu("Request NavMesh Update")]
     public void Build()
     {
+        if (!buildRequested) firstRequestTime = Time.unscaledTime;
         buildRequested = true;
-        nextBuildTime = Mathf.Max(nextBuildTime, Time.unscaledTime + UpdateDelay);
+        // Continuous streaming/mining must not postpone a rebuild indefinitely.
+        float deadline = Mathf.Min(Time.unscaledTime + UpdateDelay, firstRequestTime + MaximumRequestDelay);
+        nextBuildTime = Mathf.Max(nextBuildTime, deadline);
     }
 
-    private static void ExcludePlayersFromBuild()
+    private void ExcludePlayersFromBuild()
     {
-        // The player's collider is not map geometry. Excluding the whole hierarchy
-        // keeps the floor below the player walkable without disabling collisions.
-        foreach (PlayerPresenter player in FindObjectsByType<PlayerPresenter>(FindObjectsSortMode.None))
-        {
-            NavMeshModifier modifier = player.GetComponent<NavMeshModifier>();
-            if (modifier == null)
-                modifier = player.gameObject.AddComponent<NavMeshModifier>();
-
-            modifier.ignoreFromBuild = true;
-            modifier.applyToChildren = true;
-            modifier.enabled = true;
-        }
+        if (excludedPlayer != null) return;
+        excludedPlayer = FindFirstObjectByType<PlayerPresenter>();
+        if (excludedPlayer == null) return;
+        NavMeshModifier modifier = excludedPlayer.GetComponent<NavMeshModifier>();
+        if (modifier == null) modifier = excludedPlayer.gameObject.AddComponent<NavMeshModifier>();
+        modifier.ignoreFromBuild = true;
+        modifier.applyToChildren = true;
+        modifier.enabled = true;
     }
 
     private void CancelUpdate()

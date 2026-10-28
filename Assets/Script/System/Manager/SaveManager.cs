@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 public class SaveManager : MonoBehaviour
 {
     public static SaveManager Instance;
+    private bool hasLoaded;
 
     [SerializeField] private Transform player;
     [SerializeField] private string saveFileName = "SaveFile.json";
@@ -103,12 +104,18 @@ public class SaveManager : MonoBehaviour
 
     public bool TryLoadGame(bool restorePosition = true)
     {
+        if (hasLoaded)
+        {
+            Debug.LogWarning("[LOAD] 실행 중 인벤토리만 되돌릴 수 없습니다. 메인 메뉴의 이어하기를 이용해주세요.");
+            return false;
+        }
         string path = Path.Combine(
             Application.persistentDataPath,
             saveFileName);
 
         if (!File.Exists(path))
         {
+            hasLoaded = true;
             return true;
         }
 
@@ -156,6 +163,7 @@ public class SaveManager : MonoBehaviour
             inventoryPresenter.RefreshAfterLoad();
 
         Debug.Log("[LOAD] 불러오기 완료: " + path);
+        hasLoaded = true;
         return true;
     }
     private void RemoveCurrentEquipmentStats()

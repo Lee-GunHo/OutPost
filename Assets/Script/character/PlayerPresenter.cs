@@ -948,6 +948,14 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             }
         }
 
+        if (saveData.currentHp <= 0)
+        {
+            restorePositionCoroutine = null;
+            ReviveAtNexusFront();
+            return;
+        }
+
+        stateManager.ChangeState(stateManager.IdleState);
         restorePositionCoroutine =
             StartCoroutine(RestorePlayerPositionSafely(saveData.playerPosition));
     }

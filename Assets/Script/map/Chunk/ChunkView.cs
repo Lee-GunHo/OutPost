@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Unity.Profiling;
 using UnityEngine;
 
 /// <summary>
@@ -8,6 +10,7 @@ using UnityEngine;
 /// </summary>
 public class ChunkView : MonoBehaviour
 {
+    private static readonly ProfilerMarker ReleaseMarker = new ProfilerMarker("OutPost.Chunk.ReleaseObject");
     [Header("Chunk Parent")]
     [Tooltip("생성된 청크들을 정리할 부모 오브젝트")]
     [SerializeField] private Transform chunkParent;
@@ -54,6 +57,14 @@ public class ChunkView : MonoBehaviour
         ChunksChanged?.Invoke();
     }
 
+    public IEnumerator RemoveChunkRoutine(Vector2Int chunkCoord, float budgetMs)
+    {
+        if (!loadedChunks.TryGetValue(chunkCoord, out GameObject chunkObject)) yield break;
+        loadedChunks.Remove(chunkCoord);
+        yield return ReleaseChunkRoutine(chunkObject, budgetMs);
+        ChunksChanged?.Invoke();
+    }
+
     public bool TryGetLoadedChunk(
         Vector2Int chunkCoord,
         out Transform chunkTransform)
@@ -86,41 +97,49 @@ public class ChunkView : MonoBehaviour
     /// 청크 루트의 자식들을 파괴 대신 GameObjectPool로 되돌리고, 빈 청크 루트만 파괴함.
     /// 채굴이 진행되어 일부 파츠가 이미 사라진 벽/나무는 재사용이 안전하지 않으므로 그대로 파괴함.
     ///
-    /// 자식 각각에 SetParent를 거는 대신 DetachChildren으로 한 번에 떼어냄.
-    /// (자식 수만큼 SetParent를 반복 호출하는 쪽이 훨씬 느려서 청크 전환 시 버벅임이 오히려 심해졌었음)
+    /// 일반 스트리밍에서는 ReleaseChunkRoutine으로 분산 처리하고,
+    /// 이 동기 함수는 명시적인 즉시 정리에만 사용한다.
     /// </summary>
     public static void ReleaseChunkObject(GameObject chunkObject)
     {
-        if (chunkObject == null)
-            return;
+        // Explicit synchronous cleanup only (shutdown/immediate-load conflict).
+        IEnumerator routine = ReleaseChunkRoutine(chunkObject, float.MaxValue);
+        while (routine.MoveNext()) { }
+    }
 
-        Transform chunkTransform = chunkObject.transform;
-        int childCount = chunkTransform.childCount;
-
-        if (childCount > 0)
+    public static IEnumerator ReleaseChunkRoutine(GameObject chunkObject, float budgetMs)
+    {
+        if (chunkObject == null) yield break;
+        Transform root = chunkObject.transform;
+        GameObjectPool pool = GameObjectPool.GetOrCreate();
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        double budget = Mathf.Max(0.1f, budgetMs);
+        int releasedThisFrame = 0;
+        while (root != null && root.childCount > 0)
         {
-            GameObject[] children = new GameObject[childCount];
-            for (int i = 0; i < childCount; i++)
-                children[i] = chunkTransform.GetChild(i).gameObject;
-
-            chunkTransform.DetachChildren();
-
-            GameObjectPool pool = GameObjectPool.GetOrCreate();
-
-            foreach (GameObject child in children)
+            using (ReleaseMarker.Auto())
             {
-                BreakableWallModel breakableModel = child.GetComponent<BreakableWallModel>();
-
-                if (breakableModel != null && breakableModel.CurrentStage > 0)
+                GameObject child = root.GetChild(root.childCount - 1).gameObject;
+                // Detach one at a time so hierarchy callbacks and OnDisable work also
+                // fit the frame budget. Destroying the root must not destroy pooled items.
+                child.transform.SetParent(null, true);
+                BreakableWallModel breakable = child.GetComponent<BreakableWallModel>();
+                if (breakable != null && breakable.CurrentStage > 0)
                 {
+                    child.SetActive(false);
                     Destroy(child);
-                    continue;
                 }
-
-                pool.Despawn(child);
+                else pool.Despawn(child);
+            }
+            // Physics/render cleanup can be deferred beyond SetActive/Destroy.
+            // Limit the object count as well as the measured synchronous time.
+            if (++releasedThisFrame >= 32 || watch.Elapsed.TotalMilliseconds >= budget)
+            {
+                yield return null;
+                watch.Restart();
+                releasedThisFrame = 0;
             }
         }
-
-        Destroy(chunkObject);
+        if (chunkObject != null) Destroy(chunkObject);
     }
 }
