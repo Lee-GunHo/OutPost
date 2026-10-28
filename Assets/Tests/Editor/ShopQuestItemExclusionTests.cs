@@ -40,12 +40,12 @@ public class ShopQuestItemExclusionTests
             string path = AssetDatabase.GUIDToAssetPath(guid);
             ShopData shop = AssetDatabase.LoadAssetAtPath<ShopData>(path);
 
-            if (shop == null || shop.SellItems == null)
+            if (shop == null || shop.TradeItems == null)
             {
                 continue;
             }
 
-            foreach (ShopItemData shopItem in shop.SellItems)
+            foreach (ShopItemData shopItem in shop.TradeItems)
             {
                 if (shopItem == null || shopItem.ItemData == null)
                 {

@@ -10,6 +10,10 @@ public class ShopSlotView : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TMP_Text itemNameText;
     [SerializeField] private TMP_Text amountText;
 
+    [Header("교환 재료 표시 (비우면 이름 텍스트를 복제해 아래 줄에 자동 생성)")]
+    [SerializeField] private TMP_Text costText;
+    [SerializeField] private Color unaffordableCostColor = new Color(1f, 0.45f, 0.45f);
+
     [Header("슬롯 배경")]
     [SerializeField] private Image slotBackground;
     [SerializeField] private Sprite defaultSlotSprite;
@@ -21,6 +25,8 @@ public class ShopSlotView : MonoBehaviour, IPointerClickHandler
 
     private ItemData currentItem;
     private int currentAmount;
+    private Color defaultCostColor = Color.white;
+    private bool costTextReady;
 
     public ItemData CurrentItem => currentItem;
     public int CurrentAmount => currentAmount;
@@ -88,7 +94,65 @@ public class ShopSlotView : MonoBehaviour, IPointerClickHandler
             amountText.text = "";
         }
 
+        if(costText != null)
+        {
+            costText.text = "";
+        }
+
+        SetIconDimmed(false);
         SetSelected(false);
+    }
+
+    /// <summary>
+    /// 교환 슬롯 아래 줄에 필요한 재료를 표시. 재료가 모자라면 빨간 글씨 + 아이콘 흐리게
+    /// </summary>
+    public void SetTradeInfo(string costLine, bool affordable)
+    {
+        EnsureCostText();
+
+        if (costText != null)
+        {
+            costText.text = costLine;
+            costText.color = affordable ? defaultCostColor : unaffordableCostColor;
+        }
+
+        SetIconDimmed(!affordable);
+    }
+
+    private void SetIconDimmed(bool dimmed)
+    {
+        if (itemIcon == null)
+            return;
+
+        Color color = itemIcon.color;
+        color.a = dimmed ? 0.4f : 1f;
+        itemIcon.color = color;
+    }
+
+    // 기존 ShopSlot 프리팹에는 재료 줄이 없어서, 이름 텍스트를 복제해 바로 아래에 붙임
+    private void EnsureCostText()
+    {
+        if (costTextReady)
+            return;
+
+        costTextReady = true;
+
+        if (costText == null && itemNameText != null)
+        {
+            costText = Instantiate(itemNameText, itemNameText.transform.parent);
+            costText.name = "CostText";
+            costText.fontSize = itemNameText.fontSize * 0.7f;
+            costText.textWrappingMode = TextWrappingModes.NoWrap;
+            costText.raycastTarget = false;
+
+            RectTransform nameRect = itemNameText.rectTransform;
+            costText.rectTransform.anchoredPosition = nameRect.anchoredPosition + new Vector2(0f, -nameRect.sizeDelta.y * 0.85f);
+        }
+
+        if (costText != null)
+        {
+            defaultCostColor = costText.color;
+        }
     }
 
     public void SetSelected(bool isSelected)
@@ -113,11 +177,8 @@ public class ShopSlotView : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        if(mode == ShopSlotMode.Sell)
-        {
-            owner.OnPlayerItemDoubleClicked(slotIndex);
-        }
-        else if(mode == ShopSlotMode.Buy)
+        // 판매(돈) 기능이 없어져서 오른쪽 재료 슬롯은 보기만 함
+        if(mode == ShopSlotMode.Buy)
         {
             owner.OnShopItemDoubleClicked(slotIndex);
         }
