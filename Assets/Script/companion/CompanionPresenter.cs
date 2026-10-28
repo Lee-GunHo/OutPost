@@ -20,12 +20,20 @@ public class CompanionPresenter : MonoBehaviour
     private float nextAttackTime;
     private float nextNavMeshPlaceTime;
 
+    // 외형 모델(NPCVisual)의 걷기 애니메이션. 플레이어와 같은 PlayerLocomotion 컨트롤러(IsWalking)를 씀
+    private static readonly int IsWalkingHash = Animator.StringToHash("IsWalking");
+    private const float WalkingSpeedThreshold = 0.1f;
+    private Animator walkingAnimator;
+    private Vector3 lastPosition;
+
     public CompanionRuleValues RuleValues => companionModel.RuleValues;
 
     private void Awake()
     {
         companionModel = GetComponent<CompanionModel>();
         agent = GetComponent<NavMeshAgent>();
+        walkingAnimator = GetComponentInChildren<Animator>();
+        lastPosition = transform.position;
 
         if (agent != null)
         {
@@ -46,6 +54,21 @@ public class CompanionPresenter : MonoBehaviour
         {
             Debug.LogWarning("CompanionPresenter: Player 태그를 가진 오브젝트를 찾지 못했습니다.");
         }
+    }
+
+    // NavMeshAgent/직선 이동 둘 다 위치 변화로 판단 (상태와 무관하게 실제로 움직였을 때만 걷기)
+    private void LateUpdate()
+    {
+        if (walkingAnimator == null || Time.deltaTime <= 0f)
+        {
+            return;
+        }
+
+        Vector3 offset = transform.position - lastPosition;
+        offset.y = 0f;
+        lastPosition = transform.position;
+
+        walkingAnimator.SetBool(IsWalkingHash, offset.magnitude / Time.deltaTime > WalkingSpeedThreshold);
     }
 
     /// <summary>
