@@ -12,17 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 440e90cf0a44f8f4a9afc4da6f56fefe, type: 3}
   m_Name: TEMP_ShopData
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
-  shopSellItems:
+  tradeItems:
   - itemData: {fileID: 11400000, guid: 7ca41ba285fcf9941917edccd37769b5, type: 2}
-    buyPrice: 0
-    sellPrice: 0
+    giveAmount: 1
+    costs:
+    - item: {fileID: 11400000, guid: 439e4f17d4e64110b96b776912b56ab7, type: 2}
+      amount: 3
+    - item: {fileID: 11400000, guid: 58eaa5e02f5d4a51ab5132c20c41f3e6, type: 2}
+      amount: 1
+    maxTotalGive: 99
   - itemData: {fileID: 11400000, guid: df6cfe3bd450dad459ccec57def68f99, type: 2}
-    buyPrice: 0
-    sellPrice: 0
-  shopBuyItems:
-  - itemData: {fileID: 11400000, guid: 196e3aa69191e7b429e82300b523737d, type: 2}
-    buyPrice: 0
-    sellPrice: 0
-  - itemData: {fileID: 11400000, guid: db3a62772f789604db68d83d6c47d0a7, type: 2}
-    buyPrice: 0
-    sellPrice: 0
+    giveAmount: 1
+    costs:
+    - item: {fileID: 11400000, guid: e155e27397554d02a3152e10706f1906, type: 2}
+      amount: 2
+    - item: {fileID: 11400000, guid: 58eaa5e02f5d4a51ab5132c20c41f3e6, type: 2}
+      amount: 1
+    maxTotalGive: 99
