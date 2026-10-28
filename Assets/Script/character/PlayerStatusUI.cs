@@ -18,6 +18,7 @@ public class PlayerStatusUI : MonoBehaviour
 
     [Header("Stat Panel")]
     [SerializeField] private GameObject statPanel;
+    [SerializeField] private TMP_FontAsset koreanFont;
 
     [Header("Stat Texts")]
     [SerializeField] private TMP_Text hpText;
@@ -37,10 +38,20 @@ public class PlayerStatusUI : MonoBehaviour
     [SerializeField] private Button moveSpeedUpgradeButton;
 
     private int statPanelClosedFrame = -1;
+    private int displayedAttackPower = int.MinValue;
 
     private void Awake()
     {
         ResolvePlayerReferences();
+
+        if (statPanel != null && koreanFont != null)
+        {
+            foreach (TMP_Text label in statPanel.GetComponentsInChildren<TMP_Text>(true))
+            {
+                label.font = koreanFont;
+                if (label.text.Trim() == "Status") label.text = "능력치";
+            }
+        }
 
         if (statPanel != null)
         {
@@ -86,6 +97,12 @@ public class PlayerStatusUI : MonoBehaviour
 
     private void Update()
     {
+        if (statPanel != null && statPanel.activeSelf && playerPresenter != null &&
+            displayedAttackPower != playerPresenter.CombatAttackPower)
+        {
+            RefreshStatTexts();
+        }
+
         // ESC takes priority if L was also pressed during this frame.
         if (statPanelClosedFrame == Time.frameCount || UIState.WasEscapeHandledThisFrame)
         {
@@ -236,42 +253,43 @@ public class PlayerStatusUI : MonoBehaviour
     {
         if (hpText != null)
         {
-            hpText.text = $"HP: {playerPresenter.CurrentHp} / {playerPresenter.MaxHp}  Lv.{playerPresenter.HpUpgradeLevel}";
+            hpText.text = $"체력: {playerPresenter.CurrentHp} / {playerPresenter.MaxHp}\n<size=80%>강화 {playerPresenter.HpUpgradeLevel}</size>";
         }
 
         if (mpText != null)
         {
-            mpText.text = $"MP: {playerPresenter.CurrentMp} / {playerPresenter.MaxMp}  Lv.{playerPresenter.MpUpgradeLevel}";
+            mpText.text = $"마나: {playerPresenter.CurrentMp} / {playerPresenter.MaxMp}\n<size=80%>강화 {playerPresenter.MpUpgradeLevel}</size>";
         }
 
         if (attackText != null)
         {
-            attackText.text = $"Attack: {playerPresenter.AttackPower}  Lv.{playerPresenter.AttackUpgradeLevel}";
+            displayedAttackPower = playerPresenter.CombatAttackPower;
+            attackText.text = $"공격력: {displayedAttackPower}\n<size=80%>강화 {playerPresenter.AttackUpgradeLevel}</size>";
         }
 
         if (defenseText != null)
         {
-            defenseText.text = $"Defense: {playerPresenter.DefensePower}  Lv.{playerPresenter.DefenseUpgradeLevel}";
+            defenseText.text = $"방어력: {playerPresenter.DefensePower}\n<size=80%>강화 {playerPresenter.DefenseUpgradeLevel}</size>";
         }
 
         if (moveSpeedText != null)
         {
-            moveSpeedText.text = $"Move Speed: {playerPresenter.MoveSpeed:F1}  Lv.{playerPresenter.MoveSpeedUpgradeLevel}";
+            moveSpeedText.text = $"이동속도: {playerPresenter.MoveSpeed:F1}\n<size=80%>강화 {playerPresenter.MoveSpeedUpgradeLevel}</size>";
         }
 
         if (levelText != null)
         {
-            levelText.text = $"Level: {playerPresenter.Level}";
+            levelText.text = $"레벨: {playerPresenter.Level}";
         }
 
         if (expText != null)
         {
-            expText.text = $"EXP: {playerPresenter.CurrentExp} / {playerPresenter.RequiredExp}";
+            expText.text = $"경험치: {playerPresenter.CurrentExp} / {playerPresenter.RequiredExp}";
         }
 
         if (statPointText != null)
         {
-            statPointText.text = $"Stat Points: {playerPresenter.StatPoint}";
+            statPointText.text = $"능력치 포인트: {playerPresenter.StatPoint}";
         }
     }
 

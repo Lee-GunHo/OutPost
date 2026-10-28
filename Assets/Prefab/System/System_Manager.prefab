@@ -915,6 +915,8 @@ MonoBehaviour:
   dirtRange: 176
   stoneCopperRange: 336
   silverGoldRange: 496
+  bossChunkChance: 5
+  maxBossesPerChunk: 2
   treeClearingChance: 50
   clearingWidth: 5
   clearingLength: 10
@@ -942,6 +944,7 @@ MonoBehaviour:
   silverWallPrefab: {fileID: 8317466132184921900, guid: 562a606324ba6de40a402e5fd82ec9ab, type: 3}
   goldWallPrefab: {fileID: 5638992812030455425, guid: e365c2a0a1ca0f8468e4de5d79e964b4, type: 3}
   wallYOffset: 0.5
+  bossPrefab: {fileID: 9222151659745498448, guid: d38508a09fa4a0642b0f1714aebdeb70, type: 3}
   treePrefab: {fileID: 2842405900904198630, guid: c3e8a0b1599825d4a9fa6b456469724a, type: 3}
   treeYOffset: 0.5
 --- !u!114 &3862820166605921218

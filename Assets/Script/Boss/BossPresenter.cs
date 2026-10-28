@@ -1,8 +1,19 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BossPresenter : MonoBehaviour, IDamageable
 {
+    public static readonly HashSet<BossPresenter> ActiveBosses = new HashSet<BossPresenter>();
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetRegistry() => ActiveBosses.Clear();
+    private void OnEnable() => ActiveBosses.Add(this);
+    private void OnDisable() => ActiveBosses.Remove(this);
+
+    public void InitializeChunkSpawn(int seed, Vector2Int chunk, Vector2Int local, Vector2Int global)
+    {
+        bossModel.SetSpawnIdentity(seed, chunk, local, global);
+    }
     private BossModel bossModel;
     private BossStateManager stateManager;
 
@@ -111,6 +122,11 @@ public class BossPresenter : MonoBehaviour, IDamageable
         }
 
         isDeathProcessed = true;
+
+        if (bossModel.HasSpawnIdentity)
+            ChunkModificationSaveManager.GetOrCreate().RegisterDestroyedObject(
+                bossModel.WorldSeed, bossModel.SpawnChunk, bossModel.SpawnLocalCell,
+                bossModel.SpawnGlobalCell, ChunkModificationSaveManager.ObjectTypeBoss);
 
         GiveExpToPlayer();
 

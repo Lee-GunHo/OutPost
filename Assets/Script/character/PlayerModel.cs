@@ -87,6 +87,14 @@ public class PlayerModel : MonoBehaviour
     public int AttackPower =>
         baseAttackPower + equipmentAttackBonus + statusAttackBonus + attackUpgradeLevel * attackIncreasePerUpgrade;
 
+    public int GetAttackDamage(ItemData heldItem)
+    {
+        // Pickaxes and hoes also use ItemType.Weapon, but are not combat weapons.
+        int heldWeaponBonus = heldItem != null && heldItem.itemType == ItemType.Weapon &&
+            heldItem.toolType == ToolType.Sword ? heldItem.attackBonus : 0;
+        return Mathf.Max(1, AttackPower + heldWeaponBonus);
+    }
+
     public int DefensePower =>
         baseDefensePower + equipmentDefenseBonus + statusDefenseBonus + defenseUpgradeLevel * defenseIncreasePerUpgrade;
 

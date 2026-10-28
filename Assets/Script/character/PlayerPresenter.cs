@@ -57,6 +57,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public float InteractionRange => playerModel.InteractionRange;
 
     public int AttackPower => playerModel.AttackPower;
+    // Keep held-item bonuses out of the stats used by the existing save system.
+    public int CombatAttackPower => GetAttackDamage(GetHeldItem());
     public int DefensePower => playerModel.DefensePower;
     public float AttackDuration => playerModel.AttackDuration;
     public float WallBreakDuration => playerModel.WallBreakDuration;
@@ -190,6 +192,14 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        // Run before UI input gating: falling recovery must also work with a panel open.
+        // The load coroutine owns positioning until it has restored the saved location.
+        if (restorePositionCoroutine == null && transform.position.y <= 0f)
+        {
+            ReviveAtNexusFront();
+            return;
+        }
+
         if (UIState.IsAnyUIOpen)
         {
             return;
@@ -548,15 +558,16 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return 0f;
         }
 
-        ItemStack selectedItem = hotbarPresenter != null
-            ? hotbarPresenter.GetSelectedItem()
-            : null;
+        return ExecuteMousePriorityAction(GetHeldItem());
+    }
 
-        ItemData item = selectedItem != null
-            ? selectedItem.item
-            : null;
+    private ItemData GetHeldItem()
+    {
+        if (hotbarPresenter == null)
+            hotbarPresenter = HotbarPresenter.Instance;
 
-        return ExecuteMousePriorityAction(item);
+        ItemStack selectedItem = hotbarPresenter != null ? hotbarPresenter.GetSelectedItem() : null;
+        return selectedItem != null && selectedItem.amount > 0 ? selectedItem.item : null;
     }
 
     private float GetAttackRecoveryDuration(ItemData item)
@@ -704,19 +715,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     private int GetAttackDamage(ItemData item)
     {
-        int finalDamage = AttackPower;
-
-        if (item == null)
-        {
-            return Mathf.Max(1, finalDamage);
-        }
-
-        // 나중에 ItemData에 공격력 필드가 있으면 여기서 더하면 됨.
-        // 예시:
-        // finalDamage += item.attackDamage;
-        // finalDamage += item.weaponDamage;
-
-        return Mathf.Max(1, finalDamage);
+        return playerModel.GetAttackDamage(item);
     }
 
     // 곡괭이면 ItemData.pickPower(엑셀 pickstats), 아니면 맨손 채굴력
@@ -827,6 +826,9 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         {
             return false;
         }
+
+        if (item == null)
+            item = GetHeldItem();
 
         Vector3 attackDirection = GetMouseDirectionFromPlayer();
 

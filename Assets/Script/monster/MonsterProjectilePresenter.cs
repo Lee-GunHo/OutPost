@@ -25,7 +25,17 @@ public sealed class MonsterProjectilePresenter : MonoBehaviour
     {
         if (model == null || model.Resolved) return;
         // Also check the starting volume: casts alone miss initial overlaps.
-        foreach (Collider collider in Physics.OverlapSphere(model.Position, model.Radius, ~0, QueryTriggerInteraction.Ignore))
+        Collider[] overlaps = Physics.OverlapSphere(model.Position, model.Radius, ~0, QueryTriggerInteraction.Collide);
+        // Overlap results have no distance ordering. A wall must win over an
+        // overlapping player so spawning inside a wall cannot deal damage through it.
+        foreach (Collider collider in overlaps)
+        {
+            if (!MonsterCombatPresenter.IsWallCollider(collider) ||
+                !MonsterCombatPresenter.BlocksAttack(collider, owner)) continue;
+            Hit(collider);
+            return;
+        }
+        foreach (Collider collider in overlaps)
         {
             if (!MonsterCombatPresenter.BlocksAttack(collider, owner)) continue;
             Hit(collider);
@@ -33,7 +43,7 @@ public sealed class MonsterProjectilePresenter : MonoBehaviour
         }
         float distance = model.StepDistance(Time.fixedDeltaTime);
         RaycastHit[] hits = Physics.SphereCastAll(model.Position, model.Radius, model.Direction,
-            distance, ~0, QueryTriggerInteraction.Ignore);
+            distance, ~0, QueryTriggerInteraction.Collide);
         Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         foreach (RaycastHit hit in hits)
         {
@@ -49,7 +59,8 @@ public sealed class MonsterProjectilePresenter : MonoBehaviour
     private void Hit(Collider collider)
     {
         model.Resolve();
-        Component target = MonsterCombatPresenter.FindDamageTarget(collider);
+        Component target = MonsterCombatPresenter.IsWallCollider(collider)
+            ? null : MonsterCombatPresenter.FindDamageTarget(collider);
         if (target != null) MonsterCombatPresenter.ApplyHit(target, model.Payload);
         model.Payload.Observation?.Complete(target == null ? "Blocked" : "OtherTarget");
         view.Remove();

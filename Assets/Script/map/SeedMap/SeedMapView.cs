@@ -24,6 +24,16 @@ public class SeedMapView : MonoBehaviour
 
     public bool CanCreateTree => treePrefab != null;
 
+    [Header("Boss Prefab")]
+    [SerializeField] private BossPresenter bossPrefab;
+    public bool CanCreateBoss => bossPrefab != null;
+
+    public BossPresenter CreateBoss(Vector3 position, Transform chunkRoot)
+    {
+        // Bosses are not pooled: their HP/FSM is freshly initialized on chunk reload.
+        return bossPrefab != null ? Instantiate(bossPrefab, position, Quaternion.identity, chunkRoot) : null;
+    }
+
     public GameObject CreateChunkRoot(Vector3 worldPosition)
     {
         GameObject chunkObject = new GameObject("Chunk");

@@ -11,45 +11,46 @@ public class BossHealthUI : MonoBehaviour
     [SerializeField] private GameObject bossHealthPanel;
     [SerializeField] private Slider hpSlider;
     [SerializeField] private TMP_Text hpText;
+    private float nextTargetRefresh;
 
     private void Awake()
     {
+        // Resolve dynamically, including bosses created after this canvas starts.
+        bossPresenter = null;
         HideUI();
     }
 
-    private void Start()
+    private void Update()
     {
-        // 보스가 처음부터 씬에 있는 경우 대비
-        if (bossPresenter == null)
+        if (Time.unscaledTime < nextTargetRefresh) return;
+        nextTargetRefresh = Time.unscaledTime + 0.25f;
+        BossPresenter closest = null;
+        float closestDistance = float.PositiveInfinity;
+        foreach (BossPresenter boss in BossPresenter.ActiveBosses)
         {
-            BossPresenter foundBoss = FindFirstObjectByType<BossPresenter>();
-
-            if (foundBoss != null)
-            {
-                SetBoss(foundBoss);
-            }
+            if (boss == null || boss.IsDead || !boss.IsTargetInDetectionRange()) continue;
+            float distance = boss.GetDistanceToTarget();
+            if (distance >= closestDistance) continue;
+            closest = boss;
+            closestDistance = distance;
         }
-        else
-        {
-            SetBoss(bossPresenter);
-        }
+        if (closest != bossPresenter) SetBoss(closest);
+        else if (closest == null) HideUI();
     }
 
     private void OnDisable()
     {
         UnsubscribeBoss();
+        bossPresenter = null;
+        HideUI();
     }
 
     public void SetBoss(BossPresenter newBossPresenter)
     {
-        if (newBossPresenter == null)
-        {
-            return;
-        }
-
         UnsubscribeBoss();
 
         bossPresenter = newBossPresenter;
+        if (bossPresenter == null) { HideUI(); return; }
 
         bossPresenter.OnBossHpChanged += RefreshUI;
         bossPresenter.OnBossDead += HandleBossDead;

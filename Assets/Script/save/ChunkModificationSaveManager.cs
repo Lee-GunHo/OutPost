@@ -14,6 +14,7 @@ public class ChunkModificationSaveManager : MonoBehaviour
 {
     public const string ObjectTypeWall = "Wall";
     public const string ObjectTypeTree = "Tree";
+    public const string ObjectTypeBoss = "Boss";
 
     private const int CurrentSaveVersion = 2;
 
@@ -533,6 +534,8 @@ public class ChunkModificationSaveManager : MonoBehaviour
 
     private static string NormalizeObjectType(string objectType)
     {
+        if (string.Equals(objectType, ObjectTypeBoss, StringComparison.OrdinalIgnoreCase))
+            return ObjectTypeBoss;
         if (string.Equals(objectType, ObjectTypeTree, StringComparison.OrdinalIgnoreCase))
             return ObjectTypeTree;
 

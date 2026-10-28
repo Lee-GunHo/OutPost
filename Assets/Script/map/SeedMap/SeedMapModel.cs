@@ -87,6 +87,42 @@ public class SeedMapModel : MonoBehaviour
     public int StoneCopperRange => stoneCopperRange;
     public int SilverGoldRange => silverGoldRange;
 
+    [Header("Boss Encounters")]
+    [SerializeField, Range(0, 100)] private int bossChunkChance = 5;
+    [SerializeField, Range(1, 2)] private int maxBossesPerChunk = 2;
+
+    // Independent RNG preserves the existing terrain sequence and stable spawn identities.
+    public List<Vector2Int> GetBossCells(int seed, Vector2Int chunk, int size)
+    {
+        var result = new List<Vector2Int>();
+        if (size < 7) return result;
+        var random = new System.Random(GetChunkSeed(seed, chunk) ^ 0x4B05A17);
+        if (random.Next(100) >= bossChunkChance) return result;
+        int count = random.Next(1, Mathf.Clamp(maxBossesPerChunk, 1, 2) + 1);
+        Vector3 origin = GetChunkWorldPosition(chunk, size);
+        for (int attempt = 0; attempt < 64 && result.Count < count; attempt++)
+        {
+            var cell = new Vector2Int(random.Next(2, size - 2), random.Next(2, size - 2));
+            Vector3 position = origin + GetLocalCellPosition(cell.x, cell.y);
+            // Silver is the existing internal name of the iron/gold zone.
+            if (GetSquareDistanceInTiles(position) <= stoneCopperRange + 1) continue;
+            bool tooClose = result.Exists(other => (other - cell).sqrMagnitude < 64);
+            if (!tooClose) result.Add(cell);
+        }
+        return result;
+    }
+
+    // A boss chunk is one enclosed arena, shared by all bosses in that chunk.
+    public static bool IsBossArenaBoundary(Vector2Int cell, int chunkSize)
+    {
+        return cell.x == 0 || cell.y == 0 || cell.x == chunkSize - 1 || cell.y == chunkSize - 1;
+    }
+
+    public WallType GetBossArenaWallType(float squareDistance)
+    {
+        return squareDistance <= silverGoldRange ? WallType.Silver : WallType.Gold;
+    }
+
     public int GetChunkSeed(int globalSeed, Vector2Int chunkCoord)
     {
         unchecked

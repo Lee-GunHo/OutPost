@@ -399,7 +399,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         Vector3 delta = end - start;
         if (delta.sqrMagnitude < 0.0001f) return true;
         RaycastHit[] hits = Physics.RaycastAll(start, delta.normalized, delta.magnitude + 0.05f,
-            ~0, QueryTriggerInteraction.Ignore);
+            ~0, QueryTriggerInteraction.Collide);
         Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         foreach (RaycastHit hit in hits)
         {
@@ -428,10 +428,25 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
 
     public static bool BlocksAttack(Collider collider, Transform owner)
     {
-        return collider != null && !collider.isTrigger &&
-            (owner == null || !collider.transform.IsChildOf(owner)) &&
+        if (collider == null || (owner != null && collider.transform.IsChildOf(owner)))
+            return false;
+
+        // Explicit wall volumes block attacks even when configured as triggers.
+        // Other triggers (pickups, interaction ranges, etc.) remain transparent.
+        if (IsWallCollider(collider)) return true;
+        return !collider.isTrigger &&
             collider.GetComponentInParent<MonsterPresenter>() == null &&
             collider.GetComponentInParent<BossPresenter>() == null;
+    }
+
+    public static bool IsWallCollider(Collider collider)
+    {
+        if (collider == null) return false;
+        if (collider.GetComponentInParent<BreakableWallPresenter>() != null) return true;
+        int wallLayer = LayerMask.NameToLayer("Wall");
+        for (Transform current = collider.transform; current != null; current = current.parent)
+            if (current.gameObject.layer == wallLayer) return true;
+        return false;
     }
 
     public static void ApplyHit(Component target, MonsterAttackPayload payload)

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Profiling;
 
@@ -51,6 +52,8 @@ public class SeedMapPresenter : MonoBehaviour
         GameObject chunkObject = view.CreateChunkRoot(chunkWorldPosition);
 
         int chunkSeed = model.GetChunkSeed(globalSeed, chunkCoord);
+        List<Vector2Int> bossCells = view.CanCreateBoss
+            ? model.GetBossCells(globalSeed, chunkCoord, chunkSize) : new List<Vector2Int>();
 
         yield return GenerateObjectsRoutine(
             chunkObject.transform,
@@ -60,9 +63,23 @@ public class SeedMapPresenter : MonoBehaviour
             globalSeed,
             saveManager,
             placedBlockSaveManager,
-            frameTimeBudgetMs
+            frameTimeBudgetMs,
+            bossCells
         );
 
+        Physics.SyncTransforms();
+        foreach (Vector2Int cell in bossCells)
+        {
+            Vector2Int globalCell = model.GetGlobalCellCoordinate(chunkCoord, chunkSize, cell.x, cell.y);
+            if (saveManager.IsObjectDestroyed(globalSeed, chunkCoord, cell, globalCell,
+                ChunkModificationSaveManager.ObjectTypeBoss)) continue;
+            Vector3 position = chunkWorldPosition + model.GetLocalCellPosition(cell.x, cell.y) + Vector3.up;
+            // Respect player-built structures and avoid spawning inside a character.
+            if (Physics.CheckCapsule(position + Vector3.down * 0.2f, position + Vector3.up * 0.5f,
+                0.75f, LayerMask.GetMask("Wall", "Building", "Player", "NPC"), QueryTriggerInteraction.Ignore)) continue;
+            BossPresenter boss = view.CreateBoss(position, chunkObject.transform);
+            if (boss != null) boss.InitializeChunkSpawn(globalSeed, chunkCoord, cell, globalCell);
+        }
         onComplete?.Invoke(chunkObject);
     }
 
@@ -91,7 +108,8 @@ public class SeedMapPresenter : MonoBehaviour
         int globalSeed,
         ChunkModificationSaveManager saveManager,
         PlacedBlockSaveManager placedBlockSaveManager,
-        float frameTimeBudgetMs)
+        float frameTimeBudgetMs,
+        List<Vector2Int> bossCells)
     {
         System.Random random = new System.Random(chunkSeed);
 
@@ -121,7 +139,8 @@ public class SeedMapPresenter : MonoBehaviour
                     random,
                     clearing,
                     saveManager,
-                    placedBlockSaveManager
+                    placedBlockSaveManager,
+                    bossCells
                 );
 
                 if (++cellsThisFrame < 32 && stopwatch.Elapsed.TotalMilliseconds < budgetMs)
@@ -144,7 +163,8 @@ public class SeedMapPresenter : MonoBehaviour
         System.Random random,
         SeedMapModel.TreeClearingInfo clearing,
         ChunkModificationSaveManager saveManager,
-        PlacedBlockSaveManager placedBlockSaveManager)
+        PlacedBlockSaveManager placedBlockSaveManager,
+        List<Vector2Int> bossCells)
     {
         Vector2Int localCellCoord = new Vector2Int(x, z);
 
@@ -176,6 +196,10 @@ public class SeedMapPresenter : MonoBehaviour
         if (model.IsSafeArea(squareDistance))
             return;
 
+        bool isBossArena = bossCells.Count > 0;
+        bool shouldCreateWall = false;
+        SeedMapModel.WallType wallType = SeedMapModel.WallType.None;
+
         if (clearing.Contains(x, z))
         {
             TryCreateTree(
@@ -187,21 +211,25 @@ public class SeedMapPresenter : MonoBehaviour
                 localCellCoord,
                 globalCellCoord,
                 saveManager,
-                hasPlacedBlock
+                hasPlacedBlock || isBossArena
             );
-            return;
+        }
+        else
+        {
+            // 공터로 바꿔도 기존 지형의 Random 호출 순서를 보존한다.
+            shouldCreateWall = model.ShouldCreateWall(random);
+            if (shouldCreateWall)
+                wallType = model.SelectWallType(squareDistance, random);
         }
 
-        // 저장 여부와 상관없이 기존과 같은 Random 호출 순서를 유지
-        bool shouldCreateWall = model.ShouldCreateWall(random);
+        if (isBossArena)
+        {
+            // 내부는 바닥만 남기고 테두리를 채굴 가능한 지역 벽으로 둘러싼다.
+            shouldCreateWall = SeedMapModel.IsBossArenaBoundary(localCellCoord, chunkSize);
+            wallType = model.GetBossArenaWallType(squareDistance);
+        }
 
-        if (!shouldCreateWall)
-            return;
-
-        SeedMapModel.WallType wallType =
-            model.SelectWallType(squareDistance, random);
-
-        if (hasPlacedBlock)
+        if (!shouldCreateWall || hasPlacedBlock)
             return;
 
         if (saveManager.IsWallDestroyed(

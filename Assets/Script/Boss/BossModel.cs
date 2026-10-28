@@ -13,6 +13,21 @@ public class BossModel : MonoBehaviour
 
     private int currentHp;
 
+    public bool HasSpawnIdentity { get; private set; }
+    public int WorldSeed { get; private set; }
+    public Vector2Int SpawnChunk { get; private set; }
+    public Vector2Int SpawnLocalCell { get; private set; }
+    public Vector2Int SpawnGlobalCell { get; private set; }
+
+    public void SetSpawnIdentity(int seed, Vector2Int chunk, Vector2Int local, Vector2Int global)
+    {
+        HasSpawnIdentity = true;
+        WorldSeed = seed;
+        SpawnChunk = chunk;
+        SpawnLocalCell = local;
+        SpawnGlobalCell = global;
+    }
+
     public int MaxHp => maxHp;
     public int CurrentHp => currentHp;
 
