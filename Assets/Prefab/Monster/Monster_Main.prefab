@@ -172,7 +172,7 @@ MonoBehaviour:
   hitDuration: 0.35
   knockbackPower: 5
   expReward: 20
-  dropItemPrefab: {fileID: 3457806078259381087, guid: 204547259d0312a49bbfae97e901832f, type: 3}
+  dropItemPrefab: {fileID: 2646426172, guid: 409948e870584ed9b8fa3762447cafdb, type: 3}
   minDropCount: 1
   maxDropCount: 2
   dropSpread: 0.3

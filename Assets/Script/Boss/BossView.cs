@@ -22,6 +22,15 @@ public class BossView : MonoBehaviour
         CacheRenderers();
     }
 
+    public void SpawnDrop(GameObject prefab, Vector3 origin)
+    {
+        if (prefab == null)
+            return;
+
+        origin.y = 0.5f;
+        Instantiate(prefab, origin, Quaternion.identity);
+    }
+
     private void CacheRenderers()
     {
         hitBlinkRenderers.Clear();

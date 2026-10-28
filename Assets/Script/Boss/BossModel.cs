@@ -11,6 +11,10 @@ public class BossModel : MonoBehaviour
     [Header("Reward Data")]
     [SerializeField] private int expReward = 300;
 
+    [Header("Item Drop")]
+    [SerializeField] private GameObject dropItemPrefab;
+    public GameObject DropItemPrefab => dropItemPrefab;
+
     private int currentHp;
 
     public bool HasSpawnIdentity { get; private set; }

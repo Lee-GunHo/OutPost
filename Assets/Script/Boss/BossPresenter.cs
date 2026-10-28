@@ -15,6 +15,7 @@ public class BossPresenter : MonoBehaviour, IDamageable
         bossModel.SetSpawnIdentity(seed, chunk, local, global);
     }
     private BossModel bossModel;
+    private BossView bossView;
     private BossStateManager stateManager;
 
     private Transform playerTransform;
@@ -37,6 +38,7 @@ public class BossPresenter : MonoBehaviour, IDamageable
     private void Awake()
     {
         bossModel = GetComponent<BossModel>();
+        bossView = GetComponent<BossView>();
         stateManager = GetComponent<BossStateManager>();
     }
 
@@ -122,6 +124,13 @@ public class BossPresenter : MonoBehaviour, IDamageable
         }
 
         isDeathProcessed = true;
+
+        if (bossModel.DropItemPrefab != null)
+        {
+            if (bossView == null)
+                bossView = gameObject.AddComponent<BossView>();
+            bossView.SpawnDrop(bossModel.DropItemPrefab, transform.position);
+        }
 
         if (bossModel.HasSpawnIdentity)
             ChunkModificationSaveManager.GetOrCreate().RegisterDestroyedObject(

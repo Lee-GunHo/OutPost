@@ -139,6 +139,7 @@ MonoBehaviour:
   maxHp: 500
   detectionRange: 18
   expReward: 300
+  dropItemPrefab: {fileID: 2646426172, guid: c0dcdf3020564127a16bef655fcdfb32, type: 3}
 --- !u!114 &9222151659745498448
 MonoBehaviour:
   m_ObjectHideFlags: 0
