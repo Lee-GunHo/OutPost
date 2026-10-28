@@ -174,6 +174,17 @@
   `Tools > Interaction > Remove Old F-Key Canvases From Prefabs`(`Assets/Prefab` 아래 예전 Canvas 삭제).
   각 스크립트의 `interactionMark` 필드/Show·HideInteractionMark는 남아 있지만 Canvas 삭제 후엔 아무 동작 안 함.
 
+### NPC 외형 (`Assets/Editor/NPC/NPCVisualBuilder.cs`, `Assets/FBX/NPC/`)
+
+- 플레이어 인게임 모델은 `player.fbx`가 아니라 리깅된 `Assets/FBX/Monster/Animation/CHA A.fbx`(Player_Main의 `PlayerWalkingVisual`).
+  NPC도 같은 모델을 `NPCVisual` 자식으로 붙이고 루트 캡슐 MeshRenderer는 끔(Player_Main과 같은 방식).
+  크기/위치는 씬에 놓인 `Player_Main Variant`의 `PlayerWalkingVisual`(스케일 1.949)을 읽어서 맞춤 — 플레이어 크기를 바꾸면 메뉴만 다시 실행.
+- 대화 NPC = 청록 모자/보라 옷(`NPC_Dialogue.mat`), 전투 NPC = 빨간 모자/남색 옷(`NPC_Battle.mat`) — 플레이어 텍스처에서
+  헬멧(UV 마스크)과 초록 옷만 색을 바꾼 사본. 상점 NPC = 플레이어 텍스처 그대로 + 큐브로 만든 표지판(`ShopSign`).
+- 메뉴 `Tools > NPC > Build NPC Visuals`로 세 프리팹에 적용(다시 실행하면 지우고 새로 만듦). 애니메이터는 플레이어와 같은
+  `PlayerLocomotion`(기본 Idle), 전투 동료는 `CompanionPresenter.LateUpdate`가 위치 변화로 `IsWalking`을 켬.
+- `InteractionHighlight`는 꺼진 Renderer에 외곽선을 만들지 않음(숨긴 캡슐 외곽선 방지).
+
 ### 에디터 설정 참고
 
 - **Inference Engine 패키지 설치가 항상 최우선**: 이게 없으면 `Unity.InferenceEngine`을 쓰는

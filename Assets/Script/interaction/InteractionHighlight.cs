@@ -130,7 +130,9 @@ public class InteractionHighlight : MonoBehaviour
 
         foreach (Renderer candidate in GetComponentsInChildren<Renderer>())
         {
-            if (candidate.gameObject.name == OutlineObjectName ||
+            // 꺼진 Renderer(예: NPC 루트의 숨김용 캡슐)는 외곽선도 만들지 않음
+            if (!candidate.enabled ||
+                candidate.gameObject.name == OutlineObjectName ||
                 candidate.gameObject.layer == UILayer ||
                 candidate.GetComponent<TMP_Text>() != null ||
                 candidate.isPartOfStaticBatch)
