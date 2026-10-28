@@ -424,6 +424,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f53efca8214374a9c804672232d707, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableWallModel
+  maxDurability: 10
+  hardness: 0
   dropItemPrefab: {fileID: 0}
   minDropCount: 0
   maxDropCount: 0

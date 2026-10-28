@@ -21,12 +21,22 @@ public class BreakableWallModel : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool showSaveDebugLog = true;
 
+    [Header("Durability (코어키퍼식 채굴)")]
+    [Tooltip("벽 내구도(HP). 곡괭이 채굴력만큼 깎이고 0이 되면 파괴")]
+    [Min(1)]
+    [SerializeField] private int maxDurability = 10;
+
+    [Tooltip("단단함. MiningRules.CalculateDamage에서 채굴력과 비교 (0 = 제한 없음)")]
+    [Min(0)]
+    [SerializeField] private int hardness;
+
     [Header("Stage Settings")]
-    [Tooltip("완전히 파괴되기까지 필요한 채굴 횟수. Up0/Down0, Up1/Down1 ... 형태로 단계가 나뉜 프리팹에서 사용")]
+    [Tooltip("내구도를 몇 단계로 나눠 보여줄지. Up0/Down0, Up1/Down1 ... 형태로 단계가 나뉜 프리팹에서 사용")]
     [Min(1)]
     [SerializeField] private int stageCount = 1;
 
     private int currentStage;
+    private int damageTaken;
 
     private bool hasGeneratedIdentity;
     private bool isPlayerPlaced;
@@ -51,6 +61,10 @@ public class BreakableWallModel : MonoBehaviour
 
     public int StageCount => Mathf.Max(1, stageCount);
     public int CurrentStage => currentStage;
+
+    public int MaxDurability => Mathf.Max(1, maxDurability);
+    public int Hardness => hardness;
+    public int CurrentDurability => Mathf.Max(0, MaxDurability - damageTaken);
 
     public int WorldSeed => worldSeed;
     public Vector2Int ChunkCoord => chunkCoord;
@@ -101,23 +115,25 @@ public class BreakableWallModel : MonoBehaviour
         isPlayerPlaced = playerPlaced;
         isBroken = false;
         currentStage = 0;
+        damageTaken = 0;
     }
 
     /// <summary>
-    /// 채굴 한 번을 진행. 남은 단계가 있으면 currentStage만 증가시키고 false를 반환(부분 파괴)
-    /// 마지막 단계였다면 isBroken을 true로 만들고 true를 반환(완전 파괴)
-    /// clearedStage에는 이번에 제거해야 할 단계 번호(Up{n}/Down{n})가 담김
+    /// 채굴 데미지를 적용. 내구도가 남아있으면 false(부분 파괴), 0이 되면 isBroken을 true로 만들고 true(완전 파괴)
+    /// 이번 타격으로 넘어간 단계 번호(Up{n}/Down{n})는 [firstClearedStage, currentStage) 범위
+    /// (데미지가 크면 한 번에 여러 단계가 지워질 수 있음)
     /// </summary>
-    public bool AdvanceStage(out int clearedStage)
+    public bool ApplyDamage(int damage, out int firstClearedStage)
     {
-        clearedStage = currentStage;
+        firstClearedStage = currentStage;
 
-        if (isBroken)
+        if (isBroken || damage <= 0)
             return false;
 
-        currentStage++;
+        damageTaken = Mathf.Min(MaxDurability, damageTaken + damage);
+        currentStage = MiningRules.GetClearedStageCount(damageTaken, MaxDurability, StageCount);
 
-        if (currentStage >= StageCount)
+        if (damageTaken >= MaxDurability)
         {
             isBroken = true;
             return true;
@@ -132,5 +148,7 @@ public class BreakableWallModel : MonoBehaviour
         maxDropCount = Mathf.Max(minDropCount, maxDropCount);
         dropSpread = Mathf.Max(0f, dropSpread);
         stageCount = Mathf.Max(1, stageCount);
+        maxDurability = Mathf.Max(1, maxDurability);
+        hardness = Mathf.Max(0, hardness);
     }
 }

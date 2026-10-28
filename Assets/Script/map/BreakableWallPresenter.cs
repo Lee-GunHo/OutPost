@@ -165,7 +165,33 @@ public class BreakableWallPresenter : MonoBehaviour
         );
     }
 
+    /// <summary>
+    /// 남은 내구도와 상관없이 즉시 완전 파괴
+    /// </summary>
     public void Break()
+    {
+        ResolveComponents();
+
+        if (model == null)
+            return;
+
+        ApplyDamage(model.CurrentDurability);
+    }
+
+    /// <summary>
+    /// 곡괭이로 한 번 채굴. 데미지는 MiningRules.CalculateDamage(pickPower, 벽 단단함)
+    /// </summary>
+    public void Hit(int pickPower)
+    {
+        ResolveComponents();
+
+        if (model == null)
+            return;
+
+        ApplyDamage(MiningRules.CalculateDamage(pickPower, model.Hardness));
+    }
+
+    private void ApplyDamage(int damage)
     {
         ResolveComponents();
         ApplyLegacySerializedData();
@@ -182,12 +208,15 @@ public class BreakableWallPresenter : MonoBehaviour
         if (onlyBreakIfPlayerPlaced && !model.IsPlayerPlaced)
             return;
 
-        bool isFullyBroken = model.AdvanceStage(out int clearedStage);
+        int previousStage = model.CurrentStage;
+        bool isFullyBroken = model.ApplyDamage(damage, out int firstClearedStage);
+        bool stageChanged = model.CurrentStage != previousStage;
 
-        view.DestroyStageParts(GetVisualRoot(), clearedStage);
+        for (int stage = firstClearedStage; stage < model.CurrentStage; stage++)
+            view.DestroyStageParts(GetVisualRoot(), stage);
 
         // Placed blocks use carving. Natural walls belong to the baked geometry.
-        if (!model.IsPlayerPlaced)
+        if (!model.IsPlayerPlaced && (stageChanged || isFullyBroken))
             GeometryChanged?.Invoke();
 
         if (!isFullyBroken)

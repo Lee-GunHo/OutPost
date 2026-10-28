@@ -18,6 +18,10 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     [SerializeField] private float mouseActionRayRadius = 0.25f;
     [SerializeField] private float mouseActionHeightOffset = 0.8f;
 
+    [Header("Mining")]
+    [Tooltip("곡괭이가 아닌 것(맨손/검/괭이 등)으로 벽을 칠 때의 채굴력")]
+    [SerializeField, Min(0)] private int handMiningPower = 1;
+
     [Header("Invincible Data")]
     [SerializeField] private float reviveInvincibleDuration = 2f;
 
@@ -628,8 +632,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
                 if (distanceToWall <= BreakRange)
                 {
-                    wall.Break();
-                    Debug.Log("마우스 방향 선 판정: 벽 파괴");
+                    wall.Hit(GetMiningPower(item));
+                    Debug.Log("마우스 방향 선 판정: 벽 채굴");
                     return Mathf.Max(0f, WallBreakDuration);
                 }
 
@@ -692,6 +696,15 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         return Mathf.Max(1, finalDamage);
     }
 
+    // 곡괭이면 ItemData.pickPower(엑셀 pickstats), 아니면 맨손 채굴력
+    private int GetMiningPower(ItemData item)
+    {
+        if (item != null && item.toolType == ToolType.Pickaxe)
+            return item.pickPower;
+
+        return handMiningPower;
+    }
+
     public void TryBreakWall(ItemData item)
     {
         if (UIState.IsAnyUIOpen)
@@ -737,8 +750,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             if (distance <= playerModel.BreakRange)
             {
                 FaceActionTarget(hit.point);
-                wall.Break();
-                Debug.Log("벽 부수기 성공");
+                wall.Hit(GetMiningPower(item));
+                Debug.Log("벽 채굴");
             }
             else
             {
