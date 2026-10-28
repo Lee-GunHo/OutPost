@@ -7,7 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(CraftingTableModel))]
 public class CraftingTableInteractable :
     MonoBehaviour,
-    IInteractable
+    IInteractable,
+    IInteractionPromptSource
 {
     [Header("Model")]
     [SerializeField] private CraftingTableModel craftingTableModel;
@@ -15,8 +16,16 @@ public class CraftingTableInteractable :
     [Header("상호작용 표시")]
     [SerializeField] private GameObject interactionMark;
 
+    [Header("F키 안내 문구 (이름은 CraftingTableModel.TableName)")]
+    [SerializeField] private string actionText = "사용하기";
+
     private PlayerPresenter currentPlayer;
     private bool isPlayerInRange;
+
+    public bool CanInteract => isPlayerInRange;
+    public string InteractionDisplayName =>
+        craftingTableModel != null ? craftingTableModel.TableName : "제작대";
+    public string InteractionActionText => actionText;
 
     private void Awake()
     {

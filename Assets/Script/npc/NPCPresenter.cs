@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// NPCModel, NPCView, UI, 퀘스트, 상점 연결하는 스크립트
 /// </summary>
-public class NPCPresenter : MonoBehaviour, IInteractable
+public class NPCPresenter : MonoBehaviour, IInteractable, IInteractionPromptSource
 {
     private NPCModel npcModel;
 
@@ -11,6 +11,10 @@ public class NPCPresenter : MonoBehaviour, IInteractable
 
     private PlayerPresenter currentPlayer;
     private bool isPlayerInRange;
+
+    public bool CanInteract => isPlayerInRange && npcModel != null && npcView != null;
+    public string InteractionDisplayName => npcModel != null && npcModel.NPCData != null ? npcModel.NPCName : gameObject.name;
+    public string InteractionActionText => "대화하기";
 
     private void Awake()
     {

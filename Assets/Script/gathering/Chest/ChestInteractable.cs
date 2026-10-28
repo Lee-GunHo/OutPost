@@ -6,7 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(ChestModel))]
 public class ChestInteractable :
     MonoBehaviour,
-    IInteractable
+    IInteractable,
+    IInteractionPromptSource
 {
     [Header("Model")]
     [SerializeField] private ChestModel chestModel;
@@ -14,8 +15,16 @@ public class ChestInteractable :
     [Header("상호작용 표시")]
     [SerializeField] private GameObject interactionMark;
 
+    [Header("F키 안내 문구")]
+    [SerializeField] private string displayName = "상자";
+    [SerializeField] private string actionText = "열기";
+
     private PlayerPresenter currentPlayer;
     private bool isPlayerInRange;
+
+    public bool CanInteract => isPlayerInRange;
+    public string InteractionDisplayName => displayName;
+    public string InteractionActionText => actionText;
 
     private void Awake()
     {

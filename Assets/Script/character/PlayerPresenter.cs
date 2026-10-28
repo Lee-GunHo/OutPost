@@ -180,6 +180,12 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         {
             inventoryModel = GetComponentInChildren<InventoryModel>();
         }
+
+        // 가까운 상호작용 대상 외곽선 + F키 안내. 씬에서 붙이는 걸 잊어도 여기서 붙여줌
+        if (GetComponent<InteractionFocusController>() == null)
+        {
+            gameObject.AddComponent<InteractionFocusController>();
+        }
     }
 
     private void Update()
@@ -340,6 +346,24 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return;
         }
 
+        IInteractable closestInteractable = FindClosestInteractable();
+
+        if (closestInteractable != null)
+        {
+            closestInteractable.Interact(this);
+            return;
+        }
+
+        Debug.Log("상호작용 가능한 대상이 없습니다.");
+    }
+
+    /// <summary>
+    /// F키로 상호작용할 대상: 상호작용 범위 안에서 가장 가까운 것.
+    /// IInteractionPromptSource를 구현한 대상은 CanInteract일 때만 후보가 됨.
+    /// TryInteract와 InteractionFocusController(외곽선/F키 안내)가 같은 대상을 보도록 공용으로 사용.
+    /// </summary>
+    public IInteractable FindClosestInteractable()
+    {
         Collider[] colliders = Physics.OverlapSphere(transform.position, InteractionRange);
 
         IInteractable closestInteractable = null;
@@ -356,7 +380,12 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
             MonoBehaviour interactableObject = interactable as MonoBehaviour;
 
-            if (interactableObject == null)
+            if (interactableObject == null || !interactableObject.isActiveAndEnabled)
+            {
+                continue;
+            }
+
+            if (interactable is IInteractionPromptSource promptSource && !promptSource.CanInteract)
             {
                 continue;
             }
@@ -370,13 +399,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             }
         }
 
-        if (closestInteractable != null)
-        {
-            closestInteractable.Interact(this);
-            return;
-        }
-
-        Debug.Log("상호작용 가능한 대상이 없습니다.");
+        return closestInteractable;
     }
 
     public void TakeDamage(int damage)

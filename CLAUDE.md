@@ -159,6 +159,23 @@
   (몬스터가 플레이어/넥서스만 공격해 동료는 피해를 받지 않으므로 Retreat/Down은 없음).
 - **검증**: `Assets/Tests/Editor/AdviceTipSelectorTests.cs`(EditMode), 디버그 창 `Tools > NpcTip > Advice Tip Debugger`.
 
+### 상호작용 안내 (F키) + 외곽선 (`Assets/Script/interaction/`)
+
+- 예전엔 상자/제작대/NPC마다 Screen Space Overlay Canvas(`Canvas_InteractionMark`/`Canvas_NPCTrigger`)가 붙어 있었음 →
+  씬에 하나뿐인 **`InteractionPromptUI`**(프리팹 `Resources/Interaction/InteractionPrompt`)가 대상 화면 테두리 오른쪽(밖으로 나가면 왼쪽)에
+  "[F] 이름 / 눌러서 ○○"를 띄우는 방식으로 대체.
+- **`InteractionFocusController`**: `PlayerPresenter.Awake`가 자동으로 붙임. 매 프레임 `PlayerPresenter.FindClosestInteractable()`
+  (TryInteract와 공용 — F키가 실제로 먹힐 대상과 항상 같음) 하나에만 외곽선+안내 표시. UI 열림/사망 시 숨김.
+- **`InteractionHighlight`**: 대상에 자동 부착. 렌더러마다 자식 렌더러(`__InteractionOutline`)를 만들어
+  `Resources/Interaction/InteractionOutline.shader`(뒷면 + 법선 방향 화면 픽셀 두께 확장, URP)로 흰 테두리를 그림.
+  큐브 모서리가 끊기지 않게 위치별 평균 법선 메시를 만들어 씀(Read/Write 꺼진 메시는 원본 사용).
+- 이름/행동 문구: `IInteractionPromptSource`(CanInteract/InteractionDisplayName/InteractionActionText).
+  Chest=인스펙터 값(상자/열기), 제작대=`CraftingTableModel.TableName`/사용하기, NPC=NPCName/대화하기.
+  `CanInteract`가 false(트리거 범위 밖)인 대상은 F키 대상에서도 제외됨.
+- 메뉴: `Tools > Interaction > Create Interaction Prompt Prefab`(DungGeunMo 폰트로 프리팹 생성),
+  `Tools > Interaction > Remove Old F-Key Canvases From Prefabs`(`Assets/Prefab` 아래 예전 Canvas 삭제).
+  각 스크립트의 `interactionMark` 필드/Show·HideInteractionMark는 남아 있지만 Canvas 삭제 후엔 아무 동작 안 함.
+
 ### 에디터 설정 참고
 
 - **Inference Engine 패키지 설치가 항상 최우선**: 이게 없으면 `Unity.InferenceEngine`을 쓰는

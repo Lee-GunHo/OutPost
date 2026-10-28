@@ -25,7 +25,6 @@ public static class ExcelItemImporter
     private const string RecipeFolder = "Assets/Script/crafting/Data/Recipes";
     private const string StationPrefabFolder = "Assets/Prefab/Crafting/Stations";
     private const string StationMaterialFolder = "Assets/Prefab/Crafting/Stations/Materials";
-    private const string ChestPrefabPath = "Assets/Prefab/Life/Chest.prefab";
     private const string DroppedItemPrefabPath = "Assets/Prefab/DropItem/Prefab_DroppedItem_Generic.prefab";
     private const string GameScenePath = "Assets/Scenes/GameScene.unity";
 
@@ -441,7 +440,6 @@ public static class ExcelItemImporter
 
         CraftingTableModel model = root.AddComponent<CraftingTableModel>();
         CraftingTableInteractable interactable = root.AddComponent<CraftingTableInteractable>();
-        GameObject interactionMark = CopyInteractionMarkFromChest(root.transform, warnings);
 
         SerializedObject modelSerialized = new SerializedObject(model);
         modelSerialized.FindProperty("tableName").stringValue =
@@ -452,7 +450,6 @@ public static class ExcelItemImporter
 
         SerializedObject interactableSerialized = new SerializedObject(interactable);
         interactableSerialized.FindProperty("craftingTableModel").objectReferenceValue = model;
-        interactableSerialized.FindProperty("interactionMark").objectReferenceValue = interactionMark;
         interactableSerialized.ApplyModifiedPropertiesWithoutUndo();
 
         AddBreakable(root, row.Item);
@@ -532,23 +529,6 @@ public static class ExcelItemImporter
 
         EditorUtility.SetDirty(material);
         return material;
-    }
-
-    // 상자 프리팹의 F키 표시(Canvas_InteractionMark)를 그대로 복사
-    private static GameObject CopyInteractionMarkFromChest(Transform parent, List<string> warnings)
-    {
-        GameObject chest = AssetDatabase.LoadAssetAtPath<GameObject>(ChestPrefabPath);
-        Transform source = chest != null ? chest.transform.Find("Canvas_InteractionMark") : null;
-
-        if (source == null)
-        {
-            warnings.Add("Chest 프리팹에서 Canvas_InteractionMark를 찾지 못해 상호작용 표시 없이 생성");
-            return null;
-        }
-
-        GameObject copy = Object.Instantiate(source.gameObject, parent, false);
-        copy.name = source.name;
-        return copy;
     }
 
     // ---------------------------------------------------------------- 등록 / 씬
