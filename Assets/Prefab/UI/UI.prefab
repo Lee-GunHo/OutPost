@@ -2309,6 +2309,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6221437337997833644}
   - component: {fileID: 2057863698520389996}
+  - component: {fileID: 4728519630174829517}
   m_Layer: 5
   m_Name: Slider_Volume
   m_TagString: Untagged
@@ -2383,13 +2384,13 @@ MonoBehaviour:
   m_HandleRect: {fileID: 4469644755748729406}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
+  m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 100
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 4728519630174829517}
         m_TargetAssemblyTypeName: SoundSettingManager, Assembly-CSharp
         m_MethodName: OnMasterSliderChanged
         m_Mode: 0
@@ -3525,3 +3526,16 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4728519630174829517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5635435589918156363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48905b1f9526989468c485aef0ff7217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundSettingManager
+  masterSlider: {fileID: 2057863698520389996}
