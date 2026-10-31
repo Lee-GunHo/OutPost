@@ -110,6 +110,7 @@ public class DroppedItemPresenter : MonoBehaviour
             return;
 
         PlayerItemReceiver.Give(inventory, hotbar, model.ItemData, model.Amount);
+        SfxPlayer.PlayAt(SfxId.Pickup, transform.position);
         view.DestroyItem();
     }
 }

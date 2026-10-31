@@ -233,3 +233,30 @@
 - 괭이 4종(엑셀 Itemtype `Hoe`, ID 28/29/39/49, 나무/구리/은/금 제작대) → 임포터가 Weapon + `ToolType.Hoe`로 생성.
   한 번에 가는 범위는 `FarmSettings.hoeAreas`(나무 1x1, 구리 1x3 일자, 은 3x3, 금 5x5, 목표 칸 중심·바라보는 방향 기준,
   `FarmRules.GetAreaCells`). 수확/빈 밭 되돌리기는 항상 가리킨 한 칸.
+
+### 효과음 + 타격감 (`Assets/Script/sound/`, `Assets/Script/combat/`)
+
+- **`SfxPlayer`**(씬 배치 불필요, 자동 생성): `SfxPlayer.Play(SfxId)` / `PlayAt(SfxId, 위치)`. AudioSource 20개를 돌려쓰고
+  재생마다 피치를 랜덤으로 흔듦(코어키퍼식). 위치 소리는 플레이어 기준 거리 감쇠 + 화면 좌우 스테레오. 전체 음량은 `SoundSettingManager`(AudioListener.volume).
+- **`SfxLibrary`**(`Resources/Sound/SfxLibrary.asset`): 효과음 전체 볼륨 `masterVolume`(기본 0.45) + `SfxId`별 클립 배열/볼륨/피치 범위/최소 간격. 소리 교체는 인스펙터에서 clips만 바꾸면 됨.
+  `SfxId`는 int로 저장되므로 **항상 맨 뒤에 추가**.
+- 현재 클립(`Assets/Music/Sfx/*.wav`)은 `Tools/Sfx/synth_sfx.py`로 합성한 임시 효과음(외부 에셋 아님). 실제 에셋으로 바꿔도 코드 수정 불필요.
+- **`HitFeedback`**(static 진입점): 전투/채굴 코드는 `EnemyDamaged`/`BossDamaged`/`PlayerStruckEnemy`/`PlayerHurt`/`BlockHit`만 호출.
+  히트스톱·화면 흔들림은 **플레이어가 직접 때린 경우만**(동료 공격엔 소리/숫자만). 수치는 `Resources/GameFeel/HitFeedbackSettings.asset`.
+- **`GameFeelRunner`**(자동 생성): 히트스톱(timeScale 0.02 — UIState의 0/1과 구분해서 UI가 바꾼 값은 덮어쓰지 않음),
+  화면 흔들림(URP begin/endCameraRendering에서 렌더 직전에만 카메라를 움직임 → `CameraManager` 추적과 충돌 없음),
+  데미지 숫자(DungGeunMo, Overlay 셰이더로 벽 뒤에서도 보임), 파편(맞은 블록/몬스터 머티리얼을 쓰는 콜라이더 없는 작은 큐브).
+- 블록 소리 종류는 `BreakableWallPresenter.GetSoundType()`이 나무 여부/프리팹 이름(Dirt/Stone/Copper·Silver·Gold)으로 판단.
+- **블록 금/눌림**: `BreakableWallCrackView`를 `BreakableWallPresenter`가 처음 맞을 때 블록 루트에 자동 부착. 맞을 때마다 루트 스케일이
+  눌렸다 튀어나오고, 깎인 내구도 비율만큼 금(`Resources/GameFeel/BlockCrack.shader`, 월드 좌표 투영이라 메시 UV 무관, 16px 금 텍스처는
+  코드로 생성)이 퍼짐. 렌더러마다 자식 `__BlockCrack`으로 그려서 단계 파츠와 함께 지워짐. 나무는 금 없이 눌림만.
+  `__`로 시작하는 보조 렌더러는 외곽선/파편 대상에서 제외됨.
+
+### URP 후처리 + 구르기 (`Assets/Script/scene/GamePostProcess.cs`, `PlayerView`)
+
+- **`GamePostProcess`**(씬 배치 불필요, 자동 생성): 전역 Volume에 `Resources/GameFeel/GamePostProcess.asset`(VolumeProfile:
+  Bloom/Vignette/Color Adjustments/Tonemapping(Neutral)/White Balance)을 연결. 씬이 열릴 때마다 메인 카메라의 Post Processing을 켬.
+  플레이어 피격 시 빨간 비네트 번쩍임은 코드로 만든 별도 Volume(priority 20)의 weight로 처리(`HitFeedbackSettings`의 hurtFlash*).
+- **구르기**: 대시(스페이스) 시 `PlayerPresenter.PlayDashEffect` → `PlayerView.PlayRoll`. 구르기 애니메이션 클립이 없어서
+  `visualRoot`(PlayerWalkingVisual)를 몸 중심 기준으로 대시 방향 앞구르기 360° 회전 + 웅크림(LateUpdate에서 애니메이터 뒤에 적용).
+  인스펙터 `rollOnDash`/`rollTuck`.

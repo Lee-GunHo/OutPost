@@ -208,9 +208,18 @@ public class BreakableWallPresenter : MonoBehaviour
         if (onlyBreakIfPlayerPlaced && !model.IsPlayerPlaced)
             return;
 
+        // 파츠가 지워지기 전에 소리/파편에 쓸 정보를 먼저 잡아둠
+        Renderer debrisSource = FindDebrisRenderer();
+        Vector3 feedbackPosition = debrisSource != null ? debrisSource.bounds.center : transform.position;
+
         int previousStage = model.CurrentStage;
         bool isFullyBroken = model.ApplyDamage(damage, out int firstClearedStage);
         bool stageChanged = model.CurrentStage != previousStage;
+
+        HitFeedback.BlockHit(feedbackPosition, GetSoundType(), isFullyBroken, debrisSource);
+
+        if (!isFullyBroken)
+            PlayCrackEffect();
 
         for (int stage = firstClearedStage; stage < model.CurrentStage; stage++)
             view.DestroyStageParts(GetVisualRoot(), stage);
@@ -248,6 +257,55 @@ public class BreakableWallPresenter : MonoBehaviour
         );
 
         view.DestroyTarget(model.GeneratedRootObject);
+    }
+
+    // 나무 = 나무 소리, 프리팹 이름에 광석/돌이 들어가면 돌 소리, 흙벽은 흙 소리.
+    // 설치한 제작대/상자처럼 그 외의 것은 나무 소리
+    private BlockSoundType GetSoundType()
+    {
+        if (model.GeneratedObjectType == ChunkModificationSaveManager.ObjectTypeTree)
+            return BlockSoundType.Wood;
+
+        string objectName = GetVisualRoot().name;
+
+        // GoldCraftingBox처럼 등급 이름이 들어간 제작대는 광석이 아님
+        if (objectName.Contains("Crafting"))
+            return BlockSoundType.Wood;
+
+        if (objectName.Contains("Copper") || objectName.Contains("Silver") || objectName.Contains("Gold"))
+            return BlockSoundType.Ore;
+
+        if (objectName.Contains("Stone"))
+            return BlockSoundType.Stone;
+
+        if (objectName.Contains("Dirt"))
+            return BlockSoundType.Dirt;
+
+        return BlockSoundType.Wood;
+    }
+
+    // 맞을 때 블록이 눌렸다 튀어나오고 깎인 내구도만큼 금이 감. 나무는 금 없이 흔들리기만 함
+    private void PlayCrackEffect()
+    {
+        GameObject root = GetVisualRoot();
+
+        if (!root.TryGetComponent(out BreakableWallCrackView crackView))
+            crackView = root.AddComponent<BreakableWallCrackView>();
+
+        float damageRatio = 1f - (float)model.CurrentDurability / model.MaxDurability;
+        crackView.PlayHit(damageRatio, model.GeneratedObjectType != ChunkModificationSaveManager.ObjectTypeTree);
+    }
+
+    // 외곽선(__InteractionOutline) 같은 보조 렌더러는 빼고 실제 블록 렌더러를 고름
+    private Renderer FindDebrisRenderer()
+    {
+        foreach (Renderer candidate in GetVisualRoot().GetComponentsInChildren<Renderer>())
+        {
+            if (candidate.enabled && !candidate.name.StartsWith("__"))
+                return candidate;
+        }
+
+        return null;
     }
 
     /// <summary>

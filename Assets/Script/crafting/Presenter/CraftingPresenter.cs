@@ -231,6 +231,7 @@ public class CraftingPresenter : MonoBehaviour
         switch (result)
         {
             case CraftingResult.Success:
+                SfxPlayer.Play(SfxId.Craft);
                 Debug.Log($"{recipe.RecipeName} 제작 성공");
                 break;
 
@@ -246,6 +247,9 @@ public class CraftingPresenter : MonoBehaviour
                 Debug.LogWarning("올바르지 않은 제작법입니다.");
                 break;
         }
+
+        if (result != CraftingResult.Success)
+            SfxPlayer.Play(SfxId.CraftFail);
 
         RefreshCraftableState();
         if (result == CraftingResult.Success)

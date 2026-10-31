@@ -365,6 +365,7 @@ public class BlockPlacementController : MonoBehaviour
         );
 
         blockObject.name = itemData.placeablePrefab.name;
+        SfxPlayer.PlayAt(SfxId.Place, blockPosition);
 
         BreakableWall[] breakableWalls =
             blockObject.GetComponentsInChildren<BreakableWall>(true);

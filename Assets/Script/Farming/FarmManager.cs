@@ -216,6 +216,7 @@ public class FarmManager : MonoBehaviour
         if (plot != null && plot.HasCrop)
         {
             Harvest(plot);
+            SfxPlayer.PlayAt(SfxId.Harvest, CellToWorld(cell));
             return true;
         }
 
@@ -225,6 +226,7 @@ public class FarmManager : MonoBehaviour
         if (plot != null)
         {
             RemovePlot(cell); // 빈 밭을 괭이로 다시 치면 그 한 칸만 땅으로 되돌림
+            SfxPlayer.PlayAt(SfxId.Till, CellToWorld(cell));
             return true;
         }
 
@@ -243,6 +245,7 @@ public class FarmManager : MonoBehaviour
         if (tilledCount == 0)
             return false;
 
+        SfxPlayer.PlayAt(SfxId.Till, CellToWorld(cell));
         MarkChangedAndSave();
         return true;
     }
@@ -288,6 +291,7 @@ public class FarmManager : MonoBehaviour
 
         plot.Plant(crop);
         views[cell].Refresh(plot);
+        SfxPlayer.PlayAt(SfxId.Plant, CellToWorld(cell));
         MarkChangedAndSave();
         return true;
     }
