@@ -260,3 +260,10 @@
 - **구르기**: 대시(스페이스) 시 `PlayerPresenter.PlayDashEffect` → `PlayerView.PlayRoll`. 구르기 애니메이션 클립이 없어서
   `visualRoot`(PlayerWalkingVisual)를 몸 중심 기준으로 대시 방향 앞구르기 360° 회전 + 웅크림(LateUpdate에서 애니메이터 뒤에 적용).
   인스펙터 `rollOnDash`/`rollTuck`.
+
+### 몬스터 원거리 공격 연출 (`MonsterCombatView`, `MonsterProjectileView`)
+
+- 예고(windup): 바닥에 사거리만큼 흐린 경로 + 양쪽 테두리, 진한 부분이 발사 시점까지 차오름, 끝 화살촉은 발사 직전일수록 빠르게 깜빡임,
+  몬스터 앞에 빛나는 구슬이 커짐(다 차면 그 자리에서 발사체가 나감) + 충전음. 근접/원형/돌진 예고는 기존 선 그대로.
+- 발사체: HDR 색 코어(Bloom으로 빛남) + 반투명 후광 + TrailRenderer 꼬리, 발사음. 맞으면 `MonsterProjectileBurst`(빛 구 + 바닥 고리)와
+  폭발음, 사거리 끝에서는 작게 꺼짐. 모두 기존 `Resources/MonsterCombat/AttackVisual` 머티리얼(정점 색 × _BaseColor) 사용.

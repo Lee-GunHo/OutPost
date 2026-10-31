@@ -316,6 +316,34 @@ def nexus_hit(i):
     return finish(crush(saturate(mix(ring * 0.7, thud), 1.8), 10, 2))
 
 
+def projectile_charge(i):
+    d = 0.5
+    t = t_axis(d)
+    f = 300 + 900 * (t / d) ** 1.5
+    whine = np.sin(2 * np.pi * np.cumsum(f) / SR) * 0.4 + np.sign(np.sin(2 * np.pi * np.cumsum(f * 0.5) / SR)) * 0.15
+    hiss = bp(noise(d), 2000, 6000) * 0.25
+    e = np.clip(t / d, 0, 1) ** 1.2 * np.clip((d - t) / 0.04, 0, 1)
+    return finish(crush(lp(whine + hiss, 3500) * e, 9, 2))
+
+
+def projectile_fire(i):
+    d = 0.3
+    t = t_axis(d)
+    center = jit(2200) * np.exp(-t * 6) + 400
+    whoosh = bp(noise(d), center * 0.5, center * 1.3) * env_exp(d, 0.1, 0.003)
+    pew = sweep_sine(d, jit(1400), 350, 18, "tri") * env_exp(d, 0.06) * 0.6
+    thump = sweep_sine(d, 180, 70, 25) * env_exp(d, 0.04) * 0.5
+    return finish(crush(saturate(mix(whoosh, pew, thump), 1.8), 10, 2))
+
+
+def projectile_impact(i):
+    d = 0.4
+    boom = sweep_sine(d, jit(220), 50, 14) * env_exp(d, 0.09)
+    crackle = bp(noise(d) * (rng.random(int(SR * d)) > 0.85), 1500, 6000) * env_exp(d, 0.12) * 1.4
+    burst = lp(noise(d), 1800) * env_exp(d, 0.05, 0.001)
+    return finish(crush(saturate(mix(boom * 1.1, crackle * 0.5, burst), 2.2), 10, 2))
+
+
 SOUNDS = {
     "swing": (swing, 3),
     "hit_enemy": (hit_enemy, 3),
@@ -340,6 +368,9 @@ SOUNDS = {
     "harvest": (harvest, 1),
     "dash": (dash, 1),
     "nexus_hit": (nexus_hit, 1),
+    "projectile_charge": (projectile_charge, 1),
+    "projectile_fire": (projectile_fire, 2),
+    "projectile_impact": (projectile_impact, 2),
 }
 
 if __name__ == "__main__":
