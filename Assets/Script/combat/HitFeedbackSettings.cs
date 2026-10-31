@@ -42,6 +42,8 @@ public class HitFeedbackSettings : ScriptableObject
     [Header("파편 (블록을 캐거나 몬스터가 죽을 때 튀는 조각)")]
     [Min(0)] public int blockHitDebris = 3;
     [Min(0)] public int blockBreakDebris = 10;
+    [Tooltip("블록이 부서질 때 추가로 튀는 큰 덩어리 개수")]
+    [Min(0)] public int blockBreakChunks = 4;
     [Min(0)] public int enemyKillDebris = 8;
     [Min(0.01f)] public float debrisSize = 0.13f;
     [Min(0f)] public float debrisSpeed = 4.5f;

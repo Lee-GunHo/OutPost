@@ -247,3 +247,7 @@
   화면 흔들림(URP begin/endCameraRendering에서 렌더 직전에만 카메라를 움직임 → `CameraManager` 추적과 충돌 없음),
   데미지 숫자(DungGeunMo, Overlay 셰이더로 벽 뒤에서도 보임), 파편(맞은 블록/몬스터 머티리얼을 쓰는 콜라이더 없는 작은 큐브).
 - 블록 소리 종류는 `BreakableWallPresenter.GetSoundType()`이 나무 여부/프리팹 이름(Dirt/Stone/Copper·Silver·Gold)으로 판단.
+- **블록 금/눌림**: `BreakableWallCrackView`를 `BreakableWallPresenter`가 처음 맞을 때 블록 루트에 자동 부착. 맞을 때마다 루트 스케일이
+  눌렸다 튀어나오고, 깎인 내구도 비율만큼 금(`Resources/GameFeel/BlockCrack.shader`, 월드 좌표 투영이라 메시 UV 무관, 16px 금 텍스처는
+  코드로 생성)이 퍼짐. 렌더러마다 자식 `__BlockCrack`으로 그려서 단계 파츠와 함께 지워짐. 나무는 금 없이 눌림만.
+  `__`로 시작하는 보조 렌더러는 외곽선/파편 대상에서 제외됨.

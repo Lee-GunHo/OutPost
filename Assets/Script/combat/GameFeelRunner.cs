@@ -333,13 +333,13 @@ public class GameFeelRunner : MonoBehaviour
     // ------------------------------------------------------------------ 파편
 
     /// <summary>source 렌더러의 머티리얼(블록 색)을 그대로 쓰는 작은 큐브 조각을 튀김</summary>
-    public static void SpawnDebris(Vector3 position, int count, Renderer source, float power = 1f)
+    public static void SpawnDebris(Vector3 position, int count, Renderer source, float power = 1f, float sizeScale = 1f)
     {
         if (instance != null && count > 0)
-            instance.EmitDebris(position, count, source, power);
+            instance.EmitDebris(position, count, source, power, sizeScale);
     }
 
-    private void EmitDebris(Vector3 position, int count, Renderer source, float power)
+    private void EmitDebris(Vector3 position, int count, Renderer source, float power, float sizeScale)
     {
         Material material = source != null ? source.sharedMaterial : null;
 
@@ -363,7 +363,7 @@ public class GameFeelRunner : MonoBehaviour
             debris.spin = Random.insideUnitSphere * 720f;
             debris.age = 0f;
             debris.lifetime = Settings.debrisLifetime * Random.Range(0.7f, 1.2f);
-            debris.size = Settings.debrisSize * Random.Range(0.6f, 1.3f) * Mathf.Lerp(1f, power, 0.5f);
+            debris.size = Settings.debrisSize * sizeScale * Random.Range(0.6f, 1.3f) * Mathf.Lerp(1f, power, 0.5f);
             debris.active = true;
 
             debris.renderer.sharedMaterial = material;

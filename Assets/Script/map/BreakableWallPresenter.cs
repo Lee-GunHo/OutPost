@@ -218,6 +218,9 @@ public class BreakableWallPresenter : MonoBehaviour
 
         HitFeedback.BlockHit(feedbackPosition, GetSoundType(), isFullyBroken, debrisSource);
 
+        if (!isFullyBroken)
+            PlayCrackEffect();
+
         for (int stage = firstClearedStage; stage < model.CurrentStage; stage++)
             view.DestroyStageParts(GetVisualRoot(), stage);
 
@@ -279,6 +282,18 @@ public class BreakableWallPresenter : MonoBehaviour
             return BlockSoundType.Dirt;
 
         return BlockSoundType.Wood;
+    }
+
+    // 맞을 때 블록이 눌렸다 튀어나오고 깎인 내구도만큼 금이 감. 나무는 금 없이 흔들리기만 함
+    private void PlayCrackEffect()
+    {
+        GameObject root = GetVisualRoot();
+
+        if (!root.TryGetComponent(out BreakableWallCrackView crackView))
+            crackView = root.AddComponent<BreakableWallCrackView>();
+
+        float damageRatio = 1f - (float)model.CurrentDurability / model.MaxDurability;
+        crackView.PlayHit(damageRatio, model.GeneratedObjectType != ChunkModificationSaveManager.ObjectTypeTree);
     }
 
     // 외곽선(__InteractionOutline) 같은 보조 렌더러는 빼고 실제 블록 렌더러를 고름

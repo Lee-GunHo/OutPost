@@ -35,6 +35,7 @@ MonoBehaviour:
   damageNumberHeight: 1.8
   blockHitDebris: 3
   blockBreakDebris: 10
+  blockBreakChunks: 4
   enemyKillDebris: 8
   debrisSize: 0.13
   debrisSpeed: 4.5

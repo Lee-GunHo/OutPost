@@ -94,6 +94,10 @@ public static class HitFeedback
 
         GameFeelRunner.SpawnDebris(position, broken ? Settings.blockBreakDebris : Settings.blockHitDebris,
             debrisSource, broken ? 1f : 0.6f);
+
+        // 부서질 때는 큼직한 덩어리도 같이 튀어서 블록이 쪼개지는 느낌
+        if (broken)
+            GameFeelRunner.SpawnDebris(position, Settings.blockBreakChunks, debrisSource, 0.8f, 2.6f);
     }
 
     private static SfxId GetBlockSfx(BlockSoundType type, bool broken)
