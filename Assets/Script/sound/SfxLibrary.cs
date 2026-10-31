@@ -23,6 +23,10 @@ public class SfxLibrary : ScriptableObject
         [Min(0f)] public float minInterval = 0.03f;
     }
 
+    [Header("전체")]
+    [Tooltip("모든 효과음에 곱해지는 볼륨. 효과음 전체가 크거나 작으면 이 값만 조절")]
+    [Range(0f, 1f)] public float masterVolume = 0.45f;
+
     [Header("거리 감쇠 (위치가 있는 소리만)")]
     [Tooltip("이 거리 안에서는 최대 볼륨")]
     [Min(0f)] public float fullVolumeDistance = 8f;

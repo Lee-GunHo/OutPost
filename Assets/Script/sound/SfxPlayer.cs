@@ -73,7 +73,7 @@ public class SfxPlayer : MonoBehaviour
         if (lastPlayTimes.TryGetValue(id, out float lastTime) && now - lastTime < entry.minInterval)
             return;
 
-        float volume = entry.volume * volumeScale;
+        float volume = library.masterVolume * entry.volume * volumeScale;
         float pan = 0f;
 
         if (positional && !TryGetPositionalMix(position, ref volume, out pan))

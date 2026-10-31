@@ -238,7 +238,7 @@
 
 - **`SfxPlayer`**(씬 배치 불필요, 자동 생성): `SfxPlayer.Play(SfxId)` / `PlayAt(SfxId, 위치)`. AudioSource 20개를 돌려쓰고
   재생마다 피치를 랜덤으로 흔듦(코어키퍼식). 위치 소리는 플레이어 기준 거리 감쇠 + 화면 좌우 스테레오. 전체 음량은 `SoundSettingManager`(AudioListener.volume).
-- **`SfxLibrary`**(`Resources/Sound/SfxLibrary.asset`): `SfxId`별 클립 배열/볼륨/피치 범위/최소 간격. 소리 교체는 인스펙터에서 clips만 바꾸면 됨.
+- **`SfxLibrary`**(`Resources/Sound/SfxLibrary.asset`): 효과음 전체 볼륨 `masterVolume`(기본 0.45) + `SfxId`별 클립 배열/볼륨/피치 범위/최소 간격. 소리 교체는 인스펙터에서 clips만 바꾸면 됨.
   `SfxId`는 int로 저장되므로 **항상 맨 뒤에 추가**.
 - 현재 클립(`Assets/Music/Sfx/*.wav`)은 `Tools/Sfx/synth_sfx.py`로 합성한 임시 효과음(외부 에셋 아님). 실제 에셋으로 바꿔도 코드 수정 불필요.
 - **`HitFeedback`**(static 진입점): 전투/채굴 코드는 `EnemyDamaged`/`BossDamaged`/`PlayerStruckEnemy`/`PlayerHurt`/`BlockHit`만 호출.

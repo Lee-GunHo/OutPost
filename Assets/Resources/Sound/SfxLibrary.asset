@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a411b793f02441ce893764d88ed829b1, type: 3}
   m_Name: SfxLibrary
   m_EditorClassIdentifier: Assembly-CSharp::SfxLibrary
+  masterVolume: 0.45
   fullVolumeDistance: 8
   maxHearingDistance: 26
   stereoPan: 0.5
