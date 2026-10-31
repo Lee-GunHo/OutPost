@@ -251,3 +251,12 @@
   눌렸다 튀어나오고, 깎인 내구도 비율만큼 금(`Resources/GameFeel/BlockCrack.shader`, 월드 좌표 투영이라 메시 UV 무관, 16px 금 텍스처는
   코드로 생성)이 퍼짐. 렌더러마다 자식 `__BlockCrack`으로 그려서 단계 파츠와 함께 지워짐. 나무는 금 없이 눌림만.
   `__`로 시작하는 보조 렌더러는 외곽선/파편 대상에서 제외됨.
+
+### URP 후처리 + 구르기 (`Assets/Script/scene/GamePostProcess.cs`, `PlayerView`)
+
+- **`GamePostProcess`**(씬 배치 불필요, 자동 생성): 전역 Volume에 `Resources/GameFeel/GamePostProcess.asset`(VolumeProfile:
+  Bloom/Vignette/Color Adjustments/Tonemapping(Neutral)/White Balance)을 연결. 씬이 열릴 때마다 메인 카메라의 Post Processing을 켬.
+  플레이어 피격 시 빨간 비네트 번쩍임은 코드로 만든 별도 Volume(priority 20)의 weight로 처리(`HitFeedbackSettings`의 hurtFlash*).
+- **구르기**: 대시(스페이스) 시 `PlayerPresenter.PlayDashEffect` → `PlayerView.PlayRoll`. 구르기 애니메이션 클립이 없어서
+  `visualRoot`(PlayerWalkingVisual)를 몸 중심 기준으로 대시 방향 앞구르기 360° 회전 + 웅크림(LateUpdate에서 애니메이터 뒤에 적용).
+  인스펙터 `rollOnDash`/`rollTuck`.

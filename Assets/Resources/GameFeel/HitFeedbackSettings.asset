@@ -23,6 +23,9 @@ MonoBehaviour:
   bossKillShake: 0.6
   shakeDecay: 12
   shakeFrequency: 28
+  hurtFlashColor: {r: 0.75, g: 0.05, b: 0.05, a: 1}
+  hurtFlashIntensity: 0.45
+  hurtFlashDuration: 0.45
   showDamageNumbers: 1
   damageFont: {fileID: 11400000, guid: 9aae1551c147eda46b99aad0a91169fc, type: 2}
   damageNumberShader: {fileID: 4800000, guid: dd89cf5b9246416f84610a006f916af7, type: 3}

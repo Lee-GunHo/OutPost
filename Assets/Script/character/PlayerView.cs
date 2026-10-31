@@ -17,6 +17,21 @@ public class PlayerView : MonoBehaviour
 
     private Coroutine hitEffectCoroutine;
 
+    [Header("Roll (Dash)")]
+    [Tooltip("대시할 때 앞으로 한 바퀴 구르는 모션")]
+    [SerializeField] private bool rollOnDash = true;
+    [Tooltip("구르는 동안 몸을 웅크리는 정도(0~1)")]
+    [Range(0f, 0.6f)] [SerializeField] private float rollTuck = 0.25f;
+
+    private bool isRolling;
+    private float rollElapsed;
+    private float rollDuration;
+    private Vector3 rollAxis;
+    private float rollPivotHeight;
+    private Vector3 rollRestLocalPosition;
+    private Quaternion rollRestLocalRotation;
+    private Vector3 rollRestLocalScale;
+
     [Header("Walking Animation")]
     [SerializeField] private Animator walkingAnimator;
     private static readonly int IsWalkingHash = Animator.StringToHash("IsWalking");
@@ -49,6 +64,96 @@ public class PlayerView : MonoBehaviour
     private void OnDisable()
     {
         SetWalking(false);
+        StopRoll();
+    }
+
+    /// <summary>대시 방향으로 한 바퀴 구름. 애니메이션 클립 없이 보이는 모델(visualRoot)을 몸 중심 기준으로 회전</summary>
+    public void PlayRoll(Vector3 direction, float duration)
+    {
+        if (!rollOnDash || visualRoot == null || visualRoot == transform || visualRoot.parent == null)
+            return;
+
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude < 0.0001f)
+            direction = transform.forward;
+
+        StopRoll();
+
+        rollRestLocalPosition = visualRoot.localPosition;
+        rollRestLocalRotation = visualRoot.localRotation;
+        rollRestLocalScale = visualRoot.localScale;
+        // 앞구르기: 머리가 진행 방향으로 넘어가도록 진행 방향의 오른쪽 축으로 회전
+        rollAxis = Vector3.Cross(Vector3.up, direction.normalized);
+        rollPivotHeight = GetVisualCenterHeight();
+        rollDuration = Mathf.Max(0.1f, duration);
+        rollElapsed = 0f;
+        isRolling = true;
+    }
+
+    // 애니메이터가 갱신한 뒤에 덮어써야 해서 LateUpdate에서 적용
+    private void LateUpdate()
+    {
+        if (!isRolling)
+            return;
+
+        rollElapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(rollElapsed / rollDuration);
+
+        if (t >= 1f)
+        {
+            StopRoll();
+            return;
+        }
+
+        float eased = t * t * (3f - 2f * t);
+        Quaternion spin = Quaternion.AngleAxis(360f * eased, rollAxis);
+        float scale = 1f - Mathf.Sin(t * Mathf.PI) * rollTuck;
+
+        Transform parent = visualRoot.parent;
+        Vector3 restPosition = parent.TransformPoint(rollRestLocalPosition);
+        Quaternion restRotation = parent.rotation * rollRestLocalRotation;
+        Vector3 pivot = transform.position + Vector3.up * rollPivotHeight;
+
+        visualRoot.position = pivot + spin * (restPosition - pivot) * scale;
+        visualRoot.rotation = spin * restRotation;
+        visualRoot.localScale = rollRestLocalScale * scale;
+    }
+
+    private void StopRoll()
+    {
+        if (!isRolling)
+            return;
+
+        isRolling = false;
+        visualRoot.localPosition = rollRestLocalPosition;
+        visualRoot.localRotation = rollRestLocalRotation;
+        visualRoot.localScale = rollRestLocalScale;
+    }
+
+    // 보이는 모델의 높이 중심(발밑 기준). 렌더러가 없으면 대략적인 사람 키의 절반
+    private float GetVisualCenterHeight()
+    {
+        bool hasBounds = false;
+        Bounds bounds = default;
+
+        foreach (Renderer visualRenderer in visualRoot.GetComponentsInChildren<Renderer>())
+        {
+            if (!visualRenderer.enabled || visualRenderer.name.StartsWith("__"))
+                continue;
+
+            if (!hasBounds)
+            {
+                bounds = visualRenderer.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(visualRenderer.bounds);
+            }
+        }
+
+        return hasBounds ? Mathf.Max(0.2f, bounds.center.y - transform.position.y) : 0.9f;
     }
 
     private void CacheRenderers()

@@ -76,6 +76,7 @@ public static class HitFeedback
         ShowDamage(position, damage, Settings.playerDamageColor, died);
         GameFeelRunner.HitStop(Settings.playerHurtHitStop);
         GameFeelRunner.Shake(Settings.playerHurtShake);
+        GamePostProcess.FlashHurt();
     }
 
     /// <summary>블록/나무를 한 번 침. 부서졌으면 더 큰 소리와 파편</summary>

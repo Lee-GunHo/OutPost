@@ -24,6 +24,11 @@ public class HitFeedbackSettings : ScriptableObject
     [Min(0.1f)] public float shakeDecay = 12f;
     [Min(1f)] public float shakeFrequency = 28f;
 
+    [Header("피격 시 화면 가장자리 빨간 번쩍임 (GamePostProcess)")]
+    public Color hurtFlashColor = new Color(0.75f, 0.05f, 0.05f);
+    [Range(0f, 1f)] public float hurtFlashIntensity = 0.45f;
+    [Min(0f)] public float hurtFlashDuration = 0.45f;
+
     [Header("데미지 숫자")]
     public bool showDamageNumbers = true;
     [Tooltip("비우면 TMP 기본 폰트")]

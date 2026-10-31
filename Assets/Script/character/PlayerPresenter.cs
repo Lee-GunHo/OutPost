@@ -329,6 +329,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     public void PlayDashEffect()
     {
         playerView.PlayDashEffect();
+        playerView.PlayRoll(GetDashDirection(), DashDuration);
     }
 
     public void PlayHitEffect(float duration)
