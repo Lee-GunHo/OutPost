@@ -26,4 +26,10 @@ public enum SfxId
     Harvest,
     Dash,
     NexusHit,
+    ProjectileCharge,
+    ProjectileFire,
+    ProjectileImpact,
+    AoeCharge,
+    AoeBlast,
+    ChargeWindup,
 }

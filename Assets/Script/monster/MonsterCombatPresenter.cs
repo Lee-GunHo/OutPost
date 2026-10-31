@@ -212,7 +212,8 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         IsExecuting = true;
         view.ShowWarning(kind, origin, direction,
             kind == MonsterAttackKind.Circle ? model.CircleRadius
-            : kind == MonsterAttackKind.Charge ? model.ChargeDistance : EffectiveProjectileRange);
+            : kind == MonsterAttackKind.Charge ? model.ChargeDistance : EffectiveProjectileRange,
+            phaseRemaining, model.ProjectileRadius);
         AttackStarted?.Invoke(kind);
         return true;
     }
@@ -229,6 +230,8 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
             released = true;
             if (observation != null) observation.released = true;
             view.ClearWarning();
+            view.PlayRelease(activeKind, origin,
+                activeKind == MonsterAttackKind.Circle ? model.CircleRadius : 0f);
             Execute();
             phaseRemaining = model.GetRecovery(activeKind);
         }

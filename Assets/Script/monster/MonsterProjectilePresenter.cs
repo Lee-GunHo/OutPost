@@ -19,6 +19,7 @@ public sealed class MonsterProjectilePresenter : MonoBehaviour
             settings.ProjectileRadius, range, payload);
         presenter.view = projectile.GetComponent<MonsterProjectileView>();
         presenter.view.Initialize(settings.ProjectileRadius, material);
+        SfxPlayer.PlayAt(SfxId.ProjectileFire, origin);
     }
 
     private void FixedUpdate()
@@ -63,7 +64,7 @@ public sealed class MonsterProjectilePresenter : MonoBehaviour
             ? null : MonsterCombatPresenter.FindDamageTarget(collider);
         if (target != null) MonsterCombatPresenter.ApplyHit(target, model.Payload);
         model.Payload.Observation?.Complete(target == null ? "Blocked" : "OtherTarget");
-        view.Remove();
+        view.Remove(true);
     }
 
     private void Finish()
