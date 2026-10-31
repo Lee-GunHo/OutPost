@@ -103,7 +103,14 @@ public class BossPresenter : MonoBehaviour, IDamageable
             return;
         }
 
+        int previousHp = CurrentHp;
         bossModel.TakeDamage(damage);
+
+        if (bossView != null)
+            bossView.PlayHitBlinkEffect();
+
+        HitFeedback.BossDamaged(transform.position, Mathf.Max(0, previousHp - CurrentHp),
+            bossModel.IsDead, GetComponentInChildren<Renderer>());
 
         Debug.Log($"Boss damaged. HP: {CurrentHp}/{MaxHp}");
 

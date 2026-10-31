@@ -98,6 +98,7 @@ public class NexusPresenter : MonoBehaviour, IDamageable
         }
 
         nexusModel?.TakeDamage(damage);
+        SfxPlayer.PlayAt(SfxId.NexusHit, transform.position);
     }
 
     // Use the solid body's horizontal bounds as the melee footprint. This also

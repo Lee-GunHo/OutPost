@@ -158,6 +158,8 @@ public class PlayerView : MonoBehaviour
 
     public void PlayDashEffect()
     {
+        SfxPlayer.PlayAt(SfxId.Dash, transform.position);
+
         if (dashEffectPrefab == null)
         {
             Debug.Log("대시 이펙트 프리팹이 아직 없습니다.");

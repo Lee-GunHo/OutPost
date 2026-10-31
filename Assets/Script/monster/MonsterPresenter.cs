@@ -456,6 +456,9 @@ public class MonsterPresenter : MonoBehaviour, IDamageable
             monsterView.PlayHitBlinkEffect(HitDuration);
         }
 
+        HitFeedback.EnemyDamaged(transform.position, Mathf.Max(0, previousHp - monsterModel.CurrentHp),
+            monsterModel.IsDead, GetComponentInChildren<Renderer>());
+
         Debug.Log("몬스터 피격, 현재 체력: " + monsterModel.CurrentHp);
 
         if (monsterModel.IsDead)

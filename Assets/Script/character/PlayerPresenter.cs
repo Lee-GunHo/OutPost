@@ -171,6 +171,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         mainCamera = Camera.main;
         initialSpawnPosition = playerModel.SpawnPosition;
         SetPhysicsPosition(initialSpawnPosition);
+        OnPlayerUpgraded += _ => SfxPlayer.Play(SfxId.Upgrade);
 
         // (경민) 0707 NPC 퀘스트 관련 InventoryModel 연결 추가
         if (inventoryModel == null)
@@ -425,8 +426,11 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return;
         }
 
+        int previousHp = playerModel.CurrentHp;
         playerModel.TakeDamage(damage);
         NotifyStatusChanged();
+
+        HitFeedback.PlayerHurt(transform.position, Mathf.Max(0, previousHp - playerModel.CurrentHp), playerModel.IsDead);
 
         Debug.Log("플레이어 피격, 현재 체력: " + playerModel.CurrentHp);
 
@@ -581,6 +585,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
     private float ExecuteMousePriorityAction(ItemData item)
     {
         float attackRecoveryDuration = GetAttackRecoveryDuration(item);
+        HitFeedback.PlayerSwing(transform.position);
 
         if (!TryGetMouseWorldPosition(out Vector3 mouseWorldPosition))
         {
@@ -648,6 +653,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             {
                 int finalDamage = GetAttackDamage(item);
                 damageable.TakeDamage(finalDamage);
+                HitFeedback.PlayerStruckEnemy();
 
                 Debug.Log("마우스 방향 선 판정: 적 공격 / 데미지 " + finalDamage);
                 return attackRecoveryDuration;
@@ -863,6 +869,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
             int finalDamage = GetAttackDamage(item);
             damageable.TakeDamage(finalDamage);
+            HitFeedback.PlayerStruckEnemy();
 
             return true;
         }
@@ -903,8 +910,12 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return;
         }
 
+        int previousLevel = levelModel.Level;
         levelModel.AddExp(amount);
         NotifyStatusChanged();
+
+        if (levelModel.Level > previousLevel)
+            SfxPlayer.Play(SfxId.LevelUp);
     }
 
     public void TakeStatusDamage(int damage)
@@ -928,6 +939,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         if (playerModel.IsDead)
         {
             Debug.Log("플레이어 사망");
+            SfxPlayer.PlayAt(SfxId.PlayerDeath, transform.position);
             OnPlayerDied?.Invoke("StatusEffect", transform.position);
             stateManager.ChangeState(stateManager.DeadState);
         }
