@@ -344,6 +344,35 @@ def projectile_impact(i):
     return finish(crush(saturate(mix(boom * 1.1, crackle * 0.5, burst), 2.2), 10, 2))
 
 
+def aoe_charge(i):
+    d = 0.7
+    t = t_axis(d)
+    f = 55 + 70 * (t / d) ** 1.3
+    rumble = np.sin(2 * np.pi * np.cumsum(f) / SR) + lp(noise(d), 220) * 1.5
+    crackle = bp(noise(d) * (rng.random(int(SR * d)) > 0.96), 1200, 5000) * (t / d) * 1.5
+    e = np.clip(t / d, 0, 1) ** 1.1 * np.clip((d - t) / 0.04, 0, 1)
+    return finish(crush(saturate((rumble * 0.8 + crackle * 0.5) * e, 1.8), 10, 2))
+
+
+def aoe_blast(i):
+    d = 0.7
+    boom = sweep_sine(d, jit(160), 35, 7) * env_exp(d, 0.2)
+    burst = lp(noise(d), 2500) * env_exp(d, 0.08, 0.001)
+    rumble = lp(noise(d), 300) * env_exp(d, 0.25, 0.01) * 0.8
+    return finish(crush(saturate(mix(boom * 1.2, burst, rumble), 2.2), 10, 2))
+
+
+def charge_windup(i):
+    d = 0.65
+    parts = []
+    for k in range(2):
+        stomp = sweep_sine(0.15, 130, 50, 30) * env_exp(0.15, 0.04) + lp(noise(0.15), 600) * env_exp(0.15, 0.025) * 0.6
+        parts.append(delay(stomp, k * 0.16))
+    t = t_axis(0.35)
+    growl = lp(np.sign(np.sin(2 * np.pi * np.cumsum(90 + 140 * t / 0.35) / SR)), 900) * np.clip(t / 0.35, 0, 1) * 0.35
+    return finish(crush(saturate(mix(*parts, delay(growl, 0.3)), 1.8), 10, 2))
+
+
 SOUNDS = {
     "swing": (swing, 3),
     "hit_enemy": (hit_enemy, 3),
@@ -371,6 +400,9 @@ SOUNDS = {
     "projectile_charge": (projectile_charge, 1),
     "projectile_fire": (projectile_fire, 2),
     "projectile_impact": (projectile_impact, 2),
+    "aoe_charge": (aoe_charge, 1),
+    "aoe_blast": (aoe_blast, 2),
+    "charge_windup": (charge_windup, 1),
 }
 
 if __name__ == "__main__":

@@ -29,4 +29,7 @@ public enum SfxId
     ProjectileCharge,
     ProjectileFire,
     ProjectileImpact,
+    AoeCharge,
+    AoeBlast,
+    ChargeWindup,
 }

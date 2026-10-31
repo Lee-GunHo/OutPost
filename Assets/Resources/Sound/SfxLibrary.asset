@@ -210,3 +210,22 @@ MonoBehaviour:
     volume: 0.65
     pitchRange: {x: 0.9, y: 1.1}
     minInterval: 0.05
+  - id: 28
+    clips:
+    - {fileID: 8300000, guid: d138d7ab98874241a1ced4572978551d, type: 3}
+    volume: 0.5
+    pitchRange: {x: 0.95, y: 1.05}
+    minInterval: 0.15
+  - id: 29
+    clips:
+    - {fileID: 8300000, guid: 15651ed7d5304e0eb0b7b87636e66b06, type: 3}
+    - {fileID: 8300000, guid: 1c79ca1e691342a5901be30966e060a3, type: 3}
+    volume: 0.75
+    pitchRange: {x: 0.9, y: 1.1}
+    minInterval: 0.08
+  - id: 30
+    clips:
+    - {fileID: 8300000, guid: 9c0e481a8da84085a95ebdb4357e1b3d, type: 3}
+    volume: 0.6
+    pitchRange: {x: 0.95, y: 1.08}
+    minInterval: 0.15

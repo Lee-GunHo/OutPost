@@ -230,6 +230,8 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
             released = true;
             if (observation != null) observation.released = true;
             view.ClearWarning();
+            view.PlayRelease(activeKind, origin,
+                activeKind == MonsterAttackKind.Circle ? model.CircleRadius : 0f);
             Execute();
             phaseRemaining = model.GetRecovery(activeKind);
         }

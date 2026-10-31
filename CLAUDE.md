@@ -264,6 +264,9 @@
 ### 몬스터 원거리 공격 연출 (`MonsterCombatView`, `MonsterProjectileView`)
 
 - 예고(windup): 바닥에 사거리만큼 흐린 경로 + 양쪽 테두리, 진한 부분이 발사 시점까지 차오름, 끝 화살촉은 발사 직전일수록 빠르게 깜빡임,
-  몬스터 앞에 빛나는 구슬이 커짐(다 차면 그 자리에서 발사체가 나감) + 충전음. 근접/원형/돌진 예고는 기존 선 그대로.
-- 발사체: HDR 색 코어(Bloom으로 빛남) + 반투명 후광 + TrailRenderer 꼬리, 발사음. 맞으면 `MonsterProjectileBurst`(빛 구 + 바닥 고리)와
+  몬스터 앞에 빛나는 구슬이 커짐(다 차면 그 자리에서 발사체가 나감) + 충전음.
+- 원형 예고: 범위 전체 흐린 원 + 가운데부터 차오르는 진한 원(디스크 메시는 코드로 생성) + 깜빡이는 테두리, 터질 때 범위 번쩍임 + 퍼지는 고리
+  (`MonsterCombatView.PlayRelease` → `MonsterAttackBurst.PlayShockwave`). 돌진 예고: 넓은 경로 + 앞으로 흐르듯 깜빡이는 화살촉 3개.
+  각 예고/발동에 효과음(AoeCharge/AoeBlast, ChargeWindup/Dash). 근접 공격은 예고 없음.
+- 발사체: HDR 색 코어(Bloom으로 빛남) + 반투명 후광 + TrailRenderer 꼬리, 발사음. 맞으면 `MonsterAttackBurst`(빛 구 + 바닥 고리)와
   폭발음, 사거리 끝에서는 작게 꺼짐. 모두 기존 `Resources/MonsterCombat/AttackVisual` 머티리얼(정점 색 × _BaseColor) 사용.

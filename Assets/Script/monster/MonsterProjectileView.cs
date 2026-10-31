@@ -97,6 +97,6 @@ public sealed class MonsterProjectileView : MonoBehaviour
         if (material == null) return;
         var burst = new GameObject("Projectile burst");
         burst.transform.position = position;
-        burst.AddComponent<MonsterProjectileBurst>().Play(material, radius, scale);
+        burst.AddComponent<MonsterAttackBurst>().Play(material, radius, scale);
     }
 }
