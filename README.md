@@ -20,7 +20,7 @@
 | 팀 | 3인 |
 | 엔진 | Unity 6 (6000.3.10f1) |
 | 언어 | C# |
-| 그 외 | Blender (3D 에셋), JSON 데이터 구조 |
+| 그 외 | Blender (3D 에셋), Excel 기반 아이템 데이터 |
 
 ## 담당 파트 — 이건호
 
@@ -71,9 +71,22 @@ public CraftingResult Craft(CraftingRecipe recipe)
 - **해결:** `CraftingPresenter`가 `InventoryModel.OnInventoryChanged`와 `HotbarModel.OnHotbarChanged`를 구독해, 데이터가 바뀔 때마다 제작 가능 상태를 다시 계산하도록 연결했습니다.
 - **배운 점:** 데이터가 바뀌는 시점과 화면이 그 데이터를 읽는 시점을 함께 설계해야 합니다.
 
-### 6. 확장을 고려한 데이터
+### 6. 엑셀로 관리하는 아이템 데이터
 
-아이템과 제작법을 UI 코드에 직접 넣지 않고 별도 데이터(`ItemData`, `CraftingRecipe`)로 관리해, 이후 JSON 기반 데이터로 옮길 수 있게 설계했습니다.
+아이템 50여 종의 ID·종류·등급·스탯·설명·최대 수량·제작대 등급·레시피를 프로젝트 루트의 `아이템.xlsx` 한 시트로 정리하고, 에디터 메뉴 **Tools > Crafting > Import Items From Excel** 한 번으로 게임 데이터를 만드는 임포터를 만들었습니다.
+
+| 엑셀 열 | 생성·갱신되는 데이터 |
+|---|---|
+| Item ID · 스탯 · 설명 · Max Stack | `ItemData` (아이콘·프리팹 연결은 유지) |
+| Recipe (`"Potato1,Wheat1"`) | `CraftingRecipe` |
+| Craftingbox Type (Normal / Wood / Copper / Silver / Gold / Pot) | 손 제작, 등급별 제작대, 항아리 |
+
+- 엑셀을 고친 뒤 다시 실행하면 같은 에셋을 덮어써서, 여러 번 실행해도 안전합니다
+- 이름이 바뀐 행은 같은 ID의 기존 에셋과 연결해 참조가 끊기지 않게 했습니다
+- 상위 제작대는 하위 등급 제작대를 가리켜, 제작 UI의 화살표로 하위 레시피를 오가며 만들 수 있습니다
+- `.xlsx`가 zip 안의 XML이라는 점을 이용해 외부 라이브러리 없이 읽고(`XlsxSheetReader`), 엑셀에서 파일을 연 상태여도 읽을 수 있게 했습니다
+
+코드: `Assets/Editor/Crafting/ExcelItemImporter.cs`, `XlsxSheetReader.cs`
 
 ## 팀원 담당 파트
 
@@ -108,5 +121,5 @@ Assets/Script/
 
 - 제작 결과 아이템을 마우스로 끌어 옮기는 드래그 상태
 - 제작대 종류별 제작법 분리
-- JSON 데이터 검증과 편집 편의성 개선
+- 엑셀 데이터 검증과 편집 편의성 개선
 - 저장·불러오기와 인벤토리 상태 연동
