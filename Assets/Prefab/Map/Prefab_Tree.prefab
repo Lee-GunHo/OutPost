@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4609430165179808277}
@@ -61,6 +61,25 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.1914349, y: 3.6074297, z: 1.1965744}
   m_Center: {x: -0.00032243133, y: 1.3037149, z: -0.00016725063}
+--- !u!114 &7400000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2842405900904198630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e2bc272e3184a91ab60ab851cc365cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RandomItemDrop
+  items:
+  - {fileID: 11400000, guid: 3f361c6949e57954ba5e9a233d4de0cc, type: 2}
+  - {fileID: 11400000, guid: 6067dabbe351fae4d826e559754f25c5, type: 2}
+  - {fileID: 11400000, guid: 7dc2f1d122d647349babd8505fcbfc63, type: 2}
+  dropChance: 0.2
+  amount: 1
+  droppedItemPrefab: {fileID: 1542218634, guid: 158ac2cba533995895385e12c2cac2b2, type: 3}
 --- !u!114 &-7598805793440517630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,6 +94,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BreakableWall
   model: {fileID: 1104850543006067139}
   view: {fileID: 1542599139151614044}
+  onlyBreakIfPlayerPlaced: 0
   dropItemPrefab: {fileID: 8770676088589347088, guid: 2e9b1361904f1ea46b5b8a81837f7567, type: 3}
   minDropCount: 1
   maxDropCount: 1
@@ -92,13 +112,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f53efca8214374a9c804672232d707, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableWallModel
-  maxDurability: 15
-  hardness: 0
   dropItemPrefab: {fileID: 8770676088589347088, guid: 2e9b1361904f1ea46b5b8a81837f7567, type: 3}
   minDropCount: 1
   maxDropCount: 1
   dropSpread: 0.3
   showSaveDebugLog: 1
+  maxDurability: 15
+  hardness: 0
+  stageCount: 1
 --- !u!114 &1542599139151614044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,7 +216,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9762ba5230692b94986e7483c22e8dc8, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.6
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9762ba5230692b94986e7483c22e8dc8, type: 3}
       propertyPath: m_LocalScale.y
@@ -203,7 +224,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9762ba5230692b94986e7483c22e8dc8, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.6
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9762ba5230692b94986e7483c22e8dc8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -407,22 +428,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9762ba5230692b94986e7483c22e8dc8, type: 3}
   m_PrefabInstance: {fileID: 8540799198800715651}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7400000000000000001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2842405900904198630}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e2bc272e3184a91ab60ab851cc365cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RandomItemDrop
-  items:
-  - {fileID: 11400000, guid: 3f361c6949e57954ba5e9a233d4de0cc, type: 2}
-  - {fileID: 11400000, guid: 6067dabbe351fae4d826e559754f25c5, type: 2}
-  - {fileID: 11400000, guid: 7dc2f1d122d647349babd8505fcbfc63, type: 2}
-  dropChance: 0.2
-  amount: 1
-  droppedItemPrefab: {fileID: 1542218634, guid: 158ac2cba533995895385e12c2cac2b2, type: 3}
