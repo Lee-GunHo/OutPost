@@ -8,7 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(BreakableWallView))]
 public class BreakableWallPresenter : MonoBehaviour
 {
-    public static event System.Action GeometryChanged;
+    public static event System.Action<Vector2Int> GeometryChanged;
 
     /// <summary>
     /// 완전히 파괴되어 오브젝트가 제거되기 직전에 호출 (상자 내용물 드롭 등)
@@ -226,7 +226,7 @@ public class BreakableWallPresenter : MonoBehaviour
 
         // Placed blocks use carving. Natural walls belong to the baked geometry.
         if (!model.IsPlayerPlaced && (stageChanged || isFullyBroken))
-            GeometryChanged?.Invoke();
+            GeometryChanged?.Invoke(model.ChunkCoord);
 
         if (!isFullyBroken)
             return;
