@@ -45,5 +45,6 @@ public class PlayerAttackState : IPlayerState
 
     public void Exit()
     {
+        playerPresenter.CancelQueuedSpecialAttack();
     }
 }

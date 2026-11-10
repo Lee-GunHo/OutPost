@@ -52,6 +52,17 @@ public class PlayerLevelModel : MonoBehaviour
         Debug.Log($"레벨업! 현재 레벨: {level}, 스탯 포인트: {statPoint}");
     }
 
+    public bool ApplyDeathLevelPenalty()
+    {
+        if (level <= 1) return false;
+        level--;
+        RecalculateRequiredExp();
+        // Keep earned EXP where possible, but never leave an already-complete
+        // level bar that would immediately undo the penalty on the next EXP gain.
+        currentExp = Mathf.Clamp(currentExp, 0, Mathf.Max(0, requiredExp - 1));
+        return true;
+    }
+
     public bool UseStatPoint(int amount)
     {
         if (amount <= 0)

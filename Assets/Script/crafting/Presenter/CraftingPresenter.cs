@@ -231,6 +231,7 @@ public class CraftingPresenter : MonoBehaviour
         switch (result)
         {
             case CraftingResult.Success:
+                GameSaveManager.RequestAutoSave();
                 SfxPlayer.Play(SfxId.Craft);
                 Debug.Log($"{recipe.RecipeName} 제작 성공");
                 break;

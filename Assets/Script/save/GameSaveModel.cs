@@ -57,6 +57,7 @@ public sealed class GameSaveModel
             fileName = fileName.Substring(0, fileName.Length - 4);
 
         return fileName == inventoryFileName || fileName == PlayerFileName ||
+            fileName == SaveCheckpointModel.JournalFileName ||
             fileName == "monster_learning.json" ||
             fileName == "quest_save.json" || fileName == "chest_save.json" ||
             fileName == ProgressTracker.SaveFileName ||

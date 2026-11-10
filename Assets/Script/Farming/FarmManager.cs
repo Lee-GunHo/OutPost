@@ -362,7 +362,7 @@ public class FarmManager : MonoBehaviour
         SaveNow();
     }
 
-    private void SaveNow()
+    public void SaveNow()
     {
         saveTimer = 0f;
 

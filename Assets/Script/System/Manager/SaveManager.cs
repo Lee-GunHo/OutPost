@@ -83,7 +83,7 @@ public class SaveManager : MonoBehaviour
 
         try
         {
-            File.WriteAllText(path, json);
+            GameSaveManager.WriteProgressFile(path, json);
         }
         catch (System.Exception exception)
         {

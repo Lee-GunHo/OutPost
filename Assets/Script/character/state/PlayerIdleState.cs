@@ -16,6 +16,7 @@ public class PlayerIdleState : IPlayerState
 
     public void Update()
     {
+        if (playerPresenter.TryStartSpecialAttack()) return;
         if (playerPresenter.IsAttackPressed)
         {
             playerPresenter.StateManager.ChangeState(playerPresenter.StateManager.AttackState);

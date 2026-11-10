@@ -39,6 +39,12 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
     }
 
     private void OnEnable() { MonsterSquadPresenter.Register(this); }
+    private void Update()
+    {
+        if (monster != null && owner != null)
+            monster.TickRegroupRecovery(Time.deltaTime,
+                IsCooperating && !model.IsFleeing && model.SquadRole == MonsterSquadRole.Regroup);
+    }
     public MonsterPresenter Owner => owner;
     public Transform FleeTargetForTelemetry => model != null && model.IsFleeing ? fleeTarget : null;
     public bool IsAttacking => owner != null && !owner.IsDead && owner.Combat.IsExecuting;

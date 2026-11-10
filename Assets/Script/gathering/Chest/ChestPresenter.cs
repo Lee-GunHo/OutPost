@@ -40,6 +40,11 @@ public class ChestPresenter : MonoBehaviour
     public bool IsOpen => isOpen;
     public ChestModel CurrentChest => currentChest;
     public bool IsCarryingItem => carriedStack != null;
+    public bool HasTransientItems => carriedStack != null || pendingDiscard != null;
+    public void PrepareForSave()
+    {
+        if (HasTransientItems) RestoreTransientItems();
+    }
 
     private sealed class SlotAddress
     {

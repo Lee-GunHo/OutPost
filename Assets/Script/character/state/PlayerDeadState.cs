@@ -21,6 +21,8 @@ public class PlayerDeadState : IPlayerState
 
         playerPresenter.StopMove();
 
+        playerPresenter.ApplyDeathPenalty();
+
         deadTimer = DeadDelay;
         hasLoadedScene = false;
     }

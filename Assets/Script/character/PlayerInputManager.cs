@@ -10,6 +10,8 @@ public class PlayerInputManager : MonoBehaviour
     public bool IsAttackPressed { get; private set; }
     public bool IsInteractPressed { get; private set; }
     public bool IsDashPressed { get; private set; }
+    // Q is separate from right-click placement/planting.
+    public bool IsSpecialAttackPressed => Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame;
     public bool IsToggleToolPressed { get; private set; }
 
     // (경민) 0806 스탯창 관련 입력 추가

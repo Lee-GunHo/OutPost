@@ -515,6 +515,9 @@ public class ShopUI : MonoBehaviour
             ProgressTracker.GetOrCreate().AddShopReceivedAmount(item.itemID, receiveAmount);
         }
 
+        // Unlimited trades also change inventory, even without a purchase-limit record.
+        GameSaveManager.RequestAutoSave();
+
         RefreshShopItems();
         RefreshPlayerItems();
         RefreshSelectedMarks();

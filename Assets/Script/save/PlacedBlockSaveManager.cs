@@ -155,7 +155,7 @@ public class PlacedBlockSaveManager : MonoBehaviour
         {
             saveData.worldSeed = currentWorldSeed;
             string json = JsonUtility.ToJson(saveData, true);
-            File.WriteAllText(GetSaveFilePath(currentWorldSeed), json);
+            GameSaveManager.WriteProgressFile(GetSaveFilePath(currentWorldSeed), json);
         }
         catch (Exception exception)
         {

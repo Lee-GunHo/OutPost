@@ -11,9 +11,67 @@ public class GameSaveManager : MonoBehaviour
 
     private string SavePath => Path.Combine(Application.persistentDataPath, GameSaveModel.PlayerFileName);
     private bool isReady;
+    private static GameSaveManager instance;
+    private static bool recoveryFailed;
+    private static bool suppressProgressWrites;
+    private readonly SaveCheckpointModel checkpoint = new SaveCheckpointModel();
+    private bool autoSaveRequested;
+    private float nextSaveRetry;
+    private InventoryPresenter inventoryPresenter;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RecoverInterruptedSave()
+    {
+        instance = null;
+        recoveryFailed = false;
+        suppressProgressWrites = false;
+        try { SaveCheckpointModel.Recover(Application.persistentDataPath); }
+        catch (System.Exception exception)
+        {
+            recoveryFailed = true;
+            Debug.LogError("중단된 저장 복구 실패. 기존 파일 보호를 위해 저장/불러오기를 중지합니다: " + exception);
+        }
+    }
+
+    // Mutations may happen in several callbacks (e.g. place then consume an item).
+    // Capture all their final states together at the end of the frame.
+    public static void RequestAutoSave()
+    {
+        if (instance != null) instance.autoSaveRequested = true;
+    }
+
+    public static void WriteProgressFile(string path, string json)
+    {
+        // Scene teardown after New Game/Delete must not resurrect the deleted run.
+        if (suppressProgressWrites) return;
+        if (recoveryFailed) throw new System.IO.IOException("Save recovery has failed.");
+        if (instance != null)
+        {
+            instance.checkpoint.Stage(path, json);
+            instance.autoSaveRequested = true;
+        }
+        else SaveCheckpointModel.WriteAtomic(path, json);
+    }
+
+    private void LateUpdate()
+    {
+        if (!isReady || !autoSaveRequested || Time.unscaledTime < nextSaveRetry ||
+            playerPresenter == null || playerPresenter.IsRestoringPosition) return;
+        if (inventoryPresenter == null) inventoryPresenter = FindFirstObjectByType<InventoryPresenter>();
+        if ((inventoryPresenter != null && inventoryPresenter.HasTransientItems) ||
+            (ChestPresenter.Instance != null && ChestPresenter.Instance.HasTransientItems)) return;
+        if (!TrySaveGame()) nextSaveRetry = Time.unscaledTime + 5f;
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this) instance = null;
+    }
 
     private void Awake()
     {
+        instance = this;
+        suppressProgressWrites = false;
         if (playerPresenter == null)
         {
             GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -74,11 +132,15 @@ public class GameSaveManager : MonoBehaviour
     public bool TrySaveGame()
     {
         // Avoid overwriting a saved run before its initial load has finished.
-        if (!isReady || playerPresenter == null)
+        if (recoveryFailed || !isReady || playerPresenter == null || playerPresenter.IsRestoringPosition)
         {
             Debug.LogWarning("저장 실패: 플레이어의 불러오기가 아직 완료되지 않았습니다.");
             return false;
         }
+
+        if (inventoryPresenter == null) inventoryPresenter = FindFirstObjectByType<InventoryPresenter>();
+        inventoryPresenter?.PrepareForSave();
+        ChestPresenter.Instance?.PrepareForSave();
 
         if (SaveManager.Instance == null || !SaveManager.Instance.TrySaveGame())
             return false;
@@ -132,7 +194,7 @@ public class GameSaveManager : MonoBehaviour
 
         try
         {
-            File.WriteAllText(SavePath, json);
+            WriteProgressFile(SavePath, json);
         }
         catch (System.Exception exception)
         {
@@ -141,7 +203,7 @@ public class GameSaveManager : MonoBehaviour
         }
 
         if (MonsterLearningPresenter.Instance != null && !MonsterLearningPresenter.Instance.SaveNow())
-            return false;
+            Debug.LogWarning("몬스터 학습 저장 실패. 아이템 및 진행도 저장은 계속합니다.");
         if (QuestSaveManager.Instance != null)
             QuestSaveManager.Instance.SaveNow();
         if (ProgressTracker.Instance != null)
@@ -153,12 +215,22 @@ public class GameSaveManager : MonoBehaviour
         if (PlacedBlockSaveManager.Instance != null)
             PlacedBlockSaveManager.Instance.SaveNow();
 
+        FarmManager.Instance?.SaveNow();
+        try { checkpoint.Commit(Application.persistentDataPath); }
+        catch (System.Exception exception)
+        {
+            Debug.LogError("게임 저장 실패. 다음 저장/실행 시 재시도합니다: " + exception);
+            return false;
+        }
+        autoSaveRequested = false;
+
         Debug.Log("게임 저장 완료: " + SavePath);
         return true;
     }
 
     public void LoadGame()
     {
+        if (recoveryFailed) return;
         // World stores persist changes immediately. Reloading only the inventory in
         // this scene would duplicate transferred/placed items. Load once on scene entry.
         if (isReady)
@@ -231,6 +303,25 @@ public class GameSaveManager : MonoBehaviour
 
     public static void ResetProgressCaches()
     {
+        // Retry a recoverable interrupted write on Continue; after New Game the
+        // journal has been deleted, so a previously failed recovery is cleared.
+        try
+        {
+            SaveCheckpointModel.Recover(Application.persistentDataPath);
+            recoveryFailed = false;
+        }
+        catch (System.Exception exception)
+        {
+            recoveryFailed = true;
+            Debug.LogError("저장 복구 실패: " + exception);
+        }
+        suppressProgressWrites = true;
+        if (instance != null)
+        {
+            instance.checkpoint.Clear();
+            instance.autoSaveRequested = false;
+            instance.isReady = false;
+        }
         MonsterLearningPresenter.ClearRuntimeMemory();
         if (QuestSaveManager.Instance != null)
             QuestSaveManager.Instance.ResetCache();

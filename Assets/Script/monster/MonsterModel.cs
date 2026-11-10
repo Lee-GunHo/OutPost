@@ -67,6 +67,28 @@ public class MonsterModel : MonoBehaviour
 
 
     private int currentHp;
+    private float regroupRecoveryTime;
+    private int regroupRecoveredHp;
+
+    public void TickRegroupRecovery(float deltaTime, bool regrouping)
+    {
+        if (!regrouping || IsDead)
+        {
+            regroupRecoveryTime = 0f;
+            regroupRecoveredHp = 0;
+            return;
+        }
+        regroupRecoveryTime += deltaTime;
+        int ticks = Mathf.FloorToInt(regroupRecoveryTime);
+        if (ticks <= 0) return;
+        regroupRecoveryTime -= ticks;
+        int budget = Mathf.Max(1, Mathf.RoundToInt(maxHp * 0.15f));
+        int amount = Mathf.Min(Mathf.Max(1, Mathf.RoundToInt(maxHp * 0.05f)) * ticks,
+            budget - regroupRecoveredHp, maxHp - currentHp);
+        amount = Mathf.Max(0, amount);
+        currentHp += amount;
+        regroupRecoveredHp += amount;
+    }
 
     public float MoveSpeed => moveSpeed;
 

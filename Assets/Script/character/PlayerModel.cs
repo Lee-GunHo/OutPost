@@ -13,6 +13,35 @@ public class PlayerModel : MonoBehaviour
     [Header("MP Data")]
     [SerializeField] private int baseMaxMp = 100;
     [SerializeField] private int currentMp = 100;
+    private float manaRegenElapsed;
+    private float specialAttackCooldownRemaining;
+    public int SpecialAttackManaCost => 10;
+    public bool CanUseSpecialAttack => !IsDead && currentMp >= SpecialAttackManaCost && specialAttackCooldownRemaining <= 0f;
+
+    // Tick from the presenter so the HUD is notified only when MP actually changes.
+    public bool TickManaAndSpecialAttack(float deltaTime)
+    {
+        specialAttackCooldownRemaining = Mathf.Max(0f, specialAttackCooldownRemaining - deltaTime);
+        if (IsDead || currentMp >= MaxMp)
+        {
+            manaRegenElapsed = 0f;
+            return false;
+        }
+        manaRegenElapsed += deltaTime;
+        int ticks = Mathf.FloorToInt(manaRegenElapsed);
+        if (ticks <= 0) return false;
+        manaRegenElapsed -= ticks;
+        int previous = currentMp;
+        RecoverMp(Mathf.FloorToInt(MaxMp * 0.01f + 0.5f) * ticks);
+        return previous != currentMp;
+    }
+
+    public bool TrySpendSpecialAttackMana()
+    {
+        if (!CanUseSpecialAttack || !UseMp(SpecialAttackManaCost)) return false;
+        specialAttackCooldownRemaining = 0.5f;
+        return true;
+    }
 
     [Header("Move Data")]
     [SerializeField] private float baseMoveSpeed = 5f;
@@ -275,6 +304,32 @@ public class PlayerModel : MonoBehaviour
         moveSpeedUpgradeLevel++;
 
         Debug.Log($"이동속도 강화 완료. 강화 레벨: {moveSpeedUpgradeLevel}, 현재 이동속도: {MoveSpeed}");
+    }
+
+    public int UpgradedStatTypeCount =>
+        (hpUpgradeLevel > 0 ? 1 : 0) + (mpUpgradeLevel > 0 ? 1 : 0) +
+        (attackUpgradeLevel > 0 ? 1 : 0) + (defenseUpgradeLevel > 0 ? 1 : 0) +
+        (moveSpeedUpgradeLevel > 0 ? 1 : 0);
+
+    // candidateIndex is an index among upgraded stat types, not all five stats.
+    // The presenter supplies a random choice; equipment/base stats are untouched.
+    public string ReduceUpgradedStat(int candidateIndex)
+    {
+        if (candidateIndex < 0 || candidateIndex >= UpgradedStatTypeCount) return null;
+        string statName;
+        if (hpUpgradeLevel > 0 && candidateIndex-- == 0)
+        { hpUpgradeLevel--; statName = "체력"; }
+        else if (mpUpgradeLevel > 0 && candidateIndex-- == 0)
+        { mpUpgradeLevel--; statName = "마나"; }
+        else if (attackUpgradeLevel > 0 && candidateIndex-- == 0)
+        { attackUpgradeLevel--; statName = "공격력"; }
+        else if (defenseUpgradeLevel > 0 && candidateIndex-- == 0)
+        { defenseUpgradeLevel--; statName = "방어력"; }
+        else
+        { moveSpeedUpgradeLevel--; statName = "이동속도"; }
+        ClampCurrentHp();
+        ClampCurrentMp();
+        return statName;
     }
 
     public void ToggleTool()

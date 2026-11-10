@@ -114,6 +114,7 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     private Vector3 initialSpawnPosition;
     private Coroutine restorePositionCoroutine;
+    public bool IsRestoringPosition => restorePositionCoroutine != null;
     private bool restorePreviousUseGravity;
 
     // (경민) 0707 NPC 퀘스트 관련 InventoryModel 연결 추가
@@ -193,6 +194,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (restorePositionCoroutine == null && playerModel.TickManaAndSpecialAttack(Time.deltaTime))
+            NotifyStatusChanged();
         // Run before UI input gating: falling recovery must also work with a panel open.
         // The load coroutine owns positioning until it has restored the saved location.
         if (restorePositionCoroutine == null && transform.position.y <= 0f)
@@ -447,6 +450,24 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         stateManager.ChangeState(stateManager.HitState);
     }
 
+    private bool deathPenaltyApplied;
+
+    public void ApplyDeathPenalty()
+    {
+        if (!IsDead || deathPenaltyApplied) return;
+        deathPenaltyApplied = true;
+        if (levelModel != null && levelModel.ApplyDeathLevelPenalty())
+        {
+            int count = playerModel.UpgradedStatTypeCount;
+            string reducedStat = count > 0
+                ? playerModel.ReduceUpgradedStat(UnityEngine.Random.Range(0, count)) : null;
+            Debug.Log($"사망 페널티: 레벨 {Level}, " +
+                (reducedStat != null ? reducedStat + " 강화 1단계 감소" : "강화된 스탯 없음"));
+        }
+        NotifyStatusChanged();
+        GameSaveManager.RequestAutoSave();
+    }
+
     public void ReviveAtNexusFront()
     {
         Vector3 revivePosition = playerModel.SpawnPosition;
@@ -470,6 +491,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
         );
 
         stateManager.ChangeState(stateManager.IdleState);
+        deathPenaltyApplied = false;
+        GameSaveManager.RequestAutoSave();
     }
 
     public void SetDashInvincible(bool value)
@@ -563,7 +586,8 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return 0f;
         }
 
-        return ExecuteMousePriorityAction(GetHeldItem());
+        ItemData item = GetHeldItem();
+        return specialAttackQueued ? ExecuteSwordWave(item) : ExecuteMousePriorityAction(item);
     }
 
     private ItemData GetHeldItem()
@@ -581,6 +605,37 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
             return item.attackRecoveryDuration;
 
         return Mathf.Max(0f, AttackDuration);
+    }
+
+    private bool specialAttackQueued;
+
+    public bool TryStartSpecialAttack()
+    {
+        if (UIState.IsAnyUIOpen || IsDead || restorePositionCoroutine != null ||
+            !inputManager.IsSpecialAttackPressed || !playerModel.CanUseSpecialAttack) return false;
+        ItemData item = GetHeldItem();
+        if (item == null || item.toolType != ToolType.Sword || item.itemType != ItemType.Weapon) return false;
+        specialAttackQueued = true;
+        stateManager.ChangeState(stateManager.AttackState);
+        return true;
+    }
+
+    public void CancelQueuedSpecialAttack() { specialAttackQueued = false; }
+
+    private float ExecuteSwordWave(ItemData item)
+    {
+        specialAttackQueued = false;
+        if (item == null || item.toolType != ToolType.Sword ||
+            !TryGetMouseWorldPosition(out Vector3 target)) return 0f;
+        Vector3 direction = target - transform.position;
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.001f || !playerModel.TrySpendSpecialAttackMana()) return 0f;
+        direction.Normalize();
+        FaceActionTarget(target);
+        NotifyStatusChanged();
+        Vector3 origin = transform.position + Vector3.up * 0.35f;
+        SwordWavePresenter.Spawn(origin, direction, GetAttackDamage(item), transform, Camera.main);
+        return GetAttackRecoveryDuration(item);
     }
 
     private float ExecuteMousePriorityAction(ItemData item)
@@ -1053,6 +1108,9 @@ public class PlayerPresenter : MonoBehaviour, IDamageable
                 yield return null;
         }
 
+        // Always yield once: otherwise a synchronously completed coroutine's handle
+        // can overwrite the null assigned at its end and leave restoration locked.
+        yield return null;
         Physics.SyncTransforms();
 
         if (TryFindGroundBelow(temporaryPosition, out RaycastHit groundHit))

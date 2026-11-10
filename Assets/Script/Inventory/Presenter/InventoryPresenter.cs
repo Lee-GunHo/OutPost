@@ -34,6 +34,11 @@ public class InventoryPresenter : MonoBehaviour
     private bool isOpen;
 
     public bool IsOpen => isOpen;
+    public bool HasTransientItems => draggingItem != null;
+    public void PrepareForSave()
+    {
+        if (HasTransientItems) CancelDrag();
+    }
 
     [Header("Test Items")]
     [SerializeField] private bool addTestItemsOnStart;

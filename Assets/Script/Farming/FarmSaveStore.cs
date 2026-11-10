@@ -85,13 +85,7 @@ public static class FarmSaveStore
         try
         {
             // 쓰는 도중 종료돼도 기존 파일이 깨지지 않게 임시 파일에 쓰고 교체
-            string tempPath = path + ".tmp";
-            File.WriteAllText(tempPath, JsonUtility.ToJson(data, true));
-
-            if (File.Exists(path))
-                File.Delete(path);
-
-            File.Move(tempPath, path);
+            GameSaveManager.WriteProgressFile(path, JsonUtility.ToJson(data, true));
         }
         catch (Exception exception)
         {

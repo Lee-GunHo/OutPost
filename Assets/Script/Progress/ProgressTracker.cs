@@ -340,17 +340,9 @@ public class ProgressTracker : MonoBehaviour
             saveData.saveVersion = CurrentSaveVersion;
 
             string savePath = GetSaveFilePath();
-            string temporaryPath = savePath + ".tmp";
             string json = JsonUtility.ToJson(saveData, true);
 
-            File.WriteAllText(temporaryPath, json);
-
-            if (File.Exists(savePath))
-            {
-                File.Delete(savePath);
-            }
-
-            File.Move(temporaryPath, savePath);
+            GameSaveManager.WriteProgressFile(savePath, json);
         }
         catch (Exception exception)
         {

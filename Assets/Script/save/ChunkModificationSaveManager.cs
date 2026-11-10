@@ -346,16 +346,10 @@ public class ChunkModificationSaveManager : MonoBehaviour
             saveData.worldSeed = currentWorldSeed;
 
             string savePath = GetSaveFilePath(currentWorldSeed);
-            string tempPath = savePath + ".tmp";
             string json = JsonUtility.ToJson(saveData, true);
 
             Directory.CreateDirectory(Path.GetDirectoryName(savePath));
-            File.WriteAllText(tempPath, json);
-
-            if (File.Exists(savePath))
-                File.Delete(savePath);
-
-            File.Move(tempPath, savePath);
+            GameSaveManager.WriteProgressFile(savePath, json);
 
             if (showDebugLog)
             {
