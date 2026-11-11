@@ -184,8 +184,6 @@
 - 메뉴 `Tools > NPC > Build NPC Visuals`로 세 프리팹에 적용(다시 실행하면 지우고 새로 만듦). 애니메이터는 플레이어와 같은
   `PlayerLocomotion`(기본 Idle), 전투 동료는 `CompanionPresenter.LateUpdate`가 위치 변화로 `IsWalking`을 켬.
 - `InteractionHighlight`는 꺼진 Renderer에 외곽선을 만들지 않음(숨긴 캡슐 외곽선 방지).
-- 메뉴 `Tools > NPC > Export NPC Images (PNG)`(`NPCImageExporter`): `Assets/Prefab` 아래 `NPCPresenter`가 붙은 프리팹을 전부
-  미리보기 씬에서 Idle 포즈로 찍어 프로젝트 루트 `NPCRenders/<프리팹>_front.png`/`_quarter.png`(1024px, 투명 배경)로 저장. 열린 씬은 안 건드림.
 
 ### 에디터 설정 참고
 
