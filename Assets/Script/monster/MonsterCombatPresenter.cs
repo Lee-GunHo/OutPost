@@ -64,7 +64,9 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         {
             float weight = owner.Behavior != null
                 ? owner.Behavior.GetAttackWeight(kind, model.GetWeight(kind)) : model.GetWeight(kind);
-            if (player != null && UsesLearnedPolicy && policy != null)
+            if (player != null && learning != null && learning.Settings.UsesMaximumChargeDemo(owner.IsRegisteredLearningTest))
+                weight *= learning.Settings.DemoAttackMultiplier(kind);
+            else if (player != null && UsesLearnedPolicy && policy != null)
                 weight *= policy.Weight(owner.LearningType, learningContext, (int)kind);
             selectionWeights[(int)kind] = weight;
             total += weight;
@@ -206,7 +208,6 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
         owner.StopMove();
         owner.transform.rotation = Quaternion.LookRotation(direction);
         model.Commit(kind, Time.time, owner.AttackCooldown);
-        owner.Behavior?.RecordAttack(kind);
         phaseRemaining = model.GetWindup(kind);
         released = false;
         IsExecuting = true;

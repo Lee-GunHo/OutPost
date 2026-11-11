@@ -65,7 +65,6 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
     private float lastHitTime = float.NegativeInfinity;
     private float nextRetreatTime = float.NegativeInfinity;
     private float retreatEndTime;
-    private MonsterAttackKind? lastAttack;
     [SerializeField] private MonsterSquadRole squadRole = MonsterSquadRole.Solo;
     [SerializeField] private int engagedMonsterCount = 1;
     public MonsterSquadRole SquadRole => squadRole;
@@ -87,7 +86,6 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
     public float PreferredDistance => Mathf.Max(retreatTriggerDistance + 0.5f, preferredDistance);
 
     public void RecordHit(float now) { lastHitTime = now; }
-    public void RecordAttack(MonsterAttackKind kind) { lastAttack = kind; }
     public bool WasRecentlyHit(float now) => now - lastHitTime < Mathf.Max(0f, recentHitDuration);
     public bool IsLowHealth(float healthRatio) => healthRatio <= lowHealthRatio;
 
@@ -144,8 +142,7 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
                 if (hit) preference *= 0.6f;
                 break;
         }
-        // Prefer variety, while still allowing the only legal attack to be used.
-        if (lastAttack == kind) preference *= 0.3f;
+        // Attack cooldowns gate reuse; the previous attack does not reduce selection weight.
         if (cooperating)
         {
             if (!AllowsAttack(squadRole, kind)) return 0f;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public sealed class MonsterLearningModel
 {
     public const int SchemaVersion = 1;
+    public const float MaximumLearningMultiplier = 2f;
     public int schemaVersion = SchemaVersion;
     public int version;
     public List<MonsterActionExperience> entries = new List<MonsterActionExperience>();
@@ -25,7 +26,7 @@ public sealed class MonsterLearningModel
         if (entry == null) return 1f;
         // Sparse observations stay close to the initial policy. Never suppress an action entirely.
         float confidence = entry.attempts / (entry.attempts + 12f);
-        return Math.Max(0.65f, Math.Min(1.8f, 1f + entry.meanReward * confidence));
+        return Math.Max(0.65f, Math.Min(MaximumLearningMultiplier, 1f + entry.meanReward * confidence));
     }
 
     public MonsterActionExperience Observe(string type, string context, int action, bool hit)

@@ -113,7 +113,6 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
     }
 
     public void RecordHit() { model.RecordHit(Time.time); }
-    public void RecordAttack(MonsterAttackKind kind) { model.RecordAttack(kind); }
 
     public float GetAttackWeight(MonsterAttackKind kind, float baseWeight) =>
         model.AttackWeight(kind, baseWeight, HealthRatio, owner.Combat.TargetDistance, owner.AttackRange, Time.time, IsCooperating);

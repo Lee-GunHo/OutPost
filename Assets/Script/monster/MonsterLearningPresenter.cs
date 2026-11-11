@@ -67,8 +67,9 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
             mode = Settings.learningMode.ToString(), cooperation = Settings.cooperationEnabled,
             naturalSpawn = owner.IsNaturalSpawn, registeredLearningTest = owner.IsRegisteredLearningTest,
             learningEligible = owner.IsLearningEligible,
+            maximumChargeDemo = Settings.UsesMaximumChargeDemo(owner.IsRegisteredLearningTest),
             train = owner.IsLearningEligible && Settings.learningMode == MonsterLearningMode.Training,
-            learnedWeightVersion = policyVersion, eligibleActions = eligible,
+            learnedWeightVersion = Settings.UsesMaximumChargeDemo(owner.IsRegisteredLearningTest) ? 0 : policyVersion, eligibleActions = eligible,
             selectionProbabilities = probabilities, selectedProbability = probability
         };
     }
@@ -88,12 +89,12 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
                 entry.attempts, entry.hits, record.damageDealt > 0 ? 1f : -0.25f, oldWeight,
                 Memory.Weight(record.monsterType, record.context, record.action), Memory.version);
         }
-        Write("actions.csv", "actionId,battleId,monsterId,monsterType,startTime,endTime,mode,cooperation,naturalSpawn,role,context,selfHpRatio,playerHpRatio,distance,action,eligibleActions,probabilities,selectedProbability,policyVersion,released,outcome,damageDealt,registeredLearningTest,learningEligible",
+        Write("actions.csv", "actionId,battleId,monsterId,monsterType,startTime,endTime,mode,cooperation,naturalSpawn,role,context,selfHpRatio,playerHpRatio,distance,action,eligibleActions,probabilities,selectedProbability,policyVersion,released,outcome,damageDealt,registeredLearningTest,learningEligible,maximumChargeDemo",
             record.actionId, record.battleId, record.monsterId, record.monsterType, record.startedAt, Time.time, record.mode,
             record.cooperation, record.naturalSpawn, record.role, record.context, record.selfHpRatio,
             record.playerHpRatio, record.distance, (MonsterAttackKind)record.action, record.eligibleActions,
             record.selectionProbabilities, record.selectedProbability, record.learnedWeightVersion,
-            record.released, record.outcome, record.damageDealt, record.registeredLearningTest, record.learningEligible);
+            record.released, record.outcome, record.damageDealt, record.registeredLearningTest, record.learningEligible, record.maximumChargeDemo);
     }
 
     public void RecordFormation(string group, MonsterPresenter owner, MonsterSquadAssignment assignment, string reason)
@@ -114,6 +115,7 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         Settings.SetDiagnostics(Memory.version, completed, directory);
         view.Render(Settings.showOverlay, "Monster AI | " + Settings.learningMode + " | Cooperation: " + Settings.cooperationEnabled +
             "\nPolicy version: " + Memory.version + " | Resolved actions: " + completed +
+            (Settings.maximumChargeDemo ? "\nDEMO: registered test monsters only | Charge x" + MonsterLearningModel.MaximumLearningMultiplier.ToString("0.0", CultureInfo.InvariantCulture) + ", others x1 | not trained data" : "") +
             "\nNew monsters use a policy snapshot. Natural spawns train; waves do not." +
             "\nCSV / snapshots: persistentDataPath/MonsterAIResearch" +
             (Settings.showOverlay ? "\n" + MonsterSquadPresenter.GetDebugSummary() : ""));
@@ -167,6 +169,38 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         Instance.Memory = new MonsterLearningModel();
         Instance.dirty = false;
         Instance.storageBlocked = false;
+    }
+
+    [ContextMenu("Demo/1 - Baseline (No Learning)")]
+    public void DemoBaseline() => SetDemo(false, MonsterLearningMode.Baseline);
+
+    [ContextMenu("Demo/2 - Maximum Charge x2.0 (No Learning)")]
+    public void DemoMaximumCharge() => SetDemo(true, MonsterLearningMode.Frozen);
+
+    [ContextMenu("Demo/3 - Use Saved Policy (Frozen)")]
+    public void DemoSavedPolicy() => SetDemo(false, MonsterLearningMode.Frozen);
+
+    private void SetDemo(bool maximumCharge, MonsterLearningMode mode)
+    {
+        if (!Application.isPlaying || Settings == null)
+        {
+            Debug.LogWarning("Enter Play mode before selecting an AI demonstration preset.");
+            return;
+        }
+        Telemetry?.ResetForLoad();
+        generation++; // Discard unfinished observations and refresh existing monsters' snapshots.
+        Settings.maximumChargeDemo = maximumCharge;
+        Settings.learningMode = mode;
+        Settings.cooperationEnabled = false;
+        Settings.showOverlay = true;
+        Write("demo_presets.csv", "time,preset,mode,scope,chargeMultiplier,otherMultiplier",
+            Time.time, maximumCharge ? "SyntheticMaximumCharge" : mode.ToString(), mode,
+            maximumCharge ? "RegisteredTestOnly" : "All", maximumCharge ? MonsterLearningModel.MaximumLearningMultiplier : 1f,
+            mode == MonsterLearningMode.Frozen && !maximumCharge ? "SavedPolicy" : "1");
+        FlushLogs();
+        Debug.Log(maximumCharge
+            ? "Charge demo enabled: registered test monsters use x" + MonsterLearningModel.MaximumLearningMultiplier.ToString("0.0", CultureInfo.InvariantCulture) + " charge and x1 other attacks. Saved learning memory is unchanged."
+            : "AI demonstration preset: " + mode + ". Cooperation OFF; learning updates OFF.");
     }
 
     [ContextMenu("Flush Logs and Export Current Policy")]

@@ -1,5 +1,16 @@
 # OutPost 몬스터 AI — 구현 상태와 비교 실험 안내
 
+## 2026-11-12: 촬영용 돌진 최대 배율 프리셋
+
+- 직접 배치한 일반 몬스터의 `MonsterModel > Test Learning Enabled`를 체크한다. 돌진 공격도 활성화되어 있어야 한다.
+- Play 중 `Monster AI research`의 `MonsterLearningPresenter` 컴포넌트 메뉴에서 `Demo/1 - Baseline (No Learning)`으로 기본 상태를 촬영한다.
+- 공격이 끝난 뒤 `Demo/2 - Maximum Charge x2.0 (No Learning)`을 선택하면 테스트 등록 개체의 모든 상황에서 돌진 배율 2.0, 다른 공격 배율 1이 적용된다.
+- 두 프리셋 모두 협동 OFF, 추가 학습 OFF다. 최대 배율은 실제 경험을 생성하거나 학습 JSON을 수정하지 않는 런타임 시연 설정이며 Play 종료 시 해제된다.
+- `Demo/3 - Use Saved Policy (Frozen)`은 시연 배율을 해제하고 저장된 실제 학습값을 적용한다. 협동은 계속 OFF다.
+- 거리와 쿨다운 조건은 유지하고 직전 공격의 가중치를 낮추는 반복 억제는 제거했다. 2.0배는 선택 확률 100%나 연속 돌진 보장이 아니다. 비교 촬영은 변경된 규칙에서 Baseline과 최대 배율 모두 다시 진행한다.
+- `actions.csv`의 `maximumChargeDemo`와 `demo_presets.csv`로 인위적으로 설정한 시연을 구분한다. `policy_v*.json`은 실제 학습 기억만 포함한다.
+- 발표 표기는 ‘기본 배율 / 돌진 학습 배율 최대 적용(시연 설정)’으로 한다. 이 자료 자체는 실제 학습 과정의 증거가 아니다.
+
 2026-10-15 기준. 협동 정책 2차 구현 및 직접 배치한 테스트 몬스터의 명시적 학습 등록을 반영했다. 10월 15일 확인한 첫 실험 로그는 미등록 배치 개체라 학습 버전이 0이었다. 학습 효과는 아직 검증되지 않았다.
 
 ## 교수님 요청 대응
@@ -71,7 +82,7 @@
 빗나감 또는 플레이어 접촉 후 실제 피해 없음: reward = -0.25
 meanReward += 0.08 × (reward - meanReward)
 confidence = attemptCount / (attemptCount + 12)
-multiplier = clamp(1 + meanReward × confidence, 0.65, 1.8)
+multiplier = clamp(1 + meanReward × confidence, 0.65, 2.0)
 finalWeight = 기존 상황/역할 가중치 × multiplier
 probability = finalWeight / 가능한 공격들의 finalWeight 합
 ```
