@@ -1,0 +1,11 @@
+{
+    "passed": true,
+    "modelVersion": "attack-preference-mlp-v1",
+    "unityVersion": "6000.3.10f1",
+    "backend": "Unity.InferenceEngine CPU",
+    "error": "",
+    "probes": 256,
+    "inferenceCount": 256,
+    "assertions": 1290,
+    "maximumAbsoluteDifference": 0.00003147125244140625
+}

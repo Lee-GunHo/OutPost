@@ -1,0 +1,51 @@
+{
+  "modelId": "attack-preference-mlp-v1",
+  "method": "supervised policy distillation of original utility rules",
+  "architecture": [
+    4,
+    32,
+    32,
+    4
+  ],
+  "hiddenActivation": "ReLU",
+  "outputActivation": "Exp",
+  "input": [
+    "distance / 8",
+    "(distance - meleeRange) / 8",
+    "lowHealth",
+    "recentlyHit"
+  ],
+  "output": [
+    "Melee",
+    "Projectile",
+    "Circle",
+    "Charge"
+  ],
+  "seed": 20261118,
+  "bestEpoch": 1199,
+  "epochs": 1200,
+  "bestValidationLoss": 0.0005105988821014762,
+  "splitSizes": {
+    "train": 12000,
+    "validation": 3000,
+    "test": 4000
+  },
+  "teacherSourceSha256": "7f6d06f2832afb6ec16eac88021d4ad9c1ed1ba5b5a659b3bc2db5a73afddaaf",
+  "datasetCsvSha256": "f352a8fd74a72889c47ca7c9e6552f89a82d094a996873b7dd16f34ec22a9fbc",
+  "onnxSha256": "3542e50b3c658583ed56601f931aa9adb1c33a800968fb43533bf9d65214680e",
+  "python": "3.11.0",
+  "torch": "2.11.0+cu128",
+  "onnx": "1.17.0",
+  "onnxruntime": "1.20.1",
+  "testMetrics": {
+    "samples": 4000,
+    "preference_mae": 0.00937655009329319,
+    "probability_mae_percentage_points": 0.1160142719745636,
+    "probability_max_error_percentage_points": 13.57406997680664,
+    "away_from_boundaries_mae_pp": 0.059857405722141266,
+    "near_boundaries_mae_pp": 0.6200255155563354,
+    "near_boundary_samples": 401,
+    "worst_role_mask_mean_error_pp": 0.13682223453710177,
+    "pytorch_onnx_max_abs_difference": 6.67572021484375e-06
+  }
+}

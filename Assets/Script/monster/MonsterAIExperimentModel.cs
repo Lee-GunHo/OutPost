@@ -7,6 +7,8 @@ public sealed class MonsterAIExperimentModel : MonoBehaviour
 {
     public MonsterLearningMode learningMode = MonsterLearningMode.Training;
     public bool cooperationEnabled = true;
+    [Tooltip("Use the bundled MLP for individual attack preferences. Independent of online learning mode.")]
+    public bool useNeuralAttackPolicy = true;
     [Tooltip("Allow wave monsters to fully flee (squad orders and individual chance). Default: regroup and resume combat.")]
     public bool waveSquadWithdrawal;
     [Tooltip("Wave monsters never train. Enable only to let them use an existing learned policy.")]

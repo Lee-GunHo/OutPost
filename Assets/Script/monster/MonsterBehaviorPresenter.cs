@@ -117,6 +117,15 @@ public sealed class MonsterBehaviorPresenter : MonoBehaviour
     public float GetAttackWeight(MonsterAttackKind kind, float baseWeight) =>
         model.AttackWeight(kind, baseWeight, HealthRatio, owner.Combat.TargetDistance, owner.AttackRange, Time.time, IsCooperating);
 
+    public MonsterNeuralPolicyModel.Observation GetNeuralObservation() => new MonsterNeuralPolicyModel.Observation
+    {
+        distance = owner.Combat.TargetDistance, meleeRange = owner.AttackRange,
+        lowHealth = model.IsLowHealth(HealthRatio), recentlyHit = model.WasRecentlyHit(Time.time)
+    };
+
+    public float ApplyRoleWeight(MonsterAttackKind kind, float baseWeight, float preference) =>
+        model.ApplyRoleWeight(kind, baseWeight, preference, IsCooperating);
+
     public MonsterBehaviorAction Decide()
     {
         // Keep the flee intention through hit stun and normal aggro-distance changes.

@@ -6,6 +6,7 @@ public sealed class MonsterCombatTelemetryModel
 {
     public string actionId, battleId, monsterId, monsterType, context, role, mode;
     public string eligibleActions, selectionProbabilities;
+    public string preferenceSource, neuralModelVersion;
     public int action, learnedWeightVersion, damageDealt;
     public float startedAt, distance, selfHpRatio, playerHpRatio, selectedProbability;
     public bool cooperation, naturalSpawn, train, released, playerContact, resolved;

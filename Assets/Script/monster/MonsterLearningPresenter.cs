@@ -13,6 +13,7 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
     public static MonsterLearningPresenter Instance { get; private set; }
     public static bool CooperationEnabled => Instance == null || Instance.Settings.cooperationEnabled;
     public MonsterCombatTelemetryPresenter Telemetry { get; private set; }
+    public MonsterNeuralPolicyPresenter NeuralPolicy { get; private set; }
     public MonsterAIExperimentModel Settings { get; private set; }
     public int Generation => generation;
     public MonsterLearningModel Memory { get; private set; } = new MonsterLearningModel();
@@ -41,6 +42,8 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         Instance = this;
         Settings = GetComponent<MonsterAIExperimentModel>();
         view = GetComponent<MonsterLearningView>();
+        NeuralPolicy = new MonsterNeuralPolicyPresenter();
+        if (Settings.useNeuralAttackPolicy) NeuralPolicy.Initialize();
         directory = Path.Combine(Application.persistentDataPath, "MonsterAIResearch",
             DateTime.UtcNow.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture) + "_" + Guid.NewGuid().ToString("N"));
         Telemetry = gameObject.AddComponent<MonsterCombatTelemetryPresenter>();
@@ -89,12 +92,13 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
                 entry.attempts, entry.hits, record.damageDealt > 0 ? 1f : -0.25f, oldWeight,
                 Memory.Weight(record.monsterType, record.context, record.action), Memory.version);
         }
-        Write("actions.csv", "actionId,battleId,monsterId,monsterType,startTime,endTime,mode,cooperation,naturalSpawn,role,context,selfHpRatio,playerHpRatio,distance,action,eligibleActions,probabilities,selectedProbability,policyVersion,released,outcome,damageDealt,registeredLearningTest,learningEligible,maximumChargeDemo",
+        Write("actions.csv", "actionId,battleId,monsterId,monsterType,startTime,endTime,mode,cooperation,naturalSpawn,role,context,selfHpRatio,playerHpRatio,distance,action,eligibleActions,probabilities,selectedProbability,policyVersion,released,outcome,damageDealt,registeredLearningTest,learningEligible,maximumChargeDemo,preferenceSource,neuralModelVersion",
             record.actionId, record.battleId, record.monsterId, record.monsterType, record.startedAt, Time.time, record.mode,
             record.cooperation, record.naturalSpawn, record.role, record.context, record.selfHpRatio,
             record.playerHpRatio, record.distance, (MonsterAttackKind)record.action, record.eligibleActions,
             record.selectionProbabilities, record.selectedProbability, record.learnedWeightVersion,
-            record.released, record.outcome, record.damageDealt, record.registeredLearningTest, record.learningEligible, record.maximumChargeDemo);
+            record.released, record.outcome, record.damageDealt, record.registeredLearningTest, record.learningEligible, record.maximumChargeDemo,
+            record.preferenceSource, record.neuralModelVersion);
     }
 
     public void RecordFormation(string group, MonsterPresenter owner, MonsterSquadAssignment assignment, string reason)
@@ -115,6 +119,8 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         Settings.SetDiagnostics(Memory.version, completed, directory);
         view.Render(Settings.showOverlay, "Monster AI | " + Settings.learningMode + " | Cooperation: " + Settings.cooperationEnabled +
             "\nPolicy version: " + Memory.version + " | Resolved actions: " + completed +
+            "\nAttack preferences: " + (Settings.useNeuralAttackPolicy ? "MLP " + NeuralPolicy.Model.status : "Original rules") +
+            " | Inferences: " + NeuralPolicy.Model.inferenceCount + " | Fallbacks: " + NeuralPolicy.Model.fallbackCount +
             (Settings.maximumChargeDemo ? "\nDEMO: registered test monsters only | Charge x" + MonsterLearningModel.MaximumLearningMultiplier.ToString("0.0", CultureInfo.InvariantCulture) + ", others x1 | not trained data" : "") +
             "\nNew monsters use a policy snapshot. Natural spawns train; waves do not." +
             "\nCSV / snapshots: persistentDataPath/MonsterAIResearch" +
@@ -265,6 +271,7 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance != this) return;
+        NeuralPolicy?.Dispose();
         Telemetry?.EndSession();
         SaveNow();
         ExportCurrentPolicy();

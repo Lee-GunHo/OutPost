@@ -118,30 +118,17 @@ public sealed class MonsterBehaviorModel : MonoBehaviour
     public float AttackWeight(MonsterAttackKind kind, float baseWeight, float healthRatio,
         float distance, float meleeRange, float now, bool cooperating = true)
     {
-        bool low = IsLowHealth(healthRatio);
-        bool hit = WasRecentlyHit(now);
-        float preference;
-        switch (kind)
+        var observation = new MonsterNeuralPolicyModel.Observation
         {
-            case MonsterAttackKind.Melee:
-                preference = low ? 0.65f : 2f;
-                break;
-            case MonsterAttackKind.Projectile:
-                preference = distance > meleeRange + 0.5f ? 2f : 1f;
-                if (low) preference *= 2.5f;
-                if (hit) preference *= 1.4f;
-                break;
-            case MonsterAttackKind.Circle:
-                preference = distance <= 2f ? 2.5f : 1f;
-                if (low) preference *= 1.7f;
-                if (hit) preference *= 2f;
-                break;
-            default:
-                preference = distance >= 2.3f ? 2.2f : 1f;
-                if (low) preference *= 0.35f;
-                if (hit) preference *= 0.6f;
-                break;
-        }
+            distance = distance, meleeRange = meleeRange,
+            lowHealth = IsLowHealth(healthRatio), recentlyHit = WasRecentlyHit(now)
+        };
+        return ApplyRoleWeight(kind, baseWeight,
+            MonsterNeuralPolicyModel.TeacherPreference((int)kind, observation), cooperating);
+    }
+
+    public float ApplyRoleWeight(MonsterAttackKind kind, float baseWeight, float preference, bool cooperating)
+    {
         // Attack cooldowns gate reuse; the previous attack does not reduce selection weight.
         if (cooperating)
         {
