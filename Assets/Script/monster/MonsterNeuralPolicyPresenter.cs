@@ -1,3 +1,4 @@
+// Legacy offline-model verification only. Live combat uses MonsterOnlineNetworkModel.
 using System;
 using Unity.InferenceEngine;
 using UnityEngine;

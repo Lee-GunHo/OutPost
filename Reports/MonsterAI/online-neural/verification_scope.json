@@ -1,0 +1,12 @@
+{
+  "scope": "Synthetic model and Unity JSON verification, not gameplay performance",
+  "pureModelChecks": 17,
+  "unitySerializationChecks": 9,
+  "runtimeCompilation": "passed",
+  "editorCompilation": "passed",
+  "modelSha256": {
+    "Assets/Script/monster/MonsterOnlineNetworkModel.cs": "6803a08c9d82d37b3e88532b7375022af1370d1217228e3142e22d1d68674f3d",
+    "Assets/Script/monster/MonsterLearningModel.cs": "1419cd4a07383e829f5ab1159c119f8da8ff1c991a82c84e0798968f94e662d6"
+  },
+  "legacyRunnerNote": "Run-ModelChecks.ps1 has pre-existing stale references to AdvanceFlank and SaveCheckpointModel. This change uses Run-OnlineNeuralChecks.ps1 instead."
+}

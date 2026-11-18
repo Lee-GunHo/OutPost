@@ -13,7 +13,6 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
     public static MonsterLearningPresenter Instance { get; private set; }
     public static bool CooperationEnabled => Instance == null || Instance.Settings.cooperationEnabled;
     public MonsterCombatTelemetryPresenter Telemetry { get; private set; }
-    public MonsterNeuralPolicyPresenter NeuralPolicy { get; private set; }
     public MonsterAIExperimentModel Settings { get; private set; }
     public int Generation => generation;
     public MonsterLearningModel Memory { get; private set; } = new MonsterLearningModel();
@@ -42,8 +41,6 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         Instance = this;
         Settings = GetComponent<MonsterAIExperimentModel>();
         view = GetComponent<MonsterLearningView>();
-        NeuralPolicy = new MonsterNeuralPolicyPresenter();
-        if (Settings.useNeuralAttackPolicy) NeuralPolicy.Initialize();
         directory = Path.Combine(Application.persistentDataPath, "MonsterAIResearch",
             DateTime.UtcNow.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture) + "_" + Guid.NewGuid().ToString("N"));
         Telemetry = gameObject.AddComponent<MonsterCombatTelemetryPresenter>();
@@ -82,23 +79,29 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         if (record.generation != generation) return; // A load/reset invalidates in-flight observations.
         completed++;
         bool evaluable = record.released && (record.outcome == "Hit" || record.outcome == "Miss" || record.outcome == "NoDamageContact");
-        if (record.train && Settings.learningMode == MonsterLearningMode.Training && evaluable && !storageBlocked)
+        if (record.train && Settings.useNeuralAttackPolicy && record.mode == "Training" &&
+            Settings.learningMode == MonsterLearningMode.Training && evaluable && !storageBlocked &&
+            MonsterOnlineNetworkModel.ValidInput(record.neuralInput))
         {
-            float oldWeight = Memory.Weight(record.monsterType, record.context, record.action);
-            var entry = Memory.Observe(record.monsterType, record.context, record.action, record.damageDealt > 0);
+            float oldWeight = Memory.Weight(record.monsterType, record.neuralInput, record.action);
+            float predictionBefore = Memory.Prediction(record.monsterType, record.neuralInput, record.action);
+            float loss = Memory.Observe(record.monsterType, record.neuralInput, record.action, record.damageDealt > 0,
+                Mathf.Clamp(Settings.neuralLearningRate, .001f, .2f));
             dirty = true;
-            Write("learning_updates.csv", "actionId,monsterType,context,action,attempts,hits,reward,oldWeight,newWeight,version",
+            Write("learning_updates.csv", "actionId,monsterType,context,action,target,loss,oldWeight,newWeight,version,model,learningRate,predictionBefore,predictionAfter",
                 record.actionId, record.monsterType, record.context, (MonsterAttackKind)record.action,
-                entry.attempts, entry.hits, record.damageDealt > 0 ? 1f : -0.25f, oldWeight,
-                Memory.Weight(record.monsterType, record.context, record.action), Memory.version);
+                record.damageDealt > 0 ? 1 : 0, loss, oldWeight,
+                Memory.Weight(record.monsterType, record.neuralInput, record.action), Memory.version,
+                MonsterOnlineNetworkModel.Contract, Settings.neuralLearningRate, predictionBefore,
+                Memory.Prediction(record.monsterType, record.neuralInput, record.action));
         }
-        Write("actions.csv", "actionId,battleId,monsterId,monsterType,startTime,endTime,mode,cooperation,naturalSpawn,role,context,selfHpRatio,playerHpRatio,distance,action,eligibleActions,probabilities,selectedProbability,policyVersion,released,outcome,damageDealt,registeredLearningTest,learningEligible,maximumChargeDemo,preferenceSource,neuralModelVersion",
+        Write("actions.csv", "actionId,battleId,monsterId,monsterType,startTime,endTime,mode,cooperation,naturalSpawn,role,context,selfHpRatio,playerHpRatio,distance,action,eligibleActions,probabilities,selectedProbability,policyVersion,released,outcome,damageDealt,registeredLearningTest,learningEligible,maximumChargeDemo,preferenceSource,neuralModelVersion,neuralInput",
             record.actionId, record.battleId, record.monsterId, record.monsterType, record.startedAt, Time.time, record.mode,
             record.cooperation, record.naturalSpawn, record.role, record.context, record.selfHpRatio,
             record.playerHpRatio, record.distance, (MonsterAttackKind)record.action, record.eligibleActions,
             record.selectionProbabilities, record.selectedProbability, record.learnedWeightVersion,
             record.released, record.outcome, record.damageDealt, record.registeredLearningTest, record.learningEligible, record.maximumChargeDemo,
-            record.preferenceSource, record.neuralModelVersion);
+            record.preferenceSource, record.neuralModelVersion, EncodeInput(record.neuralInput));
     }
 
     public void RecordFormation(string group, MonsterPresenter owner, MonsterSquadAssignment assignment, string reason)
@@ -119,10 +122,10 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         Settings.SetDiagnostics(Memory.version, completed, directory);
         view.Render(Settings.showOverlay, "Monster AI | " + Settings.learningMode + " | Cooperation: " + Settings.cooperationEnabled +
             "\nPolicy version: " + Memory.version + " | Resolved actions: " + completed +
-            "\nAttack preferences: " + (Settings.useNeuralAttackPolicy ? "MLP " + NeuralPolicy.Model.status : "Original rules") +
-            " | Inferences: " + NeuralPolicy.Model.inferenceCount + " | Fallbacks: " + NeuralPolicy.Model.fallbackCount +
+            "\nLearning: " + (Settings.useNeuralAttackPolicy ? "Online MLP (7-16-actions), no pretraining" : "OFF (rules only)") +
+            "\nNetworks: " + Memory.networks.Count + " | Multiplier: x0.5 - x2.5" +
             (Settings.maximumChargeDemo ? "\nDEMO: registered test monsters only | Charge x" + MonsterLearningModel.MaximumLearningMultiplier.ToString("0.0", CultureInfo.InvariantCulture) + ", others x1 | not trained data" : "") +
-            "\nNew monsters use a policy snapshot. Natural spawns train; waves do not." +
+            "\nNext decisions use updated weights. Natural/test monsters train; waves do not." +
             "\nCSV / snapshots: persistentDataPath/MonsterAIResearch" +
             (Settings.showOverlay ? "\n" + MonsterSquadPresenter.GetDebugSummary() : ""));
         if (Time.unscaledTime < nextFlush) return;
@@ -158,7 +161,18 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
             if (!File.Exists(SavePath)) return;
             var loaded = JsonUtility.FromJson<MonsterLearningModel>(File.ReadAllText(SavePath));
             if (loaded == null || !loaded.IsValid()) throw new InvalidDataException("Invalid learning schema/data.");
-            Memory = loaded;
+            if (loaded.schemaVersion == 1)
+            {
+                // Old aggregates do not contain continuous observations, so they cannot be neural training data.
+                Directory.CreateDirectory(directory);
+                string backup = Path.Combine(directory, "legacy_statistics_backup.json");
+                if (File.Exists(backup)) backup = Path.Combine(directory, "legacy_statistics_backup_" + Guid.NewGuid().ToString("N") + ".json");
+                File.Copy(SavePath, backup, false);
+                Memory = new MonsterLearningModel();
+                dirty = true;
+                Debug.Log("Legacy monster statistics backed up. Online MLP starts untrained; player/world saves are unchanged.");
+            }
+            else Memory = loaded;
         }
         catch (Exception e)
         {
@@ -180,7 +194,7 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
     [ContextMenu("Demo/1 - Baseline (No Learning)")]
     public void DemoBaseline() => SetDemo(false, MonsterLearningMode.Baseline);
 
-    [ContextMenu("Demo/2 - Maximum Charge x2.0 (No Learning)")]
+    [ContextMenu("Demo/2 - Maximum Charge x2.5 (No Learning)")]
     public void DemoMaximumCharge() => SetDemo(true, MonsterLearningMode.Frozen);
 
     [ContextMenu("Demo/3 - Use Saved Policy (Frozen)")]
@@ -259,6 +273,14 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
         catch (Exception e) { csvFailed = true; Debug.LogWarning("Monster CSV logging stopped: " + e.Message); }
     }
 
+    private static string EncodeInput(float[] input)
+    {
+        if (input == null) return "";
+        var values = new string[input.Length];
+        for (int i = 0; i < values.Length; i++) values[i] = input[i].ToString("R", CultureInfo.InvariantCulture);
+        return string.Join(";", values);
+    }
+
     private void FlushLogs()
     {
         if (csvFailed) return;
@@ -271,7 +293,6 @@ public sealed class MonsterLearningPresenter : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance != this) return;
-        NeuralPolicy?.Dispose();
         Telemetry?.EndSession();
         SaveNow();
         ExportCurrentPolicy();

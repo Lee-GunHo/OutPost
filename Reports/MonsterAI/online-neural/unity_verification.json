@@ -1,0 +1,10 @@
+{
+    "passed": true,
+    "contract": "combat-outcome-mlp-v2",
+    "unityVersion": "6000.3.10f1",
+    "error": "",
+    "checks": 9,
+    "coldMultiplier": 1.0,
+    "successfulMultiplier": 2.314176082611084,
+    "failedMultiplier": 0.5147351026535034
+}

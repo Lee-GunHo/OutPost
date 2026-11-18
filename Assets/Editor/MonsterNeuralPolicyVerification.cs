@@ -34,7 +34,7 @@ public static class MonsterNeuralPolicyVerification
         Verify();
     }
 
-    [MenuItem("Tools/OutPost/Monster AI/Verify MLP Model")]
+    [MenuItem("Tools/OutPost/Monster AI/Legacy - Verify Pretrained MLP")]
     public static void Verify()
     {
         var result = new Result

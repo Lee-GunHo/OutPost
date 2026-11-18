@@ -15,7 +15,7 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
     private MonsterAttackPayload chargePayload;
     private readonly List<MonsterAttackKind> available = new List<MonsterAttackKind>(4);
     private readonly float[] selectionWeights = new float[4];
-    private readonly float[] neuralPreferences = new float[4];
+    private float[] neuralInput;
     private string preferenceSource = "Rules";
     private float preparedTotal;
     private MonsterAttackKind activeKind;
@@ -24,28 +24,17 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
     private float phaseRemaining;
     private bool released;
     private MonsterLearningPresenter learning;
-    private MonsterLearningModel policy;
     private MonsterCombatTelemetryModel observation;
     private string learningContext;
-    private int policyGeneration;
-    private MonsterLearningMode policyMode;
 
     private void Start()
     {
         learning = MonsterLearningPresenter.Ensure(this);
-        RefreshPolicy();
     }
 
     public bool IsAttackReady(MonsterAttackKind kind) => SupportsAttack(kind) && (owner.Behavior == null || owner.Behavior.AllowsAttack(kind)) && model.IsReady(kind, Time.time);
 
     public bool SupportsAttack(MonsterAttackKind kind) => model != null && model.IsEnabled(kind) && model.GetWeight(kind) > 0f;
-
-    private void RefreshPolicy()
-    {
-        policy = learning.Snapshot();
-        policyGeneration = learning.Generation;
-        policyMode = learning.Settings.learningMode;
-    }
 
     private PlayerPresenter TargetPlayer => owner.CurrentTarget != null
         ? owner.CurrentTarget.GetComponentInParent<PlayerPresenter>() : null;
@@ -55,28 +44,28 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
 
     private float PrepareWeights()
     {
-        if (learning != null && (policy == null || policyGeneration != learning.Generation || policyMode != learning.Settings.learningMode))
-            RefreshPolicy();
         var player = TargetPlayer;
         var state = player != null ? player.GetComponent<PlayerStateManager>() : null;
         float hp = monster.CurrentHp / (float)Mathf.Max(1, monster.MaxHp);
         learningContext = MonsterLearningModel.Context(TargetDistance, hp, state != null && state.IsAttacking, state != null && state.IsDashing);
         float total = 0f;
         preferenceSource = "Rules";
-        bool neural = false;
-        if (owner.Behavior != null && learning != null && learning.Settings.useNeuralAttackPolicy)
-            neural = learning.NeuralPolicy.TryPredict(owner.Behavior.GetNeuralObservation(), neuralPreferences, out preferenceSource);
+        var raw = owner.Behavior != null ? owner.Behavior.GetNeuralObservation() : default;
+        neuralInput = MonsterOnlineNetworkModel.Encode(TargetDistance, owner.AttackRange, hp, raw.recentlyHit,
+            state != null && state.IsAttacking, state != null && state.IsDashing);
+        bool neural = player != null && UsesLearnedPolicy && learning.Settings.useNeuralAttackPolicy && neuralInput != null;
+        if (neural) preferenceSource = "OnlineMLP";
+        if (player != null && learning != null && learning.Settings.UsesMaximumChargeDemo(owner.IsRegisteredLearningTest))
+            preferenceSource = "SyntheticMaximumCharge";
         System.Array.Clear(selectionWeights, 0, selectionWeights.Length);
         foreach (var kind in available)
         {
-            float weight = neural
-                ? owner.Behavior.ApplyRoleWeight(kind, model.GetWeight(kind), neuralPreferences[(int)kind])
-                : owner.Behavior != null
+            float weight = owner.Behavior != null
                 ? owner.Behavior.GetAttackWeight(kind, model.GetWeight(kind)) : model.GetWeight(kind);
             if (player != null && learning != null && learning.Settings.UsesMaximumChargeDemo(owner.IsRegisteredLearningTest))
                 weight *= learning.Settings.DemoAttackMultiplier(kind);
-            else if (player != null && UsesLearnedPolicy && policy != null)
-                weight *= policy.Weight(owner.LearningType, learningContext, (int)kind);
+            else if (neural)
+                weight *= learning.Memory.Weight(owner.LearningType, neuralInput, (int)kind);
             selectionWeights[(int)kind] = weight;
             total += weight;
         }
@@ -204,12 +193,13 @@ public sealed class MonsterCombatPresenter : MonoBehaviour
                 (totalWeight > 0f ? selectionWeights[i] / totalWeight : 0f).ToString("R", System.Globalization.CultureInfo.InvariantCulture);
             observation = learning.Begin(owner, kind, learningContext, TargetDistance,
                 monster.CurrentHp / (float)Mathf.Max(1, monster.MaxHp), player,
-                UsesLearnedPolicy && policy != null ? policy.version : 0, eligible,
+                UsesLearnedPolicy ? learning.Memory.version : 0, eligible,
                 string.Join(";", probabilities), weightedSelection && totalWeight > 0f ? selectionWeights[(int)kind] / totalWeight : -1f);
             // An external/custom policy is not an observation of our weighted-selection learner.
-            if (!weightedSelection) observation.train = false;
+            if (!weightedSelection || !learning.Settings.useNeuralAttackPolicy || neuralInput == null) observation.train = false;
+            observation.neuralInput = neuralInput != null ? (float[])neuralInput.Clone() : null;
             observation.preferenceSource = preferenceSource;
-            observation.neuralModelVersion = preferenceSource == "MLP" ? MonsterNeuralPolicyModel.Version : "";
+            observation.neuralModelVersion = preferenceSource == "OnlineMLP" ? MonsterOnlineNetworkModel.Contract : "";
         }
         activeKind = kind;
         lockedTarget = owner.CurrentTarget;
